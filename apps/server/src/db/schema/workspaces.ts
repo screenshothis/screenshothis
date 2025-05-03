@@ -13,24 +13,32 @@ export const workspaces = pgTable("workspaces", {
 	isPersonal: boolean("is_personal").notNull().default(false),
 	ownerId: text("owner_id")
 		.notNull()
-		.references(() => users.id),
+		.references(() => users.id, {
+			onDelete: "cascade",
+		}),
 	...timestamps,
 });
 
 export const workspaceMembers = pgTable("workspace_members", {
 	workspaceId: text("workspace_id")
 		.notNull()
-		.references(() => workspaces.id),
+		.references(() => workspaces.id, {
+			onDelete: "cascade",
+		}),
 	userId: text("user_id")
 		.notNull()
-		.references(() => users.id),
+		.references(() => users.id, {
+			onDelete: "cascade",
+		}),
 	...timestamps,
 });
 
 export const workspaceInvitations = pgTable("workspace_invitations", {
 	workspaceId: text("workspace_id")
 		.notNull()
-		.references(() => workspaces.id),
+		.references(() => workspaces.id, {
+			onDelete: "cascade",
+		}),
 	email: text("email").notNull(),
 	...timestamps,
 });
