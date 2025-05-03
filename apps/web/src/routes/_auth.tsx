@@ -8,10 +8,13 @@ import {
 	useLocation,
 } from "@tanstack/react-router";
 import { createHighlighterCore } from "shiki/core";
-import { createOnigurumaEngine } from "shiki/engine/oniguruma";
+import { createOnigurumaEngine, loadWasm } from "shiki/engine/oniguruma";
 
 import { LanguageSelect } from "#/components/language-select.tsx";
 import * as Button from "#/components/ui/button.tsx";
+
+// @ts-expect-error - wasm doesn't have types
+await loadWasm(import("shiki/onig.wasm"));
 
 type PathConfig = {
 	message: string;

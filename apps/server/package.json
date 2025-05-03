@@ -1,10 +1,10 @@
 {
 	"name": "server",
 	"type": "module",
-	"main": "src/index.ts",
 	"imports": {
 		"#/*": "./src/*"
 	},
+	"main": "src/index.ts",
 	"scripts": {
 		"build": "tsc && tsc-alias",
 		"check-types": "tsc --noEmit",
