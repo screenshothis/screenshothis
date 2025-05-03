@@ -14,7 +14,7 @@ import { LanguageSelect } from "#/components/language-select.tsx";
 import * as Button from "#/components/ui/button.tsx";
 
 // @ts-expect-error - wasm doesn't have types
-await loadWasm(import("shiki/onig.wasm"));
+await loadWasm(import("shiki/onig.wasm?url"));
 
 type PathConfig = {
 	message: string;
