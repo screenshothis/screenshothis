@@ -31,9 +31,4 @@ export default defineConfig({
 			tailwindcss(),
 		],
 	},
-	routers: {
-		ssr: {
-			middleware: "./src/middlewares/ssr.ts",
-		},
-	},
 });
