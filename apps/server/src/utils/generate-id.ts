@@ -5,6 +5,8 @@ const b58 = baseX("123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz");
 const prefixes = {
 	user: "user",
 	workspace: "ws",
+	workspaceMember: "wsm",
+	workspaceInvitation: "wsi",
 } as const;
 
 export function newId<TPrefix extends keyof typeof prefixes>(prefix: TPrefix) {

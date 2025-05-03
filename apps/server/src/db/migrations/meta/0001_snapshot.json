@@ -1,5 +1,5 @@
 {
-  "id": "9d50c7e2-088e-4925-8bce-1458ddad9734",
+  "id": "5dd4e8bf-fc33-45e5-aede-e10fff22d139",
   "prevId": "0575a96b-162d-4043-87fa-dcf3835f83ba",
   "version": "7",
   "dialect": "postgresql",
@@ -220,6 +220,12 @@
           "notNull": true,
           "default": false
         },
+        "owner_id": {
+          "name": "owner_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
         "created_at": {
           "name": "created_at",
           "type": "bigint",
@@ -235,7 +241,21 @@
         }
       },
       "indexes": {},
-      "foreignKeys": {},
+      "foreignKeys": {
+        "workspaces_owner_id_users_id_fk": {
+          "name": "workspaces_owner_id_users_id_fk",
+          "tableFrom": "workspaces",
+          "tableTo": "users",
+          "columnsFrom": [
+            "owner_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
       "compositePrimaryKeys": {},
       "uniqueConstraints": {},
       "policies": {},
