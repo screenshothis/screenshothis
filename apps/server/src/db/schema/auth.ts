@@ -1,17 +1,17 @@
-import { pgTable, text } from "drizzle-orm/pg-core";
+import { sqliteTable, text } from "drizzle-orm/sqlite-core";
 
 import { newId } from "#/utils/generate-id";
 import { timestamps } from "./utils/timestamps.ts";
 
-export const users = pgTable("users", {
-	id: text("id")
+export const users = sqliteTable("users", {
+	id: text()
 		.primaryKey()
 		.$defaultFn(() => newId("user")),
-	externalId: text("external_id").unique().notNull(),
-	username: text("username"),
-	firstName: text("first_name"),
-	lastName: text("last_name"),
-	imageUrl: text("image_url").notNull(),
-	email: text("email").unique().notNull(),
+	externalId: text().unique().notNull(),
+	username: text(),
+	firstName: text(),
+	lastName: text(),
+	imageUrl: text().notNull(),
+	email: text().unique().notNull(),
 	...timestamps,
 });

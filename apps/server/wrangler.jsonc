@@ -1,0 +1,14 @@
+{
+	"name": "screenshothis-server",
+	"main": "src/index.ts",
+	"compatibility_date": "2025-04-02",
+	"compatibility_flags": ["nodejs_compat"],
+	"d1_databases": [
+		{
+			"binding": "DB",
+			"database_name": "screenshothis",
+			"database_id": "1f18b9ef-1395-4f46-acbd-984b754e1f61",
+			"migrations_dir": "db/migrations"
+		}
+	]
+}

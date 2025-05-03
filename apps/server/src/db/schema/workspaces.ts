@@ -1,17 +1,17 @@
-import { boolean, pgTable, text } from "drizzle-orm/pg-core";
 import { relations } from "drizzle-orm/relations";
+import { integer, sqliteTable, text } from "drizzle-orm/sqlite-core";
 
 import { newId } from "#/utils/generate-id";
 import { users } from "./auth.ts";
 import { timestamps } from "./utils/timestamps.ts";
 
-export const workspaces = pgTable("workspaces", {
-	id: text("id")
+export const workspaces = sqliteTable("workspaces", {
+	id: text()
 		.primaryKey()
 		.$defaultFn(() => newId("workspace")),
-	name: text("name").notNull(),
-	isPersonal: boolean("is_personal").notNull().default(false),
-	ownerId: text("owner_id")
+	name: text().notNull(),
+	isPersonal: integer({ mode: "boolean" }).notNull().default(false),
+	ownerId: text()
 		.notNull()
 		.references(() => users.id, {
 			onDelete: "cascade",
@@ -19,13 +19,13 @@ export const workspaces = pgTable("workspaces", {
 	...timestamps,
 });
 
-export const workspaceMembers = pgTable("workspace_members", {
-	workspaceId: text("workspace_id")
+export const workspaceMembers = sqliteTable("workspace_members", {
+	workspaceId: text()
 		.notNull()
 		.references(() => workspaces.id, {
 			onDelete: "cascade",
 		}),
-	userId: text("user_id")
+	userId: text()
 		.notNull()
 		.references(() => users.id, {
 			onDelete: "cascade",
@@ -33,13 +33,13 @@ export const workspaceMembers = pgTable("workspace_members", {
 	...timestamps,
 });
 
-export const workspaceInvitations = pgTable("workspace_invitations", {
-	workspaceId: text("workspace_id")
+export const workspaceInvitations = sqliteTable("workspace_invitations", {
+	workspaceId: text()
 		.notNull()
 		.references(() => workspaces.id, {
 			onDelete: "cascade",
 		}),
-	email: text("email").notNull(),
+	email: text().notNull(),
 	...timestamps,
 });
 

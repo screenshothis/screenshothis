@@ -8,11 +8,12 @@ import { cors } from "hono/cors";
 import { logger } from "hono/logger";
 import { stream } from "hono/streaming";
 
+import type { Environment } from "../bindings.ts";
 import { createContext } from "./lib/context.ts";
 import { appRouter } from "./routers";
 import { handleClerkWebhook } from "./webhooks/clerk.ts";
 
-const app = new Hono();
+const app = new Hono<Environment>();
 
 app.use(logger());
 app.use(clerkMiddleware());
