@@ -1,0 +1,41 @@
+{
+	"name": "server",
+	"type": "module",
+	"main": "src/index.ts",
+	"imports": {
+		"#/*": "./src/*"
+	},
+	"scripts": {
+		"build": "tsc && tsc-alias",
+		"check-types": "tsc --noEmit",
+		"compile": "bun build --compile --minify --sourcemap --bytecode ./src/index.ts --outfile server",
+		"db:push": "drizzle-kit push",
+		"db:studio": "drizzle-kit studio",
+		"dev": "bun run --hot src/index.ts",
+		"start": "bun run dist/src/index.js"
+	},
+	"dependencies": {
+		"@ai-sdk/google": "1.2.14",
+		"@clerk/backend": "1.31.2",
+		"@hono/clerk-auth": "2.0.0",
+		"@hono/trpc-server": "0.3.4",
+		"@trpc/client": "11.1.2",
+		"@trpc/server": "11.1.2",
+		"ai": "4.3.13",
+		"base-x": "5.0.1",
+		"dotenv": "16.5.0",
+		"drizzle-orm": "0.43.1",
+		"hono": "4.7.8",
+		"pg": "8.15.6",
+		"svix": "1.64.1",
+		"zod": "3.24.3"
+	},
+	"devDependencies": {
+		"@epic-web/config": "1.20.0",
+		"@types/bun": "1.2.11",
+		"@types/pg": "8.11.14",
+		"drizzle-kit": "0.31.0",
+		"tsc-alias": "1.8.15",
+		"typescript": "5.8.3"
+	}
+}

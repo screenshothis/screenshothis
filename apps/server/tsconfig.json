@@ -1,0 +1,11 @@
+{
+	"extends": ["@epic-web/config/typescript"],
+	"compilerOptions": {
+		"paths": {
+			"#/*": ["./src/*"]
+		}
+	},
+	"tsc-alias": {
+		"resolveFullPaths": true
+	}
+}

@@ -1,0 +1,220 @@
+:root,
+html {
+	scroll-behavior: smooth;
+}
+
+:root,
+.light,
+[data-theme="light"] {
+	color-scheme: light;
+	--light: initial;
+	--dark: ;
+
+	/* neutral colors */
+	--bg-strong-950: var(--light, var(--color-neutral-950))
+		var(--dark, var(--color-neutral-0));
+	--bg-surface-800: var(--light, var(--color-neutral-800))
+		var(--dark, var(--color-neutral-200));
+	--bg-sub-300: var(--light, var(--color-neutral-300))
+		var(--dark, var(--color-neutral-600));
+	--bg-soft-200: var(--light, var(--color-neutral-200))
+		var(--dark, var(--color-neutral-700));
+	--bg-weak-50: var(--light, var(--color-neutral-50))
+		var(--dark, var(--color-neutral-900));
+	--bg-white-0: var(--light, var(--color-neutral-0))
+		var(--dark, var(--color-neutral-950));
+
+	--text-strong-950: var(--light, var(--color-neutral-950))
+		var(--dark, var(--color-neutral-0));
+	--text-sub-600: var(--light, var(--color-neutral-600))
+		var(--dark, var(--color-neutral-400));
+	--text-soft-400: var(--light, var(--color-neutral-400))
+		var(--dark, var(--color-neutral-500));
+	--text-disabled-300: var(--light, var(--color-neutral-300))
+		var(--dark, var(--color-neutral-600));
+	--text-white-0: var(--light, var(--color-neutral-0))
+		var(--dark, var(--color-neutral-950));
+
+	--stroke-strong-950: var(--light, var(--color-neutral-950))
+		var(--dark, var(--color-neutral-0));
+	--stroke-sub-300: var(--light, var(--color-neutral-300))
+		var(--dark, var(--color-neutral-600));
+	--stroke-soft-200: var(--light, var(--color-neutral-200))
+		var(--dark, var(--color-neutral-700));
+	--stroke-white-0: var(--light, var(--color-neutral-0))
+		var(--dark, var(--color-neutral-950));
+
+	--icon-strong-950: var(--light, var(--color-neutral-950))
+		var(--dark, var(--color-neutral-0));
+	--icon-sub-600: var(--light, var(--color-neutral-600))
+		var(--dark, var(--color-neutral-400));
+	--icon-soft-400: var(--light, var(--color-neutral-400))
+		var(--dark, var(--color-neutral-500));
+	--icon-disabled-300: var(--light, var(--color-neutral-300))
+		var(--dark, var(--color-neutral-600));
+	--icon-white-0: var(--light, var(--color-neutral-0))
+		var(--dark, var(--color-neutral-950));
+
+	/* state-colors */
+	--state-faded-dark: var(--light, var(--color-neutral-800))
+		var(--dark, var(--color-neutral-300));
+	--state-faded-base: var(--light, var(--color-neutral-500))
+		var(--dark, var(--color-neutral-500));
+	--state-faded-light: var(--light, var(--color-neutral-200))
+		var(--dark, var(--color-neutral-alpha-24));
+	--state-faded-lighter: var(--light, var(--color-neutral-100))
+		var(--dark, var(--color-neutral-alpha-16));
+
+	--state-information-dark: var(--light, var(--color-blue-950))
+		var(--dark, var(--color-blue-400));
+	--state-information-base: var(--light, var(--color-blue-500))
+		var(--dark, var(--color-blue-600));
+	--state-information-light: var(--light, var(--color-blue-200))
+		var(--dark, var(--color-blue-alpha-24));
+	--state-information-lighter: var(--light, var(--color-blue-50))
+		var(--dark, var(--color-blue-alpha-16));
+
+	--state-warning-dark: var(--light, var(--color-orange-950))
+		var(--dark, var(--color-orange-400));
+	--state-warning-base: var(--light, var(--color-orange-500))
+		var(--dark, var(--color-orange-600));
+	--state-warning-light: var(--light, var(--color-orange-200))
+		var(--dark, var(--color-orange-alpha-24));
+	--state-warning-lighter: var(--light, var(--color-orange-50))
+		var(--dark, var(--color-orange-alpha-16));
+
+	--state-error-dark: var(--light, var(--color-red-950))
+		var(--dark, var(--color-red-400));
+	--state-error-base: var(--light, var(--color-red-500))
+		var(--dark, var(--color-red-600));
+	--state-error-light: var(--light, var(--color-red-200))
+		var(--dark, var(--color-red-alpha-24));
+	--state-error-lighter: var(--light, var(--color-red-50))
+		var(--dark, var(--color-red-alpha-16));
+
+	--state-success-dark: var(--light, var(--color-green-950))
+		var(--dark, var(--color-green-400));
+	--state-success-base: var(--light, var(--color-green-500))
+		var(--dark, var(--color-green-600));
+	--state-success-light: var(--light, var(--color-green-200))
+		var(--dark, var(--color-green-alpha-24));
+	--state-success-lighter: var(--light, var(--color-green-50))
+		var(--dark, var(--color-green-alpha-16));
+
+	--state-away-dark: var(--light, var(--color-yellow-950))
+		var(--dark, var(--color-yellow-400));
+	--state-away-base: var(--light, var(--color-yellow-500))
+		var(--dark, var(--color-yellow-600));
+	--state-away-light: var(--light, var(--color-yellow-200))
+		var(--dark, var(--color-yellow-alpha-24));
+	--state-away-lighter: var(--light, var(--color-yellow-50))
+		var(--dark, var(--color-yellow-alpha-16));
+
+	--state-feature-dark: var(--light, var(--color-purple-950))
+		var(--dark, var(--color-purple-400));
+	--state-feature-base: var(--light, var(--color-purple-500))
+		var(--dark, var(--color-purple-600));
+	--state-feature-light: var(--light, var(--color-purple-200))
+		var(--dark, var(--color-purple-alpha-24));
+	--state-feature-lighter: var(--light, var(--color-purple-50))
+		var(--dark, var(--color-purple-alpha-16));
+
+	--state-verified-dark: var(--light, var(--color-sky-950))
+		var(--dark, var(--color-sky-400));
+	--state-verified-base: var(--light, var(--color-sky-500))
+		var(--dark, var(--color-sky-600));
+	--state-verified-light: var(--light, var(--color-sky-200))
+		var(--dark, var(--color-sky-alpha-24));
+	--state-verified-lighter: var(--light, var(--color-sky-50))
+		var(--dark, var(--color-sky-alpha-16));
+
+	--state-highlighted-dark: var(--light, var(--color-pink-950))
+		var(--dark, var(--color-pink-400));
+	--state-highlighted-base: var(--light, var(--color-pink-500))
+		var(--dark, var(--color-pink-600));
+	--state-highlighted-light: var(--light, var(--color-pink-200))
+		var(--dark, var(--color-pink-alpha-24));
+	--state-highlighted-lighter: var(--light, var(--color-pink-50))
+		var(--dark, var(--color-pink-alpha-16));
+
+	--state-stable-dark: var(--light, var(--color-teal-950))
+		var(--dark, var(--color-teal-400));
+	--state-stable-base: var(--light, var(--color-teal-500))
+		var(--dark, var(--color-teal-600));
+	--state-stable-light: var(--light, var(--color-teal-200))
+		var(--dark, var(--color-teal-alpha-24));
+	--state-stable-lighter: var(--light, var(--color-teal-50))
+		var(--dark, var(--color-teal-alpha-16));
+
+	--social-apple: var(--light, oklch(0% 0 0deg))
+		var(--dark, oklch(100% 0.0000000000000005 0deg));
+	--social-twitter: var(--light, oklch(6.72% 0.0000000000000000351 0deg))
+		var(--dark, oklch(100% 0.0000000000000005 0deg));
+	--social-github: var(--light, oklch(27.9% 0.0132 253deg))
+		var(--dark, oklch(100% 0.0000000000000005 0deg));
+	--social-notion: var(--light, oklch(25% 0.00961 248deg))
+		var(--dark, oklch(100% 0.0000000000000005 0deg));
+	--social-tidal: var(--light, oklch(0% 0 0deg))
+		var(--dark, oklch(100% 0.0000000000000005 0deg));
+	--social-amazon: var(--light, oklch(35.9% 0.0197 248deg))
+		var(--dark, oklch(100% 0.0000000000000005 0deg));
+	--social-zendesk: var(--light, oklch(19.1% 0.0138 94deg))
+		var(--dark, oklch(100% 0.0000000000000005 0deg));
+
+	--overlay-gray: var(--light, oklch(32.1% 0.000000000000000262 0deg / 24%))
+		var(--dark, oklch(32.1% 0.000000000000000262 0deg / 56%));
+	--overlay-slate: var(--light, oklch(30.9% 0.021 266deg / 24%))
+		var(--dark, oklch(30.9% 0.021 266deg / 56%));
+
+	--illustration-white-0: var(--light, var(--color-neutral-0))
+		var(--dark, var(--color-neutral-950));
+	--illustration-weak-100: var(--light, var(--color-neutral-100))
+		var(--dark, var(--color-neutral-900));
+	--illustration-soft-200: var(--light, var(--color-neutral-200))
+		var(--dark, var(--color-neutral-800));
+	--illustration-sub-300: var(--light, var(--color-neutral-300))
+		var(--dark, var(--color-neutral-700));
+	--illustration-strong-400: var(--light, var(--color-neutral-400))
+		var(--dark, var(--color-neutral-600));
+}
+
+.dark,
+[data-theme="dark"] {
+	color-scheme: dark;
+	--light: ;
+	--dark: initial;
+}
+
+h1,
+h2,
+h3,
+h4,
+.text-h1,
+.text-h2,
+.text-h3,
+.text-h4 {
+	/* Balance headings across multiple lines into an even block. */
+	@apply text-balance;
+}
+
+p {
+	/* Prevent text orphans (single words on last line). */
+	@apply text-pretty;
+}
+
+html.dark .shiki,
+html.dark .shiki span {
+  color: var(--shiki-dark) !important;
+  background-color: var(--shiki-dark-bg) !important;
+  /* Optional, if you also want font styles */
+  font-style: var(--shiki-dark-font-style) !important;
+  font-weight: var(--shiki-dark-font-weight) !important;
+  text-decoration: var(--shiki-dark-text-decoration) !important;
+}
+
+/* Optional, for the code block we add overflow, borders and padding */
+.shiki {
+  overflow-x: auto;
+  border-radius: 12px;
+  padding: 20px;
+}
