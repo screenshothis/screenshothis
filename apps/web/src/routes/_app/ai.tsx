@@ -3,8 +3,8 @@ import { createFileRoute } from "@tanstack/react-router";
 import { Send } from "lucide-react";
 import * as React from "react";
 
-import { Button } from "#/components/ui/button.tsx";
-import { Input } from "#/components/ui/input.tsx";
+import * as Button from "#/components/ui/button.tsx";
+import * as Input from "#/components/ui/input.tsx";
 
 export const Route = createFileRoute("/_app/ai")({
 	component: RouteComponent,
@@ -52,7 +52,7 @@ function RouteComponent() {
 				onSubmit={handleSubmit}
 				className="flex w-full items-center space-x-2 border-t pt-2"
 			>
-				<Input
+				<Input.Input
 					name="prompt"
 					value={input}
 					onChange={handleInputChange}
@@ -61,9 +61,9 @@ function RouteComponent() {
 					autoComplete="off"
 					autoFocus
 				/>
-				<Button type="submit" size="icon">
+				<Button.Root type="submit" $size="sm">
 					<Send size={18} />
-				</Button>
+				</Button.Root>
 			</form>
 		</div>
 	);
