@@ -2,6 +2,7 @@ import tailwindcss from "@tailwindcss/vite";
 import { defineConfig } from "@tanstack/react-start/config";
 import { cloudflare } from "unenv";
 import Icons from "unplugin-icons/vite";
+import wasm from "vite-plugin-wasm";
 import viteTsConfigPaths from "vite-tsconfig-paths";
 
 export default defineConfig({
@@ -15,6 +16,7 @@ export default defineConfig({
 	},
 	vite: {
 		plugins: [
+			wasm(),
 			Icons({
 				compiler: "jsx",
 				jsx: "react",
