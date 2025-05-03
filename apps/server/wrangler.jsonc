@@ -1,5 +1,5 @@
 {
-	"name": "screenshothis-server",
+	"name": "screenshothis-api",
 	"main": "src/index.ts",
 	"compatibility_date": "2025-04-02",
 	"compatibility_flags": ["nodejs_compat"],
