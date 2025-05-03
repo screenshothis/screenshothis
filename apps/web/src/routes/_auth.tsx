@@ -1,3 +1,5 @@
+import bash from "@shikijs/langs/bash";
+import catppuccinFrappe from "@shikijs/themes/catppuccin-frappe";
 import {
 	Link,
 	Outlet,
@@ -5,10 +7,11 @@ import {
 	redirect,
 	useLocation,
 } from "@tanstack/react-router";
+import { createHighlighterCore } from "shiki/core";
+import { createOnigurumaEngine } from "shiki/engine/oniguruma";
 
 import { LanguageSelect } from "#/components/language-select.tsx";
 import * as Button from "#/components/ui/button.tsx";
-import { codeToHtml } from "shiki/bundle/web";
 
 type PathConfig = {
 	message: string;
@@ -49,7 +52,13 @@ export const Route = createFileRoute("/_auth")({
 		}
 	},
 	async loader() {
-		const code = await codeToHtml(
+		const highlighter = await createHighlighterCore({
+			themes: [catppuccinFrappe],
+			langs: [bash],
+			engine: createOnigurumaEngine(import("shiki/wasm")),
+		});
+
+		const code = highlighter.codeToHtml(
 			`curl -G https://api.screenshothis.com/v1/take?url=https://example.com \
 
   -H "Authorization: Bearer {token}" \
