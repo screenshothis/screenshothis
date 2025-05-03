@@ -4,7 +4,7 @@ import { HTTPException } from "hono/http-exception";
 
 import { db } from "#/db";
 import { users } from "#/db/schema/auth";
-import { workspaces } from "#/db/schema/workspaces.ts";
+import { workspaces } from "#/db/schema/workspaces";
 
 export async function handleClerkWebhook(c: Context) {
 	try {
