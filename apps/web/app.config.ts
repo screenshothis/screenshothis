@@ -11,6 +11,9 @@ export default defineConfig({
 	},
 	tsr: {
 		appDirectory: "src",
+		experimental: {
+			enableCodeSplitting: true,
+		},
 	},
 	vite: {
 		plugins: [
