@@ -1,10 +1,7 @@
 {
 	"name": "screenshothis",
 	"private": true,
-	"workspaces": [
-		"apps/*",
-		"packages/*"
-	],
+	"workspaces": ["apps/*", "packages/*"],
 	"scripts": {
 		"build": "turbo build",
 		"check-types": "turbo check-types",
@@ -14,7 +11,7 @@
 		"dev:native": "turbo -F native dev",
 		"dev:server": "turbo -F server dev",
 		"dev:web": "turbo -F web dev",
-		"prepare": "husky"
+		"prepare": "husky || true"
 	},
 	"lint-staged": {
 		"*.{js,ts,cjs,mjs,d.cts,d.mts,jsx,tsx,json,jsonc}": [
@@ -28,9 +25,5 @@
 		"turbo": "2.5.2"
 	},
 	"packageManager": "bun@1.2.11",
-	"trustedDependencies": [
-		"@biomejs/biome",
-		"@clerk/shared",
-		"@parcel/watcher"
-	]
+	"trustedDependencies": ["@biomejs/biome", "@clerk/shared", "@parcel/watcher"]
 }
