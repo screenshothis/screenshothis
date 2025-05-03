@@ -15,6 +15,7 @@ import type { TRPCOptionsProxy } from "@trpc/tanstack-react-query";
 
 import { Toaster } from "#/components/ui/sonner.tsx";
 import { seo } from "#/utils/seo.ts";
+import { ThemeProvider } from "next-themes";
 import type { AppRouter } from "../../../server/src/routers";
 import appCss from "../app.css?url";
 import tailwindCss from "../tailwind.css?url";
@@ -103,36 +104,42 @@ export const Route = createRootRouteWithContext<RouterAppContext>()({
 
 function RootComponent() {
 	return (
-		<ClerkProvider
-			appearance={{
-				layout: {
-					logoLinkUrl: "/",
-				},
-				variables: {
-					colorPrimary: "#FF9147", // var(--color-primary)
-					colorDanger: "#FB3748", // var(--color-red-500)
-					colorSuccess: "#1FC16B", // var(--color-green-500)
-					colorWarning: "#FF9147", // var(--color-orange-500)
-					colorNeutral: "#0E121B", // var(--color-neutral-500)
-					colorText: "#0E121B", // var(--color-neutral-950)
-					colorTextOnPrimaryBackground: "#FFFFFF", // var(--color-neutral-0)
-					colorTextSecondary: "#525866", // var(--color-neutral-600)
-					colorBackground: "#F5F7FA", // var(--color-neutral-50)
-					colorInputText: "#0E121B", // var(--color-neutral-950)
-					colorInputBackground: "#FFFFFF", // var(--color-neutral-0)
-					colorShimmer: "#EBF1FF", // var(--color-blue-50)
-					fontFamily: "var(--default-font-sans)",
-					fontFamilyButtons: "var(--default-font-sans)",
-					borderRadius: "8px",
-				},
-			}}
-			signUpFallbackRedirectUrl="/dashboard"
-			signInFallbackRedirectUrl="/dashboard"
+		<ThemeProvider
+			disableTransitionOnChange
+			attribute={["class", "data-theme"]}
+			defaultTheme="light"
 		>
-			<RootDocument>
-				<Outlet />
-			</RootDocument>
-		</ClerkProvider>
+			<ClerkProvider
+				appearance={{
+					layout: {
+						logoLinkUrl: "/",
+					},
+					variables: {
+						colorPrimary: "#FF9147", // var(--color-primary)
+						colorDanger: "#FB3748", // var(--color-red-500)
+						colorSuccess: "#1FC16B", // var(--color-green-500)
+						colorWarning: "#FF9147", // var(--color-orange-500)
+						colorNeutral: "#0E121B", // var(--color-neutral-500)
+						colorText: "#0E121B", // var(--color-neutral-950)
+						colorTextOnPrimaryBackground: "#FFFFFF", // var(--color-neutral-0)
+						colorTextSecondary: "#525866", // var(--color-neutral-600)
+						colorBackground: "#F5F7FA", // var(--color-neutral-50)
+						colorInputText: "#0E121B", // var(--color-neutral-950)
+						colorInputBackground: "#FFFFFF", // var(--color-neutral-0)
+						colorShimmer: "#EBF1FF", // var(--color-blue-50)
+						fontFamily: "var(--default-font-sans)",
+						fontFamilyButtons: "var(--default-font-sans)",
+						borderRadius: "8px",
+					},
+				}}
+				signUpFallbackRedirectUrl="/dashboard"
+				signInFallbackRedirectUrl="/dashboard"
+			>
+				<RootDocument>
+					<Outlet />
+				</RootDocument>
+			</ClerkProvider>
+		</ThemeProvider>
 	);
 }
 

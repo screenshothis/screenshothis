@@ -12,7 +12,7 @@ export function PageHeader({
 	...rest
 }: Omit<React.HTMLAttributes<HTMLDivElement>, "title"> & {
 	icon?: React.ReactNode;
-	title?: string | null;
+	title?: React.ReactNode | null;
 	description?: string;
 	contentClassName?: string;
 }) {

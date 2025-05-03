@@ -16,6 +16,7 @@ import { cn } from "#/utils/cn.ts";
 import * as Avatar from "./ui/avatar.tsx";
 import * as Divider from "./ui/divider.tsx";
 import * as DropdownMenu from "./ui/dropdown-menu.tsx";
+import { Skeleton } from "./ui/skeleton.tsx";
 import * as Switch from "./ui/switch.tsx";
 
 export function UserButton({ className }: { className?: string }) {
@@ -30,28 +31,41 @@ export function UserButton({ className }: { className?: string }) {
 					className,
 				)}
 			>
-				<Avatar.Root $color="blue" $size="40">
-					{user?.imageUrl ? (
-						<Avatar.Image
-							alt={user?.fullName ?? ""}
-							src={user?.imageUrl ?? undefined}
-						/>
-					) : (
-						user?.fullName?.slice(0, 2)
-					)}
-				</Avatar.Root>
+				{user ? (
+					<Avatar.Root $color="blue" $size="40">
+						{user?.imageUrl ? (
+							<Avatar.Image
+								alt={user?.fullName ?? ""}
+								src={user?.imageUrl ?? undefined}
+							/>
+						) : (
+							user?.fullName?.slice(0, 2)
+						)}
+					</Avatar.Root>
+				) : (
+					<Skeleton className="size-10 rounded-full" />
+				)}
 
 				<div
 					className="flex w-[172px] shrink-0 items-center gap-3"
 					data-hide-collapsed
 				>
 					<div className="flex-1 space-y-1">
-						<div className="flex items-center gap-0.5 text-label-sm">
-							{user?.fullName}
-						</div>
-						<div className="text-(--text-sub-600) text-paragraph-xs">
-							{user?.emailAddresses[0].emailAddress}
-						</div>
+						{user ? (
+							<div className="flex items-center gap-0.5 text-label-sm">
+								{user?.fullName}
+							</div>
+						) : (
+							<Skeleton className="h-5" />
+						)}
+
+						{user ? (
+							<div className="text-(--text-sub-600) text-paragraph-xs">
+								{user?.emailAddresses[0].emailAddress}
+							</div>
+						) : (
+							<Skeleton className="h-4" />
+						)}
 					</div>
 
 					<div className="flex size-6 items-center justify-center rounded-6">

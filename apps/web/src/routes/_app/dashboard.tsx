@@ -4,6 +4,7 @@ import { createFileRoute } from "@tanstack/react-router";
 
 import { PageHeader } from "#/components/page-header.tsx";
 import * as Avatar from "#/components/ui/avatar.tsx";
+import { Skeleton } from "#/components/ui/skeleton.tsx";
 import { useTRPC } from "#/utils/trpc.ts";
 
 export const Route = createFileRoute("/_app/dashboard")({
@@ -20,16 +21,17 @@ function RouteComponent() {
 		<>
 			<PageHeader
 				icon={
-					<Avatar.Root $size="48">
-						{user?.imageUrl ? (
-							<Avatar.Image
-								src={`${user.imageUrl}?width=48&height=48`}
-								alt={user.fullName ?? ""}
-							/>
-						) : null}
-					</Avatar.Root>
+					user ? (
+						<Avatar.Root $size="48">
+							{user?.imageUrl ? (
+								<Avatar.Image src={user.imageUrl} alt={user.fullName ?? ""} />
+							) : null}
+						</Avatar.Root>
+					) : (
+						<Skeleton className="size-12 rounded-full" />
+					)
 				}
-				title={user?.fullName ?? "Placeholder"}
+				title={user?.fullName ?? <Skeleton className="h-6" />}
 				description="Welcome back to ScreenshoThis 👋🏻"
 			/>
 
