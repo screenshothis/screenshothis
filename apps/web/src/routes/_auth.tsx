@@ -1,5 +1,3 @@
-import bash from "@shikijs/langs/bash";
-import catppuccinFrappe from "@shikijs/themes/catppuccin-frappe";
 import {
 	Link,
 	Outlet,
@@ -7,14 +5,9 @@ import {
 	redirect,
 	useLocation,
 } from "@tanstack/react-router";
-import { createHighlighterCore } from "shiki/core";
-import { createOnigurumaEngine, loadWasm } from "shiki/engine/oniguruma";
 
 import { LanguageSelect } from "#/components/language-select.tsx";
 import * as Button from "#/components/ui/button.tsx";
-
-// @ts-expect-error - wasm doesn't have types
-await loadWasm(import("shiki/onig.wasm?url"));
 
 type PathConfig = {
 	message: string;
@@ -54,34 +47,10 @@ export const Route = createFileRoute("/_auth")({
 			});
 		}
 	},
-	async loader() {
-		const highlighter = await createHighlighterCore({
-			themes: [catppuccinFrappe],
-			langs: [bash],
-			engine: createOnigurumaEngine(import("shiki/wasm")),
-		});
-
-		const code = highlighter.codeToHtml(
-			`curl -G https://api.screenshothis.com/v1/take?url=https://example.com \
-
-  -H "Authorization: Bearer {token}" \
-`,
-			{
-				lang: "bash",
-				theme: "catppuccin-frappe",
-			},
-		);
-
-		return {
-			code,
-		};
-	},
 	component: PathlessLayoutComponent,
 });
 
 function PathlessLayoutComponent() {
-	const { code } = Route.useLoaderData();
-
 	return (
 		<div
 			className="grid min-h-screen lg:grid-cols-[minmax(0,1fr)_500px] xl:grid-cols-[minmax(0,1fr)_596px] min-[1440px]:grid-cols-[minmax(0,844fr)_minmax(0,596fr)]"
@@ -123,11 +92,6 @@ function PathlessLayoutComponent() {
 									Take screenshots of your website programatically using a
 									simple API.
 								</div>
-
-								<div className="relative overflow-x-auto">
-									{/* biome-ignore lint/security/noDangerouslySetInnerHtml: we control the code */}
-									<div dangerouslySetInnerHTML={{ __html: code }} />
-								</div>
 							</div>
 						</section>
 					</div>
@@ -154,8 +118,6 @@ function DynamicContent({ pathname }: { pathname: string }) {
 
 export default function AuthHeader() {
 	const pathname = useLocation().pathname;
-
-	console.info(pathname);
 
 	return (
 		<div className="mx-auto flex w-full items-center justify-between gap-6 py-3.5 lg:py-0">
