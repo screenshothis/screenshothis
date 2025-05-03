@@ -145,11 +145,11 @@ function RootComponent() {
 
 function RootDocument({ children }: { children: React.ReactNode }) {
 	return (
-		<html lang="en" className="h-full" suppressHydrationWarning>
+		<html lang="en" className="h-full antialiased" suppressHydrationWarning>
 			<head>
 				<HeadContent />
 			</head>
-			<body className="h-full">
+			<body className="h-full bg-(--bg-white-0)">
 				{children}
 				<Toaster richColors />
 				<TanStackRouterDevtools position="bottom-left" />
