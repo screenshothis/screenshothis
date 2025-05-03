@@ -126,6 +126,8 @@ function RootComponent() {
 					borderRadius: "8px",
 				},
 			}}
+			signUpFallbackRedirectUrl="/dashboard"
+			signInFallbackRedirectUrl="/dashboard"
 		>
 			<RootDocument>
 				<Outlet />

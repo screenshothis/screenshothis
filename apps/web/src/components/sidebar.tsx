@@ -1,17 +1,15 @@
 "use client";
 
+import { Link, useLocation } from "@tanstack/react-router";
 import * as React from "react";
 import { useHotkeys } from "react-hotkeys-hook";
 import DashboardSquare02Icon from "virtual:icons/hugeicons/dashboard-square-02";
 
-import { Link, useLocation } from "@tanstack/react-router";
-// import { CompanySwitch } from '#/components/company-switch';
 // import { UserButton } from '#/components/user-button';
 import * as Divider from "#/components/ui/divider";
 import { cn } from "#/utils/cn.ts";
+import { UserButton } from "./user-button.tsx";
 import { WorkspaceSwitch } from "./workspace-switch.tsx";
-
-// import { settingsModalOpenAtom } from './settings-modal/settings-modal';
 
 type NavigationLink = {
 	icon: React.ComponentType<{ className?: string }>;
@@ -94,11 +92,6 @@ export function SidebarHeader({ collapsed }: { collapsed?: boolean }) {
 					"w-16": collapsed,
 				})}
 			/>
-			{/* <CompanySwitch
-        className={cn('transition-all-default', {
-          'w-16': collapsed,
-        })}
-      /> */}
 		</div>
 	);
 }
@@ -170,21 +163,21 @@ function NavigationMenu({ collapsed }: { collapsed: boolean }) {
 	);
 }
 
-// function UserProfile({ collapsed }: { collapsed: boolean }) {
-//   return (
-//     <div
-//       className={cn('p-3', {
-//         'px-2': collapsed,
-//       })}
-//     >
-//       <UserButton
-//         className={cn('transition-all-default', {
-//           'w-auto': collapsed,
-//         })}
-//       />
-//     </div>
-//   );
-// }
+function UserProfile({ collapsed }: { collapsed: boolean }) {
+	return (
+		<div
+			className={cn("p-3", {
+				"px-2": collapsed,
+			})}
+		>
+			<UserButton
+				className={cn("transition-all-default", {
+					"w-auto": collapsed,
+				})}
+			/>
+		</div>
+	);
+}
 
 function SidebarDivider({ collapsed }: { collapsed: boolean }) {
 	return (
@@ -239,7 +232,7 @@ export default function Sidebar({
 
 					<SidebarDivider collapsed={collapsed} />
 
-					{/* <UserProfile collapsed={collapsed} /> */}
+					<UserProfile collapsed={collapsed} />
 				</div>
 			</div>
 
