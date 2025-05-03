@@ -12,6 +12,6 @@ export const users = pgTable("users", {
 	firstName: text("first_name"),
 	lastName: text("last_name"),
 	imageUrl: text("image_url").notNull(),
-	email: text("email"),
+	email: text("email").unique().notNull(),
 	...timestamps,
 });
