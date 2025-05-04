@@ -6,16 +6,19 @@ import { HTTPException } from "hono/http-exception";
 import { db } from "#/db";
 import { users } from "#/db/schema/auth";
 import { workspaces } from "#/db/schema/workspaces";
+import type { Environment } from "../../bindings.ts";
 
-export async function handleClerkWebhook(c: Context) {
+export async function handleClerkWebhook(c: Context<Environment>) {
 	try {
-		if (!process.env.CLERK_WEBHOOK_SECRET) {
+		if (!c.env.CLERK_WEBHOOK_SIGNING_SECRET) {
 			throw new HTTPException(500, {
 				message: "Error occurred -- no Clerk webhook secret",
 			});
 		}
 
-		const evt = await verifyWebhook(c.req.raw);
+		const evt = await verifyWebhook(c.req.raw, {
+			signingSecret: c.env.CLERK_WEBHOOK_SIGNING_SECRET,
+		});
 
 		const eventType = evt.type;
 

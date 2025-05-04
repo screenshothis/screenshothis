@@ -11,7 +11,7 @@
 		"compile": "bun build --compile --minify --sourcemap --bytecode ./src/index.ts --outfile server",
 		"db:push": "drizzle-kit push",
 		"db:studio": "drizzle-kit studio",
-		"dev": "bun run --hot src/index.ts",
+		"dev": "wrangler dev src/index.ts --port 3000",
 		"start": "bun run dist/src/index.js"
 	},
 	"dependencies": {

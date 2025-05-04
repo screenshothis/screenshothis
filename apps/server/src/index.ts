@@ -17,6 +17,15 @@ const app = new Hono<Environment>();
 
 app.use(logger());
 app.use(clerkMiddleware());
+
+app.use("*", async (c, next) => {
+	const clerk = clerkMiddleware({
+		publishableKey: c.env.CLERK_PUBLISHABLE_KEY,
+		secretKey: c.env.CLERK_SECRET_KEY,
+	});
+	return clerk(c, next);
+});
+
 app.use(
 	"/*",
 	cors({
