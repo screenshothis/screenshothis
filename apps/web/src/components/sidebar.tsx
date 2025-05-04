@@ -5,9 +5,8 @@ import * as React from "react";
 import { useHotkeys } from "react-hotkeys-hook";
 import DashboardSquare02Icon from "virtual:icons/hugeicons/dashboard-square-02";
 
-// import { UserButton } from '#/components/user-button';
-import * as Divider from "#/components/ui/divider";
 import { cn } from "#/utils/cn.ts";
+import * as Divider from "./ui/divider.tsx";
 import { UserButton } from "./user-button.tsx";
 import { WorkspaceSwitch } from "./workspace-switch.tsx";
 
