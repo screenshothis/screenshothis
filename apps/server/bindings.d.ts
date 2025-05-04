@@ -1,3 +1,4 @@
+import type { D1Database } from "@cloudflare/workers-types";
 import type { Env } from "hono";
 
 type Environment = Env & {
