@@ -18,7 +18,7 @@ const app = new Hono<Environment>();
 app.use(logger());
 app.use(clerkMiddleware());
 
-app.use("*", async (c, next) => {
+app.use("/*", async (c, next) => {
 	const clerk = clerkMiddleware({
 		publishableKey: c.env.CLERK_PUBLISHABLE_KEY,
 		secretKey: c.env.CLERK_SECRET_KEY,
@@ -26,15 +26,15 @@ app.use("*", async (c, next) => {
 	return clerk(c, next);
 });
 
-app.use(
-	"/*",
-	cors({
-		origin: process.env.CORS_ORIGIN || "",
+app.use("/*", async (c, next) => {
+	const corsMiddleware = cors({
+		origin: c.env.CORS_ORIGIN || "",
 		allowMethods: ["GET", "POST", "OPTIONS"],
 		allowHeaders: ["Content-Type", "Authorization"],
 		credentials: true,
-	}),
-);
+	});
+	return corsMiddleware(c, next);
+});
 
 app.use(
 	"/trpc/*",
