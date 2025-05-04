@@ -10,5 +10,20 @@
 			"database_id": "1f18b9ef-1395-4f46-acbd-984b754e1f61",
 			"migrations_dir": "db/migrations"
 		}
-	]
+	],
+	"queues": {
+		"producers": [
+			{
+				"queue": "screenshots",
+				"binding": "SCREENSHOT_QUEUE"
+			}
+		],
+		"consumers": [
+			{
+				"queue": "screenshots",
+				"max_batch_size": 100,
+				"max_batch_timeout": 30
+			}
+		]
+	}
 }

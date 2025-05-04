@@ -7,7 +7,9 @@ import { Hono } from "hono";
 import { cors } from "hono/cors";
 import { logger } from "hono/logger";
 import { stream } from "hono/streaming";
+import { v4 as uuidv4 } from "uuid";
 
+import type { MessageBatch } from "@cloudflare/workers-types";
 import type { Environment } from "../bindings.ts";
 import { createContext } from "./lib/context.ts";
 import { appRouter } from "./routers";
@@ -63,8 +65,80 @@ app.post("/ai", async (c) => {
 
 app.post("/webhooks/clerk", handleClerkWebhook);
 
+const pendingScreenshots = new Map<string, (result: ArrayBuffer) => void>();
+
+app.get("/take", async (c) => {
+	const url = c.req.query("url") || "";
+	const width = Number(c.req.query("width")) || 1200;
+	const height = Number(c.req.query("height")) || 630;
+	const format = c.req.query("format") || "jpg";
+	const workspaceId = c.req.query("workspaceId") || "";
+	const jobId = uuidv4();
+	await c.env.SCREENSHOT_QUEUE.send({
+		url,
+		width,
+		height,
+		format,
+		workspaceId,
+		jobId,
+	});
+
+	const result = await new Promise<ArrayBuffer>((resolve) => {
+		pendingScreenshots.set(jobId, resolve);
+	});
+
+	return new Response(result, {
+		headers: { "Content-Type": `image/${format}` },
+	});
+});
+
 app.get("/", (c) => {
 	return c.text("OK");
 });
 
-export default app;
+export default {
+	fetch: app.fetch,
+	async queue(
+		batch: MessageBatch<{
+			url: string;
+			width: number;
+			height: number;
+			format: string;
+			workspaceId: string;
+			jobId: string;
+		}>,
+		env: Environment,
+	) {
+		for (const message of batch.messages) {
+			const { url, width, height, format, workspaceId, jobId } = message.body;
+			const accountId = env.Bindings.CLOUDFLARE_ACCOUNT_ID;
+			const apiToken = env.Bindings.CLOUDFLARE_API_TOKEN;
+
+			const response = await fetch(
+				`https://api.cloudflare.com/client/v4/accounts/${accountId}/browser-rendering/screenshot`,
+				{
+					method: "POST",
+					headers: {
+						"Content-Type": "application/json",
+						Authorization: `Bearer ${apiToken}`,
+					},
+					body: JSON.stringify({
+						url,
+						viewport: { width, height },
+						format,
+					}),
+				},
+			);
+
+			const data = await response.arrayBuffer();
+
+			const cb = pendingScreenshots.get(jobId);
+			if (cb) {
+				cb(data);
+				pendingScreenshots.delete(jobId);
+			}
+
+			message.ack();
+		}
+	},
+};
