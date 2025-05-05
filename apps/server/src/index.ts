@@ -1,18 +1,18 @@
 import { google } from "@ai-sdk/google";
+import type { MessageBatch } from "@cloudflare/workers-types";
 import { clerkMiddleware } from "@hono/clerk-auth";
 import { trpcServer } from "@hono/trpc-server";
 import { streamText } from "ai";
-import Cloudflare from "cloudflare";
 import "dotenv/config";
 import { Hono } from "hono";
 import { cors } from "hono/cors";
 import { logger } from "hono/logger";
 import { stream } from "hono/streaming";
 
-import type { MessageBatch } from "@cloudflare/workers-types";
 import type { Environment } from "../bindings.ts";
 import { createContext } from "./lib/context.ts";
 import { appRouter } from "./routers";
+import { getOrCreateScreenshot } from "./utils/screenshot.ts";
 import { handleClerkWebhook } from "./webhooks/clerk.ts";
 
 const app = new Hono<Environment>();
@@ -73,53 +73,30 @@ app.get("/take", async (c) => {
 	const accountId = c.env.CLOUDFLARE_ACCOUNT_ID;
 	const apiToken = c.env.CLOUDFLARE_API_TOKEN;
 
-	const cloudflare = new Cloudflare({ apiToken });
-
-	const screenshot = await cloudflare.browserRendering.screenshot.create({
-		account_id: accountId,
+	const { object } = await getOrCreateScreenshot({
 		url,
-		screenshotOptions: {
-			encoding: "base64",
-			type: format as "png" | "jpeg" | "webp",
-		},
-		viewport: { width, height },
-		gotoOptions: {
-			waitUntil: "networkidle0",
-			timeout: 45000,
-		},
+		width,
+		height,
+		format,
+		accountId,
+		apiToken,
+		bucket: c.env.SCREENSHOTS_BUCKET,
 	});
 
-	if (!screenshot.status) {
-		return c.json({ error: screenshot.errors }, 500);
-	}
-
-	const result: unknown = screenshot as unknown;
-	let base64Image: string | undefined;
-	if (
-		result &&
-		typeof result === "object" &&
-		"image" in result &&
-		typeof (result as { image: unknown }).image === "string"
-	) {
-		base64Image = (result as { image: string }).image;
-	} else if (typeof result === "string") {
-		base64Image = result;
-	} else {
-		return c.json({ error: "No image data in screenshot response" }, 500);
-	}
-	const imageBuffer = Buffer.from(base64Image ?? "", "base64");
-	const key = `screenshots/${Date.now()}-${Math.random().toString(36).slice(2)}.${format}`;
-	await c.env.SCREENSHOTS_BUCKET.put(key, imageBuffer, {
-		httpMetadata: { contentType: `image/${format}` },
-	});
-
-	const object = await c.env.SCREENSHOTS_BUCKET.get(key);
 	if (!object) {
-		return c.json({ error: "Failed to retrieve image from R2" }, 500);
+		return c.json({ error: "Failed to get or create screenshot" }, 404);
 	}
 
-	return new Response(await object.arrayBuffer(), {
-		headers: { "Content-Type": `image/${format}` },
+	const contentType = `image/${format}`;
+	const headers = new Headers();
+	object.writeHttpMetadata(headers);
+	headers.set("etag", object.httpEtag);
+	if (!headers.has("content-type")) {
+		headers.set("content-type", contentType);
+	}
+
+	return c.body(object.body as unknown as ReadableStream, {
+		headers,
 	});
 });
 
