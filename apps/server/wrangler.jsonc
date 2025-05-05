@@ -25,5 +25,11 @@
 				"max_batch_timeout": 30
 			}
 		]
-	}
+	},
+	"r2_buckets": [
+		{
+			"binding": "SCREENSHOTS_BUCKET",
+			"bucket_name": "screenshothis-ss"
+		}
+	]
 }

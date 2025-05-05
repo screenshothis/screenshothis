@@ -1,4 +1,4 @@
-import type { D1Database, Queue } from "@cloudflare/workers-types";
+import type { D1Database, Queue, R2Bucket } from "@cloudflare/workers-types";
 import type { Env } from "hono";
 
 type Environment = Env & {
@@ -12,6 +12,7 @@ type Environment = Env & {
 			workspaceId: string;
 			jobId: string;
 		}>;
+		SCREENSHOTS_BUCKET: R2Bucket;
 		CORS_ORIGIN: string;
 		CLOUDFLARE_ACCOUNT_ID: string;
 		CLOUDFLARE_API_TOKEN: string;

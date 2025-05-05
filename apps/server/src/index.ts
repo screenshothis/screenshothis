@@ -2,12 +2,12 @@ import { google } from "@ai-sdk/google";
 import { clerkMiddleware } from "@hono/clerk-auth";
 import { trpcServer } from "@hono/trpc-server";
 import { streamText } from "ai";
+import Cloudflare from "cloudflare";
 import "dotenv/config";
 import { Hono } from "hono";
 import { cors } from "hono/cors";
 import { logger } from "hono/logger";
 import { stream } from "hono/streaming";
-import { v4 as uuidv4 } from "uuid";
 
 import type { MessageBatch } from "@cloudflare/workers-types";
 import type { Environment } from "../bindings.ts";
@@ -65,29 +65,60 @@ app.post("/ai", async (c) => {
 
 app.post("/webhooks/clerk", handleClerkWebhook);
 
-const pendingScreenshots = new Map<string, (result: ArrayBuffer) => void>();
-
 app.get("/take", async (c) => {
 	const url = c.req.query("url") || "";
 	const width = Number(c.req.query("width")) || 1200;
 	const height = Number(c.req.query("height")) || 630;
-	const format = c.req.query("format") || "jpg";
-	const workspaceId = c.req.query("workspaceId") || "";
-	const jobId = uuidv4();
-	await c.env.SCREENSHOT_QUEUE.send({
+	const format = c.req.query("format") || "png";
+	const accountId = c.env.CLOUDFLARE_ACCOUNT_ID;
+	const apiToken = c.env.CLOUDFLARE_API_TOKEN;
+
+	const cloudflare = new Cloudflare({ apiToken });
+
+	const screenshot = await cloudflare.browserRendering.screenshot.create({
+		account_id: accountId,
 		url,
-		width,
-		height,
-		format,
-		workspaceId,
-		jobId,
+		screenshotOptions: {
+			encoding: "base64",
+			type: format as "png" | "jpeg" | "webp",
+		},
+		viewport: { width, height },
+		gotoOptions: {
+			waitUntil: "networkidle0",
+			timeout: 45000,
+		},
 	});
 
-	const result = await new Promise<ArrayBuffer>((resolve) => {
-		pendingScreenshots.set(jobId, resolve);
+	if (!screenshot.status) {
+		return c.json({ error: screenshot.errors }, 500);
+	}
+
+	const result: unknown = screenshot as unknown;
+	let base64Image: string | undefined;
+	if (
+		result &&
+		typeof result === "object" &&
+		"image" in result &&
+		typeof (result as { image: unknown }).image === "string"
+	) {
+		base64Image = (result as { image: string }).image;
+	} else if (typeof result === "string") {
+		base64Image = result;
+	} else {
+		return c.json({ error: "No image data in screenshot response" }, 500);
+	}
+	const imageBuffer = Buffer.from(base64Image ?? "", "base64");
+	const key = `screenshots/${Date.now()}-${Math.random().toString(36).slice(2)}.${format}`;
+	await c.env.SCREENSHOTS_BUCKET.put(key, imageBuffer, {
+		httpMetadata: { contentType: `image/${format}` },
 	});
 
-	return new Response(result, {
+	const object = await c.env.SCREENSHOTS_BUCKET.get(key);
+	if (!object) {
+		return c.json({ error: "Failed to retrieve image from R2" }, 500);
+	}
+
+	return new Response(await object.arrayBuffer(), {
 		headers: { "Content-Type": `image/${format}` },
 	});
 });
@@ -131,12 +162,6 @@ export default {
 			);
 
 			const data = await response.arrayBuffer();
-
-			const cb = pendingScreenshots.get(jobId);
-			if (cb) {
-				cb(data);
-				pendingScreenshots.delete(jobId);
-			}
 
 			message.ack();
 		}
