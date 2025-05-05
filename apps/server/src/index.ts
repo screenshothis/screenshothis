@@ -2,6 +2,7 @@ import { google } from "@ai-sdk/google";
 import type { MessageBatch } from "@cloudflare/workers-types";
 import { clerkMiddleware } from "@hono/clerk-auth";
 import { trpcServer } from "@hono/trpc-server";
+import { vValidator } from "@hono/valibot-validator";
 import { streamText } from "ai";
 import "dotenv/config";
 import { Hono } from "hono";
@@ -12,6 +13,7 @@ import { stream } from "hono/streaming";
 import type { Environment } from "../bindings.ts";
 import { createContext } from "./lib/context.ts";
 import { appRouter } from "./routers";
+import { takeScreenshotSchema } from "./schemas/take-screenshot.ts";
 import { getOrCreateScreenshot } from "./utils/screenshot.ts";
 import { handleClerkWebhook } from "./webhooks/clerk.ts";
 
@@ -20,23 +22,17 @@ const app = new Hono<Environment>();
 app.use(logger());
 app.use(clerkMiddleware());
 
-app.use("/*", async (c, next) => {
-	const clerk = clerkMiddleware({
-		publishableKey: c.env.CLERK_PUBLISHABLE_KEY,
-		secretKey: c.env.CLERK_SECRET_KEY,
-	});
-	return clerk(c, next);
-});
+app.use("/*", clerkMiddleware());
 
-app.use("/*", async (c, next) => {
-	const corsMiddleware = cors({
-		origin: c.env.CORS_ORIGIN || "",
+app.use(
+	"/*",
+	cors({
+		origin: process.env.CORS_ORIGIN || "",
 		allowMethods: ["GET", "POST", "OPTIONS"],
 		allowHeaders: ["Content-Type", "Authorization"],
 		credentials: true,
-	});
-	return corsMiddleware(c, next);
-});
+	}),
+);
 
 app.use(
 	"/trpc/*",
@@ -65,37 +61,20 @@ app.post("/ai", async (c) => {
 
 app.post("/webhooks/clerk", handleClerkWebhook);
 
-app.get("/take", async (c) => {
-	const url = c.req.query("url") || "";
-	const width = Number(c.req.query("width")) || 1200;
-	const height = Number(c.req.query("height")) || 630;
-	const format = c.req.query("format") || "png";
-	const accountId = c.env.CLOUDFLARE_ACCOUNT_ID;
-	const apiToken = c.env.CLOUDFLARE_API_TOKEN;
-
-	const { object } = await getOrCreateScreenshot({
-		url,
-		width,
-		height,
-		format,
-		accountId,
-		apiToken,
-		bucket: c.env.SCREENSHOTS_BUCKET,
-	});
+app.get("/take", vValidator("query", takeScreenshotSchema), async (c) => {
+	const { object } = await getOrCreateScreenshot(c.req.valid("query"));
 
 	if (!object) {
 		return c.json({ error: "Failed to get or create screenshot" }, 404);
 	}
 
-	const contentType = `image/${format}`;
+	const contentType = `image/${c.req.valid("query").format}`;
 	const headers = new Headers();
-	object.writeHttpMetadata(headers);
-	headers.set("etag", object.httpEtag);
 	if (!headers.has("content-type")) {
 		headers.set("content-type", contentType);
 	}
 
-	return c.body(object.body as unknown as ReadableStream, {
+	return c.body(object, {
 		headers,
 	});
 });
