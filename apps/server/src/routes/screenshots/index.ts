@@ -1,6 +1,7 @@
 import { OpenAPIHono, createRoute, z } from "@hono/zod-openapi";
 
 import type { Variables } from "#/common/environment";
+import { unkey } from "#/lib/unkey";
 import { createErrorResponse } from "#/utils/errors";
 import { getOrCreateScreenshot } from "#/utils/screenshot";
 import { CreateScreenshotParamsSchema } from "./schema";
@@ -57,6 +58,19 @@ const screenshots = new OpenAPIHono<{ Variables: Variables }>().openapi(
 			});
 		} catch (error) {
 			const errorResponse = createErrorResponse(error, c.get("requestId"));
+
+			/**
+			 * If we got some errors, increment the use
+			 * We only decrement when the response is successful
+			 */
+			const key = c.get("unkey");
+			if (key?.keyId) {
+				await unkey.keys.updateRemaining({
+					keyId: key.keyId,
+					op: "increment",
+					value: 1,
+				});
+			}
 
 			return c.json(errorResponse, 400);
 		}

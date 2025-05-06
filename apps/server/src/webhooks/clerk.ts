@@ -10,6 +10,7 @@ import { users } from "#/db/schema/auth";
 import { workspaces } from "#/db/schema/workspaces";
 import { env } from "#/env";
 import { unkey } from "#/lib/unkey";
+import { keyLimits } from "#/utils/keys";
 
 export async function handleClerkWebhook(c: Context<{ Variables: Variables }>) {
 	function webhookReceived() {
@@ -67,6 +68,7 @@ export async function handleClerkWebhook(c: Context<{ Variables: Variables }>) {
 				apiId: env.UNKEY_API_ID,
 				name: `${workspace[0]?.name} API Key`,
 				externalId: workspace[0]?.id,
+				...keyLimits.free,
 			});
 
 			if (!key.result) {
