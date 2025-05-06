@@ -11,6 +11,10 @@ import { workspaces } from "#/db/schema/workspaces";
 import { unkey } from "#/lib/unkey";
 
 export async function handleClerkWebhook(c: Context<{ Variables: Variables }>) {
+	function webhookReceived() {
+		return c.text("Webhook received");
+	}
+
 	try {
 		if (!process.env.CLERK_WEBHOOK_SIGNING_SECRET) {
 			throw new HTTPException(500, {
@@ -84,7 +88,7 @@ export async function handleClerkWebhook(c: Context<{ Variables: Variables }>) {
 				workspaceId: workspace[0]?.id,
 			});
 
-			return c.text("Webhook received");
+			return webhookReceived();
 		}
 
 		if (eventType === "user.updated") {
@@ -104,7 +108,8 @@ export async function handleClerkWebhook(c: Context<{ Variables: Variables }>) {
 					imageUrl: evt.data.image_url,
 				})
 				.where(eq(users.email, email));
-			return c.text("Webhook received");
+
+			return webhookReceived();
 		}
 
 		if (eventType === "user.deleted") {
@@ -115,15 +120,19 @@ export async function handleClerkWebhook(c: Context<{ Variables: Variables }>) {
 				});
 			}
 			await db.delete(users).where(eq(users.externalId, externalId));
-			return c.text("Webhook received");
+			return webhookReceived();
 		}
 
 		// For all other event types, return 200 OK
-		return c.text("Webhook received");
+		return webhookReceived();
 	} catch (error) {
-		console.error(error);
+		console.error(
+			"Webhook error:",
+			error instanceof Error ? error.message : error,
+		);
 		throw new HTTPException(500, {
-			message: "Error occurred -- could not verify webhook",
+			message:
+				"Error occurred -- could not verify webhook. See server logs for details.",
 		});
 	}
 }
