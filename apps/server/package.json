@@ -16,8 +16,8 @@
 		"start": "bun run dist/src/index.js"
 	},
 	"dependencies": {
-		"@ai-sdk/google": "1.2.14",
-		"@clerk/backend": "1.31.2",
+		"@ai-sdk/google": "1.2.15",
+		"@clerk/backend": "1.31.3",
 		"@ghostery/adblocker-playwright": "2.5.2",
 		"@hono-storage/core": "0.0.14",
 		"@hono-storage/s3": "0.0.13",
