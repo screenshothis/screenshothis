@@ -1,17 +1,10 @@
 {
 	"name": "screenshothis",
-	"devDependencies": {
-		"@biomejs/biome": "1.9.4",
-		"husky": "9.1.7",
-		"turbo": "2.5.2"
-	},
-	"lint-staged": {
-		"*.{js,ts,cjs,mjs,d.cts,d.mts,jsx,tsx,json,jsonc}": [
-			"biome check --write ."
-		]
-	},
-	"packageManager": "bun@1.2.12",
 	"private": true,
+	"workspaces": [
+		"apps/*",
+		"packages/*"
+	],
 	"scripts": {
 		"build": "turbo build",
 		"check-types": "turbo check-types",
@@ -23,6 +16,20 @@
 		"dev:web": "turbo -F web dev",
 		"prepare": "husky || true"
 	},
-	"trustedDependencies": ["@biomejs/biome", "@clerk/shared", "@parcel/watcher"],
-	"workspaces": ["apps/*", "packages/*"]
+	"lint-staged": {
+		"*.{js,ts,cjs,mjs,d.cts,d.mts,jsx,tsx,json,jsonc}": [
+			"biome check --write ."
+		]
+	},
+	"devDependencies": {
+		"@biomejs/biome": "1.9.4",
+		"husky": "9.1.7",
+		"turbo": "2.5.2"
+	},
+	"packageManager": "bun@1.2.12",
+	"trustedDependencies": [
+		"@biomejs/biome",
+		"@clerk/shared",
+		"@parcel/watcher"
+	]
 }

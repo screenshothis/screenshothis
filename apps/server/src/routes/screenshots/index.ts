@@ -1,29 +1,41 @@
-import { Hono } from "hono";
-import { describeRoute } from "hono-openapi";
-import { resolver, validator } from "hono-openapi/valibot";
-import * as v from "valibot";
+import { OpenAPIHono, createRoute, z } from "@hono/zod-openapi";
 
 import { getOrCreateScreenshot } from "#/utils/screenshot";
 import { CreateScreenshotParamsSchema } from "./schema";
 
-const screenshots = new Hono();
-
-screenshots.post(
-	"/",
-	describeRoute({
-		description: "Take a screenshot of a website",
+const screenshots = new OpenAPIHono().openapi(
+	createRoute({
+		method: "get",
+		path: "/take",
+		request: {
+			query: CreateScreenshotParamsSchema,
+		},
 		responses: {
 			200: {
-				description: "Successful response",
 				content: {
-					"image/jpeg": { schema: resolver(v.string()) },
-					"image/png": { schema: resolver(v.string()) },
-					"image/webp": { schema: resolver(v.string()) },
+					"image/jpeg": {
+						schema: z.string(),
+						encoding: {
+							contentType: "image/jpeg",
+						},
+					},
+					"image/png": {
+						schema: z.string(),
+						encoding: {
+							contentType: "image/png",
+						},
+					},
+					"image/webp": {
+						schema: z.string(),
+						encoding: {
+							contentType: "image/webp",
+						},
+					},
 				},
+				description: "Successful response",
 			},
 		},
 	}),
-	validator("query", CreateScreenshotParamsSchema),
 	async (c) => {
 		const { object } = await getOrCreateScreenshot(c.req.valid("query"));
 

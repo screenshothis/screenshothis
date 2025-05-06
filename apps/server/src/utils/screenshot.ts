@@ -3,10 +3,10 @@ import {
 	adsAndTrackingLists,
 	adsLists,
 } from "@ghostery/adblocker-playwright";
+import type { z } from "@hono/zod-openapi";
 import fetch from "cross-fetch";
 import { chromium } from "playwright-extra";
 import StealthPlugin from "puppeteer-extra-plugin-stealth";
-import type * as v from "valibot";
 
 import { s3Client } from "#/lib/s3";
 import type { CreateScreenshotParamsSchema } from "#/routes/screenshots/schema";
@@ -23,9 +23,7 @@ function getScreenshotKey(
 	return `screenshots/${safeUrl}_${width}x${height}.${format}`;
 }
 
-type GetOrCreateScreenshotParams = v.InferOutput<
-	typeof CreateScreenshotParamsSchema
->;
+type GetOrCreateScreenshotParams = z.infer<typeof CreateScreenshotParamsSchema>;
 
 export async function getOrCreateScreenshot({
 	url,
