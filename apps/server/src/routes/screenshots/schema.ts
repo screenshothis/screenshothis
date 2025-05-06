@@ -31,5 +31,10 @@ export const CreateScreenshotParamsSchema = z
 			description: "Whether to block trackers",
 			example: true,
 		}),
+		cache_key: z.string().optional().openapi({
+			description:
+				"Optional cache key to differentiate screenshots of the same page.",
+			example: "v2-20240601",
+		}),
 	})
 	.transform((data) => objectToCamel(data));

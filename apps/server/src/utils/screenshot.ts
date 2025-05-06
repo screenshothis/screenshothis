@@ -19,9 +19,14 @@ function getScreenshotKey(
 	width: number,
 	height: number,
 	format: string,
+	cacheKey?: string,
 ) {
 	const safeUrl = encodeURIComponent(url);
-	return `screenshots/${safeUrl}_${width}x${height}.${format}`;
+	const keyBase = `screenshots/${safeUrl}_${width}x${height}`;
+	const key = cacheKey
+		? `${keyBase}_${encodeURIComponent(cacheKey)}.${format}`
+		: `${keyBase}.${format}`;
+	return key;
 }
 
 type GetOrCreateScreenshotParams = z.infer<typeof CreateScreenshotParamsSchema>;
@@ -52,8 +57,9 @@ export async function getOrCreateScreenshot(
 			blockAds,
 			blockCookieBanners,
 			blockTrackers,
+			cacheKey,
 		} = params;
-		const key = getScreenshotKey(url, width, height, format);
+		const key = getScreenshotKey(url, width, height, format, cacheKey);
 		let object: ArrayBuffer | null = null;
 		try {
 			object = await s3.file(key).arrayBuffer();
