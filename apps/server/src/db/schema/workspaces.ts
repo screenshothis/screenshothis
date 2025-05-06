@@ -12,11 +12,6 @@ export const workspaces = pgTable("workspaces", {
 		.$defaultFn(() => newId("workspace")),
 	name: text().notNull(),
 	isPersonal: boolean().notNull().default(false),
-	ownerId: text()
-		.notNull()
-		.references(() => users.id, {
-			onDelete: "cascade",
-		}),
 	...timestamps,
 });
 
@@ -45,10 +40,6 @@ export const workspaceInvitations = pgTable("workspace_invitations", {
 });
 
 export const workspacesRelations = relations(workspaces, ({ one, many }) => ({
-	owner: one(users, {
-		fields: [workspaces.ownerId],
-		references: [users.id],
-	}),
 	members: many(workspaceMembers),
 	invitations: many(workspaceInvitations),
 	accessToken: one(accessTokens, {

@@ -15,9 +15,16 @@ export const users = pgTable("users", {
 	lastName: text(),
 	imageUrl: text().notNull(),
 	email: text().unique().notNull(),
+	currentWorkspaceId: text().references(() => workspaces.id, {
+		onDelete: "set null",
+	}),
 	...timestamps,
 });
 
-export const userRelations = relations(users, ({ many }) => ({
+export const userRelations = relations(users, ({ many, one }) => ({
 	workspaces: many(workspaces),
+	currentWorkspace: one(workspaces, {
+		fields: [users.currentWorkspaceId],
+		references: [workspaces.id],
+	}),
 }));

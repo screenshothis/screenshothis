@@ -7,7 +7,7 @@ import type { Variables } from "#/common/environment";
 import { db } from "#/db";
 import { accessTokens } from "#/db/schema/access-tokens";
 import { users } from "#/db/schema/auth";
-import { workspaces } from "#/db/schema/workspaces";
+import { workspaceMembers, workspaces } from "#/db/schema/workspaces";
 import { env } from "#/env";
 import { unkey } from "#/lib/unkey";
 import { keyLimits } from "#/utils/keys";
@@ -54,7 +54,6 @@ export async function handleClerkWebhook(c: Context<{ Variables: Variables }>) {
 				.values({
 					name: `${evt.data.first_name ?? evt.data.last_name ?? ""}'s Workspace`,
 					isPersonal: true,
-					ownerId: user[0]?.id,
 				})
 				.returning({ id: workspaces.id, name: workspaces.name });
 
@@ -63,6 +62,18 @@ export async function handleClerkWebhook(c: Context<{ Variables: Variables }>) {
 					message: "Error occurred -- could not create workspace",
 				});
 			}
+
+			await db.insert(workspaceMembers).values({
+				workspaceId: workspace[0]?.id,
+				userId: user[0]?.id,
+			});
+
+			await db
+				.update(users)
+				.set({
+					currentWorkspaceId: workspace[0]?.id,
+				})
+				.where(eq(users.id, user[0]?.id));
 
 			const key = await unkey.keys.create({
 				apiId: env.UNKEY_API_ID,
