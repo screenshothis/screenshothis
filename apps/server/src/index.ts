@@ -1,12 +1,13 @@
 import { clerkMiddleware } from "@hono/clerk-auth";
 import { swaggerUI } from "@hono/swagger-ui";
 import { trpcServer } from "@hono/trpc-server";
+import { OpenAPIHono } from "@hono/zod-openapi";
 import { unkey } from "@unkey/hono";
 import "dotenv/config";
 import { cors } from "hono/cors";
 import { logger } from "hono/logger";
+import { requestId } from "hono/request-id";
 
-import { OpenAPIHono } from "@hono/zod-openapi";
 import type { Variables } from "./common/environment";
 import { createContext } from "./lib/context";
 import { workspaceMiddleware } from "./middleware";
@@ -23,6 +24,7 @@ const app = new OpenAPIHono<{ Variables: Variables }>({
 });
 
 app.use(logger());
+app.use(requestId());
 app.use(
 	"*",
 	cors({
@@ -52,6 +54,11 @@ app.use(
 	}),
 );
 app.use("/v1/*", workspaceMiddleware);
+
+app.openAPIRegistry.registerComponent("securitySchemes", "Bearer", {
+	type: "http",
+	scheme: "bearer",
+});
 
 app.get(
 	"/",

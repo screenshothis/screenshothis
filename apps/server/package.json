@@ -34,13 +34,12 @@
 		"dotenv": "16.5.0",
 		"drizzle-orm": "0.43.1",
 		"hono": "4.7.8",
-		"hono-openapi": "0.4.8",
 		"pg": "8.15.6",
 		"playwright-extra": "4.3.6",
 		"puppeteer-extra-plugin-stealth": "2.11.2",
 		"svix": "1.64.1",
 		"ts-case-convert": "2.1.0",
-		"zod": "4.0.0-beta.20250505T195954"
+		"zod": "3.24.4"
 	},
 	"devDependencies": {
 		"@epic-web/config": "1.20.1",
