@@ -3,13 +3,16 @@ import { eq } from "drizzle-orm";
 import type { Context } from "hono";
 import { HTTPException } from "hono/http-exception";
 
+import type { Variables } from "#/common/environment";
 import { db } from "#/db";
+import { accessTokens } from "#/db/schema/access-tokens";
 import { users } from "#/db/schema/auth";
 import { workspaces } from "#/db/schema/workspaces";
+import { unkey } from "#/lib/unkey";
 
-export async function handleClerkWebhook(c: Context) {
+export async function handleClerkWebhook(c: Context<{ Variables: Variables }>) {
 	try {
-		if (!c.env.CLERK_WEBHOOK_SIGNING_SECRET) {
+		if (!process.env.CLERK_WEBHOOK_SIGNING_SECRET) {
 			throw new HTTPException(500, {
 				message: "Error occurred -- no Clerk webhook secret",
 			});
@@ -23,11 +26,13 @@ export async function handleClerkWebhook(c: Context) {
 
 		if (eventType === "user.created") {
 			const email = evt.data.email_addresses[0]?.email_address;
+
 			if (!email) {
 				throw new HTTPException(400, {
 					message: "Error occurred -- no email address",
 				});
 			}
+
 			const user = await db
 				.insert(users)
 				.values({
@@ -39,16 +44,46 @@ export async function handleClerkWebhook(c: Context) {
 					email,
 				})
 				.returning({ id: users.id });
+
 			if (!user[0]?.id) {
 				throw new HTTPException(500, {
 					message: "Error occurred -- could not create user",
 				});
 			}
-			await db.insert(workspaces).values({
-				name: `${evt.data.first_name ?? evt.data.last_name ?? ""}'s Workspace`,
-				isPersonal: true,
-				ownerId: user[0]?.id,
+
+			const workspace = await db
+				.insert(workspaces)
+				.values({
+					name: `${evt.data.first_name ?? evt.data.last_name ?? ""}'s Workspace`,
+					isPersonal: true,
+					ownerId: user[0]?.id,
+				})
+				.returning({ id: workspaces.id, name: workspaces.name });
+
+			if (!workspace[0]?.id) {
+				throw new HTTPException(500, {
+					message: "Error occurred -- could not create workspace",
+				});
+			}
+
+			const key = await unkey.keys.create({
+				apiId: process.env.UNKEY_API_ID ?? "",
+				name: `${workspace[0]?.name} API Key`,
+				externalId: workspace[0]?.id,
 			});
+
+			if (!key.result) {
+				throw new HTTPException(500, {
+					message: "Error occurred -- could not create key",
+				});
+			}
+
+			await db.insert(accessTokens).values({
+				token: key.result.key,
+				externalId: key.result.keyId,
+				workspaceId: workspace[0]?.id,
+			});
+
 			return c.text("Webhook received");
 		}
 

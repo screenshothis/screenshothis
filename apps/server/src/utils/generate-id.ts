@@ -7,6 +7,8 @@ const prefixes = {
 	workspace: "ws",
 	workspaceMember: "wsm",
 	workspaceInvitation: "wsi",
+	screenshot: "ss",
+	accessToken: "atok",
 } as const;
 
 export function newId<TPrefix extends keyof typeof prefixes>(prefix: TPrefix) {

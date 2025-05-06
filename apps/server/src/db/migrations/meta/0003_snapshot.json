@@ -1,5 +1,5 @@
 {
-  "id": "6f14a567-2260-4979-a1a4-4e363402de02",
+  "id": "5463c02d-e908-446d-95c2-62df01bd1c9f",
   "prevId": "fed8ed69-d97a-4a5f-9f65-11e603d97167",
   "version": "7",
   "dialect": "postgresql",
@@ -14,14 +14,14 @@
           "primaryKey": true,
           "notNull": true
         },
-        "name": {
-          "name": "name",
+        "token": {
+          "name": "token",
           "type": "text",
           "primaryKey": false,
           "notNull": true
         },
-        "token": {
-          "name": "token",
+        "external_id": {
+          "name": "external_id",
           "type": "text",
           "primaryKey": false,
           "notNull": true
@@ -38,12 +38,6 @@
           "primaryKey": false,
           "notNull": true,
           "default": "extract(epoch from now())"
-        },
-        "expires_at": {
-          "name": "expires_at",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": true
         },
         "created_at": {
           "name": "created_at",
@@ -68,6 +62,13 @@
           "nullsNotDistinct": false,
           "columns": [
             "token"
+          ]
+        },
+        "access_tokens_externalId_unique": {
+          "name": "access_tokens_externalId_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "external_id"
           ]
         }
       },
