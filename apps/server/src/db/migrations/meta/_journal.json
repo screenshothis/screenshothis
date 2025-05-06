@@ -1,19 +1,26 @@
 {
   "version": "7",
-  "dialect": "sqlite",
+  "dialect": "postgresql",
   "entries": [
     {
       "idx": 0,
-      "version": "6",
-      "when": 1746289848498,
-      "tag": "0000_demonic_thunderbolt",
+      "version": "7",
+      "when": 1746496620509,
+      "tag": "0000_nervous_amphibian",
       "breakpoints": true
     },
     {
       "idx": 1,
-      "version": "6",
-      "when": 1746290330079,
-      "tag": "0001_lean_arachne",
+      "version": "7",
+      "when": 1746496629778,
+      "tag": "0001_classy_micromacro",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1746496665111,
+      "tag": "0002_stiff_boomerang",
       "breakpoints": true
     }
   ]

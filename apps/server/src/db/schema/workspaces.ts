@@ -1,16 +1,16 @@
+import { boolean, pgTable, text } from "drizzle-orm/pg-core";
 import { relations } from "drizzle-orm/relations";
-import { integer, sqliteTable, text } from "drizzle-orm/sqlite-core";
 
 import { newId } from "#/utils/generate-id";
 import { users } from "./auth";
 import { timestamps } from "./utils/timestamps";
 
-export const workspaces = sqliteTable("workspaces", {
+export const workspaces = pgTable("workspaces", {
 	id: text()
 		.primaryKey()
 		.$defaultFn(() => newId("workspace")),
 	name: text().notNull(),
-	isPersonal: integer({ mode: "boolean" }).notNull().default(false),
+	isPersonal: boolean().notNull().default(false),
 	ownerId: text()
 		.notNull()
 		.references(() => users.id, {
@@ -19,7 +19,7 @@ export const workspaces = sqliteTable("workspaces", {
 	...timestamps,
 });
 
-export const workspaceMembers = sqliteTable("workspace_members", {
+export const workspaceMembers = pgTable("workspace_members", {
 	workspaceId: text()
 		.notNull()
 		.references(() => workspaces.id, {
@@ -33,7 +33,7 @@ export const workspaceMembers = sqliteTable("workspace_members", {
 	...timestamps,
 });
 
-export const workspaceInvitations = sqliteTable("workspace_invitations", {
+export const workspaceInvitations = pgTable("workspace_invitations", {
 	workspaceId: text()
 		.notNull()
 		.references(() => workspaces.id, {

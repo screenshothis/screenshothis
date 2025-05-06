@@ -1,10 +1,10 @@
 import { relations } from "drizzle-orm";
-import { integer, sqliteTable, text } from "drizzle-orm/sqlite-core";
+import { integer, pgTable, text } from "drizzle-orm/pg-core";
 
 import { timestamps } from "./utils/timestamps";
 import { workspaces } from "./workspaces";
 
-export const screenshots = sqliteTable("screenshots", {
+export const screenshots = pgTable("screenshots", {
 	id: text().primaryKey(),
 	url: text().notNull(),
 	width: integer().notNull(),
