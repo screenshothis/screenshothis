@@ -1,6 +1,6 @@
 import { Hono } from "hono";
 
-import { handleClerkWebhook } from "#/webhooks/clerk.ts";
+import { handleClerkWebhook } from "#/webhooks/clerk";
 
 const webhooks = new Hono();
 

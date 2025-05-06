@@ -6,10 +6,10 @@ import { openAPISpecs } from "hono-openapi";
 import { cors } from "hono/cors";
 import { logger } from "hono/logger";
 
-import { createContext } from "./lib/context.ts";
+import { createContext } from "./lib/context";
 import { appRouter } from "./routers";
-import screenshotsRoutes from "./routes/screenshots/index.ts";
-import webhooksRoutes from "./routes/webhooks/index.ts";
+import screenshotsRoutes from "./routes/screenshots";
+import webhooksRoutes from "./routes/webhooks";
 
 const app = new Hono();
 

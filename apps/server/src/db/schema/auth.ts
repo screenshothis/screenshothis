@@ -1,7 +1,7 @@
 import { sqliteTable, text } from "drizzle-orm/sqlite-core";
 
 import { newId } from "#/utils/generate-id";
-import { timestamps } from "./utils/timestamps.ts";
+import { timestamps } from "./utils/timestamps";
 
 export const users = sqliteTable("users", {
 	id: text()

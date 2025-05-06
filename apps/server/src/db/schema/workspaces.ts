@@ -2,8 +2,8 @@ import { relations } from "drizzle-orm/relations";
 import { integer, sqliteTable, text } from "drizzle-orm/sqlite-core";
 
 import { newId } from "#/utils/generate-id";
-import { users } from "./auth.ts";
-import { timestamps } from "./utils/timestamps.ts";
+import { users } from "./auth";
+import { timestamps } from "./utils/timestamps";
 
 export const workspaces = sqliteTable("workspaces", {
 	id: text()

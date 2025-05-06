@@ -1,8 +1,8 @@
 import { relations } from "drizzle-orm";
 import { integer, sqliteTable, text } from "drizzle-orm/sqlite-core";
 
-import { timestamps } from "./utils/timestamps.ts";
-import { workspaces } from "./workspaces.ts";
+import { timestamps } from "./utils/timestamps";
+import { workspaces } from "./workspaces";
 
 export const screenshots = sqliteTable("screenshots", {
 	id: text().primaryKey(),

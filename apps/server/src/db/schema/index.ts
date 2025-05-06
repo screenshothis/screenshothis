@@ -1,3 +1,3 @@
-export * from "./auth.ts";
-export * from "./screenshots.ts";
-export * from "./workspaces.ts";
+export * from "./auth";
+export * from "./screenshots";
+export * from "./workspaces";

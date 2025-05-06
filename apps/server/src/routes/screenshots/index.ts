@@ -3,8 +3,8 @@ import { describeRoute } from "hono-openapi";
 import { resolver, validator } from "hono-openapi/valibot";
 import * as v from "valibot";
 
-import { getOrCreateScreenshot } from "#/utils/screenshot.ts";
-import { CreateScreenshotParamsSchema } from "./schema.ts";
+import { getOrCreateScreenshot } from "#/utils/screenshot";
+import { CreateScreenshotParamsSchema } from "./schema";
 
 const screenshots = new Hono();
 
