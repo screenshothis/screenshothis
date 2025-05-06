@@ -5,6 +5,7 @@ import {
 } from "@ghostery/adblocker-playwright";
 import type { z } from "@hono/zod-openapi";
 import fetch from "cross-fetch";
+import pLimit from "p-limit";
 import { chromium } from "playwright-extra";
 import StealthPlugin from "puppeteer-extra-plugin-stealth";
 
@@ -25,64 +26,75 @@ function getScreenshotKey(
 
 type GetOrCreateScreenshotParams = z.infer<typeof CreateScreenshotParamsSchema>;
 
-export async function getOrCreateScreenshot({
-	url,
-	width,
-	height,
-	format,
-	blockAds,
-	blockCookieBanners,
-	blockTrackers,
-}: GetOrCreateScreenshotParams): Promise<{
+let browserPromise: ReturnType<typeof chromium.launch> | null = null;
+const limit = pLimit(5);
+
+async function getBrowser() {
+	if (!browserPromise) {
+		browserPromise = chromium.launch({ headless: true });
+	}
+	return browserPromise;
+}
+
+export async function getOrCreateScreenshot(
+	params: GetOrCreateScreenshotParams,
+): Promise<{
 	object: ArrayBuffer | null;
 	key: string;
 	created: boolean;
 }> {
-	const key = getScreenshotKey(url, width, height, format);
-	let object: ArrayBuffer | null = null;
-	try {
-		object = await s3.file(key).arrayBuffer();
-		if (object) {
-			return { object, key, created: false };
+	return limit(async () => {
+		const {
+			url,
+			width,
+			height,
+			format,
+			blockAds,
+			blockCookieBanners,
+			blockTrackers,
+		} = params;
+		const key = getScreenshotKey(url, width, height, format);
+		let object: ArrayBuffer | null = null;
+		try {
+			object = await s3.file(key).arrayBuffer();
+			if (object) {
+				return { object, key, created: false };
+			}
+		} catch {}
+
+		const browser = await getBrowser();
+		const context = await browser.newContext();
+		const page = await context.newPage();
+		try {
+			const blocker = await PlaywrightBlocker.fromLists(fetch, [
+				...(blockAds ? adsLists : []),
+				...(blockCookieBanners
+					? ["https://secure.fanboy.co.nz/fanboy-cookiemonster.txt"]
+					: []),
+				...(blockTrackers ? adsAndTrackingLists : []),
+			]);
+			await blocker.enableBlockingInPage(page);
+
+			await page.goto(url, { waitUntil: "networkidle", timeout: 15000 });
+
+			const buffer = await page.screenshot({
+				quality: 80,
+				type: "jpeg",
+			});
+
+			await s3.write(key, buffer);
+		} finally {
+			await page.close();
+			await context.close();
 		}
-	} catch {}
 
-	const browser = await chromium.launch({ headless: true });
+		try {
+			object = await s3.file(key).arrayBuffer();
+			if (object) {
+				return { object, key, created: true };
+			}
+		} catch {}
 
-	try {
-		const blocker = await PlaywrightBlocker.fromLists(fetch, [
-			...(blockAds ? adsLists : []),
-			...(blockCookieBanners
-				? ["https://secure.fanboy.co.nz/fanboy-cookiemonster.txt"]
-				: []),
-			...(blockTrackers ? adsAndTrackingLists : []),
-		]);
-		const page = await browser.newPage({
-			viewport: {
-				width,
-				height,
-			},
-		});
-		await blocker.enableBlockingInPage(page);
-
-		await page.goto(url, { waitUntil: "networkidle" });
-
-		const buffer = await page.screenshot({
-			quality: 80,
-			type: "jpeg",
-		});
-
-		await s3.write(key, buffer);
-	} finally {
-		await browser.close();
-	}
-
-	try {
-		object = await s3.file(key).arrayBuffer();
-		if (object) {
-			return { object, key, created: true };
-		}
-	} catch {}
-
-	return { object: null, key, created: false };
+		return { object: null, key, created: false };
+	});
 }
