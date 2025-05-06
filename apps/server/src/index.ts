@@ -51,14 +51,15 @@ app.use(
 	"/v1/*",
 	unkey({
 		apiId: env.UNKEY_API_ID,
-		getKey: (c) => c.req.query("access_key"),
+		getKey: (c) => c.req.query("api_key"),
 	}),
 );
 app.use("/v1/*", workspaceMiddleware);
 
-app.openAPIRegistry.registerComponent("securitySchemes", "Bearer", {
-	type: "http",
-	scheme: "bearer",
+app.openAPIRegistry.registerComponent("securitySchemes", "ApiKeyQuery", {
+	type: "apiKey",
+	in: "query",
+	name: "api_key",
 });
 
 app.get(
