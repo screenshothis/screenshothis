@@ -1,7 +1,7 @@
 import { objectToCamel } from "ts-case-convert";
 import * as v from "valibot";
 
-export const takeScreenshotSchema = v.pipe(
+export const CreateScreenshotParamsSchema = v.pipe(
 	v.object({
 		url: v.pipe(
 			v.string(),

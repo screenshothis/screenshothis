@@ -6,9 +6,8 @@ import { HTTPException } from "hono/http-exception";
 import { db } from "#/db";
 import { users } from "#/db/schema/auth";
 import { workspaces } from "#/db/schema/workspaces";
-import type { Environment } from "../../bindings.ts";
 
-export async function handleClerkWebhook(c: Context<Environment>) {
+export async function handleClerkWebhook(c: Context) {
 	try {
 		if (!c.env.CLERK_WEBHOOK_SIGNING_SECRET) {
 			throw new HTTPException(500, {
@@ -17,7 +16,7 @@ export async function handleClerkWebhook(c: Context<Environment>) {
 		}
 
 		const evt = await verifyWebhook(c.req.raw, {
-			signingSecret: c.env.CLERK_WEBHOOK_SIGNING_SECRET,
+			signingSecret: process.env.CLERK_WEBHOOK_SIGNING_SECRET,
 		});
 
 		const eventType = evt.type;

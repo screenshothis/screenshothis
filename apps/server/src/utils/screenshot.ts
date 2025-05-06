@@ -8,8 +8,8 @@ import { chromium } from "playwright-extra";
 import StealthPlugin from "puppeteer-extra-plugin-stealth";
 import type * as v from "valibot";
 
-import { s3Client } from "#/lib/s3";
-import type { takeScreenshotSchema } from "#/schemas/take-screenshot";
+import { s3Client } from "#/lib/s3.ts";
+import type { CreateScreenshotParamsSchema } from "#/routes/screenshots/schema.ts";
 
 chromium.use(StealthPlugin());
 
@@ -23,6 +23,10 @@ function getScreenshotKey(
 	return `screenshots/${safeUrl}_${width}x${height}.${format}`;
 }
 
+type GetOrCreateScreenshotParams = v.InferOutput<
+	typeof CreateScreenshotParamsSchema
+>;
+
 export async function getOrCreateScreenshot({
 	url,
 	width,
@@ -31,7 +35,7 @@ export async function getOrCreateScreenshot({
 	blockAds,
 	blockCookieBanners,
 	blockTrackers,
-}: v.InferOutput<typeof takeScreenshotSchema>): Promise<{
+}: GetOrCreateScreenshotParams): Promise<{
 	object: ArrayBuffer | null;
 	key: string;
 	created: boolean;

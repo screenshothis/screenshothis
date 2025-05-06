@@ -25,26 +25,28 @@
 		"@hono/valibot-validator": "0.5.2",
 		"@trpc/client": "11.1.2",
 		"@trpc/server": "11.1.2",
+		"@valibot/to-json-schema": "1.0.0",
 		"ai": "4.3.13",
 		"base-x": "5.0.1",
 		"cross-fetch": "4.1.0",
 		"dotenv": "16.5.0",
 		"drizzle-orm": "0.43.1",
 		"hono": "4.7.8",
+		"hono-openapi": "0.4.8",
 		"pg": "8.15.6",
 		"playwright-extra": "4.3.6",
 		"puppeteer-extra-plugin-stealth": "2.11.2",
 		"svix": "1.64.1",
 		"ts-case-convert": "2.1.0",
-		"wrangler": "4.14.1"
+		"valibot": "1.0.0"
 	},
 	"devDependencies": {
-		"@cloudflare/workers-types": "4.20250505.0",
 		"@epic-web/config": "1.20.1",
 		"@types/bun": "1.2.12",
 		"@types/pg": "8.11.14",
 		"drizzle-kit": "0.31.1",
 		"tsc-alias": "1.8.16",
 		"typescript": "5.8.3"
-	}
+	},
+	"packageManager": "bun@1.2.12"
 }
