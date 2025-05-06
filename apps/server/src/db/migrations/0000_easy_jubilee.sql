@@ -6,8 +6,8 @@ CREATE TABLE "users" (
 	"last_name" text,
 	"image_url" text NOT NULL,
 	"email" text NOT NULL,
-	"created_at" timestamp DEFAULT (now()) NOT NULL,
-	"updated_at" timestamp,
+	"created_at" integer DEFAULT extract(epoch from now()) NOT NULL,
+	"updated_at" integer,
 	CONSTRAINT "users_externalId_unique" UNIQUE("external_id"),
 	CONSTRAINT "users_email_unique" UNIQUE("email")
 );

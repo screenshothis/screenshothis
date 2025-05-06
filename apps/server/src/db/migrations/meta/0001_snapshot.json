@@ -1,6 +1,6 @@
 {
-  "id": "f0c1ea55-620b-4897-8afe-4fb5f0f6eb18",
-  "prevId": "e574b588-cbba-4112-91c2-b7035df63c35",
+  "id": "72723059-1c9a-4b1b-93bd-97022cb12c72",
+  "prevId": "fb7e7dd8-7280-47d8-9f42-6ef1c71a160c",
   "version": "7",
   "dialect": "postgresql",
   "tables": {
@@ -52,14 +52,14 @@
         },
         "created_at": {
           "name": "created_at",
-          "type": "timestamp",
+          "type": "integer",
           "primaryKey": false,
           "notNull": true,
-          "default": "(now())"
+          "default": "extract(epoch from now())"
         },
         "updated_at": {
           "name": "updated_at",
-          "type": "timestamp",
+          "type": "integer",
           "primaryKey": false,
           "notNull": false
         }
@@ -105,14 +105,14 @@
         },
         "created_at": {
           "name": "created_at",
-          "type": "timestamp",
+          "type": "integer",
           "primaryKey": false,
           "notNull": true,
-          "default": "(now())"
+          "default": "extract(epoch from now())"
         },
         "updated_at": {
           "name": "updated_at",
-          "type": "timestamp",
+          "type": "integer",
           "primaryKey": false,
           "notNull": false
         }
@@ -157,14 +157,14 @@
         },
         "created_at": {
           "name": "created_at",
-          "type": "timestamp",
+          "type": "integer",
           "primaryKey": false,
           "notNull": true,
-          "default": "(now())"
+          "default": "extract(epoch from now())"
         },
         "updated_at": {
           "name": "updated_at",
-          "type": "timestamp",
+          "type": "integer",
           "primaryKey": false,
           "notNull": false
         }
@@ -235,14 +235,14 @@
         },
         "created_at": {
           "name": "created_at",
-          "type": "timestamp",
+          "type": "integer",
           "primaryKey": false,
           "notNull": true,
-          "default": "(now())"
+          "default": "extract(epoch from now())"
         },
         "updated_at": {
           "name": "updated_at",
-          "type": "timestamp",
+          "type": "integer",
           "primaryKey": false,
           "notNull": false
         }

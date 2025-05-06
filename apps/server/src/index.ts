@@ -1,17 +1,20 @@
 import { clerkMiddleware } from "@hono/clerk-auth";
 import { swaggerUI } from "@hono/swagger-ui";
 import { trpcServer } from "@hono/trpc-server";
+import { unkey } from "@unkey/hono";
 import "dotenv/config";
 import { cors } from "hono/cors";
 import { logger } from "hono/logger";
 
 import { OpenAPIHono } from "@hono/zod-openapi";
+import type { Variables } from "./common/environment";
 import { createContext } from "./lib/context";
+import { workspaceMiddleware } from "./middleware";
 import { appRouter } from "./routers";
 import screenshotsRoutes from "./routes/screenshots";
 import webhooksRoutes from "./routes/webhooks";
 
-const app = new OpenAPIHono({
+const app = new OpenAPIHono<{ Variables: Variables }>({
 	defaultHook: (result, c) => {
 		if (!result.success) {
 			return c.json({ success: false, errors: result.error.errors }, 422);
@@ -41,6 +44,15 @@ app.use(
 	}),
 );
 
+app.use(
+	"/v1/*",
+	unkey({
+		apiId: process.env.UNKEY_API_ID || "",
+		getKey: (c) => c.req.header("x-screenshothis-key"),
+	}),
+);
+app.use("/v1/*", workspaceMiddleware);
+
 app.get(
 	"/",
 	swaggerUI({
@@ -64,7 +76,7 @@ app.doc("/openapi", {
 });
 
 const appRoutes = app
-	.route("/screenshots", screenshotsRoutes)
+	.route("/v1/screenshots", screenshotsRoutes)
 	.route("/webhooks", webhooksRoutes);
 
 export type AppType = typeof appRoutes;

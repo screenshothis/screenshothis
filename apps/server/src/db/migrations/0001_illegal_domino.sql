@@ -1,15 +1,15 @@
 CREATE TABLE "workspace_invitations" (
 	"workspace_id" text NOT NULL,
 	"email" text NOT NULL,
-	"created_at" timestamp DEFAULT (now()) NOT NULL,
-	"updated_at" timestamp
+	"created_at" integer DEFAULT extract(epoch from now()) NOT NULL,
+	"updated_at" integer
 );
 --> statement-breakpoint
 CREATE TABLE "workspace_members" (
 	"workspace_id" text NOT NULL,
 	"user_id" text NOT NULL,
-	"created_at" timestamp DEFAULT (now()) NOT NULL,
-	"updated_at" timestamp
+	"created_at" integer DEFAULT extract(epoch from now()) NOT NULL,
+	"updated_at" integer
 );
 --> statement-breakpoint
 CREATE TABLE "workspaces" (
@@ -17,8 +17,8 @@ CREATE TABLE "workspaces" (
 	"name" text NOT NULL,
 	"is_personal" boolean DEFAULT false NOT NULL,
 	"owner_id" text NOT NULL,
-	"created_at" timestamp DEFAULT (now()) NOT NULL,
-	"updated_at" timestamp
+	"created_at" integer DEFAULT extract(epoch from now()) NOT NULL,
+	"updated_at" integer
 );
 --> statement-breakpoint
 ALTER TABLE "workspace_invitations" ADD CONSTRAINT "workspace_invitations_workspace_id_workspaces_id_fk" FOREIGN KEY ("workspace_id") REFERENCES "public"."workspaces"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint

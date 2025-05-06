@@ -1,5 +1,5 @@
 {
-  "id": "e574b588-cbba-4112-91c2-b7035df63c35",
+  "id": "fb7e7dd8-7280-47d8-9f42-6ef1c71a160c",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -52,14 +52,14 @@
         },
         "created_at": {
           "name": "created_at",
-          "type": "timestamp",
+          "type": "integer",
           "primaryKey": false,
           "notNull": true,
-          "default": "(now())"
+          "default": "extract(epoch from now())"
         },
         "updated_at": {
           "name": "updated_at",
-          "type": "timestamp",
+          "type": "integer",
           "primaryKey": false,
           "notNull": false
         }

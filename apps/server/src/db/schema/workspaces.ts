@@ -2,6 +2,7 @@ import { boolean, pgTable, text } from "drizzle-orm/pg-core";
 import { relations } from "drizzle-orm/relations";
 
 import { newId } from "#/utils/generate-id";
+import { accessTokens } from "./access-tokens";
 import { users } from "./auth";
 import { timestamps } from "./utils/timestamps";
 
@@ -50,6 +51,10 @@ export const workspacesRelations = relations(workspaces, ({ one, many }) => ({
 	}),
 	members: many(workspaceMembers),
 	invitations: many(workspaceInvitations),
+	accessToken: one(accessTokens, {
+		fields: [workspaces.id],
+		references: [accessTokens.workspaceId],
+	}),
 }));
 
 export const workspaceInvitationsRelations = relations(

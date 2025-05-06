@@ -1,7 +1,7 @@
+import { relations } from "drizzle-orm";
 import { pgTable, text } from "drizzle-orm/pg-core";
 
 import { newId } from "#/utils/generate-id";
-import { relations } from "drizzle-orm";
 import { timestamps } from "./utils/timestamps";
 import { workspaces } from "./workspaces";
 
