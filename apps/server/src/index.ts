@@ -51,7 +51,7 @@ app.use(
 	"/v1/*",
 	unkey({
 		apiId: env.UNKEY_API_ID,
-		getKey: (c) => c.req.header("x-screenshothis-key"),
+		getKey: (c) => c.req.query("access_key"),
 	}),
 );
 app.use("/v1/*", workspaceMiddleware);
