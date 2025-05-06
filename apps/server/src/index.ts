@@ -20,7 +20,6 @@ const app = new OpenAPIHono({
 });
 
 app.use(logger());
-app.use(clerkMiddleware());
 app.use(
 	"*",
 	cors({
@@ -31,6 +30,7 @@ app.use(
 	}),
 );
 
+app.use("/trpc/*", clerkMiddleware());
 app.use(
 	"/trpc/*",
 	trpcServer({
