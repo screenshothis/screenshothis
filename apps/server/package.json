@@ -10,6 +10,7 @@
 		"check-types": "tsc --noEmit",
 		"compile": "bun build --compile --minify --sourcemap --bytecode ./src/index.ts --outfile server",
 		"db:push": "drizzle-kit push",
+		"db:reset": "bun run scripts/reset-db.ts",
 		"db:studio": "drizzle-kit studio",
 		"dev": "bun run --hot src/index.ts",
 		"start": "bun run dist/src/index.js"

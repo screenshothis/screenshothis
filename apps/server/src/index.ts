@@ -9,6 +9,7 @@ import { logger } from "hono/logger";
 import { requestId } from "hono/request-id";
 
 import type { Variables } from "./common/environment";
+import { env } from "./env";
 import { createContext } from "./lib/context";
 import { workspaceMiddleware } from "./middleware";
 import { appRouter } from "./routers";
@@ -28,7 +29,7 @@ app.use(requestId());
 app.use(
 	"*",
 	cors({
-		origin: process.env.CORS_ORIGIN || "",
+		origin: env.CORS_ORIGIN || "",
 		allowMethods: ["GET", "POST", "OPTIONS"],
 		allowHeaders: ["Content-Type", "Authorization"],
 		credentials: true,
@@ -49,7 +50,7 @@ app.use(
 app.use(
 	"/v1/*",
 	unkey({
-		apiId: process.env.UNKEY_API_ID || "",
+		apiId: env.UNKEY_API_ID,
 		getKey: (c) => c.req.header("x-screenshothis-key"),
 	}),
 );

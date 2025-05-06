@@ -1,5 +1,7 @@
 import { Unkey } from "@unkey/api";
 
+import { env } from "#/env";
+
 export const unkey = new Unkey({
-	token: process.env.UNKEY_ROOT_KEY ?? "",
+	token: env.UNKEY_ROOT_KEY,
 });

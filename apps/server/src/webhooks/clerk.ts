@@ -8,6 +8,7 @@ import { db } from "#/db";
 import { accessTokens } from "#/db/schema/access-tokens";
 import { users } from "#/db/schema/auth";
 import { workspaces } from "#/db/schema/workspaces";
+import { env } from "#/env";
 import { unkey } from "#/lib/unkey";
 
 export async function handleClerkWebhook(c: Context<{ Variables: Variables }>) {
@@ -16,15 +17,7 @@ export async function handleClerkWebhook(c: Context<{ Variables: Variables }>) {
 	}
 
 	try {
-		if (!process.env.CLERK_WEBHOOK_SIGNING_SECRET) {
-			throw new HTTPException(500, {
-				message: "Error occurred -- no Clerk webhook secret",
-			});
-		}
-
-		const evt = await verifyWebhook(c.req.raw, {
-			signingSecret: process.env.CLERK_WEBHOOK_SIGNING_SECRET,
-		});
+		const evt = await verifyWebhook(c.req.raw);
 
 		const eventType = evt.type;
 
@@ -71,7 +64,7 @@ export async function handleClerkWebhook(c: Context<{ Variables: Variables }>) {
 			}
 
 			const key = await unkey.keys.create({
-				apiId: process.env.UNKEY_API_ID ?? "",
+				apiId: env.UNKEY_API_ID,
 				name: `${workspace[0]?.name} API Key`,
 				externalId: workspace[0]?.id,
 			});

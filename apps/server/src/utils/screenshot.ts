@@ -8,7 +8,7 @@ import fetch from "cross-fetch";
 import { chromium } from "playwright-extra";
 import StealthPlugin from "puppeteer-extra-plugin-stealth";
 
-import { s3Client } from "#/lib/s3";
+import { s3 } from "#/lib/s3";
 import type { CreateScreenshotParamsSchema } from "#/routes/screenshots/schema";
 
 chromium.use(StealthPlugin());
@@ -41,7 +41,7 @@ export async function getOrCreateScreenshot({
 	const key = getScreenshotKey(url, width, height, format);
 	let object: ArrayBuffer | null = null;
 	try {
-		object = await s3Client.file(key).arrayBuffer();
+		object = await s3.file(key).arrayBuffer();
 		if (object) {
 			return { object, key, created: false };
 		}
@@ -72,13 +72,13 @@ export async function getOrCreateScreenshot({
 			type: "jpeg",
 		});
 
-		await s3Client.write(key, buffer);
+		await s3.write(key, buffer);
 	} finally {
 		await browser.close();
 	}
 
 	try {
-		object = await s3Client.file(key).arrayBuffer();
+		object = await s3.file(key).arrayBuffer();
 		if (object) {
 			return { object, key, created: true };
 		}
