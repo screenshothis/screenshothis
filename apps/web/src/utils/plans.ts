@@ -5,39 +5,39 @@ type Plan = {
 	features: string[];
 };
 
-export const plans: Record<"free" | "pro" | "enterprise", Plan> = {
-	free: {
-		name: "Free",
-		price: 0,
+export const plans: Record<"lite" | "pro" | "enterprise", Plan> = {
+	lite: {
+		name: "Lite",
+		price: 5,
 		features: [
-			"100 Screenshots are included",
-			"Handles 60 requests each minute",
+			"<strong>1,000 Screenshots</strong> are included",
+			"<strong>300 requests</strong> each minute",
 			"Blocks ads and cookie banners",
 			"Takes full-page screenshots",
-			"Includes caching (you only pay for each screenshot made)",
+			"Includes caching <span class='text-(--text-sub-600)'>(you only pay for each screenshot made)</span>",
 		],
 	},
 	pro: {
 		name: "Pro",
-		price: 29,
+		price: 15,
 		isFeatured: true,
 		features: [
-			"10,000 Screenshots are included",
-			"Handles 600 requests each minute",
+			"<strong>10,000 Screenshots</strong> are included",
+			"<strong>600 requests</strong> each minute",
 			"Blocks ads and cookie banners",
 			"Takes full-page screenshots",
-			"Includes caching (you only pay for each screenshot made)",
+			"Includes caching <span class='text-(--text-sub-600)'>(you only pay for each screenshot made)</span>",
 		],
 	},
 	enterprise: {
 		name: "Enterprise",
-		price: 149,
+		price: 99,
 		features: [
-			"100,000 Screenshots are included",
-			"Handles 6,000 requests each minute",
+			"<strong>100,000 Screenshots</strong> are included",
+			"<strong>6,000 requests</strong> each minute",
 			"Blocks ads and cookie banners",
 			"Takes full-page screenshots",
-			"Includes caching (you only pay for each screenshot made)",
+			"Includes caching <span class='text-(--text-sub-600)'>(you only pay for each screenshot made)</span>",
 		],
 	},
 };
