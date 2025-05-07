@@ -1,4 +1,4 @@
-import { useQuery } from "@tanstack/react-query";
+import { useQueries } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 
 import { PageHeader } from "#/components/page-header.tsx";
@@ -11,6 +11,7 @@ import { useTRPC } from "#/utils/trpc.ts";
 export const Route = createFileRoute("/_app/dashboard")({
 	loader: async ({ context: { trpc, queryClient } }) => {
 		await queryClient.prefetchQuery(trpc.me.queryOptions());
+		await queryClient.prefetchQuery(trpc.stats.queryOptions({ range: "30d" }));
 		return;
 	},
 	component: RouteComponent,
@@ -18,26 +19,31 @@ export const Route = createFileRoute("/_app/dashboard")({
 
 function RouteComponent() {
 	const trpc = useTRPC();
-	const { data } = useQuery(trpc.me.queryOptions());
+	const [{ data: me }, { data: stats }] = useQueries({
+		queries: [
+			trpc.me.queryOptions(),
+			trpc.stats.queryOptions({ range: "30d" }),
+		],
+	});
+
+	// TODO: Add a chart for the stats
+	console.log(stats);
 
 	return (
 		<>
 			<PageHeader
 				icon={
-					data?.user ? (
+					me ? (
 						<Avatar.Root $size="48">
-							{data?.user?.imageUrl ? (
-								<Avatar.Image
-									src={data.user.imageUrl}
-									alt={data.user.fullName ?? ""}
-								/>
+							{me?.imageUrl ? (
+								<Avatar.Image src={me.imageUrl} alt={me.fullName ?? ""} />
 							) : null}
 						</Avatar.Root>
 					) : (
 						<Skeleton className="size-12 rounded-full" />
 					)
 				}
-				title={data?.user?.fullName ?? <Skeleton className="h-6" />}
+				title={me?.fullName ?? <Skeleton className="h-6" />}
 				description="Welcome back to ScreenshoThis 👋🏻"
 			/>
 
@@ -48,24 +54,24 @@ function RouteComponent() {
 							<div className="flex justify-between gap-1.5">
 								<span className="text-label-sm">
 									Usage (
-									{(data?.currentWorkspace?.usage?.totalRequests ?? 0) -
-										(data?.currentWorkspace?.usage?.remainingRequests ?? 0)}
-									/{data?.currentWorkspace?.usage?.totalRequests ?? 0})
+									{(me?.currentWorkspace?.usage?.totalRequests ?? 0) -
+										(me?.currentWorkspace?.usage?.remainingRequests ?? 0)}
+									/{me?.currentWorkspace?.usage?.totalRequests ?? 0})
 								</span>
 								<span className="text-(--text-sub-600) text-paragraph-xs">
-									{(((data?.currentWorkspace?.usage?.totalRequests ?? 0) -
-										(data?.currentWorkspace?.usage?.remainingRequests ?? 0)) /
-										(data?.currentWorkspace?.usage?.totalRequests ?? 0)) *
+									{(((me?.currentWorkspace?.usage?.totalRequests ?? 0) -
+										(me?.currentWorkspace?.usage?.remainingRequests ?? 0)) /
+										(me?.currentWorkspace?.usage?.totalRequests ?? 0)) *
 										100 || 0}
 									%
 								</span>
 							</div>
 							<ProgressBar.Root
 								value={
-									data?.currentWorkspace?.usage?.totalRequests
-										? ((data.currentWorkspace.usage.totalRequests -
-												(data.currentWorkspace.usage.remainingRequests ?? 0)) /
-												data.currentWorkspace.usage.totalRequests) *
+									me?.currentWorkspace?.usage?.totalRequests
+										? ((me.currentWorkspace.usage.totalRequests -
+												(me.currentWorkspace.usage.remainingRequests ?? 0)) /
+												me.currentWorkspace.usage.totalRequests) *
 											100
 										: 0
 								}
