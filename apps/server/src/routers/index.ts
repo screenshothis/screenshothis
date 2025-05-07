@@ -57,9 +57,9 @@ export const appRouter = router({
 
 		return {
 			user: {
+				fullName: `${user.firstName} ${user.lastName}`,
 				email: user.email,
-				firstName: user.firstName,
-				lastName: user.lastName,
+				imageUrl: user.imageUrl,
 			},
 			currentWorkspace: {
 				id: user.currentWorkspace.id,

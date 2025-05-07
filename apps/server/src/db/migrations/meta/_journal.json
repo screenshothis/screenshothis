@@ -43,6 +43,13 @@
       "when": 1746571316734,
       "tag": "0005_gorgeous_daimon_hellstrom",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1746592157680,
+      "tag": "0006_productive_puff_adder",
+      "breakpoints": true
     }
   ]
 }

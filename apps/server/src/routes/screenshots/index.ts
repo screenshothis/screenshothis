@@ -1,6 +1,8 @@
 import { OpenAPIHono, createRoute, z } from "@hono/zod-openapi";
 
 import type { Variables } from "#/common/environment";
+import { db } from "#/db";
+import * as schema from "#/db/schema";
 import { unkey } from "#/lib/unkey";
 import { createErrorResponse } from "#/utils/errors";
 import { getOrCreateScreenshot } from "#/utils/screenshot";
@@ -67,6 +69,14 @@ const screenshots = new OpenAPIHono<{ Variables: Variables }>().openapi(
 			if (!headers.has("content-type")) {
 				headers.set("content-type", contentType);
 			}
+
+			await db.insert(schema.screenshots).values({
+				url: c.req.valid("query").url,
+				width: c.req.valid("query").width,
+				height: c.req.valid("query").height,
+				format: c.req.valid("query").format,
+				workspaceId: c.get("workspaceId"),
+			});
 
 			return c.body(object, {
 				headers,

@@ -1,5 +1,5 @@
 import { relations } from "drizzle-orm";
-import { integer, pgTable, text } from "drizzle-orm/pg-core";
+import { boolean, integer, pgTable, text } from "drizzle-orm/pg-core";
 
 import { newId } from "#/utils/generate-id";
 import { timestamps } from "./utils/timestamps";
@@ -12,7 +12,8 @@ export const screenshots = pgTable("screenshots", {
 	url: text().notNull(),
 	width: integer("width").notNull(),
 	height: integer("height").notNull(),
-	format: text("format").$type<"jpg" | "png" | "webp">().notNull(),
+	format: text("format").$type<"jpeg" | "png" | "webp">().notNull(),
+	isExtra: boolean("is_extra").notNull().default(false),
 	workspaceId: text("workspace_id")
 		.notNull()
 		.references(() => workspaces.id, {
