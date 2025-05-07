@@ -10,12 +10,15 @@ import * as LinkButton from "#/components/ui/link-button.tsx";
 import * as ProgressBar from "#/components/ui/progress-bar.tsx";
 import { Skeleton } from "#/components/ui/skeleton.tsx";
 import { DashboardSearchSchema } from "#/schemas/dashboard.ts";
-import { useTRPC } from "#/utils/trpc.ts";
+import { useORPC } from "#/utils/orpc.ts";
 
 export const Route = createFileRoute("/_app/dashboard")({
-	loader: async ({ context: { trpc, queryClient } }) => {
-		await queryClient.prefetchQuery(trpc.me.queryOptions());
-		await queryClient.prefetchQuery(trpc.stats.queryOptions({ range: "30d" }));
+	// TODO: figure it out a wait to getQueryData passing the auth user
+	loader: async ({ context: { orpc, queryClient } }) => {
+		await queryClient.prefetchQuery(orpc.me.queryOptions());
+		await queryClient.prefetchQuery(
+			orpc.stats.queryOptions({ input: { range: "30d" } }),
+		);
 		return;
 	},
 	validateSearch: (search) => DashboardSearchSchema.parse(search),
@@ -24,11 +27,11 @@ export const Route = createFileRoute("/_app/dashboard")({
 
 function RouteComponent() {
 	const { range } = Route.useSearch();
-	const trpc = useTRPC();
+	const orpc = useORPC();
 	const [{ data: me }, { data: stats }] = useQueries({
 		queries: [
-			trpc.me.queryOptions(),
-			trpc.stats.queryOptions({ range: "30d" }),
+			orpc.me.queryOptions(),
+			orpc.stats.queryOptions({ input: { range } }),
 		],
 	});
 
@@ -98,7 +101,11 @@ function RouteComponent() {
 					<DashedDivider />
 
 					<div className="mt-6">
-						<TotalScreenshots data={stats?.data ?? []} range={range} />
+						{stats ? (
+							<TotalScreenshots data={stats.data} range={range} />
+						) : (
+							<Skeleton className="h-67" />
+						)}
 					</div>
 				</div>
 			</div>

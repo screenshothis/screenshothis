@@ -3,14 +3,12 @@ import { eq } from "drizzle-orm";
 import type { Context } from "hono";
 import { HTTPException } from "hono/http-exception";
 
-import type { Variables } from "#/common/environment";
-import { db } from "#/db";
-import { accessTokens } from "#/db/schema/access-tokens";
-import { users } from "#/db/schema/auth";
-import { workspaceMembers, workspaces } from "#/db/schema/workspaces";
-import { env } from "#/env";
-import { unkey } from "#/lib/unkey";
-import { keyLimits } from "#/utils/keys";
+import type { Variables } from "../common/environment";
+import { db } from "../db";
+import * as schema from "../db/schema";
+import { unkey } from "../lib/unkey";
+import { env } from "../utils/env";
+import { keyLimits } from "../utils/keys";
 
 export async function handleClerkWebhook(c: Context<{ Variables: Variables }>) {
 	function webhookReceived() {
@@ -32,7 +30,7 @@ export async function handleClerkWebhook(c: Context<{ Variables: Variables }>) {
 			}
 
 			const user = await db
-				.insert(users)
+				.insert(schema.users)
 				.values({
 					externalId: evt.data.id ?? "",
 					username: evt.data.username ?? null,
@@ -41,7 +39,7 @@ export async function handleClerkWebhook(c: Context<{ Variables: Variables }>) {
 					imageUrl: evt.data.image_url,
 					email,
 				})
-				.returning({ id: users.id });
+				.returning({ id: schema.users.id });
 
 			if (!user[0]?.id) {
 				throw new HTTPException(500, {
@@ -50,12 +48,12 @@ export async function handleClerkWebhook(c: Context<{ Variables: Variables }>) {
 			}
 
 			const workspace = await db
-				.insert(workspaces)
+				.insert(schema.workspaces)
 				.values({
 					name: `${evt.data.first_name ?? evt.data.last_name ?? ""}'s Workspace`,
 					isPersonal: true,
 				})
-				.returning({ id: workspaces.id, name: workspaces.name });
+				.returning({ id: schema.workspaces.id, name: schema.workspaces.name });
 
 			if (!workspace[0]?.id) {
 				throw new HTTPException(500, {
@@ -63,17 +61,17 @@ export async function handleClerkWebhook(c: Context<{ Variables: Variables }>) {
 				});
 			}
 
-			await db.insert(workspaceMembers).values({
+			await db.insert(schema.workspaceMembers).values({
 				workspaceId: workspace[0]?.id,
 				userId: user[0]?.id,
 			});
 
 			await db
-				.update(users)
+				.update(schema.users)
 				.set({
 					currentWorkspaceId: workspace[0]?.id,
 				})
-				.where(eq(users.id, user[0]?.id));
+				.where(eq(schema.users.id, user[0]?.id));
 
 			const key = await unkey.keys.create({
 				apiId: env.UNKEY_API_ID,
@@ -88,7 +86,7 @@ export async function handleClerkWebhook(c: Context<{ Variables: Variables }>) {
 				});
 			}
 
-			await db.insert(accessTokens).values({
+			await db.insert(schema.accessTokens).values({
 				token: key.result.key,
 				externalId: key.result.keyId,
 				workspaceId: workspace[0]?.id,
@@ -105,7 +103,7 @@ export async function handleClerkWebhook(c: Context<{ Variables: Variables }>) {
 				});
 			}
 			await db
-				.update(users)
+				.update(schema.users)
 				.set({
 					externalId: evt.data.id ?? "",
 					username: evt.data.username ?? null,
@@ -113,7 +111,7 @@ export async function handleClerkWebhook(c: Context<{ Variables: Variables }>) {
 					lastName: evt.data.last_name ?? null,
 					imageUrl: evt.data.image_url,
 				})
-				.where(eq(users.email, email));
+				.where(eq(schema.users.email, email));
 
 			return webhookReceived();
 		}
@@ -125,7 +123,9 @@ export async function handleClerkWebhook(c: Context<{ Variables: Variables }>) {
 					message: "Error occurred -- no external ID",
 				});
 			}
-			await db.delete(users).where(eq(users.externalId, externalId));
+			await db
+				.delete(schema.users)
+				.where(eq(schema.users.externalId, externalId));
 			return webhookReceived();
 		}
 

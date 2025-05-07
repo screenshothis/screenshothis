@@ -1,7 +1,7 @@
 import { clerkMiddleware } from "@hono/clerk-auth";
 import { swaggerUI } from "@hono/swagger-ui";
-import { trpcServer } from "@hono/trpc-server";
 import { OpenAPIHono } from "@hono/zod-openapi";
+import { RPCHandler } from "@orpc/server/fetch";
 import { unkey } from "@unkey/hono";
 import "dotenv/config";
 import { cors } from "hono/cors";
@@ -9,12 +9,12 @@ import { logger } from "hono/logger";
 import { requestId } from "hono/request-id";
 
 import type { Variables } from "./common/environment";
-import { env } from "./env";
 import { createContext } from "./lib/context";
 import { workspaceMiddleware } from "./middleware";
 import { appRouter } from "./routers";
 import screenshotsRoutes from "./routes/screenshots";
 import webhooksRoutes from "./routes/webhooks";
+import { env } from "./utils/env";
 
 const app = new OpenAPIHono<{ Variables: Variables }>({
 	defaultHook: (result, c) => {
@@ -36,16 +36,21 @@ app.use(
 	}),
 );
 
-app.use("/trpc/*", clerkMiddleware());
-app.use(
-	"/trpc/*",
-	trpcServer({
-		router: appRouter,
-		createContext: (_opts, context) => {
-			return createContext({ context });
-		},
-	}),
-);
+const handler = new RPCHandler(appRouter);
+app.use("/rpc/*", clerkMiddleware());
+app.use("/rpc/*", async (c, next) => {
+	const context = await createContext({ context: c });
+	const { matched, response } = await handler.handle(c.req.raw, {
+		prefix: "/rpc",
+		context,
+	});
+
+	if (matched) {
+		return c.newResponse(response.body, response);
+	}
+
+	await next();
+});
 
 app.use(
 	"/v1/*",

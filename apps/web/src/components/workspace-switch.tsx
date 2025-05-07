@@ -3,7 +3,7 @@ import Tick01Icon from "virtual:icons/hugeicons/tick-01";
 import UnfoldMoreIcon from "virtual:icons/hugeicons/unfold-more";
 
 import { cn } from "#/utils/cn.ts";
-import { useTRPC } from "#/utils/trpc.ts";
+import { useORPC } from "#/utils/orpc.ts";
 import * as Avatar from "./ui/avatar.tsx";
 import * as DropdownMenu from "./ui/dropdown-menu.tsx";
 import { Skeleton } from "./ui/skeleton.tsx";
@@ -46,8 +46,8 @@ export function WorkspaceItem({ workspace, isCurrent }: WorkspaceItem) {
 }
 
 export function WorkspaceSwitch({ className }: { className?: string }) {
-	const trpc = useTRPC();
-	const { data } = useQuery(trpc.me.queryOptions());
+	const orpc = useORPC();
+	const { data } = useQuery(orpc.me.queryOptions());
 
 	return (
 		<DropdownMenu.Root>

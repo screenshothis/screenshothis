@@ -9,8 +9,8 @@ import pLimit from "p-limit";
 import { chromium } from "playwright-extra";
 import StealthPlugin from "puppeteer-extra-plugin-stealth";
 
-import { s3 } from "#/lib/s3";
-import type { CreateScreenshotParamsSchema } from "#/routes/screenshots/schema";
+import { s3 } from "../lib/s3";
+import type { CreateScreenshotParamsSchema } from "../routes/screenshots/schema";
 
 chromium.use(StealthPlugin());
 

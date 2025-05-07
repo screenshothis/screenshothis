@@ -3,16 +3,13 @@ import { z } from "zod";
 
 import { db } from "#/db";
 import { users, workspaceMembers, workspaces } from "#/db/schema";
+import { protectedProcedure } from "#/lib/orpc";
 import { unkey } from "#/lib/unkey";
-import { protectedProcedure, publicProcedure, router } from "../lib/trpc";
 
-export const appRouter = router({
-	healthCheck: publicProcedure.query(() => {
-		return "OK";
-	}),
-	me: protectedProcedure.query(async ({ ctx }) => {
+export const appRouter = {
+	me: protectedProcedure.handler(async ({ context }) => {
 		const user = await db.query.users.findFirst({
-			where: eq(users.externalId, ctx.session.userId),
+			where: eq(users.externalId, context.session.userId),
 			with: {
 				currentWorkspace: {
 					columns: {
@@ -68,19 +65,17 @@ export const appRouter = router({
 					remainingRequests: result.remaining,
 				},
 			},
-			// For some reason I needed to add this for trpc type inference
-			workspaces: userWorkspaces as {
-				id: string;
-				name: string;
-			}[],
+			workspaces: userWorkspaces,
 		};
 	}),
 	stats: protectedProcedure
 		.input(
-			z.object({ range: z.enum(["24h", "7d", "30d", "year"]).default("30d") }),
+			z.object({
+				range: z.enum(["24h", "7d", "30d", "year"]).optional().default("30d"),
+			}),
 		)
-		.query(async ({ ctx, input }) => {
-			if (!ctx.user?.currentWorkspaceId) {
+		.handler(async ({ context, input }) => {
+			if (!context.user?.currentWorkspaceId) {
 				throw new Error("Current workspace not found");
 			}
 
@@ -119,29 +114,34 @@ export const appRouter = router({
 			const fromSeconds = fromDate.getTime() / 1000;
 			const toSeconds = toDate.getTime() / 1000;
 
-			const data = await db.execute(
-				sql.raw(`
-				SELECT
-					gs.date,
-					COALESCE(s.count, 0) AS count
-				FROM
-					generate_series(
-						to_timestamp(${fromSeconds}),
-						to_timestamp(${toSeconds}),
-						interval '${interval}'
-					) AS gs(date)
-				LEFT JOIN (
-					SELECT
-						date_trunc('${trunc}', to_timestamp(("created_at" / 1000)::double precision)) AS date,
-						count(*) AS count
-					FROM screenshots
-					WHERE "workspace_id" = '${ctx.user.currentWorkspaceId}'
-						AND ("created_at")::bigint >= ${BigInt(fromDate.getTime())}
-					GROUP BY date
-				) s ON gs.date = s.date
-				ORDER BY gs.date
-			`),
-			);
+			const data = await db
+				.execute(
+					sql`
+            SELECT
+                gs.date,
+                COALESCE(s.count, 0) AS count
+            FROM
+                generate_series(
+                    to_timestamp(${fromSeconds}),
+                    to_timestamp(${toSeconds}),
+                    (${interval})::interval
+                ) AS gs(date)
+            LEFT JOIN (
+                SELECT
+                    date_trunc(${trunc}, to_timestamp(("created_at" / 1000)::double precision)) AS date,
+                    count(*) AS count
+                FROM screenshots
+                WHERE "workspace_id" = ${context.user.currentWorkspaceId}
+                    AND ("created_at")::bigint >= ${BigInt(fromDate.getTime())}
+                GROUP BY date
+            ) s ON gs.date = s.date
+            ORDER BY gs.date
+        `,
+				)
+				.catch((error) => {
+					console.error("Failed to fetch stats", error);
+					throw new Error("Failed to fetch stats");
+				});
 
 			// Calculate previous period
 			const periodMs = toDate.getTime() - fromDate.getTime();
@@ -149,18 +149,23 @@ export const appRouter = router({
 			const prevFromDate = new Date(fromDate.getTime() - periodMs);
 
 			// Build a map of previous period counts by date for comparison
-			const prevDataRows = await db.execute(
-				sql.raw(`
-				SELECT
-					date_trunc('${trunc}', to_timestamp(("created_at" / 1000)::double precision)) AS date,
-					count(*) AS count
-				FROM screenshots
-				WHERE "workspace_id" = '${ctx.user.currentWorkspaceId}'
-					AND ("created_at")::bigint >= ${BigInt(prevFromDate.getTime())}
-					AND ("created_at")::bigint < ${BigInt(prevToDate.getTime())}
-				GROUP BY date
-			`),
-			);
+			const prevDataRows = await db
+				.execute(
+					sql`
+            SELECT
+                date_trunc(${trunc}, to_timestamp(("created_at" / 1000)::double precision)) AS date,
+                count(*) AS count
+            FROM screenshots
+            WHERE "workspace_id" = ${context.user.currentWorkspaceId}
+                AND ("created_at")::bigint >= ${BigInt(prevFromDate.getTime())}
+                AND ("created_at")::bigint < ${BigInt(prevToDate.getTime())}
+            GROUP BY date
+        `,
+				)
+				.catch((error) => {
+					console.error("Failed to fetch previous stats", error);
+					throw new Error("Failed to fetch previous stats");
+				});
 
 			const prevMap = new Map<string, number>();
 			for (const row of prevDataRows.rows) {
@@ -179,12 +184,13 @@ export const appRouter = router({
 					}
 					const sign = percentChange > 0 ? "+" : "";
 					return {
-						date: row.date,
+						date: row.date as string,
 						value: count,
 						prev: `${sign}${percentChange.toFixed(0)}%`,
 					};
 				}),
 			};
 		}),
-});
+} as const;
+
 export type AppRouter = typeof appRouter;

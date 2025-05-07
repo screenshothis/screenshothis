@@ -8,7 +8,7 @@
     "editor.codeActionsOnSave": {
         "source.fixAll": "explicit",
         "source.organizeImports": "explicit",
-        "source.removeUnusedImports": "always"
+        "source.removeUnusedImports": "explicit"
     },
     "editor.defaultFormatter": "biomejs.biome",
     "editor.formatOnSave": true,
@@ -22,7 +22,6 @@
     "search.exclude": {
         "**/routeTree.gen.ts": true
     },
-    "typescript.enablePromptUseWorkspaceTsdk": true,
     "typescript.preferences.importModuleSpecifierEnding": "js",
     "typescript.tsdk": "node_modules/typescript/lib"
 }

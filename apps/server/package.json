@@ -1,8 +1,13 @@
 {
-	"name": "server",
+	"name": "@screenshothis/server",
 	"type": "module",
 	"imports": {
-		"#/*": "./src/*"
+		"#/*": [
+			"./src/*"
+		]
+	},
+	"exports": {
+		"./routers": "./src/routers/index.ts"
 	},
 	"main": "src/index.ts",
 	"scripts": {
@@ -23,10 +28,9 @@
 		"@hono-storage/s3": "0.0.13",
 		"@hono/clerk-auth": "2.0.0",
 		"@hono/swagger-ui": "0.5.1",
-		"@hono/trpc-server": "0.3.4",
 		"@hono/zod-openapi": "0.19.6",
-		"@trpc/client": "11.1.2",
-		"@trpc/server": "11.1.2",
+		"@orpc/client": "1.2.0",
+		"@orpc/server": "1.2.0",
 		"@unkey/api": "0.36.0",
 		"@unkey/hono": "1.4.16",
 		"ai": "4.3.15",
@@ -49,6 +53,7 @@
 		"@types/pg": "8.15.0",
 		"drizzle-kit": "0.31.1",
 		"tsc-alias": "1.8.16",
+		"tsdown": "0.11.1",
 		"typescript": "5.8.3"
 	},
 	"packageManager": "bun@1.2.12"

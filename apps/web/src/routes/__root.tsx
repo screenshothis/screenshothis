@@ -11,17 +11,16 @@ import {
 import { TanStackRouterDevtools } from "@tanstack/react-router-devtools";
 import { createServerFn } from "@tanstack/react-start";
 import { getWebRequest } from "@tanstack/react-start/server";
-import type { TRPCOptionsProxy } from "@trpc/tanstack-react-query";
 
 import { Toaster } from "#/components/ui/sonner.tsx";
+import type { orpc } from "#/utils/orpc.ts";
 import { seo } from "#/utils/seo.ts";
 import { ThemeProvider } from "next-themes";
-import type { AppRouter } from "../../../server/src/routers";
 import appCss from "../app.css?url";
 import tailwindCss from "../tailwind.css?url";
 
 export interface RouterAppContext {
-	trpc: TRPCOptionsProxy<AppRouter>;
+	orpc: typeof orpc;
 	queryClient: QueryClient;
 }
 
