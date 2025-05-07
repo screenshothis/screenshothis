@@ -30,7 +30,7 @@ export const keyLimits: Record<"free" | "lite" | "pro" | "enterprise", Limit> =
 			refill: {
 				interval: "monthly",
 				amount: 1000,
-				refillDay: new Date().getDay(),
+				refillDay: new Date().getDate(),
 			},
 			ratelimit: {
 				limit: 300,
@@ -42,7 +42,7 @@ export const keyLimits: Record<"free" | "lite" | "pro" | "enterprise", Limit> =
 			refill: {
 				interval: "monthly",
 				amount: 10000,
-				refillDay: new Date().getDay(),
+				refillDay: new Date().getDate(),
 			},
 			ratelimit: {
 				limit: 600,
@@ -54,7 +54,7 @@ export const keyLimits: Record<"free" | "lite" | "pro" | "enterprise", Limit> =
 			refill: {
 				interval: "monthly",
 				amount: 100000,
-				refillDay: new Date().getDay(),
+				refillDay: new Date().getDate(),
 			},
 			ratelimit: {
 				limit: 6000,
