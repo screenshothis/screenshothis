@@ -41,10 +41,25 @@ const screenshots = new OpenAPIHono<{ Variables: Variables }>().openapi(
 	}),
 	async (c) => {
 		try {
-			const { object } = await getOrCreateScreenshot(c.req.valid("query"));
+			const { object, created } = await getOrCreateScreenshot(
+				c.req.valid("query"),
+			);
 
 			if (!object) {
 				return c.json({ error: "Failed to get or create screenshot" }, 404);
+			}
+
+			/**
+			 * If the screenshot was not created (cache hit), increment the remaining requests
+			 * We only decrement when the screenshot is created (cache miss)
+			 */
+			const key = c.get("unkey");
+			if (key?.keyId && !created) {
+				await unkey.keys.updateRemaining({
+					keyId: key.keyId,
+					op: "increment",
+					value: 1,
+				});
 			}
 
 			const contentType = `image/${c.req.valid("query").format}`;
@@ -60,7 +75,7 @@ const screenshots = new OpenAPIHono<{ Variables: Variables }>().openapi(
 			const errorResponse = createErrorResponse(error, c.get("requestId"));
 
 			/**
-			 * If we got some errors, increment the use
+			 * If we got some errors, increment the user's remaining requests
 			 * We only decrement when the response is successful
 			 */
 			const key = c.get("unkey");
