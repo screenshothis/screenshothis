@@ -6,8 +6,8 @@ import {
 	useLocation,
 } from "@tanstack/react-router";
 
-import { LanguageSelect } from "@/components/language-select.tsx";
-import * as Button from "@/components/ui/button.tsx";
+import { LanguageSelect } from "#/components/language-select.tsx";
+import * as Button from "#/components/ui/button.tsx";
 
 type PathConfig = {
 	message: string;
@@ -41,7 +41,7 @@ const defaultConfig: PathConfig = {
 
 export const Route = createFileRoute("/_auth")({
 	async beforeLoad({ context }) {
-		if (context.userId) {
+		if (context.sessionId) {
 			throw redirect({
 				to: "/dashboard",
 			});

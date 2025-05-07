@@ -11,11 +11,11 @@ import {
 import { TanStackRouterDevtools } from "@tanstack/react-router-devtools";
 import { createServerFn } from "@tanstack/react-start";
 import { getWebRequest } from "@tanstack/react-start/server";
+import { ThemeProvider } from "next-themes";
 
 import { Toaster } from "#/components/ui/sonner.tsx";
 import type { orpc } from "#/utils/orpc.ts";
 import { seo } from "#/utils/seo.ts";
-import { ThemeProvider } from "next-themes";
 import appCss from "../app.css?url";
 import tailwindCss from "../tailwind.css?url";
 
@@ -28,10 +28,11 @@ const fetchClerkAuth = createServerFn({ method: "GET" }).handler(async () => {
 	const request = getWebRequest();
 	if (!request) throw new Error("No request found");
 
-	const { userId } = await getAuth(request);
+	const session = await getAuth(request);
 
 	return {
-		userId,
+		sessionId: session?.sessionId,
+		userId: session?.userId,
 	};
 });
 
@@ -92,9 +93,10 @@ export const Route = createRootRouteWithContext<RouterAppContext>()({
 		],
 	}),
 	beforeLoad: async () => {
-		const { userId } = await fetchClerkAuth();
+		const { sessionId, userId } = await fetchClerkAuth();
 
 		return {
+			sessionId,
 			userId,
 		};
 	},

@@ -1,5 +1,6 @@
 import { useQueries } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
+import { zodValidator } from "@tanstack/zod-adapter";
 
 import { DashedDivider } from "#/components/dashed-divider.tsx";
 import { PageHeader } from "#/components/page-header.tsx";
@@ -13,15 +14,17 @@ import { DashboardSearchSchema } from "#/schemas/dashboard.ts";
 import { useORPC } from "#/utils/orpc.ts";
 
 export const Route = createFileRoute("/_app/dashboard")({
-	// TODO: figure it out a wait to getQueryData passing the auth user
+	// TODO: figure it out how to queryClient.ensureQueryData passing the auth user
 	loader: async ({ context: { orpc, queryClient } }) => {
 		await queryClient.prefetchQuery(orpc.me.queryOptions());
 		await queryClient.prefetchQuery(
-			orpc.stats.queryOptions({ input: { range: "30d" } }),
+			orpc.stats.queryOptions({
+				input: { range: "30d" },
+			}),
 		);
 		return;
 	},
-	validateSearch: (search) => DashboardSearchSchema.parse(search),
+	validateSearch: zodValidator(DashboardSearchSchema),
 	component: RouteComponent,
 });
 

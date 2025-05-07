@@ -1,9 +1,10 @@
-import Sidebar from "#/components/sidebar.tsx";
 import { Outlet, createFileRoute, redirect } from "@tanstack/react-router";
+
+import Sidebar from "#/components/sidebar.tsx";
 
 export const Route = createFileRoute("/_app")({
 	beforeLoad({ context, location }) {
-		if (!context.userId) {
+		if (!context.sessionId) {
 			throw redirect({
 				to: "/login/$",
 				search: {
