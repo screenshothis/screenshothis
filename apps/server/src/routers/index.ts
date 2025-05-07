@@ -143,10 +143,48 @@ export const appRouter = router({
 			`),
 			);
 
-			return data.rows.map((row) => ({
-				date: row.date,
-				count: Number(row.count),
-			}));
+			// Calculate previous period
+			const periodMs = toDate.getTime() - fromDate.getTime();
+			const prevToDate = fromDate;
+			const prevFromDate = new Date(fromDate.getTime() - periodMs);
+
+			// Build a map of previous period counts by date for comparison
+			const prevDataRows = await db.execute(
+				sql.raw(`
+				SELECT
+					date_trunc('${trunc}', to_timestamp(("created_at" / 1000)::double precision)) AS date,
+					count(*) AS count
+				FROM screenshots
+				WHERE "workspace_id" = '${ctx.user.currentWorkspaceId}'
+					AND ("created_at")::bigint >= ${BigInt(prevFromDate.getTime())}
+					AND ("created_at")::bigint < ${BigInt(prevToDate.getTime())}
+				GROUP BY date
+			`),
+			);
+
+			const prevMap = new Map<string, number>();
+			for (const row of prevDataRows.rows) {
+				prevMap.set(String(row.date), Number(row.count));
+			}
+
+			return {
+				data: data.rows.map((row) => {
+					const prevCount = prevMap.get(String(row.date)) ?? 0;
+					const count = Number(row.count);
+					let percentChange = 0;
+					if (prevCount === 0 && count > 0) {
+						percentChange = 100;
+					} else if (prevCount > 0) {
+						percentChange = ((count - prevCount) / prevCount) * 100;
+					}
+					const sign = percentChange > 0 ? "+" : "";
+					return {
+						date: row.date,
+						value: count,
+						prev: `${sign}${percentChange.toFixed(0)}%`,
+					};
+				}),
+			};
 		}),
 });
 export type AppRouter = typeof appRouter;
