@@ -1,7 +1,7 @@
 import { eq } from "drizzle-orm";
 
 import { db } from "#/db";
-import { users } from "#/db/schema";
+import { users, workspaceMembers, workspaces } from "#/db/schema";
 import { unkey } from "#/lib/unkey";
 import { protectedProcedure, publicProcedure, router } from "../lib/trpc";
 
@@ -9,17 +9,15 @@ export const appRouter = router({
 	healthCheck: publicProcedure.query(() => {
 		return "OK";
 	}),
-	privateData: protectedProcedure.query(({ ctx }) => {
-		return {
-			message: "This is private",
-			user: ctx.session.userId,
-		};
-	}),
 	me: protectedProcedure.query(async ({ ctx }) => {
 		const user = await db.query.users.findFirst({
-			where: eq(users.id, ctx.session.userId),
+			where: eq(users.externalId, ctx.session.userId),
 			with: {
 				currentWorkspace: {
+					columns: {
+						id: true,
+						name: true,
+					},
 					with: {
 						accessToken: {
 							columns: {
@@ -37,7 +35,7 @@ export const appRouter = router({
 		}
 
 		if (!user.currentWorkspace?.accessToken) {
-			throw new Error("Access token not found");
+			throw new Error("Access token not found for current workspace");
 		}
 
 		const { result } = await unkey.keys.get({
@@ -48,18 +46,34 @@ export const appRouter = router({
 			throw new Error("Access token not found");
 		}
 
+		const userWorkspaces = await db
+			.select({
+				id: workspaces.id,
+				name: workspaces.name,
+			})
+			.from(workspaceMembers)
+			.innerJoin(workspaces, eq(workspaceMembers.workspaceId, workspaces.id))
+			.where(eq(workspaceMembers.userId, user.id));
+
 		return {
 			user: {
 				email: user.email,
 				firstName: user.firstName,
 				lastName: user.lastName,
 			},
-			workspace: {
+			currentWorkspace: {
+				id: user.currentWorkspace.id,
+				name: user.currentWorkspace.name,
 				usage: {
 					totalRequests: result.refill?.amount,
 					remainingRequests: result.remaining,
 				},
 			},
+			// For some reason I needed to add this for trpc type inference
+			workspaces: userWorkspaces as {
+				id: string;
+				name: string;
+			}[],
 		};
 	}),
 });

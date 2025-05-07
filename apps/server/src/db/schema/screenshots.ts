@@ -10,10 +10,10 @@ export const screenshots = pgTable("screenshots", {
 		.primaryKey()
 		.$defaultFn(() => newId("screenshot")),
 	url: text().notNull(),
-	width: integer().notNull(),
-	height: integer().notNull(),
-	format: text().$type<"jpg" | "png" | "webp">().notNull(),
-	workspaceId: text()
+	width: integer("width").notNull(),
+	height: integer("height").notNull(),
+	format: text("format").$type<"jpg" | "png" | "webp">().notNull(),
+	workspaceId: text("workspace_id")
 		.notNull()
 		.references(() => workspaces.id, {
 			onDelete: "cascade",

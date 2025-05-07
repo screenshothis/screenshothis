@@ -9,22 +9,25 @@ export const users = pgTable("users", {
 	id: text()
 		.primaryKey()
 		.$defaultFn(() => newId("user")),
-	externalId: text().unique().notNull(),
-	username: text(),
-	firstName: text(),
-	lastName: text(),
-	imageUrl: text().notNull(),
-	email: text().unique().notNull(),
-	currentWorkspaceId: text().references(() => workspaces.id, {
-		onDelete: "set null",
-	}),
+	externalId: text("external_id").unique().notNull(),
+	username: text("username"),
+	firstName: text("first_name"),
+	lastName: text("last_name"),
+	imageUrl: text("image_url").notNull(),
+	email: text("email").unique().notNull(),
+	currentWorkspaceId: text("current_workspace_id").references(
+		() => workspaces.id,
+		{
+			onDelete: "set null",
+		},
+	),
 	...timestamps,
 });
 
 export const userRelations = relations(users, ({ many, one }) => ({
-	workspaces: many(workspaces),
 	currentWorkspace: one(workspaces, {
 		fields: [users.currentWorkspaceId],
 		references: [workspaces.id],
 	}),
+	workspaces: many(workspaces),
 }));

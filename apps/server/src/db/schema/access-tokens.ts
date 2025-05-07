@@ -10,9 +10,11 @@ export const accessTokens = pgTable("access_tokens", {
 		.primaryKey()
 		.$defaultFn(() => newId("accessToken")),
 	token: text().notNull().unique(),
-	externalId: text().notNull().unique(),
-	workspaceId: text().notNull(),
-	lastUsedAt: integer().notNull().default(sql`extract(epoch from now())`),
+	externalId: text("external_id").notNull().unique(),
+	workspaceId: text("workspace_id").notNull(),
+	lastUsedAt: integer("last_used_at")
+		.notNull()
+		.default(sql`extract(epoch from now())`),
 	...timestamps,
 });
 

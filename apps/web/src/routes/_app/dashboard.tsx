@@ -14,8 +14,7 @@ export const Route = createFileRoute("/_app/dashboard")({
 function RouteComponent() {
 	const trpc = useTRPC();
 	const { user } = useUser();
-
-	const privateData = useQuery(trpc.privateData.queryOptions());
+	const { data } = useQuery(trpc.me.queryOptions());
 
 	return (
 		<>
@@ -38,7 +37,11 @@ function RouteComponent() {
 			<div className="flex flex-col gap-6 overflow-hidden px-4 pb-6 lg:px-8 lg:pt-1">
 				<h1>Dashboard</h1>
 				<p>Welcome {user?.fullName}</p>
-				<p>privateData: {privateData.data?.message}</p>
+				<p>
+					Workspace: {data?.currentWorkspace.name} -{" "}
+					{data?.currentWorkspace.usage.remainingRequests}/{" "}
+					{data?.currentWorkspace.usage.totalRequests}
+				</p>
 			</div>
 		</>
 	);

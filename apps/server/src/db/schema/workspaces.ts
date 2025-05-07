@@ -10,18 +10,18 @@ export const workspaces = pgTable("workspaces", {
 	id: text()
 		.primaryKey()
 		.$defaultFn(() => newId("workspace")),
-	name: text().notNull(),
-	isPersonal: boolean().notNull().default(false),
+	name: text("name").notNull(),
+	isPersonal: boolean("is_personal").notNull().default(false),
 	...timestamps,
 });
 
 export const workspaceMembers = pgTable("workspace_members", {
-	workspaceId: text()
+	workspaceId: text("workspace_id")
 		.notNull()
 		.references(() => workspaces.id, {
 			onDelete: "cascade",
 		}),
-	userId: text()
+	userId: text("user_id")
 		.notNull()
 		.references(() => users.id, {
 			onDelete: "cascade",
@@ -30,12 +30,12 @@ export const workspaceMembers = pgTable("workspace_members", {
 });
 
 export const workspaceInvitations = pgTable("workspace_invitations", {
-	workspaceId: text()
+	email: text("email").notNull(),
+	workspaceId: text("workspace_id")
 		.notNull()
 		.references(() => workspaces.id, {
 			onDelete: "cascade",
 		}),
-	email: text().notNull(),
 	...timestamps,
 });
 

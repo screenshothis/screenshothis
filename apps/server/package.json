@@ -16,8 +16,8 @@
 		"start": "bun run dist/src/index.js"
 	},
 	"dependencies": {
-		"@ai-sdk/google": "1.2.15",
-		"@clerk/backend": "1.31.3",
+		"@ai-sdk/google": "1.2.16",
+		"@clerk/backend": "1.31.4",
 		"@ghostery/adblocker-playwright": "2.5.2",
 		"@hono-storage/core": "0.0.14",
 		"@hono-storage/s3": "0.0.13",
@@ -29,7 +29,7 @@
 		"@trpc/server": "11.1.2",
 		"@unkey/api": "0.36.0",
 		"@unkey/hono": "1.4.16",
-		"ai": "4.3.13",
+		"ai": "4.3.14",
 		"base-x": "5.0.1",
 		"cross-fetch": "4.1.0",
 		"dotenv": "16.5.0",
@@ -46,7 +46,7 @@
 	"devDependencies": {
 		"@epic-web/config": "1.20.1",
 		"@types/bun": "1.2.12",
-		"@types/pg": "8.12.0",
+		"@types/pg": "8.15.0",
 		"drizzle-kit": "0.31.1",
 		"tsc-alias": "1.8.16",
 		"typescript": "5.8.3"

@@ -24,7 +24,7 @@
 	"devDependencies": {
 		"@biomejs/biome": "1.9.4",
 		"husky": "9.1.7",
-		"turbo": "2.5.2"
+		"turbo": "2.5.3"
 	},
 	"packageManager": "bun@1.2.12",
 	"trustedDependencies": [
