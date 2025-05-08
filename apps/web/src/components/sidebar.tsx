@@ -1,11 +1,12 @@
 "use client";
 
-import { Link, useLocation } from "@tanstack/react-router";
-import * as React from "react";
-import { useHotkeys } from "react-hotkeys-hook";
 import ArrowRight01Icon from "virtual:icons/hugeicons/arrow-right-01";
 import DashboardSquare02Icon from "virtual:icons/hugeicons/dashboard-square-02";
 import DocumentCode01Icon from "virtual:icons/hugeicons/document-code";
+
+import { Link, useLocation } from "@tanstack/react-router";
+import * as React from "react";
+import { useHotkeys } from "react-hotkeys-hook";
 
 import { cn } from "#/utils/cn.ts";
 import { useORPC } from "#/utils/orpc.ts";
@@ -24,7 +25,7 @@ type NavigationLink = {
 
 export const navigationLinks: NavigationLink[] = [
 	{ icon: DashboardSquare02Icon, label: "Overview", to: "/dashboard" },
-	{ icon: DocumentCode01Icon, label: "Playground", to: "/" },
+	{ icon: DocumentCode01Icon, label: "Playground", to: "/playground" },
 ];
 
 function useCollapsedState({
