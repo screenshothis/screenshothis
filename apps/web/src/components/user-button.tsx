@@ -13,6 +13,8 @@ import Setting07Icon from "virtual:icons/hugeicons/setting-07";
 import UserCircle02Icon from "virtual:icons/hugeicons/user-circle-02";
 
 import { cn } from "#/utils/cn.ts";
+import { useORPC } from "#/utils/orpc.ts";
+import { useQuery } from "@tanstack/react-query";
 import * as Avatar from "./ui/avatar.tsx";
 import * as Divider from "./ui/divider.tsx";
 import * as DropdownMenu from "./ui/dropdown-menu.tsx";
@@ -20,7 +22,8 @@ import { Skeleton } from "./ui/skeleton.tsx";
 import * as Switch from "./ui/switch.tsx";
 
 export function UserButton({ className }: { className?: string }) {
-	const { user } = useUser();
+	const orpc = useORPC();
+	const { data: me } = useQuery(orpc.me.queryOptions());
 	const { theme, setTheme } = useTheme();
 
 	return (
@@ -31,15 +34,19 @@ export function UserButton({ className }: { className?: string }) {
 					className,
 				)}
 			>
-				{user ? (
-					<Avatar.Root $color="blue" $size="40">
-						{user?.imageUrl ? (
+				{me ? (
+					<Avatar.Root
+						className="fade-in animate-in duration-300"
+						$color="blue"
+						$size="40"
+					>
+						{me.imageUrl ? (
 							<Avatar.Image
-								alt={user?.fullName ?? ""}
-								src={user?.imageUrl ?? undefined}
+								alt={me.fullName ?? ""}
+								src={me.imageUrl ?? undefined}
 							/>
 						) : (
-							user?.fullName?.slice(0, 2)
+							me.fullName?.slice(0, 2)
 						)}
 					</Avatar.Root>
 				) : (
@@ -51,17 +58,17 @@ export function UserButton({ className }: { className?: string }) {
 					data-hide-collapsed
 				>
 					<div className="flex-1 space-y-1">
-						{user ? (
-							<div className="flex items-center gap-0.5 text-label-sm">
-								{user?.fullName}
+						{me ? (
+							<div className="fade-in flex animate-in items-center gap-0.5 text-label-sm duration-300">
+								{me.fullName}
 							</div>
 						) : (
 							<Skeleton className="h-5" />
 						)}
 
-						{user ? (
-							<div className="text-(--text-sub-600) text-paragraph-xs">
-								{user?.emailAddresses[0].emailAddress}
+						{me ? (
+							<div className="fade-in animate-in truncate text-(--text-sub-600) text-paragraph-xs duration-300">
+								{me.email}
 							</div>
 						) : (
 							<Skeleton className="h-4" />

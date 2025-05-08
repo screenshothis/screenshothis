@@ -1,14 +1,15 @@
 "use client";
 
-import { Select as SelectPrimitives } from "radix-ui";
 import ArrowDown01Icon from "virtual:icons/hugeicons/arrow-down-01";
+
+import { useNavigate } from "@tanstack/react-router";
+import { Select as SelectPrimitives } from "radix-ui";
 import type { z } from "zod";
 
 import * as Badge from "#/components/ui/badge.tsx";
 import * as Button from "#/components/ui/button.tsx";
 import * as Select from "#/components/ui/select.tsx";
 import { RangeSchema } from "#/schemas/dashboard.ts";
-import { useNavigate } from "@tanstack/react-router";
 import { TotalScreenshotsChart } from "./charts/total-screenshots-chart.tsx";
 
 type TotalScreenshotsProps = {

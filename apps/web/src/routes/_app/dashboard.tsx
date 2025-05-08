@@ -14,10 +14,8 @@ import { DashboardSearchSchema } from "#/schemas/dashboard.ts";
 import { useORPC } from "#/utils/orpc.ts";
 
 export const Route = createFileRoute("/_app/dashboard")({
-	// TODO: figure it out how to queryClient.ensureQueryData passing the auth user
 	loader: async ({ context: { orpc, queryClient } }) => {
-		await queryClient.prefetchQuery(orpc.me.queryOptions());
-		await queryClient.prefetchQuery(
+		await queryClient.ensureQueryData(
 			orpc.stats.queryOptions({
 				input: { range: "30d" },
 			}),
@@ -34,8 +32,11 @@ function RouteComponent() {
 	const [{ data: me }, { data: stats }] = useQueries({
 		queries: [
 			orpc.me.queryOptions(),
-			orpc.stats.queryOptions({ input: { range } }),
+			orpc.stats.queryOptions({
+				input: { range },
+			}),
 		],
+		subscribed: true,
 	});
 
 	return (
@@ -43,8 +44,8 @@ function RouteComponent() {
 			<PageHeader
 				icon={
 					me ? (
-						<Avatar.Root $size="48">
-							{me?.imageUrl ? (
+						<Avatar.Root $size="48" className="fade-in animate-in duration-300">
+							{me.imageUrl ? (
 								<Avatar.Image src={me.imageUrl} alt={me.fullName ?? ""} />
 							) : null}
 						</Avatar.Root>
@@ -52,7 +53,15 @@ function RouteComponent() {
 						<Skeleton className="size-12 rounded-full" />
 					)
 				}
-				title={me?.fullName ?? <Skeleton className="h-6" />}
+				title={
+					me ? (
+						<span className="fade-in animate-in duration-300">
+							{me.fullName}
+						</span>
+					) : (
+						<Skeleton className="h-6" />
+					)
+				}
 				description="Welcome back to ScreenshoThis 👋🏻"
 			/>
 

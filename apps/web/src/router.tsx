@@ -11,6 +11,7 @@ export const createRouter = () => {
 	const router = createTanstackRouter({
 		routeTree,
 		scrollRestoration: true,
+		defaultPreload: "intent",
 		defaultPreloadStaleTime: 0,
 		context: { orpc, queryClient },
 		defaultPendingComponent: () => <Loader />,

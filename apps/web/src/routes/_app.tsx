@@ -3,7 +3,7 @@ import { Outlet, createFileRoute, redirect } from "@tanstack/react-router";
 import Sidebar from "#/components/sidebar.tsx";
 
 export const Route = createFileRoute("/_app")({
-	beforeLoad({ context, location }) {
+	async beforeLoad({ context: { queryClient, orpc, ...context }, location }) {
 		if (!context.sessionId) {
 			throw redirect({
 				to: "/login/$",
@@ -12,6 +12,8 @@ export const Route = createFileRoute("/_app")({
 				},
 			});
 		}
+
+		await queryClient.ensureQueryData(orpc.me.queryOptions());
 	},
 	component: PathlessLayoutComponent,
 });

@@ -5,6 +5,7 @@ import { createORPCReactQueryUtils } from "@orpc/react-query";
 import type { RouterClient } from "@orpc/server";
 import type { appRouter } from "@screenshothis/server/routers";
 import { QueryCache, QueryClient } from "@tanstack/react-query";
+import { getHeaders } from "@tanstack/react-start/server";
 import { createContext, use } from "react";
 import { toast } from "sonner";
 
@@ -32,6 +33,13 @@ export const link = new RPCLink({
 			...options,
 			credentials: "include",
 		});
+	},
+	headers: () => {
+		if (typeof window === "undefined") {
+			return getHeaders();
+		}
+
+		return {};
 	},
 });
 

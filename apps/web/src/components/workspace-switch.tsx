@@ -1,6 +1,7 @@
-import { useQuery } from "@tanstack/react-query";
 import Tick02Icon from "virtual:icons/hugeicons/tick-02";
 import UnfoldMoreIcon from "virtual:icons/hugeicons/unfold-more";
+
+import { useQuery } from "@tanstack/react-query";
 
 import { cn } from "#/utils/cn.ts";
 import { useORPC } from "#/utils/orpc.ts";
@@ -47,7 +48,7 @@ export function WorkspaceItem({ workspace, isCurrent }: WorkspaceItem) {
 
 export function WorkspaceSwitch({ className }: { className?: string }) {
 	const orpc = useORPC();
-	const { data } = useQuery(orpc.me.queryOptions());
+	const { data: me } = useQuery(orpc.me.queryOptions());
 
 	return (
 		<DropdownMenu.Root>
@@ -57,11 +58,15 @@ export function WorkspaceSwitch({ className }: { className?: string }) {
 					className,
 				)}
 			>
-				{data?.currentWorkspace ? (
-					<Avatar.Root $size="40" placeholderType="workspace">
+				{me?.currentWorkspace ? (
+					<Avatar.Root
+						className="fade-in animate-in duration-300"
+						$size="40"
+						placeholderType="workspace"
+					>
 						{/* TODO: Add workspace avatar */}
 
-						{data?.currentWorkspace.name
+						{me.currentWorkspace.name
 							.split(" ")
 							.slice(0, 2)
 							.map((word: string) => word[0])
@@ -78,7 +83,13 @@ export function WorkspaceSwitch({ className }: { className?: string }) {
 				>
 					<div className="flex-1 space-y-1">
 						<div className="truncate text-label-sm">
-							{data?.currentWorkspace.name ?? <Skeleton className="h-5" />}
+							{me?.currentWorkspace ? (
+								<span className="fade-in animate-in duration-300">
+									{me.currentWorkspace.name}
+								</span>
+							) : (
+								<Skeleton className="h-5" />
+							)}
 						</div>
 					</div>
 					<div className="flex size-6 items-center justify-center rounded-6 border border-(--stroke-soft-200) bg-(--bg-white-0) shadow-xs">
@@ -88,15 +99,15 @@ export function WorkspaceSwitch({ className }: { className?: string }) {
 			</DropdownMenu.Trigger>
 
 			<DropdownMenu.Content align="start" side="right" sideOffset={24}>
-				{data?.workspaces?.length ? (
+				{me?.workspaces?.length ? (
 					<>
 						{/* <Divider.Root $type="line-spacing" /> */}
 
-						{data.workspaces.map((workspace) => (
+						{me.workspaces.map((workspace) => (
 							<WorkspaceItem
 								key={workspace.id}
 								workspace={workspace}
-								isCurrent={workspace.id === data.currentWorkspace.id}
+								isCurrent={workspace.id === me.currentWorkspace.id}
 							/>
 						))}
 
