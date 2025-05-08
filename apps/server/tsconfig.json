@@ -1,5 +1,6 @@
 {
 	"compilerOptions": {
+		"composite": true,
 		"target": "ESNext",
 		"module": "ESNext",
 		"moduleResolution": "bundler",
@@ -8,7 +9,8 @@
 		"skipLibCheck": true,
 		"baseUrl": "./",
 		"paths": {
-			"#/*": ["./src/*"]
+			"#/*": ["./src/*"],
+			"#clerk/*": ["../../node_modules/@clerk/backend/dist/*"]
 		},
 		"outDir": "./dist",
 		"types": ["bun"],
