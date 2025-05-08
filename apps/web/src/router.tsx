@@ -1,13 +1,33 @@
-import { QueryClientProvider } from "@tanstack/react-query";
+import {
+	QueryCache,
+	QueryClient,
+	QueryClientProvider,
+} from "@tanstack/react-query";
 import { createRouter as createTanstackRouter } from "@tanstack/react-router";
+import { toast } from "sonner";
 
 import "./app.css";
 import Loader from "./components/loader.tsx";
 import { routeTree } from "./routeTree.gen.ts";
 import "./tailwind.css";
-import { ORPCContext, orpc, queryClient } from "./utils/orpc";
+import { ORPCContext, orpc } from "./utils/orpc";
 
 export const createRouter = () => {
+	const queryClient = new QueryClient({
+		queryCache: new QueryCache({
+			onError: (error) => {
+				toast.error(`Error: ${error.message}`, {
+					action: {
+						label: "retry",
+						onClick: () => {
+							queryClient.invalidateQueries();
+						},
+					},
+				});
+			},
+		}),
+	});
+
 	const router = createTanstackRouter({
 		routeTree,
 		scrollRestoration: true,

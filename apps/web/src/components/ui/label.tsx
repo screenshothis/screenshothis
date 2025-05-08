@@ -12,10 +12,7 @@ function LabelRoot({ className, ...props }: LabelRootProps) {
 	return (
 		<LabelPrimitives.Root
 			className={cn(
-				"group flex cursor-pointer items-center gap-px text-label-sm aria-disabled:text-(--text-disabled-300)",
-				{
-					"aria-disabled pointer-events-none": props.disabled,
-				},
+				"group flex cursor-pointer items-center gap-px text-label-sm aria-disabled:pointer-events-none aria-disabled:text-(--text-disabled-300)",
 				className,
 			)}
 			tabIndex={props.disabled ? -1 : undefined}

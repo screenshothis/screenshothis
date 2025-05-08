@@ -1,7 +1,7 @@
 import { SignOutButton, useUser } from "@clerk/tanstack-react-start";
 import { Link } from "@tanstack/react-router";
 
-import * as Button from "./ui/button.tsx";
+import * as Button from "./ui/button-primitives.tsx";
 import * as DropdownMenu from "./ui/dropdown-menu";
 import { Skeleton } from "./ui/skeleton.tsx";
 

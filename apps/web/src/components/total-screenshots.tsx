@@ -7,7 +7,7 @@ import { Select as SelectPrimitives } from "radix-ui";
 import type { z } from "zod";
 
 import * as Badge from "#/components/ui/badge.tsx";
-import * as Button from "#/components/ui/button.tsx";
+import * as Button from "#/components/ui/button-primitives.tsx";
 import * as Select from "#/components/ui/select.tsx";
 import { RangeSchema } from "#/schemas/dashboard.ts";
 import { TotalScreenshotsChart } from "./charts/total-screenshots-chart.tsx";

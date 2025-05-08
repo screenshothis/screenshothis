@@ -7,7 +7,7 @@ import {
 } from "@tanstack/react-router";
 
 import { LanguageSelect } from "#/components/language-select.tsx";
-import * as Button from "#/components/ui/button.tsx";
+import * as Button from "#/components/ui/button-primitives";
 
 type PathConfig = {
 	message: string;
