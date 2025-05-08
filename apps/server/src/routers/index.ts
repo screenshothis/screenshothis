@@ -64,6 +64,14 @@ export const appRouter = {
 					totalRequests: result.refill?.amount,
 					remainingRequests: result.remaining,
 				},
+				accessToken: {
+					token: user.currentWorkspace.accessToken.token,
+					redactedToken: Array.from(user.currentWorkspace.accessToken.token)
+						.map((_, i) =>
+							i > 2 ? "•" : user.currentWorkspace?.accessToken.token[i],
+						)
+						.join(""),
+				},
 			},
 			workspaces: userWorkspaces,
 		};

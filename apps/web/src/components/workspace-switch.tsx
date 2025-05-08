@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import Tick01Icon from "virtual:icons/hugeicons/tick-01";
+import Tick02Icon from "virtual:icons/hugeicons/tick-02";
 import UnfoldMoreIcon from "virtual:icons/hugeicons/unfold-more";
 
 import { cn } from "#/utils/cn.ts";
@@ -39,7 +39,7 @@ export function WorkspaceItem({ workspace, isCurrent }: WorkspaceItem) {
 			</div>
 
 			{isCurrent ? (
-				<Tick01Icon className="size-5 text-(--text-sub-600)" />
+				<Tick02Icon className="size-5 text-(--text-sub-600)" />
 			) : null}
 		</button>
 	);

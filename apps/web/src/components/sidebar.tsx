@@ -3,12 +3,16 @@
 import { Link, useLocation } from "@tanstack/react-router";
 import * as React from "react";
 import { useHotkeys } from "react-hotkeys-hook";
+import ArrowRight01Icon from "virtual:icons/hugeicons/arrow-right-01";
 import DashboardSquare02Icon from "virtual:icons/hugeicons/dashboard-square-02";
 import DocumentCode01Icon from "virtual:icons/hugeicons/document-code";
 
 import { cn } from "#/utils/cn.ts";
+import { useORPC } from "#/utils/orpc.ts";
+import { useQuery } from "@tanstack/react-query";
 import * as Divider from "./ui/divider.tsx";
 import { UserButton } from "./user-button.tsx";
+import { UsageWidget } from "./widgets/usage-widget.tsx";
 import { WorkspaceSwitch } from "./workspace-switch.tsx";
 
 type NavigationLink = {
@@ -153,9 +157,9 @@ function NavigationMenu({ collapsed }: { collapsed: boolean }) {
 							data-hide-collapsed
 						>
 							<div className="flex-1 text-label-sm">{label}</div>
-							{/* {pathname === to && (
-                // <RiArrowRightSLine className='size-5 text-(--text-sub-600)' />
-              )} */}
+							{pathname === to && (
+								<ArrowRight01Icon className="size-5 text-(--text-sub-600)" />
+							)}
 						</div>
 					</Link>
 				))}
@@ -198,6 +202,8 @@ export default function Sidebar({
 	defaultCollapsed?: boolean;
 }) {
 	const { collapsed, sidebarRef } = useCollapsedState({ defaultCollapsed });
+	const orpc = useORPC();
+	const { data: me } = useQuery(orpc.me.queryOptions());
 
 	return (
 		<>
@@ -229,6 +235,16 @@ export default function Sidebar({
 					>
 						<NavigationMenu collapsed={collapsed} />
 						{/* <SettingsAndSupport collapsed={collapsed} /> */}
+
+						{!collapsed ? (
+							<UsageWidget
+								totalRequests={me?.currentWorkspace?.usage?.totalRequests}
+								remainingRequests={
+									me?.currentWorkspace?.usage?.remainingRequests
+								}
+								className="mt-auto"
+							/>
+						) : null}
 					</div>
 
 					<SidebarDivider collapsed={collapsed} />

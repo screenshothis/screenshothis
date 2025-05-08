@@ -157,14 +157,14 @@ function RootDocument({ children }: { children: React.ReactNode }) {
 					crossOrigin="anonymous"
 				/>
 				<link
-					href="https://fonts.googleapis.com/css2?family=Geist:wght@100..900&display=swap"
+					href="https://fonts.googleapis.com/css2?family=Geist+Mono:wght@100..900&family=Geist:wght@100..900&display=swap"
 					rel="stylesheet"
 				/>
 			</head>
 			<body className="h-full bg-(--bg-white-0)">
 				{children}
 				<Toaster richColors />
-				<TanStackRouterDevtools position="bottom-left" />
+				<TanStackRouterDevtools position="bottom-right" />
 				<ReactQueryDevtools position="bottom" buttonPosition="bottom-right" />
 				<Scripts />
 			</body>

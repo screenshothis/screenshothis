@@ -2,14 +2,14 @@ import { useQueries } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 import { zodValidator } from "@tanstack/zod-adapter";
 
+import { CodeBlock } from "#/components/code-block.tsx";
 import { DashedDivider } from "#/components/dashed-divider.tsx";
 import { PageHeader } from "#/components/page-header.tsx";
 import { TotalScreenshots } from "#/components/total-screenshots.tsx";
 import * as Avatar from "#/components/ui/avatar.tsx";
 import * as Divider from "#/components/ui/divider.tsx";
-import * as LinkButton from "#/components/ui/link-button.tsx";
-import * as ProgressBar from "#/components/ui/progress-bar.tsx";
 import { Skeleton } from "#/components/ui/skeleton.tsx";
+import { UsageWidget } from "#/components/widgets/usage-widget.tsx";
 import { DashboardSearchSchema } from "#/schemas/dashboard.ts";
 import { useORPC } from "#/utils/orpc.ts";
 
@@ -62,53 +62,38 @@ function RouteComponent() {
 
 			<div className="flex flex-1 flex-col gap-6 px-4 py-6 lg:px-8 min-[1100px]:flex-row">
 				<div className="min-w-0 flex-1">
-					<div className="grid grid-cols-2 gap-4 pb-6">
-						<div className="w-full">
-							<div className="space-y-1.5">
-								<div className="flex justify-between gap-1.5">
-									<span className="text-label-sm">
-										Usage (
-										{(me?.currentWorkspace?.usage?.totalRequests ?? 0) -
-											(me?.currentWorkspace?.usage?.remainingRequests ?? 0)}
-										/{me?.currentWorkspace?.usage?.totalRequests ?? 0})
-									</span>
-									<span className="text-(--text-sub-600) text-paragraph-xs">
-										{(((me?.currentWorkspace?.usage?.totalRequests ?? 0) -
-											(me?.currentWorkspace?.usage?.remainingRequests ?? 0)) /
-											(me?.currentWorkspace?.usage?.totalRequests ?? 0)) *
-											100 || 0}
-										%
-									</span>
-								</div>
-								<ProgressBar.Root
-									value={
-										me?.currentWorkspace?.usage?.totalRequests
-											? ((me.currentWorkspace.usage.totalRequests -
-													(me.currentWorkspace.usage.remainingRequests ?? 0)) /
-													me.currentWorkspace.usage.totalRequests) *
-												100
-											: 0
-									}
-									max={100}
-								/>
-								<div className="text-(--text-sub-600) text-paragraph-xs">
-									<LinkButton.Root $style="primary" $size="sm" $underline>
-										Upgrade
-									</LinkButton.Root>{" "}
-									to unlock more screenshots.
-								</div>
-							</div>
-						</div>
-					</div>
-
-					<DashedDivider />
-
-					<div className="mt-6">
+					<div className="mb-6">
 						{stats ? (
 							<TotalScreenshots data={stats.data} range={range} />
 						) : (
 							<Skeleton className="h-67" />
 						)}
+					</div>
+
+					<div className="my-8">
+						<DashedDivider />
+					</div>
+				</div>
+
+				<div className="w-px bg-(--stroke-soft-200) lg:block" />
+
+				<div className="shrink-0 min-[1100px]:w-[328px]">
+					<UsageWidget
+						totalRequests={me?.currentWorkspace?.usage?.totalRequests}
+						remainingRequests={me?.currentWorkspace?.usage?.remainingRequests}
+						className="px-1"
+					/>
+
+					<div className="mt-8">
+						<CodeBlock
+							wrapperClassName="rounded-16"
+							isCopyable
+							title="API Key"
+							lang="bash"
+							textToCopy={me?.currentWorkspace?.accessToken?.token}
+						>
+							{me?.currentWorkspace?.accessToken?.redactedToken}
+						</CodeBlock>
 					</div>
 				</div>
 			</div>
