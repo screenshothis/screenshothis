@@ -16,6 +16,7 @@ export const createRouter = () => {
 		context: { orpc, queryClient },
 		defaultPendingComponent: () => <Loader />,
 		defaultNotFoundComponent: () => <div>Not Found</div>,
+		defaultViewTransition: true,
 		Wrap: ({ children }) => (
 			<QueryClientProvider client={queryClient}>
 				<ORPCContext.Provider value={orpc}>{children}</ORPCContext.Provider>
