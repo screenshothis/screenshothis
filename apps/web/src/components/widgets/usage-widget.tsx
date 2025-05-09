@@ -22,9 +22,10 @@ export function UsageWidget({
 						{totalRequests ?? 0})
 					</span>
 					<span className="text-(--text-sub-600) text-paragraph-xs">
-						{(((totalRequests ?? 0) - (remainingRequests ?? 0)) /
-							(totalRequests ?? 0)) *
-							100 || 0}
+						{Math.round(
+							((totalRequests - (remainingRequests ?? 0)) / totalRequests) *
+								100 || 0,
+						)}
 						%
 					</span>
 				</div>
