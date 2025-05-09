@@ -33,6 +33,7 @@ export async function getOrCreateScreenshot(
 	return limit(async () => {
 		const {
 			url,
+			selector,
 			width,
 			height,
 			isMobile,
@@ -50,6 +51,7 @@ export async function getOrCreateScreenshot(
 		const existing = await db.query.screenshots.findFirst({
 			where: and(
 				eq(screenshots.url, url),
+				selector ? eq(screenshots.selector, selector) : undefined,
 				eq(screenshots.width, width),
 				eq(screenshots.height, height),
 				eq(screenshots.isMobile, isMobile),
@@ -88,7 +90,7 @@ export async function getOrCreateScreenshot(
 		});
 		const page = await browser.newPage();
 
-		if (blockRequests?.length || blockResources?.length) {
+		if (blockRequests?.length > 0 || blockResources?.length > 0) {
 			const blockRequest = wildcardMatch(blockRequests, { separator: false });
 
 			page.on("request", (request) => {
@@ -131,13 +133,18 @@ export async function getOrCreateScreenshot(
 				.insert(screenshots)
 				.values({
 					url,
+					selector,
 					width,
 					height,
+					isMobile,
+					isLandscape,
+					hasTouch,
 					format,
 					blockAds,
 					blockCookieBanners,
 					blockTrackers,
 					blockRequests,
+					blockResources,
 					workspaceId,
 				})
 				.returning();

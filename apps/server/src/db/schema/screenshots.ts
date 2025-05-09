@@ -10,6 +10,7 @@ export const screenshots = pgTable("screenshots", {
 		.primaryKey()
 		.$defaultFn(() => newId("screenshot")),
 	url: text().notNull(),
+	selector: text("selector"),
 	width: integer("width").notNull(),
 	height: integer("height").notNull(),
 	isMobile: boolean("is_mobile").notNull().default(false),

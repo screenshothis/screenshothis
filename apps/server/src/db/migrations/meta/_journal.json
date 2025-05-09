@@ -78,6 +78,13 @@
       "when": 1746809873862,
       "tag": "0010_boring_lady_deathstrike",
       "breakpoints": true
+    },
+    {
+      "idx": 11,
+      "version": "7",
+      "when": 1746814218686,
+      "tag": "0011_tough_speed",
+      "breakpoints": true
     }
   ]
 }
