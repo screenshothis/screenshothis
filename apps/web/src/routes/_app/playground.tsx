@@ -35,13 +35,24 @@ function RouteComponent() {
 			block_trackers: true,
 		} as z.input<typeof PlaygroundFormSchema>,
 		onSubmit: async ({ value }) => {
-			await mutateAsync(value, {
-				async onSuccess() {
-					await queryClient.invalidateQueries({
-						queryKey: orpc.me.queryOptions().queryKey,
-					});
+			await mutateAsync(
+				{
+					...value,
+					block_requests: Array.isArray(value.block_requests)
+						? value.block_requests
+						: value.block_requests
+								.split("\n")
+								.map((s) => s.trim())
+								.filter(Boolean),
 				},
-			});
+				{
+					async onSuccess() {
+						await queryClient.invalidateQueries({
+							queryKey: orpc.me.queryOptions().queryKey,
+						});
+					},
+				},
+			);
 		},
 	});
 	const values = useStore(form.store, (state) => state.values);
@@ -178,6 +189,27 @@ function RouteComponent() {
 													/>
 												)}
 											/>
+
+											<form.AppField
+												name="block_requests"
+												children={(field) => (
+													<field.Textarea
+														wrapperClassName="lg:col-span-3"
+														label="Block requests"
+														name="block_requests"
+														rows={5}
+														placeholder={[
+															"*.js",
+															"*.css",
+															"https://ads.example.com/*",
+															"https://tracker.example.com/script.js",
+															"example.com/annoying-banner.png",
+															"facebook.com",
+														].join("\n")}
+														hint="One pattern per line. Supports wildcards."
+													/>
+												)}
+											/>
 										</div>
 									</Accordion.Content>
 								</Accordion.Item>
@@ -223,6 +255,12 @@ function RouteComponent() {
 											`   &block_cookie_banners=${values.block_cookie_banners}`,
 										values.block_trackers &&
 											`   &block_trackers=${values.block_trackers}`,
+										values.block_requests &&
+											typeof values.block_requests === "string" &&
+											values.block_requests
+												.split("\n")
+												.map((request) => `   &block_requests=${request}`)
+												.join("\n"),
 									]
 										.filter(Boolean)
 										.join("\n")}

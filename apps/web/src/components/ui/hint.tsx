@@ -1,5 +1,6 @@
-import * as React from "react";
 import InformationCircleSolidIcon from "virtual:icons/hugeicons/information-circle-solid";
+
+import * as React from "react";
 
 import type { PolymorphicComponentProps } from "#/utils/polymorphic.ts";
 import { recursiveCloneChildren } from "#/utils/recursive-clone-children.tsx";

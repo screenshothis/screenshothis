@@ -4,6 +4,7 @@ import { fieldContext, formContext } from "#/hooks/form-context.ts";
 import { SubmitButton } from "./submit-button.tsx";
 import { SwitchField } from "./switch-field.tsx";
 import { TextField } from "./text-field.tsx";
+import { Textarea } from "./textarea.tsx";
 
 export const { useAppForm, withForm } = createFormHook({
 	fieldContext,
@@ -11,6 +12,7 @@ export const { useAppForm, withForm } = createFormHook({
 	fieldComponents: {
 		TextField,
 		SwitchField,
+		Textarea,
 	},
 	formComponents: {
 		SubmitButton,

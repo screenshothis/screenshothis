@@ -58,7 +58,7 @@ export function Field({
 						.join(" ")}
 				>
 					<Hint.Icon />
-					{error || hint}
+					<span className="mt-px">{error || hint}</span>
 				</Hint.Root>
 			) : null}
 		</div>
