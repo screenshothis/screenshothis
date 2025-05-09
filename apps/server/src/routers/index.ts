@@ -1,15 +1,18 @@
+import { ORPCError } from "@orpc/client";
 import { eq, sql } from "drizzle-orm";
 import { z } from "zod";
 
 import { db } from "#/db";
-import { users, workspaceMembers, workspaces } from "#/db/schema";
+import * as schema from "#/db/schema";
 import { protectedProcedure } from "#/lib/orpc";
 import { unkey } from "#/lib/unkey";
+import { CreateScreenshotParamsSchema } from "#/routes/screenshots/schema";
+import { getOrCreateScreenshot } from "#/utils/screenshot";
 
 export const appRouter = {
 	me: protectedProcedure.handler(async ({ context }) => {
 		const user = await db.query.users.findFirst({
-			where: eq(users.externalId, context.session.userId),
+			where: eq(schema.users.externalId, context.session.userId),
 			with: {
 				currentWorkspace: {
 					columns: {
@@ -46,12 +49,15 @@ export const appRouter = {
 
 		const userWorkspaces = await db
 			.select({
-				id: workspaces.id,
-				name: workspaces.name,
+				id: schema.workspaces.id,
+				name: schema.workspaces.name,
 			})
-			.from(workspaceMembers)
-			.innerJoin(workspaces, eq(workspaceMembers.workspaceId, workspaces.id))
-			.where(eq(workspaceMembers.userId, user.id));
+			.from(schema.workspaceMembers)
+			.innerJoin(
+				schema.workspaces,
+				eq(schema.workspaceMembers.workspaceId, schema.workspaces.id),
+			)
+			.where(eq(schema.workspaceMembers.userId, user.id));
 
 		return {
 			fullName: `${user.firstName} ${user.lastName}`,
@@ -198,6 +204,57 @@ export const appRouter = {
 					};
 				}),
 			};
+		}),
+	playground: protectedProcedure
+		.input(CreateScreenshotParamsSchema)
+		.handler(async ({ context, input }) => {
+			if (!context.user?.currentWorkspaceId) {
+				throw new ORPCError("UNAUTHORIZED", {
+					message: "Current workspace not found",
+				});
+			}
+
+			try {
+				const { object, created } = await getOrCreateScreenshot(
+					context.user.currentWorkspaceId,
+					input,
+				);
+
+				if (!object) {
+					throw new ORPCError("NOT_FOUND", {
+						message: "Failed to get or create screenshot",
+					});
+				}
+
+				const accessToken = await db.query.accessTokens.findFirst({
+					where: eq(
+						schema.accessTokens.workspaceId,
+						context.user.currentWorkspaceId,
+					),
+					columns: {
+						token: true,
+						externalId: true,
+					},
+				});
+
+				if (accessToken?.externalId && created) {
+					await unkey.keys.updateRemaining({
+						keyId: accessToken.externalId,
+						op: "decrement",
+						value: 1,
+					});
+				}
+
+				return {
+					image: `data:image/${input.format};base64,${Buffer.from(object).toString("base64")}`,
+				};
+			} catch (error) {
+				console.error("Failed to get screenshot", error);
+
+				throw new ORPCError("BAD_REQUEST", {
+					message: "Failed to get screenshot",
+				});
+			}
 		}),
 } as const;
 

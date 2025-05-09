@@ -13,6 +13,9 @@ export const screenshots = pgTable("screenshots", {
 	width: integer("width").notNull(),
 	height: integer("height").notNull(),
 	format: text("format").$type<"jpeg" | "png" | "webp">().notNull(),
+	blockAds: boolean("block_ads").notNull().default(false),
+	blockCookieBanners: boolean("block_cookie_banners").notNull().default(false),
+	blockTrackers: boolean("block_trackers").notNull().default(false),
 	isExtra: boolean("is_extra").notNull().default(false),
 	workspaceId: text("workspace_id")
 		.notNull()

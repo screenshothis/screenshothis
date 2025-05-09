@@ -6,7 +6,6 @@ import * as schema from "#/db/schema";
 import { unkey } from "#/lib/unkey";
 import { createErrorResponse } from "#/utils/errors";
 import { getOrCreateScreenshot } from "#/utils/screenshot";
-
 import { CreateScreenshotParamsSchema } from "./schema";
 
 const screenshots = new OpenAPIHono<{ Variables: Variables }>().openapi(
@@ -45,24 +44,12 @@ const screenshots = new OpenAPIHono<{ Variables: Variables }>().openapi(
 	async (c) => {
 		try {
 			const { object, created } = await getOrCreateScreenshot(
+				c.get("workspaceId"),
 				c.req.valid("query"),
 			);
 
 			if (!object) {
 				return c.json({ error: "Failed to get or create screenshot" }, 404);
-			}
-
-			/**
-			 * If the screenshot was not created (cache hit), increment the remaining requests
-			 * We only decrement when the screenshot is created (cache miss)
-			 */
-			const key = c.get("unkey");
-			if (key?.keyId && !created) {
-				await unkey.keys.updateRemaining({
-					keyId: key.keyId,
-					op: "increment",
-					value: 1,
-				});
 			}
 
 			const contentType = `image/${c.req.valid("query").format}`;
@@ -71,13 +58,24 @@ const screenshots = new OpenAPIHono<{ Variables: Variables }>().openapi(
 				headers.set("content-type", contentType);
 			}
 
-			await db.insert(schema.screenshots).values({
-				url: c.req.valid("query").url,
-				width: c.req.valid("query").width,
-				height: c.req.valid("query").height,
-				format: c.req.valid("query").format,
-				workspaceId: c.get("workspaceId"),
-			});
+			if (created) {
+				await db.insert(schema.screenshots).values({
+					url: c.req.valid("query").url,
+					width: c.req.valid("query").width,
+					height: c.req.valid("query").height,
+					format: c.req.valid("query").format,
+					workspaceId: c.get("workspaceId"),
+				});
+
+				const key = c.get("unkey");
+				if (key?.keyId) {
+					await unkey.keys.updateRemaining({
+						keyId: key.keyId,
+						op: "decrement",
+						value: 1,
+					});
+				}
+			}
 
 			return c.body(object, {
 				headers,
