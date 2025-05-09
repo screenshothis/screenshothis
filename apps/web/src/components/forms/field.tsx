@@ -14,6 +14,7 @@ export type FieldProps = {
 	disabled?: boolean;
 	error?: string | Array<string>;
 	children: React.ReactNode;
+	hintClassName?: string;
 };
 
 export function Field({
@@ -24,6 +25,7 @@ export function Field({
 	className,
 	children,
 	hint,
+	hintClassName,
 	...props
 }: FieldProps) {
 	const generatedId = React.useId();
@@ -56,6 +58,7 @@ export function Field({
 					]
 						.filter(Boolean)
 						.join(" ")}
+					className={hintClassName}
 				>
 					<Hint.Icon />
 					<span className="mt-px">{error || hint}</span>

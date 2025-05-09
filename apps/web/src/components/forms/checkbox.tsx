@@ -16,6 +16,7 @@ export function CheckboxField({
 	label,
 	labelClassName,
 	hint,
+	hintClassName,
 	...rest
 }: CheckboxFieldProps) {
 	const field = useFieldContext<boolean>();
@@ -31,6 +32,7 @@ export function CheckboxField({
 			labelClassName={labelClassName}
 			error={error}
 			hint={hint}
+			hintClassName={hintClassName}
 			id={`${id}-form-item`}
 			className={cn("grid-cols-2", wrapperClassName)}
 		>

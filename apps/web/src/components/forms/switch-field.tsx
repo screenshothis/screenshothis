@@ -16,6 +16,7 @@ export function SwitchField({
 	label,
 	labelClassName,
 	hint,
+	hintClassName,
 	...rest
 }: SwitchFieldProps) {
 	const field = useFieldContext<boolean>();
@@ -31,6 +32,7 @@ export function SwitchField({
 			labelClassName={labelClassName}
 			error={error}
 			hint={hint}
+			hintClassName={hintClassName}
 			id={`${id}-form-item`}
 			className={cn("flex flex-col gap-1", wrapperClassName)}
 		>

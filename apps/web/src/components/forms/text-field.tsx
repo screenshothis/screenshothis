@@ -23,6 +23,7 @@ export function TextField({
 	inlineLeadingNode,
 	inlineTrailingNode,
 	hint,
+	hintClassName,
 	...rest
 }: TextFieldProps) {
 	const field = useFieldContext<string | number>();
@@ -38,6 +39,7 @@ export function TextField({
 			labelClassName={labelClassName}
 			error={error}
 			hint={hint}
+			hintClassName={hintClassName}
 			id={id}
 			className={cn("flex flex-col gap-1", wrapperClassName)}
 		>
