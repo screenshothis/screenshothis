@@ -68,6 +68,7 @@ export async function getOrCreateScreenshot(
 				sql`${screenshots.blockRequests} @> ${JSON.stringify(blockRequests)}`,
 				sql`${screenshots.blockResources} @> ${JSON.stringify(blockResources)}`,
 				eq(screenshots.prefersColorScheme, prefersColorScheme),
+				eq(screenshots.prefersReducedMotion, prefersReducedMotion),
 				eq(screenshots.workspaceId, workspaceId),
 			),
 		});
