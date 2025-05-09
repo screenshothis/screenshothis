@@ -12,11 +12,11 @@ export async function workspaceMiddleware(
 		return c.json({ error: "Unauthorized" }, 401);
 	}
 
-	if (!result.ownerId) {
+	if (!result.identity?.externalId) {
 		return c.json({ error: "Unauthorized" }, 401);
 	}
 
-	c.set("workspaceId", result.ownerId);
+	c.set("workspaceId", result.identity.externalId);
 
 	await next();
 }

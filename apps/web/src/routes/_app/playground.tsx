@@ -22,6 +22,7 @@ export const Route = createFileRoute("/_app/playground")({
 });
 
 function RouteComponent() {
+	const { queryClient } = Route.useRouteContext();
 	const orpc = useORPC();
 	const { mutateAsync, data } = useMutation(orpc.playground.mutationOptions());
 	const form = useAppForm({
@@ -30,7 +31,12 @@ function RouteComponent() {
 			url: "",
 		} as z.input<typeof PlaygroundFormSchema>,
 		onSubmit: async ({ value }) => {
-			await mutateAsync(value);
+			await mutateAsync(value, {
+				async onSuccess(data, variables, context) {
+					// await queryClient.invalidateQueries({
+					// })
+				},
+			});
 		},
 	});
 	const values = useStore(form.store, (state) => state.values);
@@ -43,6 +49,8 @@ function RouteComponent() {
 		},
 		[form],
 	);
+
+	console.info(form.state.errors);
 
 	return (
 		<>

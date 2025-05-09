@@ -7,11 +7,11 @@ export const CreateScreenshotParamsSchema = z
 			description: "The url to screenshot",
 			example: "https://www.google.com",
 		}),
-		width: z.number().optional().default(1920).openapi({
+		width: z.coerce.number().optional().default(1920).openapi({
 			description: "The width of the screenshot",
 			example: 1920,
 		}),
-		height: z.number().optional().default(1080).openapi({
+		height: z.coerce.number().optional().default(1080).openapi({
 			description: "The height of the screenshot",
 			example: 1080,
 		}),

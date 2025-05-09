@@ -82,7 +82,10 @@ export async function getOrCreateScreenshot(
 			const blocker = await PlaywrightBlocker.fromLists(fetch, [
 				...(blockAds ? adsLists : []),
 				...(blockCookieBanners
-					? ["https://secure.fanboy.co.nz/fanboy-cookiemonster.txt"]
+					? [
+							"https://secure.fanboy.co.nz/fanboy-cookiemonster.txt",
+							"https://secure.fanboy.co.nz/fanboy-annoyance.txt",
+						]
 					: []),
 				...(blockTrackers ? adsAndTrackingLists : []),
 			]);
@@ -116,6 +119,7 @@ export async function getOrCreateScreenshot(
 			await context.close();
 
 			const object = await s3.file(key).arrayBuffer();
+
 			return { object, key, created: true };
 		} finally {
 			// Ensure resources are closed if not already
