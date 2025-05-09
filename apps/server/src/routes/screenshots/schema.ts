@@ -46,6 +46,68 @@ export const CreateScreenshotParamsSchema = z
 				description:
 					"List of requests to block. Can be specified as block_requests=foo or multiple times: block_requests=foo&block_requests=bar",
 			}),
+		block_resources: z
+			.union([
+				z.string(),
+				z.array(
+					z.enum([
+						"document",
+						"stylesheet",
+						"image",
+						"media",
+						"font",
+						"script",
+						"texttrack",
+						"xhr",
+						"fetch",
+						"prefetch",
+						"eventsource",
+						"websocket",
+						"manifest",
+						"signedexchange",
+						"ping",
+						"cspviolationreport",
+						"preflight",
+						"other",
+					]),
+				),
+			])
+			.optional()
+			.transform((val) => {
+				if (!val) return [];
+				if (Array.isArray(val)) return val;
+				return [val];
+			})
+			.openapi({
+				type: "array",
+				items: {
+					type: "string",
+					enum: [
+						"document",
+						"stylesheet",
+						"image",
+						"media",
+						"font",
+						"script",
+						"texttrack",
+						"xhr",
+						"fetch",
+						"prefetch",
+						"eventsource",
+						"websocket",
+						"manifest",
+						"signedexchange",
+						"ping",
+						"cspviolationreport",
+						"preflight",
+						"other",
+					],
+					example: "script",
+				},
+				minItems: 1,
+				description:
+					"List of resource types to block. Can be specified as block_resources=script or multiple times: block_resources=script&block_resources=image",
+			}),
 		cache_key: z.string().optional().openapi({
 			description:
 				"Optional cache key to differentiate screenshots of the same page.",

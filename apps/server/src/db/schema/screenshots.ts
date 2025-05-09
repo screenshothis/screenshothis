@@ -17,6 +17,7 @@ export const screenshots = pgTable("screenshots", {
 	blockCookieBanners: boolean("block_cookie_banners").notNull().default(false),
 	blockTrackers: boolean("block_trackers").notNull().default(false),
 	blockRequests: jsonb("block_requests").$type<string[]>().default([]),
+	blockResources: jsonb("block_resources").$type<string[]>().default([]),
 	isExtra: boolean("is_extra").notNull().default(false),
 	workspaceId: text("workspace_id")
 		.notNull()

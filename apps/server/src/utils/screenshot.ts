@@ -22,11 +22,6 @@ type GetOrCreateScreenshotParams = z.infer<typeof CreateScreenshotParamsSchema>;
 
 const limit = pLimit(5);
 
-type GetBrowserParams = {
-	width?: number;
-	height?: number;
-};
-
 export async function getOrCreateScreenshot(
 	workspaceId: string,
 	params: GetOrCreateScreenshotParams,
@@ -45,23 +40,23 @@ export async function getOrCreateScreenshot(
 			blockCookieBanners,
 			blockTrackers,
 			blockRequests,
+			blockResources,
 		} = params;
-
-		const conditions = [
-			eq(screenshots.url, url),
-			eq(screenshots.width, width),
-			eq(screenshots.height, height),
-			eq(screenshots.format, format),
-			eq(screenshots.blockAds, blockAds),
-			eq(screenshots.blockCookieBanners, blockCookieBanners),
-			eq(screenshots.blockTrackers, blockTrackers),
-			sql`${screenshots.blockRequests} @> ${JSON.stringify(blockRequests)}`,
-			eq(screenshots.workspaceId, workspaceId),
-		];
 
 		// 1. Check DB for existing screenshot
 		const existing = await db.query.screenshots.findFirst({
-			where: and(...conditions),
+			where: and(
+				eq(screenshots.url, url),
+				eq(screenshots.width, width),
+				eq(screenshots.height, height),
+				eq(screenshots.format, format),
+				eq(screenshots.blockAds, blockAds),
+				eq(screenshots.blockCookieBanners, blockCookieBanners),
+				eq(screenshots.blockTrackers, blockTrackers),
+				sql`${screenshots.blockRequests} @> ${JSON.stringify(blockRequests)}`,
+				sql`${screenshots.blockResources} @> ${JSON.stringify(blockResources)}`,
+				eq(screenshots.workspaceId, workspaceId),
+			),
 		});
 
 		if (existing) {
@@ -81,12 +76,15 @@ export async function getOrCreateScreenshot(
 		});
 		const page = await browser.newPage();
 
-		console.info({ blockRequests });
-
-		if (blockRequests?.length) {
+		if (blockRequests?.length || blockResources?.length) {
 			const blockRequest = wildcardMatch(blockRequests, { separator: false });
 
 			page.on("request", (request) => {
+				if (blockResources?.includes(request.resourceType())) {
+					request.abort();
+					return;
+				}
+
 				if (blockRequest(request.url())) {
 					request.abort();
 					return;
