@@ -71,6 +71,13 @@
       "when": 1746806579613,
       "tag": "0009_huge_mimic",
       "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "7",
+      "when": 1746809873862,
+      "tag": "0010_boring_lady_deathstrike",
+      "breakpoints": true
     }
   ]
 }

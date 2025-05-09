@@ -15,6 +15,18 @@ export const CreateScreenshotParamsSchema = z
 			description: "The height of the screenshot",
 			example: 1080,
 		}),
+		isMobile: z.coerce.boolean().optional().default(false).openapi({
+			description: "Whether to take a screenshot of a mobile device",
+			example: false,
+		}),
+		isLandscape: z.coerce.boolean().optional().default(false).openapi({
+			description: "Whether to take a screenshot in landscape mode",
+			example: false,
+		}),
+		hasTouch: z.coerce.boolean().optional().default(false).openapi({
+			description: "Whether the device has touch support",
+			example: false,
+		}),
 		format: z.enum(["jpeg", "png", "webp"]).optional().default("jpeg").openapi({
 			description: "The format of the screenshot",
 			example: "jpeg",
