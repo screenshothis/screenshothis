@@ -18,6 +18,7 @@ export function Textarea({
 	label,
 	labelClassName,
 	hint,
+	hintClassName,
 	...rest
 }: TextFieldProps) {
 	const field = useFieldContext<string>();
@@ -33,6 +34,7 @@ export function Textarea({
 			labelClassName={labelClassName}
 			error={error}
 			hint={hint}
+			hintClassName={hintClassName}
 			id={`${id}-form-item`}
 			className={cn("flex flex-col gap-1", wrapperClassName)}
 		>
