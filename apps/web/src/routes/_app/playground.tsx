@@ -40,10 +40,10 @@ function RouteComponent() {
 					...value,
 					block_requests: Array.isArray(value.block_requests)
 						? value.block_requests
-						: value.block_requests
-								.split("\n")
+						: (value.block_requests
+								?.split("\n")
 								.map((s) => s.trim())
-								.filter(Boolean),
+								.filter(Boolean) ?? []),
 				},
 				{
 					async onSuccess() {

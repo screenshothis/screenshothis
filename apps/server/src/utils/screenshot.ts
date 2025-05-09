@@ -55,14 +55,9 @@ export async function getOrCreateScreenshot(
 			eq(screenshots.blockAds, blockAds),
 			eq(screenshots.blockCookieBanners, blockCookieBanners),
 			eq(screenshots.blockTrackers, blockTrackers),
+			sql`${screenshots.blockRequests} @> ${JSON.stringify(blockRequests)}`,
 			eq(screenshots.workspaceId, workspaceId),
 		];
-
-		if (Array.isArray(blockRequests) && blockRequests.length > 0) {
-			conditions.push(
-				sql`${screenshots.blockRequests} @> ${JSON.stringify(blockRequests)}`,
-			);
-		}
 
 		// 1. Check DB for existing screenshot
 		const existing = await db.query.screenshots.findFirst({

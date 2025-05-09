@@ -14,13 +14,16 @@ export const PlaygroundFormSchema = z.object({
 	block_ads: z.coerce.boolean().optional().default(true),
 	block_cookie_banners: z.coerce.boolean().optional().default(true),
 	block_trackers: z.coerce.boolean().optional().default(true),
-	block_requests: z.union([z.string(), z.array(z.string())]).transform((val) =>
-		Array.isArray(val)
-			? val
-			: val
-					.split("\n")
-					.map((s) => s.trim())
-					.filter(Boolean),
-	),
+	block_requests: z
+		.union([z.string(), z.array(z.string())])
+		.optional()
+		.transform((val) =>
+			Array.isArray(val)
+				? val
+				: (val
+						?.split("\n")
+						.map((s) => s.trim())
+						.filter(Boolean) ?? []),
+		),
 	cache_key: z.string().optional(),
 });
