@@ -1,5 +1,5 @@
 import { relations } from "drizzle-orm";
-import { boolean, integer, pgTable, text } from "drizzle-orm/pg-core";
+import { boolean, integer, jsonb, pgTable, text } from "drizzle-orm/pg-core";
 
 import { newId } from "#/utils/generate-id";
 import { timestamps } from "./utils/timestamps";
@@ -16,6 +16,7 @@ export const screenshots = pgTable("screenshots", {
 	blockAds: boolean("block_ads").notNull().default(false),
 	blockCookieBanners: boolean("block_cookie_banners").notNull().default(false),
 	blockTrackers: boolean("block_trackers").notNull().default(false),
+	blockRequests: jsonb("block_requests").$type<string[]>().default([]),
 	isExtra: boolean("is_extra").notNull().default(false),
 	workspaceId: text("workspace_id")
 		.notNull()

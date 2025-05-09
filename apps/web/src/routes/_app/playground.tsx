@@ -1,3 +1,4 @@
+import AdvertisimentIcon from "virtual:icons/hugeicons/advertisiment";
 import CropIcon from "virtual:icons/hugeicons/crop";
 import DocumentCode01Icon from "virtual:icons/hugeicons/document-code";
 import Image01Icon from "virtual:icons/hugeicons/image-01";
@@ -29,6 +30,9 @@ function RouteComponent() {
 		validators: { onSubmit: PlaygroundFormSchema },
 		defaultValues: {
 			url: "",
+			block_ads: true,
+			block_cookie_banners: true,
+			block_trackers: true,
 		} as z.input<typeof PlaygroundFormSchema>,
 		onSubmit: async ({ value }) => {
 			await mutateAsync(value, {
@@ -141,7 +145,7 @@ function RouteComponent() {
 
 								<Accordion.Item value="ads">
 									<Accordion.Trigger>
-										<Accordion.Icon as={CropIcon} />
+										<Accordion.Icon as={AdvertisimentIcon} />
 										Ads, tracking and more
 										<Accordion.Arrow />
 									</Accordion.Trigger>

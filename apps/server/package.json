@@ -24,6 +24,7 @@
 		"@ai-sdk/google": "1.2.17",
 		"@clerk/backend": "1.31.4",
 		"@ghostery/adblocker-playwright": "2.5.2",
+		"@ghostery/adblocker-puppeteer": "2.5.2",
 		"@hono-storage/core": "0.0.14",
 		"@hono-storage/s3": "0.0.13",
 		"@hono/clerk-auth": "2.0.0",
@@ -42,9 +43,12 @@
 		"p-limit": "6.2.0",
 		"pg": "8.15.6",
 		"playwright-extra": "4.3.6",
+		"puppeteer": "24.8.2",
+		"puppeteer-extra": "3.3.6",
 		"puppeteer-extra-plugin-stealth": "2.11.2",
 		"svix": "1.65.0",
 		"ts-case-convert": "2.1.0",
+		"wildcard-match": "5.1.4",
 		"zod": "3.24.4"
 	},
 	"devDependencies": {

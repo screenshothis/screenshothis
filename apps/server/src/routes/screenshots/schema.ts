@@ -31,6 +31,21 @@ export const CreateScreenshotParamsSchema = z
 			description: "Whether to block trackers",
 			example: true,
 		}),
+		block_requests: z
+			.union([z.string(), z.array(z.string())])
+			.optional()
+			.transform((val) => {
+				if (!val) return [];
+				if (Array.isArray(val)) return val;
+				return [val];
+			})
+			.openapi({
+				type: "array",
+				items: { type: "string", example: "example.com" },
+				minItems: 1,
+				description:
+					"List of requests to block. Can be specified as block_requests=foo or multiple times: block_requests=foo&block_requests=bar",
+			}),
 		cache_key: z.string().optional().openapi({
 			description:
 				"Optional cache key to differentiate screenshots of the same page.",
