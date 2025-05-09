@@ -1,7 +1,7 @@
 import {
-    ScrollArea as ScrollAreaPrimitives,
-    Select as SelectPrimitives,
-    Slot,
+	ScrollArea as ScrollAreaPrimitives,
+	Select as SelectPrimitives,
+	Slot,
 } from "radix-ui";
 import * as React from "react";
 import ArrowDown01Icon from "virtual:icons/hugeicons/arrow-down-01";
@@ -233,13 +233,17 @@ const SelectContext = React.createContext<SelectContextType>({
 
 const useSelectContext = () => React.useContext(SelectContext);
 
+export type RootProps = React.CustomComponentPropsWithRef<
+	typeof SelectPrimitives.Root
+> &
+	SelectContextType;
+
 const SelectRoot = ({
 	$size = "md",
 	$variant = "default",
 	$error = false,
 	...rest
-}: React.CustomComponentPropsWithRef<typeof SelectPrimitives.Root> &
-	SelectContextType) => {
+}: RootProps) => {
 	return (
 		<SelectContext.Provider value={{ $size, $variant, $error }}>
 			<SelectPrimitives.Root {...rest} />
@@ -416,12 +420,14 @@ function SelectItemIcon<T extends React.ElementType>({
 }
 
 export {
-    SelectContent as Content,
-    SelectGroup as Group,
-    SelectGroupLabel as GroupLabel,
-    SelectItem as Item,
-    SelectItemIcon as ItemIcon, SelectRoot as Root, SelectSeparator as Separator,
-    SelectTrigger as Trigger,
-    TriggerIcon,
-    SelectValue as Value
+	SelectContent as Content,
+	SelectGroup as Group,
+	SelectGroupLabel as GroupLabel,
+	SelectItem as Item,
+	SelectItemIcon as ItemIcon,
+	SelectRoot as Root,
+	SelectSeparator as Separator,
+	SelectTrigger as Trigger,
+	TriggerIcon,
+	SelectValue as Value,
 };

@@ -20,6 +20,7 @@ export const ResourceTypeSchema = z.enum([
 	"preflight",
 	"other",
 ]);
+export const PrefersColorSchemeSchema = z.enum(["light", "dark"]);
 
 export const PlaygroundFormSchema = z.object({
 	url: z
@@ -51,5 +52,6 @@ export const PlaygroundFormSchema = z.object({
 						.filter(Boolean) ?? []),
 		),
 	block_resources: z.array(ResourceTypeSchema).optional(),
+	prefers_color_scheme: PrefersColorSchemeSchema.optional().default("light"),
 	cache_key: z.string().optional(),
 });

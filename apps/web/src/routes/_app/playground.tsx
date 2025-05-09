@@ -3,6 +3,8 @@ import CropIcon from "virtual:icons/hugeicons/crop";
 import DocumentCode01Icon from "virtual:icons/hugeicons/document-code";
 import Image01Icon from "virtual:icons/hugeicons/image-01";
 import Link01Icon from "virtual:icons/hugeicons/link-01";
+import PaintBrush02Icon from "virtual:icons/hugeicons/paint-brush-02";
+import ToggleOnIcon from "virtual:icons/hugeicons/toggle-on";
 
 import { useStore } from "@tanstack/react-form";
 import { useMutation } from "@tanstack/react-query";
@@ -17,6 +19,7 @@ import * as Accordion from "#/components/ui/accordion.tsx";
 import { Skeleton } from "#/components/ui/skeleton.tsx";
 import {
 	PlaygroundFormSchema,
+	PrefersColorSchemeSchema,
 	ResourceTypeSchema,
 } from "#/schemas/playground.ts";
 import { cn } from "#/utils/cn.ts";
@@ -37,6 +40,7 @@ function RouteComponent() {
 			block_ads: true,
 			block_cookie_banners: true,
 			block_trackers: true,
+			prefers_color_scheme: "light",
 		} as z.input<typeof PlaygroundFormSchema>,
 		onSubmit: async ({ value }) => {
 			await mutateAsync(
@@ -92,6 +96,8 @@ function RouteComponent() {
 			values.block_resources
 				?.map((resource) => `   &block_resources=${resource}`)
 				.join("\n"),
+			values.prefers_color_scheme &&
+				`   &prefers_color_scheme=${values.prefers_color_scheme}`,
 		]
 			.filter(Boolean)
 			.join("\n");
@@ -338,6 +344,32 @@ function RouteComponent() {
 													</div>
 												</fieldset>
 											</div>
+										</Accordion.Content>
+									</Accordion.Item>
+
+									<Accordion.Item value="emulations">
+										<Accordion.Trigger>
+											<Accordion.Icon as={ToggleOnIcon} />
+											Emulations
+											<Accordion.Arrow />
+										</Accordion.Trigger>
+
+										<Accordion.Content className="mt-2 grid gap-3 px-7.5">
+											<form.AppField
+												name="prefers_color_scheme"
+												children={(field) => (
+													<field.SelectField
+														label="Prefers color scheme"
+														triggerIcon={PaintBrush02Icon}
+														options={PrefersColorSchemeSchema.options.map(
+															(option) => ({
+																value: option,
+																label: option,
+															}),
+														)}
+													/>
+												)}
+											/>
 										</Accordion.Content>
 									</Accordion.Item>
 								</Accordion.Root>
