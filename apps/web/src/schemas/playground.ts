@@ -21,6 +21,7 @@ export const ResourceTypeSchema = z.enum([
 	"other",
 ]);
 export const PrefersColorSchemeSchema = z.enum(["light", "dark"]);
+export const PrefersReducedMotionSchema = z.enum(["no-preference", "reduce"]);
 
 export const PlaygroundFormSchema = z.object({
 	url: z
@@ -53,5 +54,7 @@ export const PlaygroundFormSchema = z.object({
 		),
 	block_resources: z.array(ResourceTypeSchema).optional(),
 	prefers_color_scheme: PrefersColorSchemeSchema.optional().default("light"),
+	prefers_reduced_motion:
+		PrefersReducedMotionSchema.optional().default("no-preference"),
 	cache_key: z.string().optional(),
 });

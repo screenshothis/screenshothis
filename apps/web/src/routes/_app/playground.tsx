@@ -1,6 +1,7 @@
 import AdvertisimentIcon from "virtual:icons/hugeicons/advertisiment";
 import CropIcon from "virtual:icons/hugeicons/crop";
 import DocumentCode01Icon from "virtual:icons/hugeicons/document-code";
+import EaseInOutIcon from "virtual:icons/hugeicons/ease-in-out";
 import Image01Icon from "virtual:icons/hugeicons/image-01";
 import Link01Icon from "virtual:icons/hugeicons/link-01";
 import PaintBrush02Icon from "virtual:icons/hugeicons/paint-brush-02";
@@ -20,6 +21,7 @@ import { Skeleton } from "#/components/ui/skeleton.tsx";
 import {
 	PlaygroundFormSchema,
 	PrefersColorSchemeSchema,
+	PrefersReducedMotionSchema,
 	ResourceTypeSchema,
 } from "#/schemas/playground.ts";
 import { cn } from "#/utils/cn.ts";
@@ -98,6 +100,8 @@ function RouteComponent() {
 				.join("\n"),
 			values.prefers_color_scheme &&
 				`   &prefers_color_scheme=${values.prefers_color_scheme}`,
+			values.prefers_reduced_motion &&
+				`   &prefers_reduced_motion=${values.prefers_reduced_motion}`,
 		]
 			.filter(Boolean)
 			.join("\n");
@@ -367,6 +371,24 @@ function RouteComponent() {
 																label: option,
 															}),
 														)}
+													/>
+												)}
+											/>
+
+											<form.AppField
+												name="prefers_reduced_motion"
+												children={(field) => (
+													<field.SelectField
+														label="Prefers reduced motion"
+														triggerIcon={EaseInOutIcon}
+														placeholder="No preference (default)"
+														options={PrefersReducedMotionSchema.options.map(
+															(option) => ({
+																value: option,
+																label: option,
+															}),
+														)}
+														hint="If you have animations, you can reduce them to avoid motion sickness."
 													/>
 												)}
 											/>
