@@ -47,7 +47,6 @@ export async function getOrCreateScreenshot(
 			blockResources,
 		} = params;
 
-		// 1. Check DB for existing screenshot
 		const existing = await db.query.screenshots.findFirst({
 			where: and(
 				eq(screenshots.url, url),
@@ -77,7 +76,6 @@ export async function getOrCreateScreenshot(
 			} catch {}
 		}
 
-		// 2. Not found, generate screenshot
 		const browser = await puppeteer.launch({
 			headless: true,
 			defaultViewport: {
@@ -121,14 +119,29 @@ export async function getOrCreateScreenshot(
 			]);
 			await blocker.enableBlockingInPage(page);
 
-			await page.goto(url, { waitUntil: "networkidle0", timeout: 60000 });
+			await page.goto(url, { waitUntil: "networkidle0" });
 
-			const buffer = await page.screenshot({
-				quality: 80,
-				type: "jpeg",
-			});
+			let buffer: Uint8Array<ArrayBufferLike> | null = null;
+			if (selector) {
+				await page.waitForSelector(selector);
+				const element = await page.$(selector);
+				if (element) {
+					buffer = await element.screenshot({
+						quality: 80,
+						type: "jpeg",
+					});
+				}
+			} else {
+				buffer = await page.screenshot({
+					quality: 80,
+					type: "jpeg",
+				});
+			}
 
-			// 3. Insert new DB record
+			if (!buffer) {
+				throw new Error("Failed to generate screenshot");
+			}
+
 			const [inserted] = await db
 				.insert(screenshots)
 				.values({

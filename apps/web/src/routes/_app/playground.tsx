@@ -19,6 +19,7 @@ import {
 	PlaygroundFormSchema,
 	ResourceTypeSchema,
 } from "#/schemas/playground.ts";
+import { cn } from "#/utils/cn.ts";
 import { useORPC } from "#/utils/orpc.ts";
 
 export const Route = createFileRoute("/_app/playground")({
@@ -71,6 +72,7 @@ function RouteComponent() {
 		return [
 			"https://api.screenshothis.com/v1/screenshots/take",
 			`   ?url=${values.url || "https://polar.sh"}`,
+			values.selector && `   &selector=${values.selector}`,
 			values.width && `   &width=${values.width}`,
 			values.height && `   &height=${values.height}`,
 			values.is_mobile && `   &is_mobile=${values.is_mobile}`,
@@ -350,7 +352,12 @@ function RouteComponent() {
 										</div>
 									</div>
 
-									<div className="aspect-video w-full rounded-10 bg-(--bg-white-0)">
+									<div
+										className={cn(
+											"w-full rounded-10 bg-(--bg-white-0) transition-[height] duration-300",
+											!data?.image && "aspect-video",
+										)}
+									>
 										{form.state.isSubmitting ? (
 											<Skeleton className="h-full w-full rounded-10" />
 										) : data?.image ? (
