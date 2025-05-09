@@ -115,7 +115,7 @@ function RouteComponent() {
 
 						<div className="grid grid-cols-1 items-start gap-3 lg:grid-cols-2">
 							<Accordion.Root
-								defaultValue={["viewport", "ads"]}
+								defaultValue={["viewport"]}
 								type="multiple"
 								className="grid gap-3"
 							>
@@ -229,7 +229,7 @@ function RouteComponent() {
 															ResourceTypeSchema.options.map((option) => (
 																<field.CheckboxField
 																	wrapperClassName="flex lg:col-span-3"
-																	labelClassName="min-w-36"
+																	labelClassName="order-last"
 																	key={option}
 																	label={option}
 																	name="block_resources"
