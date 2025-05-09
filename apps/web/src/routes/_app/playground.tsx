@@ -67,7 +67,33 @@ function RouteComponent() {
 		[form],
 	);
 
-	console.info(form.state.errors);
+	const code = React.useMemo(() => {
+		return [
+			"https://api.screenshothis.com/v1/screenshots/take",
+			`   ?url=${values.url || "https://polar.sh"}`,
+			values.width && `   &width=${values.width}`,
+			values.height && `   &height=${values.height}`,
+			values.is_mobile && `   &is_mobile=${values.is_mobile}`,
+			values.is_landscape && `   &is_landscape=${values.is_landscape}`,
+			values.has_touch && `   &has_touch=${values.has_touch}`,
+			values.format && `   &format=${values.format}`,
+			values.block_ads && `   &block_ads=${values.block_ads}`,
+			values.block_cookie_banners &&
+				`   &block_cookie_banners=${values.block_cookie_banners}`,
+			values.block_trackers && `   &block_trackers=${values.block_trackers}`,
+			values.block_requests &&
+				typeof values.block_requests === "string" &&
+				values.block_requests
+					.split("\n")
+					.map((request) => `   &block_requests=${request}`)
+					.join("\n"),
+			values.block_resources
+				?.map((resource) => `   &block_resources=${resource}`)
+				.join("\n"),
+		]
+			.filter(Boolean)
+			.join("\n");
+	}, [values]);
 
 	return (
 		<>
@@ -330,32 +356,9 @@ function RouteComponent() {
 									title="Generated URL"
 									wrapperClassName="mt-8"
 									lang="bash"
-									children={[
-										`https://api.screenshothis.com/v1/screenshots/take?url=${values.url || "https://polar.sh"}`,
-										values.width && `   &width=${values.width}`,
-										values.height && `   &height=${values.height}`,
-										values.is_mobile && `   &is_mobile=${values.is_mobile}`,
-										values.is_landscape &&
-											`   &is_landscape=${values.is_landscape}`,
-										values.has_touch && `   &has_touch=${values.has_touch}`,
-										values.format && `   &format=${values.format}`,
-										values.block_ads && `   &block_ads=${values.block_ads}`,
-										values.block_cookie_banners &&
-											`   &block_cookie_banners=${values.block_cookie_banners}`,
-										values.block_trackers &&
-											`   &block_trackers=${values.block_trackers}`,
-										values.block_requests &&
-											typeof values.block_requests === "string" &&
-											values.block_requests
-												.split("\n")
-												.map((request) => `   &block_requests=${request}`)
-												.join("\n"),
-										values.block_resources
-											?.map((resource) => `   &block_resources=${resource}`)
-											.join("\n"),
-									]
-										.filter(Boolean)
-										.join("\n")}
+									isCopyable
+									textToCopy={code.replaceAll("\n", "").replaceAll("   ", "")}
+									children={code}
 								/>
 							</div>
 						</div>
