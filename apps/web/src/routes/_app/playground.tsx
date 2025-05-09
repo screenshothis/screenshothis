@@ -140,191 +140,206 @@ function RouteComponent() {
 						</div>
 
 						<div className="grid grid-cols-1 items-start gap-3 lg:grid-cols-2">
-							<Accordion.Root
-								defaultValue={["viewport"]}
-								type="multiple"
-								className="grid gap-3"
-							>
-								<Accordion.Item value="viewport">
-									<Accordion.Trigger>
-										<Accordion.Icon as={CropIcon} />
-										Viewport
-										<Accordion.Arrow />
-									</Accordion.Trigger>
-									<Accordion.Content className="mt-2 grid gap-3 px-7.5">
-										<div className="grid grid-cols-2 gap-3">
-											<form.AppField
-												name="width"
-												children={(field) => (
-													<field.TextField
-														label="Width"
-														type="number"
-														inputMode="numeric"
-														name="width"
-														placeholder="1920"
-													/>
-												)}
-											/>
-											<form.AppField
-												name="height"
-												children={(field) => (
-													<field.TextField
-														label="Height"
-														type="number"
-														inputMode="numeric"
-														name="height"
-														placeholder="1080"
-													/>
-												)}
-											/>
-										</div>
+							<div className="grid gap-4">
+								<form.AppField
+									name="selector"
+									children={(field) => (
+										<field.TextField
+											label="Selector"
+											name="selector"
+											id="selector"
+											placeholder="body > div.container"
+											hint="The element to screenshot. Defaults to the entire page."
+										/>
+									)}
+								/>
 
-										<div className="grid grid-cols-3 gap-3">
-											<form.AppField
-												name="is_mobile"
-												children={(field) => (
-													<field.SwitchField
-														wrapperClassName="flex"
-														label="Is mobile?"
-														name="is_mobile"
-														labelClassName="order-last"
-													/>
-												)}
-											/>
+								<Accordion.Root
+									defaultValue={["viewport"]}
+									type="multiple"
+									className="grid gap-4"
+								>
+									<Accordion.Item value="viewport">
+										<Accordion.Trigger>
+											<Accordion.Icon as={CropIcon} />
+											Viewport
+											<Accordion.Arrow />
+										</Accordion.Trigger>
+										<Accordion.Content className="mt-2 grid gap-3 px-7.5">
+											<div className="grid grid-cols-2 gap-3">
+												<form.AppField
+													name="width"
+													children={(field) => (
+														<field.TextField
+															label="Width"
+															type="number"
+															inputMode="numeric"
+															name="width"
+															placeholder="1920"
+														/>
+													)}
+												/>
+												<form.AppField
+													name="height"
+													children={(field) => (
+														<field.TextField
+															label="Height"
+															type="number"
+															inputMode="numeric"
+															name="height"
+															placeholder="1080"
+														/>
+													)}
+												/>
+											</div>
 
-											<form.AppField
-												name="is_landscape"
-												children={(field) => (
-													<field.SwitchField
-														wrapperClassName="flex"
-														label="Is landscape?"
-														name="is_landscape"
-														labelClassName="order-last"
-													/>
-												)}
-											/>
+											<div className="grid grid-cols-3 gap-3">
+												<form.AppField
+													name="is_mobile"
+													children={(field) => (
+														<field.SwitchField
+															wrapperClassName="flex"
+															label="Is mobile?"
+															name="is_mobile"
+															labelClassName="order-last"
+														/>
+													)}
+												/>
 
-											<form.AppField
-												name="has_touch"
-												children={(field) => (
-													<field.SwitchField
-														wrapperClassName="flex"
-														label="Has touch?"
-														name="has_touch"
-														labelClassName="order-last"
-													/>
-												)}
-											/>
-										</div>
-									</Accordion.Content>
-								</Accordion.Item>
+												<form.AppField
+													name="is_landscape"
+													children={(field) => (
+														<field.SwitchField
+															wrapperClassName="flex"
+															label="Is landscape?"
+															name="is_landscape"
+															labelClassName="order-last"
+														/>
+													)}
+												/>
 
-								<Accordion.Item value="ads">
-									<Accordion.Trigger>
-										<Accordion.Icon as={AdvertisimentIcon} />
-										Ads, tracking and more
-										<Accordion.Arrow />
-									</Accordion.Trigger>
-									<Accordion.Content className="mt-2 px-7.5">
-										<div className="grid gap-6 lg:grid-cols-3">
-											<form.AppField
-												name="block_ads"
-												children={(field) => (
-													<field.SwitchField
-														label="Block ads"
-														name="block_ads"
-													/>
-												)}
-											/>
-											<form.AppField
-												name="block_cookie_banners"
-												children={(field) => (
-													<field.SwitchField
-														label="Block cookie banners"
-														name="block_cookie_banners"
-													/>
-												)}
-											/>
-											<form.AppField
-												name="block_trackers"
-												children={(field) => (
-													<field.SwitchField
-														label="Block trackers"
-														name="block_trackers"
-													/>
-												)}
-											/>
+												<form.AppField
+													name="has_touch"
+													children={(field) => (
+														<field.SwitchField
+															wrapperClassName="flex"
+															label="Has touch?"
+															name="has_touch"
+															labelClassName="order-last"
+														/>
+													)}
+												/>
+											</div>
+										</Accordion.Content>
+									</Accordion.Item>
 
-											<form.AppField
-												name="block_requests"
-												children={(field) => (
-													<field.Textarea
-														wrapperClassName="lg:col-span-3"
-														label="Block requests"
-														name="block_requests"
-														rows={5}
-														placeholder={[
-															"*.js",
-															"*.css",
-															"https://ads.example.com/*",
-															"https://tracker.example.com/script.js",
-															"example.com/annoying-banner.png",
-															"facebook.com",
-														].join("\n")}
-														hint="One pattern per line. Supports wildcards."
-													/>
-												)}
-											/>
+									<Accordion.Item value="ads">
+										<Accordion.Trigger>
+											<Accordion.Icon as={AdvertisimentIcon} />
+											Ads, tracking and more
+											<Accordion.Arrow />
+										</Accordion.Trigger>
+										<Accordion.Content className="mt-2 px-7.5">
+											<div className="grid gap-6 lg:grid-cols-3">
+												<form.AppField
+													name="block_ads"
+													children={(field) => (
+														<field.SwitchField
+															label="Block ads"
+															name="block_ads"
+														/>
+													)}
+												/>
+												<form.AppField
+													name="block_cookie_banners"
+													children={(field) => (
+														<field.SwitchField
+															label="Block cookie banners"
+															name="block_cookie_banners"
+														/>
+													)}
+												/>
+												<form.AppField
+													name="block_trackers"
+													children={(field) => (
+														<field.SwitchField
+															label="Block trackers"
+															name="block_trackers"
+														/>
+													)}
+												/>
 
-											<fieldset className="grid gap-3 lg:col-span-3">
-												<div className="grid">
-													<legend className="font-medium text-(--text-sub-600)">
-														Block resources
-													</legend>
-													<p className="text-(--text-sub-600) text-paragraph-xs">
-														Select the resources you want to block.
-													</p>
-												</div>
+												<form.AppField
+													name="block_requests"
+													children={(field) => (
+														<field.Textarea
+															wrapperClassName="lg:col-span-3"
+															label="Block requests"
+															name="block_requests"
+															rows={5}
+															placeholder={[
+																"*.js",
+																"*.css",
+																"https://ads.example.com/*",
+																"https://tracker.example.com/script.js",
+																"example.com/annoying-banner.png",
+																"facebook.com",
+															].join("\n")}
+															hint="One pattern per line. Supports wildcards."
+														/>
+													)}
+												/>
 
-												<div className="grid gap-1.5">
-													<form.AppField
-														name="block_resources"
-														children={(field) =>
-															ResourceTypeSchema.options.map((option) => (
-																<field.CheckboxField
-																	wrapperClassName="flex lg:col-span-3"
-																	labelClassName="order-last"
-																	key={option}
-																	label={option}
-																	name="block_resources"
-																	value={option}
-																	checked={values.block_resources?.includes(
-																		option,
-																	)}
-																	onCheckedChange={(checked) => {
-																		if (checked) {
-																			field.handleChange([
-																				...(values.block_resources ?? []),
-																				option,
-																			]);
-																		} else {
-																			field.handleChange(
-																				values.block_resources?.filter(
-																					(r) => r !== option,
-																				) ?? [],
-																			);
-																		}
-																	}}
-																/>
-															))
-														}
-													/>
-												</div>
-											</fieldset>
-										</div>
-									</Accordion.Content>
-								</Accordion.Item>
-							</Accordion.Root>
+												<fieldset className="grid gap-3 lg:col-span-3">
+													<div className="grid">
+														<legend className="font-medium text-(--text-sub-600)">
+															Block resources
+														</legend>
+														<p className="text-(--text-sub-600) text-paragraph-xs">
+															Select the resources you want to block.
+														</p>
+													</div>
+
+													<div className="grid gap-1.5">
+														<form.AppField
+															name="block_resources"
+															children={(field) =>
+																ResourceTypeSchema.options.map((option) => (
+																	<field.CheckboxField
+																		wrapperClassName="flex lg:col-span-3"
+																		labelClassName="order-last"
+																		key={option}
+																		label={option}
+																		name="block_resources"
+																		value={option}
+																		checked={values.block_resources?.includes(
+																			option,
+																		)}
+																		onCheckedChange={(checked) => {
+																			if (checked) {
+																				field.handleChange([
+																					...(values.block_resources ?? []),
+																					option,
+																				]);
+																			} else {
+																				field.handleChange(
+																					values.block_resources?.filter(
+																						(r) => r !== option,
+																					) ?? [],
+																				);
+																			}
+																		}}
+																	/>
+																))
+															}
+														/>
+													</div>
+												</fieldset>
+											</div>
+										</Accordion.Content>
+									</Accordion.Item>
+								</Accordion.Root>
+							</div>
 
 							{/* Preview */}
 							<div>

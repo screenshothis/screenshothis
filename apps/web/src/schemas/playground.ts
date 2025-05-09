@@ -29,6 +29,7 @@ export const PlaygroundFormSchema = z.object({
 		.url({
 			message: "Invalid URL",
 		}),
+	selector: z.string().optional(),
 	width: z.number().optional().default(1920),
 	height: z.number().optional().default(1080),
 	is_mobile: z.coerce.boolean().optional().default(false),
