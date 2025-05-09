@@ -32,9 +32,10 @@ function RouteComponent() {
 		} as z.input<typeof PlaygroundFormSchema>,
 		onSubmit: async ({ value }) => {
 			await mutateAsync(value, {
-				async onSuccess(data, variables, context) {
-					// await queryClient.invalidateQueries({
-					// })
+				async onSuccess() {
+					await queryClient.invalidateQueries({
+						queryKey: orpc.me.queryOptions().queryKey,
+					});
 				},
 			});
 		},
