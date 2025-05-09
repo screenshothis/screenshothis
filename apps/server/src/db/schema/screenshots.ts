@@ -22,6 +22,9 @@ export const screenshots = pgTable("screenshots", {
 	blockTrackers: boolean("block_trackers").notNull().default(false),
 	blockRequests: jsonb("block_requests").$type<string[]>().default([]),
 	blockResources: jsonb("block_resources").$type<string[]>().default([]),
+	prefersColorScheme: text("prefers_color_scheme")
+		.$type<"light" | "dark">()
+		.default("light"),
 	isExtra: boolean("is_extra").notNull().default(false),
 	workspaceId: text("workspace_id")
 		.notNull()

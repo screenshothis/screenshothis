@@ -45,6 +45,7 @@ export async function getOrCreateScreenshot(
 			blockTrackers,
 			blockRequests,
 			blockResources,
+			prefersColorScheme,
 		} = params;
 
 		const existing = await db.query.screenshots.findFirst({
@@ -62,6 +63,7 @@ export async function getOrCreateScreenshot(
 				eq(screenshots.blockTrackers, blockTrackers),
 				sql`${screenshots.blockRequests} @> ${JSON.stringify(blockRequests)}`,
 				sql`${screenshots.blockResources} @> ${JSON.stringify(blockResources)}`,
+				eq(screenshots.prefersColorScheme, prefersColorScheme),
 				eq(screenshots.workspaceId, workspaceId),
 			),
 		});
@@ -87,6 +89,13 @@ export async function getOrCreateScreenshot(
 			},
 		});
 		const page = await browser.newPage();
+
+		page.emulateMediaFeatures([
+			{
+				name: "prefers-color-scheme",
+				value: prefersColorScheme,
+			},
+		]);
 
 		if (blockRequests?.length > 0 || blockResources?.length > 0) {
 			const blockRequest = wildcardMatch(blockRequests, { separator: false });
@@ -158,6 +167,7 @@ export async function getOrCreateScreenshot(
 					blockTrackers,
 					blockRequests,
 					blockResources,
+					prefersColorScheme,
 					workspaceId,
 				})
 				.returning();

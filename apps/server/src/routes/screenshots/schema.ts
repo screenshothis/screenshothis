@@ -124,6 +124,14 @@ export const CreateScreenshotParamsSchema = z
 				description:
 					"List of resource types to block. Can be specified as block_resources=script or multiple times: block_resources=script&block_resources=image",
 			}),
+		prefers_color_scheme: z
+			.enum(["light", "dark"])
+			.optional()
+			.default("light")
+			.openapi({
+				description: "The color scheme of the screenshot",
+				example: "light",
+			}),
 		cache_key: z.string().optional().openapi({
 			description:
 				"Optional cache key to differentiate screenshots of the same page.",
