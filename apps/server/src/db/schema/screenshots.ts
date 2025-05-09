@@ -27,14 +27,20 @@ export const screenshots = pgTable("screenshots", {
 	blockAds: boolean("block_ads").notNull().default(false),
 	blockCookieBanners: boolean("block_cookie_banners").notNull().default(false),
 	blockTrackers: boolean("block_trackers").notNull().default(false),
-	blockRequests: jsonb("block_requests").$type<string[]>().default([]),
+	blockRequests: jsonb("block_requests")
+		.notNull()
+		.$type<Array<string>>()
+		.default([]),
 	blockResources: jsonb("block_resources")
+		.notNull()
 		.$type<Array<z.infer<typeof ResourceTypeSchema>>>()
 		.default([]),
 	prefersColorScheme: text("prefers_color_scheme")
+		.notNull()
 		.$type<z.infer<typeof PrefersColorSchemeSchema>>()
 		.default("light"),
 	prefersReducedMotion: text("prefers_reduced_motion")
+		.notNull()
 		.$type<z.infer<typeof PrefersReducedMotionSchema>>()
 		.default("no-preference"),
 	isExtra: boolean("is_extra").notNull().default(false),

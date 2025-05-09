@@ -11,6 +11,7 @@ import { useStore } from "@tanstack/react-form";
 import { useMutation } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 import * as React from "react";
+import { objectToSnake } from "ts-case-convert";
 import type { z } from "zod";
 
 import { CodeBlock } from "#/components/code-block.tsx";
@@ -19,11 +20,11 @@ import { PageHeader } from "#/components/page-header.tsx";
 import * as Accordion from "#/components/ui/accordion.tsx";
 import { Skeleton } from "#/components/ui/skeleton.tsx";
 import {
-	PlaygroundFormSchema,
+	CreateScreenshotSchema,
 	PrefersColorSchemeSchema,
 	PrefersReducedMotionSchema,
 	ResourceTypeSchema,
-} from "#/schemas/playground.ts";
+} from "#/schemas/screenshots.ts";
 import { cn } from "#/utils/cn.ts";
 import { useORPC } from "#/utils/orpc.ts";
 
@@ -36,22 +37,20 @@ function RouteComponent() {
 	const orpc = useORPC();
 	const { mutateAsync, data } = useMutation(orpc.playground.mutationOptions());
 	const form = useAppForm({
-		validators: { onSubmit: PlaygroundFormSchema },
+		validators: { onSubmit: CreateScreenshotSchema },
 		defaultValues: {
 			url: "",
-			block_ads: true,
-			block_cookie_banners: true,
-			block_trackers: true,
-			prefers_color_scheme: "light",
-		} as z.input<typeof PlaygroundFormSchema>,
+			blockAds: true,
+			blockCookieBanners: true,
+			blockTrackers: true,
+			prefersColorScheme: "light",
+		} as z.input<typeof CreateScreenshotSchema>,
 		onSubmit: async ({ value }) => {
 			await mutateAsync(
 				{
-					...value,
-					block_requests: Array.isArray(value.block_requests)
-						? value.block_requests
-						: value.block_requests?.split("\n").map((s) => s.trim()),
-					block_resources: value.block_resources,
+					...CreateScreenshotSchema.transform((values) =>
+						objectToSnake(values),
+					).parse(value),
 				},
 				{
 					async onSuccess() {
@@ -81,27 +80,27 @@ function RouteComponent() {
 			values.selector && `   &selector=${values.selector}`,
 			values.width && `   &width=${values.width}`,
 			values.height && `   &height=${values.height}`,
-			values.is_mobile && `   &is_mobile=${values.is_mobile}`,
-			values.is_landscape && `   &is_landscape=${values.is_landscape}`,
-			values.has_touch && `   &has_touch=${values.has_touch}`,
+			values.isMobile && `   &is_mobile=${values.isMobile}`,
+			values.isLandscape && `   &is_landscape=${values.isLandscape}`,
+			values.hasTouch && `   &has_touch=${values.hasTouch}`,
 			values.format && `   &format=${values.format}`,
-			values.block_ads && `   &block_ads=${values.block_ads}`,
-			values.block_cookie_banners &&
-				`   &block_cookie_banners=${values.block_cookie_banners}`,
-			values.block_trackers && `   &block_trackers=${values.block_trackers}`,
-			values.block_requests &&
-				typeof values.block_requests === "string" &&
-				values.block_requests
-					.split("\n")
-					.map((request) => `   &block_requests=${request}`)
+			values.blockAds && `   &block_ads=${values.blockAds}`,
+			values.blockCookieBanners &&
+				`   &block_cookie_banners=${values.blockCookieBanners}`,
+			values.blockTrackers && `   &block_trackers=${values.blockTrackers}`,
+			values.blockRequests &&
+				values.blockRequests.length > 0 &&
+				values.blockRequests
+					?.split("\n")
+					?.map((request) => `   &block_requests=${request}`)
 					.join("\n"),
-			values.block_resources
+			values.blockResources
 				?.map((resource) => `   &block_resources=${resource}`)
 				.join("\n"),
-			values.prefers_color_scheme &&
-				`   &prefers_color_scheme=${values.prefers_color_scheme}`,
-			values.prefers_reduced_motion &&
-				`   &prefers_reduced_motion=${values.prefers_reduced_motion}`,
+			values.prefersColorScheme &&
+				`   &prefers_color_scheme=${values.prefersColorScheme}`,
+			values.prefersReducedMotion &&
+				`   &prefers_reduced_motion=${values.prefersReducedMotion}`,
 		]
 			.filter(Boolean)
 			.join("\n");
@@ -207,36 +206,36 @@ function RouteComponent() {
 
 											<div className="grid grid-cols-3 gap-3">
 												<form.AppField
-													name="is_mobile"
+													name="isMobile"
 													children={(field) => (
 														<field.SwitchField
 															wrapperClassName="flex"
 															label="Is mobile?"
-															name="is_mobile"
+															name="isMobile"
 															labelClassName="order-last"
 														/>
 													)}
 												/>
 
 												<form.AppField
-													name="is_landscape"
+													name="isLandscape"
 													children={(field) => (
 														<field.SwitchField
 															wrapperClassName="flex"
 															label="Is landscape?"
-															name="is_landscape"
+															name="isLandscape"
 															labelClassName="order-last"
 														/>
 													)}
 												/>
 
 												<form.AppField
-													name="has_touch"
+													name="hasTouch"
 													children={(field) => (
 														<field.SwitchField
 															wrapperClassName="flex"
 															label="Has touch?"
-															name="has_touch"
+															name="hasTouch"
 															labelClassName="order-last"
 														/>
 													)}
@@ -254,40 +253,40 @@ function RouteComponent() {
 										<Accordion.Content className="mt-2 px-7.5">
 											<div className="grid gap-6 lg:grid-cols-3">
 												<form.AppField
-													name="block_ads"
+													name="blockAds"
 													children={(field) => (
 														<field.SwitchField
 															label="Block ads"
-															name="block_ads"
+															name="blockAds"
 														/>
 													)}
 												/>
 												<form.AppField
-													name="block_cookie_banners"
+													name="blockCookieBanners"
 													children={(field) => (
 														<field.SwitchField
 															label="Block cookie banners"
-															name="block_cookie_banners"
+															name="blockCookieBanners"
 														/>
 													)}
 												/>
 												<form.AppField
-													name="block_trackers"
+													name="blockTrackers"
 													children={(field) => (
 														<field.SwitchField
 															label="Block trackers"
-															name="block_trackers"
+															name="blockTrackers"
 														/>
 													)}
 												/>
 
 												<form.AppField
-													name="block_requests"
+													name="blockRequests"
 													children={(field) => (
 														<field.Textarea
 															wrapperClassName="lg:col-span-3"
 															label="Block requests"
-															name="block_requests"
+															name="blockRequests"
 															rows={5}
 															placeholder={[
 																"*.js",
@@ -314,7 +313,7 @@ function RouteComponent() {
 
 													<div className="grid gap-1.5">
 														<form.AppField
-															name="block_resources"
+															name="blockResources"
 															children={(field) =>
 																ResourceTypeSchema.options.map((option) => (
 																	<field.CheckboxField
@@ -322,20 +321,20 @@ function RouteComponent() {
 																		labelClassName="order-last"
 																		key={option}
 																		label={option}
-																		name="block_resources"
+																		name="blockResources"
 																		value={option}
-																		checked={values.block_resources?.includes(
+																		checked={values.blockResources?.includes(
 																			option,
 																		)}
 																		onCheckedChange={(checked) => {
 																			if (checked) {
 																				field.handleChange([
-																					...(values.block_resources ?? []),
+																					...(values.blockResources ?? []),
 																					option,
 																				]);
 																			} else {
 																				field.handleChange(
-																					values.block_resources?.filter(
+																					values.blockResources?.filter(
 																						(r) => r !== option,
 																					) ?? [],
 																				);
@@ -360,7 +359,7 @@ function RouteComponent() {
 
 										<Accordion.Content className="mt-2 grid gap-3 px-7.5">
 											<form.AppField
-												name="prefers_color_scheme"
+												name="prefersColorScheme"
 												children={(field) => (
 													<field.SelectField
 														label="Prefers color scheme"
@@ -376,7 +375,7 @@ function RouteComponent() {
 											/>
 
 											<form.AppField
-												name="prefers_reduced_motion"
+												name="prefersReducedMotion"
 												children={(field) => (
 													<field.SelectField
 														label="Prefers reduced motion"

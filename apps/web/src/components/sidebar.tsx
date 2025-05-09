@@ -1,5 +1,6 @@
 "use client";
 
+import Album02Icon from "virtual:icons/hugeicons/album-02";
 import ArrowRight01Icon from "virtual:icons/hugeicons/arrow-right-01";
 import DashboardSquare02Icon from "virtual:icons/hugeicons/dashboard-square-02";
 import DocumentCode01Icon from "virtual:icons/hugeicons/document-code";
@@ -26,6 +27,7 @@ type NavigationLink = {
 export const navigationLinks: NavigationLink[] = [
 	{ icon: DashboardSquare02Icon, label: "Overview", to: "/dashboard" },
 	{ icon: DocumentCode01Icon, label: "Playground", to: "/playground" },
+	{ icon: Album02Icon, label: "Screenshots", to: "/screenshots" },
 ];
 
 function useCollapsedState({

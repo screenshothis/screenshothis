@@ -1,5 +1,5 @@
 import { ORPCError } from "@orpc/client";
-import { eq, sql } from "drizzle-orm";
+import { and, eq, like, sql } from "drizzle-orm";
 import { z } from "zod";
 
 import { db } from "#/db";
@@ -255,6 +255,50 @@ export const appRouter = {
 					message: "Failed to get screenshot",
 				});
 			}
+		}),
+	screenshots: protectedProcedure
+		.input(
+			z
+				.object({
+					q: z.string().optional(),
+				})
+				.optional(),
+		)
+		.handler(async ({ context, input }) => {
+			if (!context.user?.currentWorkspaceId) {
+				throw new ORPCError("UNAUTHORIZED", {
+					message: "Current workspace not found",
+				});
+			}
+
+			const screenshots = await db.query.screenshots.findMany({
+				where: and(
+					eq(schema.screenshots.workspaceId, context.user.currentWorkspaceId),
+					input?.q ? like(schema.screenshots.url, `%${input.q}%`) : undefined,
+				),
+				columns: {
+					id: true,
+					url: true,
+					selector: true,
+					width: true,
+					height: true,
+					isMobile: true,
+					isLandscape: true,
+					hasTouch: true,
+					format: true,
+					blockAds: true,
+					blockCookieBanners: true,
+					blockTrackers: true,
+					blockRequests: true,
+					blockResources: true,
+					prefersColorScheme: true,
+					prefersReducedMotion: true,
+					createdAt: true,
+					updatedAt: true,
+				},
+			});
+
+			return screenshots;
 		}),
 } as const;
 
