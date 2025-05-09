@@ -142,7 +142,7 @@ function RouteComponent() {
 						</div>
 
 						<div className="grid grid-cols-1 items-start gap-3 lg:grid-cols-2">
-							<div className="grid gap-4">
+							<div className="grid gap-5">
 								<form.AppField
 									name="selector"
 									children={(field) => (
@@ -159,7 +159,7 @@ function RouteComponent() {
 								<Accordion.Root
 									defaultValue={["viewport"]}
 									type="multiple"
-									className="grid gap-4"
+									className="grid gap-5"
 								>
 									<Accordion.Item value="viewport">
 										<Accordion.Trigger>
