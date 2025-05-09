@@ -1,5 +1,26 @@
 import { z } from "zod";
 
+export const ResourceTypeSchema = z.enum([
+	"document",
+	"stylesheet",
+	"image",
+	"media",
+	"font",
+	"script",
+	"texttrack",
+	"xhr",
+	"fetch",
+	"prefetch",
+	"eventsource",
+	"websocket",
+	"manifest",
+	"signedexchange",
+	"ping",
+	"cspviolationreport",
+	"preflight",
+	"other",
+]);
+
 export const PlaygroundFormSchema = z.object({
 	url: z
 		.string({
@@ -25,5 +46,6 @@ export const PlaygroundFormSchema = z.object({
 						.map((s) => s.trim())
 						.filter(Boolean) ?? []),
 		),
+	block_resources: z.array(ResourceTypeSchema).optional(),
 	cache_key: z.string().optional(),
 });

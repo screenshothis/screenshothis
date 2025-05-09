@@ -35,11 +35,11 @@ function IconIndeterminate({ ...rest }: React.SVGProps<SVGSVGElement>) {
 	);
 }
 
-function Checkbox({
-	className,
-	checked,
-	...rest
-}: React.CustomComponentPropsWithRef<typeof CheckboxPrimitive.Root>) {
+export type CheckboxProps = React.CustomComponentPropsWithRef<
+	typeof CheckboxPrimitive.Root
+>;
+
+function Checkbox({ className, checked, ...rest }: CheckboxProps) {
 	const filterId = React.useId();
 
 	// precalculated by .getTotalLength()

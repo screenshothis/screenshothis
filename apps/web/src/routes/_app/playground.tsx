@@ -15,7 +15,10 @@ import { useAppForm } from "#/components/forms/form.tsx";
 import { PageHeader } from "#/components/page-header.tsx";
 import * as Accordion from "#/components/ui/accordion.tsx";
 import { Skeleton } from "#/components/ui/skeleton.tsx";
-import { PlaygroundFormSchema } from "#/schemas/playground.ts";
+import {
+	PlaygroundFormSchema,
+	ResourceTypeSchema,
+} from "#/schemas/playground.ts";
 import { useORPC } from "#/utils/orpc.ts";
 
 export const Route = createFileRoute("/_app/playground")({
@@ -40,10 +43,8 @@ function RouteComponent() {
 					...value,
 					block_requests: Array.isArray(value.block_requests)
 						? value.block_requests
-						: (value.block_requests
-								?.split("\n")
-								.map((s) => s.trim())
-								.filter(Boolean) ?? []),
+						: value.block_requests?.split("\n").map((s) => s.trim()),
+					block_resources: value.block_resources,
 				},
 				{
 					async onSuccess() {
@@ -161,7 +162,7 @@ function RouteComponent() {
 										<Accordion.Arrow />
 									</Accordion.Trigger>
 									<Accordion.Content className="mt-2 px-7.5">
-										<div className="grid gap-3 lg:grid-cols-3">
+										<div className="grid gap-6 lg:grid-cols-3">
 											<form.AppField
 												name="block_ads"
 												children={(field) => (
@@ -210,6 +211,52 @@ function RouteComponent() {
 													/>
 												)}
 											/>
+
+											<fieldset className="grid gap-3 lg:col-span-3">
+												<div className="grid">
+													<legend className="font-medium text-(--text-sub-600)">
+														Block resources
+													</legend>
+													<p className="text-(--text-sub-600) text-paragraph-xs">
+														Select the resources you want to block.
+													</p>
+												</div>
+
+												<div className="grid gap-1.5">
+													<form.AppField
+														name="block_resources"
+														children={(field) =>
+															ResourceTypeSchema.options.map((option) => (
+																<field.CheckboxField
+																	wrapperClassName="flex lg:col-span-3"
+																	labelClassName="min-w-36"
+																	key={option}
+																	label={option}
+																	name="block_resources"
+																	value={option}
+																	checked={values.block_resources?.includes(
+																		option,
+																	)}
+																	onCheckedChange={(checked) => {
+																		if (checked) {
+																			field.handleChange([
+																				...(values.block_resources ?? []),
+																				option,
+																			]);
+																		} else {
+																			field.handleChange(
+																				values.block_resources?.filter(
+																					(r) => r !== option,
+																				) ?? [],
+																			);
+																		}
+																	}}
+																/>
+															))
+														}
+													/>
+												</div>
+											</fieldset>
 										</div>
 									</Accordion.Content>
 								</Accordion.Item>
@@ -261,6 +308,9 @@ function RouteComponent() {
 												.split("\n")
 												.map((request) => `   &block_requests=${request}`)
 												.join("\n"),
+										values.block_resources
+											?.map((resource) => `   &block_resources=${resource}`)
+											.join("\n"),
 									]
 										.filter(Boolean)
 										.join("\n")}
