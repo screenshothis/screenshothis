@@ -3,29 +3,22 @@ import * as React from "react";
 
 import { useFieldContext } from "#/hooks/form-context.ts";
 import { cn } from "#/utils/cn.ts";
-import { Input, type InputProps } from "../ui/input.tsx";
+import * as Switch from "../ui/switch.tsx";
 import { Field, type FieldProps } from "./field.tsx";
 
-export type TextFieldProps = Omit<FieldProps, "children"> &
-	InputProps & {
+export type SwitchFieldProps = Omit<FieldProps, "children"> &
+	Switch.SwitchProps & {
 		wrapperClassName?: string;
 	};
 
-export function TextField({
+export function SwitchField({
 	wrapperClassName,
-	$size,
 	label,
 	labelClassName,
-	leadingIcon: LeadingIcon,
-	trailingIcon: TrailingIcon,
-	leadingNode,
-	trailingNode,
-	inlineLeadingNode,
-	inlineTrailingNode,
 	hint,
 	...rest
-}: TextFieldProps) {
-	const field = useFieldContext<string | number>();
+}: SwitchFieldProps) {
+	const field = useFieldContext<boolean>();
 	const errors = useStore(field.store, (state) => state.meta.errors);
 	const generatedId = React.useId();
 	const id = rest.id || generatedId;
@@ -38,18 +31,11 @@ export function TextField({
 			labelClassName={labelClassName}
 			error={error}
 			hint={hint}
-			id={id}
+			id={`${id}-form-item`}
 			className={cn("flex flex-col gap-1", wrapperClassName)}
 		>
-			<Input
+			<Switch.Root
 				data-slot="form-control"
-				$error={!!error}
-				leadingIcon={LeadingIcon}
-				trailingIcon={TrailingIcon}
-				leadingNode={leadingNode}
-				trailingNode={trailingNode}
-				inlineLeadingNode={inlineLeadingNode}
-				inlineTrailingNode={inlineTrailingNode}
 				aria-describedby={[
 					errors && `${id}-form-item-message`,
 					`${id}-form-item-description`,
@@ -58,19 +44,12 @@ export function TextField({
 					.join(" ")}
 				aria-invalid={error ? true : undefined}
 				id={`${id}-form-item`}
-				type="text"
-				value={field.state.value}
-				onChange={(e) => {
-					if (rest.type === "number") {
-						field.handleChange(e.target.valueAsNumber as string | number);
-					} else {
-						field.handleChange(e.target.value as string | number);
-					}
-				}}
+				checked={field.state.value}
+				onCheckedChange={(checked) => field.handleChange(checked)}
 				onBlur={field.handleBlur}
 				{...rest}
 			/>
 		</Field>
 	);
 }
-TextField.displayName = "TextField";
+SwitchField.displayName = "SwitchField";

@@ -1,14 +1,12 @@
-"use client";
-
 import { Switch as SwitchPrimitives } from "radix-ui";
 
 import { cn } from "#/utils/cn.ts";
 
-function Switch({
-	className,
-	disabled,
-	...rest
-}: React.CustomComponentPropsWithRef<typeof SwitchPrimitives.Root>) {
+export type SwitchProps = React.CustomComponentPropsWithRef<
+	typeof SwitchPrimitives.Root
+>;
+
+function Switch({ className, disabled, ...rest }: SwitchProps) {
 	return (
 		<SwitchPrimitives.Root
 			className={cn(

@@ -10,8 +10,8 @@ type SubmitButtonProps = ButtonProps & {
 
 export function SubmitButton({
 	children,
-	isSubmitting,
 	type = "submit",
+	isSubmitting = false,
 	...props
 }: SubmitButtonProps) {
 	const form = useFormContext();
@@ -23,6 +23,14 @@ export function SubmitButton({
 					disabled={props.disabled || isSubmitting}
 					type={type}
 					{...props}
+					trailingIconClassName={cn(
+						isSubmitting && "invisible",
+						props.trailingIconClassName,
+					)}
+					leadingIconClassName={cn(
+						isSubmitting && "invisible",
+						props.leadingIconClassName,
+					)}
 				>
 					<span className={cn(isSubmitting && "invisible")}>{children}</span>
 
