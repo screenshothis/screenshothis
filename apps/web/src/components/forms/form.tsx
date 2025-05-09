@@ -12,8 +12,8 @@ export const { useAppForm, withForm } = createFormHook({
 	formContext,
 	fieldComponents: {
 		CheckboxField,
-		TextField,
 		SwitchField,
+		TextField,
 		Textarea,
 	},
 	formComponents: {

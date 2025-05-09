@@ -2,7 +2,6 @@ import { useStore } from "@tanstack/react-form";
 import * as React from "react";
 
 import { useFieldContext } from "#/hooks/form-context.ts";
-import { cn } from "#/utils/cn.ts";
 import * as Switch from "../ui/switch.tsx";
 import { Field, type FieldProps } from "./field.tsx";
 
@@ -34,7 +33,7 @@ export function SwitchField({
 			hint={hint}
 			hintClassName={hintClassName}
 			id={`${id}-form-item`}
-			className={cn("flex flex-col gap-1", wrapperClassName)}
+			className={wrapperClassName}
 		>
 			<Switch.Root
 				data-slot="form-control"

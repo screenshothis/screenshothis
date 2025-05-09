@@ -125,7 +125,7 @@ function RouteComponent() {
 										Viewport
 										<Accordion.Arrow />
 									</Accordion.Trigger>
-									<Accordion.Content className="mt-2 px-7.5">
+									<Accordion.Content className="mt-2 grid gap-3 px-7.5">
 										<div className="grid grid-cols-2 gap-3">
 											<form.AppField
 												name="width"
@@ -148,6 +148,44 @@ function RouteComponent() {
 														inputMode="numeric"
 														name="height"
 														placeholder="1080"
+													/>
+												)}
+											/>
+										</div>
+
+										<div className="grid grid-cols-3 gap-3">
+											<form.AppField
+												name="is_mobile"
+												children={(field) => (
+													<field.SwitchField
+														wrapperClassName="flex"
+														label="Is mobile?"
+														name="is_mobile"
+														labelClassName="order-last"
+													/>
+												)}
+											/>
+
+											<form.AppField
+												name="is_landscape"
+												children={(field) => (
+													<field.SwitchField
+														wrapperClassName="flex"
+														label="Is landscape?"
+														name="is_landscape"
+														labelClassName="order-last"
+													/>
+												)}
+											/>
+
+											<form.AppField
+												name="has_touch"
+												children={(field) => (
+													<field.SwitchField
+														wrapperClassName="flex"
+														label="Has touch?"
+														name="has_touch"
+														labelClassName="order-last"
 													/>
 												)}
 											/>
@@ -296,6 +334,10 @@ function RouteComponent() {
 										`https://api.screenshothis.com/v1/screenshots/take?url=${values.url || "https://polar.sh"}`,
 										values.width && `   &width=${values.width}`,
 										values.height && `   &height=${values.height}`,
+										values.is_mobile && `   &is_mobile=${values.is_mobile}`,
+										values.is_landscape &&
+											`   &is_landscape=${values.is_landscape}`,
+										values.has_touch && `   &has_touch=${values.has_touch}`,
 										values.format && `   &format=${values.format}`,
 										values.block_ads && `   &block_ads=${values.block_ads}`,
 										values.block_cookie_banners &&
