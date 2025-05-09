@@ -1,0 +1,1 @@
+ALTER TABLE "screenshots" ADD COLUMN "prefers_reduced_motion" text DEFAULT 'no-preference';

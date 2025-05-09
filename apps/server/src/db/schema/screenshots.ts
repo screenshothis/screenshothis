@@ -1,6 +1,13 @@
 import { relations } from "drizzle-orm";
 import { boolean, integer, jsonb, pgTable, text } from "drizzle-orm/pg-core";
+import type { z } from "zod";
 
+import type {
+	FormatSchema,
+	PrefersColorSchemeSchema,
+	PrefersReducedMotionSchema,
+	ResourceTypeSchema,
+} from "#/routes/screenshots/schema";
 import { newId } from "#/utils/generate-id";
 import { timestamps } from "./utils/timestamps";
 import { workspaces } from "./workspaces";
@@ -9,22 +16,27 @@ export const screenshots = pgTable("screenshots", {
 	id: text()
 		.primaryKey()
 		.$defaultFn(() => newId("screenshot")),
-	url: text().notNull(),
+	url: text("url").notNull(),
 	selector: text("selector"),
 	width: integer("width").notNull(),
 	height: integer("height").notNull(),
 	isMobile: boolean("is_mobile").notNull().default(false),
 	isLandscape: boolean("is_landscape").notNull().default(false),
 	hasTouch: boolean("has_touch").notNull().default(false),
-	format: text("format").$type<"jpeg" | "png" | "webp">().notNull(),
+	format: text("format").$type<z.infer<typeof FormatSchema>>().notNull(),
 	blockAds: boolean("block_ads").notNull().default(false),
 	blockCookieBanners: boolean("block_cookie_banners").notNull().default(false),
 	blockTrackers: boolean("block_trackers").notNull().default(false),
 	blockRequests: jsonb("block_requests").$type<string[]>().default([]),
-	blockResources: jsonb("block_resources").$type<string[]>().default([]),
+	blockResources: jsonb("block_resources")
+		.$type<Array<z.infer<typeof ResourceTypeSchema>>>()
+		.default([]),
 	prefersColorScheme: text("prefers_color_scheme")
-		.$type<"light" | "dark">()
+		.$type<z.infer<typeof PrefersColorSchemeSchema>>()
 		.default("light"),
+	prefersReducedMotion: text("prefers_reduced_motion")
+		.$type<z.infer<typeof PrefersReducedMotionSchema>>()
+		.default("no-preference"),
 	isExtra: boolean("is_extra").notNull().default(false),
 	workspaceId: text("workspace_id")
 		.notNull()

@@ -14,7 +14,10 @@ import wildcardMatch from "wildcard-match";
 import { db } from "../db";
 import { screenshots } from "../db/schema/screenshots";
 import { s3 } from "../lib/s3";
-import type { CreateScreenshotParamsSchema } from "../routes/screenshots/schema";
+import type {
+	CreateScreenshotParamsSchema,
+	ResourceTypeSchema,
+} from "../routes/screenshots/schema";
 
 puppeteer.use(StealthPlugin());
 
@@ -46,6 +49,7 @@ export async function getOrCreateScreenshot(
 			blockRequests,
 			blockResources,
 			prefersColorScheme,
+			prefersReducedMotion,
 		} = params;
 
 		const existing = await db.query.screenshots.findFirst({
@@ -94,6 +98,10 @@ export async function getOrCreateScreenshot(
 			{
 				name: "prefers-color-scheme",
 				value: prefersColorScheme,
+			},
+			{
+				name: "prefers-reduced-motion",
+				value: prefersReducedMotion,
 			},
 		]);
 
@@ -166,8 +174,11 @@ export async function getOrCreateScreenshot(
 					blockCookieBanners,
 					blockTrackers,
 					blockRequests,
-					blockResources,
+					blockResources: blockResources as Array<
+						z.infer<typeof ResourceTypeSchema>
+					>,
 					prefersColorScheme,
+					prefersReducedMotion,
 					workspaceId,
 				})
 				.returning();

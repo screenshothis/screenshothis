@@ -1,6 +1,30 @@
 import { z } from "@hono/zod-openapi";
 import { objectToCamel } from "ts-case-convert";
 
+export const FormatSchema = z.enum(["jpeg", "png", "webp"]);
+export const ResourceTypeSchema = z.enum([
+	"document",
+	"stylesheet",
+	"image",
+	"media",
+	"font",
+	"script",
+	"texttrack",
+	"xhr",
+	"fetch",
+	"prefetch",
+	"eventsource",
+	"websocket",
+	"manifest",
+	"signedexchange",
+	"ping",
+	"cspviolationreport",
+	"preflight",
+	"other",
+]);
+export const PrefersColorSchemeSchema = z.enum(["light", "dark"]);
+export const PrefersReducedMotionSchema = z.enum(["reduce", "no-preference"]);
+
 export const CreateScreenshotParamsSchema = z
 	.object({
 		url: z.string().url().openapi({
@@ -31,7 +55,7 @@ export const CreateScreenshotParamsSchema = z
 			description: "Whether the device has touch support",
 			example: false,
 		}),
-		format: z.enum(["jpeg", "png", "webp"]).optional().default("jpeg").openapi({
+		format: FormatSchema.optional().default("jpeg").openapi({
 			description: "The format of the screenshot",
 			example: "jpeg",
 		}),
@@ -63,74 +87,35 @@ export const CreateScreenshotParamsSchema = z
 					"List of requests to block. Can be specified as block_requests=foo or multiple times: block_requests=foo&block_requests=bar",
 			}),
 		block_resources: z
-			.union([
-				z.string(),
-				z.array(
-					z.enum([
-						"document",
-						"stylesheet",
-						"image",
-						"media",
-						"font",
-						"script",
-						"texttrack",
-						"xhr",
-						"fetch",
-						"prefetch",
-						"eventsource",
-						"websocket",
-						"manifest",
-						"signedexchange",
-						"ping",
-						"cspviolationreport",
-						"preflight",
-						"other",
-					]),
-				),
-			])
+			.union([z.string(), z.array(ResourceTypeSchema)])
 			.optional()
 			.transform((val) => {
 				if (!val) return [];
-				if (Array.isArray(val)) return val;
-				return [val];
+				if (Array.isArray(val)) return val.map((v) => v.toLowerCase());
+				return [val.toLowerCase()];
 			})
 			.openapi({
 				type: "array",
 				items: {
 					type: "string",
-					enum: [
-						"document",
-						"stylesheet",
-						"image",
-						"media",
-						"font",
-						"script",
-						"texttrack",
-						"xhr",
-						"fetch",
-						"prefetch",
-						"eventsource",
-						"websocket",
-						"manifest",
-						"signedexchange",
-						"ping",
-						"cspviolationreport",
-						"preflight",
-						"other",
-					],
+					enum: ResourceTypeSchema.options,
 					example: "script",
 				},
 				minItems: 1,
 				description:
 					"List of resource types to block. Can be specified as block_resources=script or multiple times: block_resources=script&block_resources=image",
 			}),
-		prefers_color_scheme: z
-			.enum(["light", "dark"])
-			.optional()
+		prefers_color_scheme: PrefersColorSchemeSchema.optional()
 			.default("light")
 			.openapi({
 				description: "The color scheme of the screenshot",
 				example: "light",
+			}),
+		prefers_reduced_motion: PrefersReducedMotionSchema.optional()
+			.default("no-preference")
+			.openapi({
+				description: "The reduced motion preference of the screenshot",
+				example: "no-preference",
 			}),
 		cache_key: z.string().optional().openapi({
 			description:
