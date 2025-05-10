@@ -3,25 +3,28 @@ import {
 	adsAndTrackingLists,
 	adsLists,
 } from "@ghostery/adblocker-puppeteer";
-import type { z } from "@hono/zod-openapi";
+import type {
+	CreateScreenshotSchema,
+	ResourceTypeSchema,
+} from "@screenshothis/schemas/screenshots";
 import fetch from "cross-fetch";
 import { and, eq, sql } from "drizzle-orm";
 import pLimit from "p-limit";
 import puppeteer from "puppeteer-extra";
 import StealthPlugin from "puppeteer-extra-plugin-stealth";
 import wildcardMatch from "wildcard-match";
+import type { z } from "zod";
 
+import type { ObjectToCamel } from "ts-case-convert";
 import { db } from "../db";
 import { screenshots } from "../db/schema/screenshots";
 import { s3 } from "../lib/s3";
-import type {
-	CreateScreenshotParamsSchema,
-	ResourceTypeSchema,
-} from "../routes/screenshots/schema";
 
 puppeteer.use(StealthPlugin());
 
-type GetOrCreateScreenshotParams = z.infer<typeof CreateScreenshotParamsSchema>;
+type GetOrCreateScreenshotParams = ObjectToCamel<
+	z.infer<typeof CreateScreenshotSchema>
+>;
 
 const limit = pLimit(5);
 
@@ -65,8 +68,8 @@ export async function getOrCreateScreenshot(
 				eq(screenshots.blockAds, blockAds),
 				eq(screenshots.blockCookieBanners, blockCookieBanners),
 				eq(screenshots.blockTrackers, blockTrackers),
-				sql`${screenshots.blockRequests} @> ${JSON.stringify(blockRequests)}`,
-				sql`${screenshots.blockResources} @> ${JSON.stringify(blockResources)}`,
+				sql`${screenshots.blockRequests} @> ${JSON.stringify(blockRequests || [])}`,
+				sql`${screenshots.blockResources} @> ${JSON.stringify(blockResources || [])}`,
 				eq(screenshots.prefersColorScheme, prefersColorScheme),
 				eq(screenshots.prefersReducedMotion, prefersReducedMotion),
 				eq(screenshots.workspaceId, workspaceId),
@@ -75,12 +78,9 @@ export async function getOrCreateScreenshot(
 
 		if (existing) {
 			const key = `screenshots/${workspaceId}/${existing.id}.${format}`;
-			try {
-				const object = await s3.file(key).arrayBuffer();
-				if (object) {
-					return { object, key, created: false };
-				}
-			} catch {}
+			const object = await s3.file(key).arrayBuffer();
+
+			return { object, key, created: false };
 		}
 
 		const browser = await puppeteer.launch({
@@ -106,11 +106,16 @@ export async function getOrCreateScreenshot(
 			},
 		]);
 
-		if (blockRequests?.length > 0 || blockResources?.length > 0) {
-			const blockRequest = wildcardMatch(blockRequests, { separator: false });
+		if (
+			(blockRequests && blockRequests?.length > 0) ||
+			blockResources?.length > 0
+		) {
+			const blockRequest = wildcardMatch(blockRequests || [], {
+				separator: false,
+			});
 
 			page.on("request", (request) => {
-				if (blockResources?.includes(request.resourceType())) {
+				if (blockResources?.includes(request.resourceType() as never)) {
 					request.abort();
 					return;
 				}

@@ -7,14 +7,14 @@
 	],
 	"scripts": {
 		"build": "turbo build",
-		"check-types": "turbo check-types",
 		"db:push": "turbo -F server db:push",
 		"db:studio": "turbo -F server db:studio",
 		"dev": "turbo dev",
 		"dev:native": "turbo -F native dev",
 		"dev:server": "turbo -F server dev",
 		"dev:web": "turbo -F web dev",
-		"prepare": "husky || true"
+		"prepare": "husky || true",
+		"typecheck": "turbo typecheck"
 	},
 	"lint-staged": {
 		"*.{js,ts,cjs,mjs,d.cts,d.mts,jsx,tsx,json,jsonc}": [

@@ -1,5 +1,6 @@
 import MoreVerticalIcon from "virtual:icons/hugeicons/more-vertical";
 
+import type { ScreenshotSchema } from "@screenshothis/schemas/screenshots";
 import { Link } from "@tanstack/react-router";
 import {
 	type ColumnDef,
@@ -9,21 +10,21 @@ import {
 } from "@tanstack/react-table";
 import { format } from "date-fns";
 import * as React from "react";
+import type { ObjectToCamel } from "ts-case-convert";
 import type { z } from "zod";
 
-import type { ScreenshotSchema } from "#/schemas/screenshots.ts";
 import { cn } from "#/utils/cn.ts";
 import * as Button from "../ui/button-primitives.tsx";
 import * as Table from "../ui/table.tsx";
 
-type ScreenshotDataType = z.infer<typeof ScreenshotSchema>;
+type ScreenshotDataType = ObjectToCamel<z.infer<typeof ScreenshotSchema>>;
 
 type ScreenshotsTableProps = {
 	data: Array<ScreenshotDataType>;
 	total: number;
 };
 
-const columns: ColumnDef<z.infer<typeof ScreenshotSchema>>[] = [
+const columns: ColumnDef<ScreenshotDataType>[] = [
 	{
 		header: "Host",
 		accessorKey: "url",

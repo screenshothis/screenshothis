@@ -1,3 +1,4 @@
+import { DashboardSearchSchema } from "@screenshothis/schemas/dashboard";
 import { useQueries } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 import { zodValidator } from "@tanstack/zod-adapter";
@@ -10,7 +11,6 @@ import * as Avatar from "#/components/ui/avatar.tsx";
 import * as Divider from "#/components/ui/divider.tsx";
 import { Skeleton } from "#/components/ui/skeleton.tsx";
 import { UsageWidget } from "#/components/widgets/usage-widget.tsx";
-import { DashboardSearchSchema } from "#/schemas/dashboard.ts";
 import { useORPC } from "#/utils/orpc.ts";
 
 export const Route = createFileRoute("/_app/dashboard")({

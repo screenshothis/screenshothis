@@ -1,5 +1,6 @@
 "use client";
 
+import type { RangeSchema } from "@screenshothis/schemas/dashboard";
 import { format } from "date-fns";
 import * as React from "react";
 import {
@@ -13,7 +14,6 @@ import {
 } from "recharts";
 
 import useBreakpoint from "#/hooks/use-breakpoint.ts";
-import type { RangeSchema } from "#/schemas/dashboard.ts";
 import { cn } from "#/utils/cn.ts";
 import type { z } from "zod";
 

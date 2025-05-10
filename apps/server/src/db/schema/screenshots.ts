@@ -1,13 +1,13 @@
-import { relations } from "drizzle-orm";
-import { boolean, integer, jsonb, pgTable, text } from "drizzle-orm/pg-core";
-import type { z } from "zod";
-
 import type {
 	FormatSchema,
 	PrefersColorSchemeSchema,
 	PrefersReducedMotionSchema,
 	ResourceTypeSchema,
-} from "#/routes/screenshots/schema";
+} from "@screenshothis/schemas/screenshots";
+import { relations } from "drizzle-orm";
+import { boolean, integer, jsonb, pgTable, text } from "drizzle-orm/pg-core";
+import type { z } from "zod";
+
 import { newId } from "#/utils/generate-id";
 import { timestamps } from "./utils/timestamps";
 import { workspaces } from "./workspaces";

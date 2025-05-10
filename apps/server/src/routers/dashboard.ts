@@ -1,3 +1,4 @@
+import { RangeSchema } from "@screenshothis/schemas/dashboard";
 import { sql } from "drizzle-orm";
 import { z } from "zod";
 
@@ -8,7 +9,7 @@ export const dashboardRouter = {
 	stats: protectedProcedure
 		.input(
 			z.object({
-				range: z.enum(["24h", "7d", "30d", "year"]).optional().default("30d"),
+				range: RangeSchema.optional().default("30d"),
 			}),
 		)
 		.handler(async ({ context, input }) => {

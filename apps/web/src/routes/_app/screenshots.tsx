@@ -1,13 +1,14 @@
 import Album02Icon from "virtual:icons/hugeicons/album-02";
 
+import { ScreenshotsFilterSchema } from "@screenshothis/schemas/screenshots";
 import { createFileRoute } from "@tanstack/react-router";
 import { zodValidator } from "@tanstack/zod-adapter";
+import { objectToCamel } from "ts-case-convert";
 
 import { DashedDivider } from "#/components/dashed-divider.tsx";
 import { ScreenshotsFilter } from "#/components/filters/screenshots-filter.tsx";
 import { PageHeader } from "#/components/page-header.tsx";
 import { ScreenshotsTable } from "#/components/tables/screenshots-table";
-import { ScreenshotsFilterSchema } from "#/schemas/screenshots.ts";
 
 export const Route = createFileRoute("/_app/screenshots")({
 	component: RouteComponent,
@@ -23,7 +24,7 @@ export const Route = createFileRoute("/_app/screenshots")({
 		);
 
 		return {
-			screenshots,
+			screenshots: screenshots.map(objectToCamel),
 		};
 	},
 });

@@ -1,17 +1,18 @@
 import { ORPCError } from "@orpc/server";
+import { CreateScreenshotSchema } from "@screenshothis/schemas/screenshots";
 import { and, eq, like } from "drizzle-orm";
+import { objectToCamel } from "ts-case-convert";
 import { z } from "zod";
 
 import { db } from "#/db";
 import * as schema from "#/db/schema";
 import { protectedProcedure } from "#/lib/orpc";
 import { unkey } from "#/lib/unkey";
-import { CreateScreenshotParamsSchema } from "#/routes/screenshots/schema";
 import { getOrCreateScreenshot } from "#/utils/screenshot";
 
 export const screenshotsRouter = {
 	create: protectedProcedure
-		.input(CreateScreenshotParamsSchema)
+		.input(CreateScreenshotSchema.transform((data) => objectToCamel(data)))
 		.handler(async ({ context, input }) => {
 			if (!context.user?.currentWorkspaceId) {
 				throw new ORPCError("UNAUTHORIZED", {

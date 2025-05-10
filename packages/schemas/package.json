@@ -1,0 +1,21 @@
+{
+	"name": "@screenshothis/schemas",
+	"private": true,
+	"type": "module",
+	"exports": {
+		"./dashboard": "./src/dashboard.ts",
+		"./screenshots": "./src/screenshots.ts"
+	},
+	"module": "src/index.ts",
+	"dependencies": {
+		"@tanstack/zod-adapter": "1.120.3",
+		"ts-case-convert": "2.1.0",
+		"zod": "3.24.4"
+	},
+	"devDependencies": {
+		"@types/bun": "1.2.12"
+	},
+	"peerDependencies": {
+		"typescript": "5.8.3"
+	}
+}

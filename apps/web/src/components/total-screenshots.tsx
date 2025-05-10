@@ -2,6 +2,7 @@
 
 import ArrowDown01Icon from "virtual:icons/hugeicons/arrow-down-01";
 
+import { RangeSchema } from "@screenshothis/schemas/dashboard";
 import { useNavigate } from "@tanstack/react-router";
 import { Select as SelectPrimitives } from "radix-ui";
 import type { z } from "zod";
@@ -9,7 +10,6 @@ import type { z } from "zod";
 import * as Badge from "#/components/ui/badge.tsx";
 import * as Button from "#/components/ui/button-primitives.tsx";
 import * as Select from "#/components/ui/select.tsx";
-import { RangeSchema } from "#/schemas/dashboard.ts";
 import { TotalScreenshotsChart } from "./charts/total-screenshots-chart.tsx";
 
 type TotalScreenshotsProps = {

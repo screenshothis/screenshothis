@@ -1,10 +1,10 @@
 import Search01Icon from "virtual:icons/hugeicons/search-01";
 
+import { ScreenshotsFilterSchema } from "@screenshothis/schemas/screenshots";
 import { useNavigate, useSearch } from "@tanstack/react-router";
 import * as React from "react";
 import type { z } from "zod";
 
-import { ScreenshotsFilterSchema } from "#/schemas/screenshots.ts";
 import { useAppForm } from "../forms/form.tsx";
 
 export function ScreenshotsFilter() {

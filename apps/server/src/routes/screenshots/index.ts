@@ -1,19 +1,18 @@
 import { OpenAPIHono, createRoute, z } from "@hono/zod-openapi";
+import { CreateScreenshotSchema } from "@screenshothis/schemas/screenshots";
+import { objectToCamel } from "ts-case-convert";
 
 import type { Variables } from "#/common/environment";
-import { db } from "#/db";
-import * as schema from "#/db/schema";
 import { unkey } from "#/lib/unkey";
 import { createErrorResponse } from "#/utils/errors";
 import { getOrCreateScreenshot } from "#/utils/screenshot";
-import { CreateScreenshotParamsSchema } from "./schema";
 
 const screenshots = new OpenAPIHono<{ Variables: Variables }>().openapi(
 	createRoute({
 		method: "get",
 		path: "/take",
 		request: {
-			query: CreateScreenshotParamsSchema,
+			query: CreateScreenshotSchema.transform((data) => objectToCamel(data)),
 		},
 		responses: {
 			200: {
@@ -58,15 +57,8 @@ const screenshots = new OpenAPIHono<{ Variables: Variables }>().openapi(
 				headers.set("content-type", contentType);
 			}
 
+			console.info({ created });
 			if (created) {
-				await db.insert(schema.screenshots).values({
-					url: c.req.valid("query").url,
-					width: c.req.valid("query").width,
-					height: c.req.valid("query").height,
-					format: c.req.valid("query").format,
-					workspaceId: c.get("workspaceId"),
-				});
-
 				const key = c.get("unkey");
 				if (key?.keyId) {
 					await unkey.keys.updateRemaining({
