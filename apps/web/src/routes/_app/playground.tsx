@@ -6,6 +6,7 @@ import Image01Icon from "virtual:icons/hugeicons/image-01";
 import Link01Icon from "virtual:icons/hugeicons/link-01";
 import PaintBrush02Icon from "virtual:icons/hugeicons/paint-brush-02";
 import ToggleOnIcon from "virtual:icons/hugeicons/toggle-on";
+import ZoomOutAreaIcon from "virtual:icons/hugeicons/zoom-out-area";
 
 import {
 	CreateScreenshotSchema,
@@ -238,6 +239,21 @@ function RouteComponent() {
 													)}
 												/>
 											</div>
+
+											<form.AppField
+												name="device_scale_factor"
+												children={(field) => (
+													<field.TextField
+														label="Device scale factor"
+														type="number"
+														inputMode="numeric"
+														name="device_scale_factor"
+														placeholder="1"
+														leadingIcon={ZoomOutAreaIcon}
+														hint="In most cases, you can leave this at 1, otherwise we recommend 0.75."
+													/>
+												)}
+											/>
 										</Accordion.Content>
 									</Accordion.Item>
 

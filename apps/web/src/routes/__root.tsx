@@ -166,7 +166,10 @@ function RootDocument({ children }: { children: React.ReactNode }) {
 					rel="stylesheet"
 				/>
 			</head>
-			<body className="h-full bg-(--bg-white-0)" suppressHydrationWarning>
+			<body
+				className="h-full bg-(--bg-white-0) text-(--text-strong-950)"
+				suppressHydrationWarning
+			>
 				{children}
 				<Toaster richColors />
 				<TanStackRouterDevtools position="bottom-right" />

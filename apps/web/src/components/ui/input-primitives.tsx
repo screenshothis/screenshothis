@@ -41,7 +41,7 @@ export const inputVariants = tv({
 		],
 		input: [
 			// base
-			"w-full bg-none bg-transparent text-paragraph-sm outline-none",
+			"w-full bg-none bg-transparent text-(--text-strong-950) text-paragraph-sm outline-none",
 			"transition duration-200 ease-out",
 			// placeholder
 			"placeholder:select-none placeholder:text-(--text-soft-400) placeholder:transition placeholder:duration-200 placeholder:ease-out",

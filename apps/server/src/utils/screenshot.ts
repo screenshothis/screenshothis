@@ -12,10 +12,10 @@ import { and, eq, sql } from "drizzle-orm";
 import pLimit from "p-limit";
 import puppeteer from "puppeteer-extra";
 import StealthPlugin from "puppeteer-extra-plugin-stealth";
+import type { ObjectToCamel } from "ts-case-convert";
 import wildcardMatch from "wildcard-match";
 import type { z } from "zod";
 
-import type { ObjectToCamel } from "ts-case-convert";
 import { db } from "../db";
 import { screenshots } from "../db/schema/screenshots";
 import { s3 } from "../lib/s3";
@@ -45,6 +45,7 @@ export async function getOrCreateScreenshot(
 			isMobile,
 			isLandscape,
 			hasTouch,
+			deviceScaleFactor,
 			format,
 			blockAds,
 			blockCookieBanners,
@@ -64,6 +65,7 @@ export async function getOrCreateScreenshot(
 				eq(screenshots.isMobile, isMobile),
 				eq(screenshots.isLandscape, isLandscape),
 				eq(screenshots.hasTouch, hasTouch),
+				eq(screenshots.deviceScaleFactor, deviceScaleFactor),
 				eq(screenshots.format, format),
 				eq(screenshots.blockAds, blockAds),
 				eq(screenshots.blockCookieBanners, blockCookieBanners),
@@ -86,11 +88,12 @@ export async function getOrCreateScreenshot(
 		const browser = await puppeteer.launch({
 			headless: true,
 			defaultViewport: {
-				width,
-				height,
+				width: width / deviceScaleFactor,
+				height: height / deviceScaleFactor,
 				isMobile,
 				isLandscape,
 				hasTouch,
+				deviceScaleFactor,
 			},
 		});
 		const page = await browser.newPage();
@@ -175,6 +178,7 @@ export async function getOrCreateScreenshot(
 					isMobile,
 					isLandscape,
 					hasTouch,
+					deviceScaleFactor,
 					format,
 					blockAds,
 					blockCookieBanners,

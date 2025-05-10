@@ -5,7 +5,14 @@ import type {
 	ResourceTypeSchema,
 } from "@screenshothis/schemas/screenshots";
 import { relations } from "drizzle-orm";
-import { boolean, integer, jsonb, pgTable, text } from "drizzle-orm/pg-core";
+import {
+	boolean,
+	integer,
+	jsonb,
+	pgTable,
+	real,
+	text,
+} from "drizzle-orm/pg-core";
 import type { z } from "zod";
 
 import { newId } from "#/utils/generate-id";
@@ -22,6 +29,7 @@ export const screenshots = pgTable("screenshots", {
 	height: integer("height").notNull(),
 	isMobile: boolean("is_mobile").notNull().default(false),
 	isLandscape: boolean("is_landscape").notNull().default(false),
+	deviceScaleFactor: real("device_scale_factor").notNull().default(1),
 	hasTouch: boolean("has_touch").notNull().default(false),
 	format: text("format").$type<z.infer<typeof FormatSchema>>().notNull(),
 	blockAds: boolean("block_ads").notNull().default(false),
