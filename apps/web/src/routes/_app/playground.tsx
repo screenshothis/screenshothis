@@ -14,7 +14,7 @@ import {
 	ResourceTypeSchema,
 } from "@screenshothis/schemas/screenshots";
 import { useStore } from "@tanstack/react-form";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 import * as React from "react";
 import type { z } from "zod";
@@ -37,6 +37,7 @@ function RouteComponent() {
 	const { mutateAsync, data } = useMutation(
 		orpc.screenshots.create.mutationOptions(),
 	);
+	const { data: me } = useQuery(orpc.users.me.queryOptions());
 	const form = useAppForm({
 		validators: { onSubmit: CreateScreenshotSchema },
 		defaultValues: {
@@ -70,7 +71,9 @@ function RouteComponent() {
 	const code = React.useMemo(() => {
 		return [
 			"https://api.screenshothis.com/v1/screenshots/take",
-			`   ?url=${values.url || "https://polar.sh"}`,
+			me?.currentWorkspace.accessToken.token &&
+				`   ?api_key=${me.currentWorkspace.accessToken.token}`,
+			`   &url=${values.url || "https://polar.sh"}`,
 			values.selector && `   &selector=${values.selector}`,
 			values.width && `   &width=${values.width}`,
 			values.height && `   &height=${values.height}`,
@@ -98,7 +101,7 @@ function RouteComponent() {
 		]
 			.filter(Boolean)
 			.join("\n");
-	}, [values]);
+	}, [values, me?.currentWorkspace.accessToken.token]);
 
 	return (
 		<>
