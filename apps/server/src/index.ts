@@ -26,8 +26,10 @@ const app = new OpenAPIHono<{ Variables: Variables }>({
 
 app.use(logger());
 app.use(requestId());
+
+const handler = new RPCHandler(appRouter);
 app.use(
-	"*",
+	"/rpc/*",
 	cors({
 		origin: env.CORS_ORIGIN || "",
 		allowMethods: ["GET", "POST", "OPTIONS"],
@@ -35,8 +37,6 @@ app.use(
 		credentials: true,
 	}),
 );
-
-const handler = new RPCHandler(appRouter);
 app.use("/rpc/*", clerkMiddleware());
 app.use("/rpc/*", async (c, next) => {
 	const context = await createContext({ context: c });
