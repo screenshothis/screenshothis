@@ -1,18 +1,14 @@
 {
 	"name": "screenshothis",
 	"private": true,
-	"workspaces": [
-		"apps/*",
-		"packages/*"
-	],
+	"workspaces": ["apps/*", "packages/*"],
 	"scripts": {
 		"build": "turbo build",
-		"db:push": "turbo -F server db:push",
-		"db:studio": "turbo -F server db:studio",
+		"db:push": "turbo -F @screenshothis/server db:push",
+		"db:studio": "turbo -F @screenshothis/server db:studio",
 		"dev": "turbo dev",
-		"dev:native": "turbo -F native dev",
-		"dev:server": "turbo -F server dev",
-		"dev:web": "turbo -F web dev",
+		"dev:server": "turbo -F @screenshothis/server dev",
+		"dev:web": "turbo -F @screenshothis/web dev",
 		"prepare": "husky || true",
 		"typecheck": "turbo typecheck"
 	},
@@ -27,9 +23,5 @@
 		"turbo": "2.5.3"
 	},
 	"packageManager": "bun@1.2.12",
-	"trustedDependencies": [
-		"@biomejs/biome",
-		"@clerk/shared",
-		"@parcel/watcher"
-	]
+	"trustedDependencies": ["@biomejs/biome", "@clerk/shared", "@parcel/watcher"]
 }
