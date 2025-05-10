@@ -6,7 +6,7 @@ import viteTsConfigPaths from "vite-tsconfig-paths";
 
 export default defineConfig({
 	server: {
-		preset: "bun",
+		preset: "node-server",
 	},
 	tsr: {
 		appDirectory: "src",
