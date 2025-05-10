@@ -35,7 +35,9 @@ export const Route = createFileRoute("/_app/playground")({
 function RouteComponent() {
 	const { queryClient } = Route.useRouteContext();
 	const orpc = useORPC();
-	const { mutateAsync, data } = useMutation(orpc.playground.mutationOptions());
+	const { mutateAsync, data } = useMutation(
+		orpc.screenshots.create.mutationOptions(),
+	);
 	const form = useAppForm({
 		validators: { onSubmit: CreateScreenshotSchema },
 		defaultValues: {
@@ -55,7 +57,7 @@ function RouteComponent() {
 				{
 					async onSuccess() {
 						await queryClient.invalidateQueries({
-							queryKey: orpc.me.queryOptions().queryKey,
+							queryKey: orpc.users.me.queryOptions().queryKey,
 						});
 					},
 				},

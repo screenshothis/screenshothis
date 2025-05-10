@@ -1,8 +1,5 @@
 "use client";
 
-import { SignOutButton, useUser } from "@clerk/tanstack-react-start";
-import { Link } from "@tanstack/react-router";
-import { useTheme } from "next-themes";
 import ArrowDown01Icon from "virtual:icons/hugeicons/arrow-down-01";
 import ArrowRight01Icon from "virtual:icons/hugeicons/arrow-right-01";
 import CustomerSupportIcon from "virtual:icons/hugeicons/customer-support";
@@ -12,9 +9,13 @@ import SecurityCheckIcon from "virtual:icons/hugeicons/security-check";
 import Setting07Icon from "virtual:icons/hugeicons/setting-07";
 import UserCircle02Icon from "virtual:icons/hugeicons/user-circle-02";
 
+import { SignOutButton, useUser } from "@clerk/tanstack-react-start";
+import { useQuery } from "@tanstack/react-query";
+import { Link } from "@tanstack/react-router";
+import { useTheme } from "next-themes";
+
 import { cn } from "#/utils/cn.ts";
 import { useORPC } from "#/utils/orpc.ts";
-import { useQuery } from "@tanstack/react-query";
 import * as Avatar from "./ui/avatar.tsx";
 import * as Divider from "./ui/divider.tsx";
 import * as DropdownMenu from "./ui/dropdown-menu.tsx";
@@ -23,7 +24,7 @@ import * as Switch from "./ui/switch.tsx";
 
 export function UserButton({ className }: { className?: string }) {
 	const orpc = useORPC();
-	const { data: me } = useQuery(orpc.me.queryOptions());
+	const { data: me } = useQuery(orpc.users.me.queryOptions());
 	const { theme, setTheme } = useTheme();
 
 	return (

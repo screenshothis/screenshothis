@@ -15,7 +15,7 @@ export const Route = createFileRoute("/_app/screenshots")({
 	loaderDeps: ({ search: { q } }) => ({ q }),
 	async loader({ context: { queryClient, orpc }, deps }) {
 		const screenshots = await queryClient.fetchQuery(
-			orpc.screenshots.queryOptions({
+			orpc.screenshots.list.queryOptions({
 				input: {
 					q: deps.q,
 				},

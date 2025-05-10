@@ -16,7 +16,7 @@ import { useORPC } from "#/utils/orpc.ts";
 export const Route = createFileRoute("/_app/dashboard")({
 	loader: async ({ context: { orpc, queryClient } }) => {
 		await queryClient.ensureQueryData(
-			orpc.stats.queryOptions({
+			orpc.dashboard.stats.queryOptions({
 				input: { range: "30d" },
 			}),
 		);
@@ -31,8 +31,8 @@ function RouteComponent() {
 	const orpc = useORPC();
 	const [{ data: me }, { data: stats }] = useQueries({
 		queries: [
-			orpc.me.queryOptions(),
-			orpc.stats.queryOptions({
+			orpc.users.me.queryOptions(),
+			orpc.dashboard.stats.queryOptions({
 				input: { range },
 			}),
 		],

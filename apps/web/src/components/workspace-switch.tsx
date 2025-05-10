@@ -48,7 +48,7 @@ export function WorkspaceItem({ workspace, isCurrent }: WorkspaceItem) {
 
 export function WorkspaceSwitch({ className }: { className?: string }) {
 	const orpc = useORPC();
-	const { data: me } = useQuery(orpc.me.queryOptions());
+	const { data: me } = useQuery(orpc.users.me.queryOptions());
 
 	return (
 		<DropdownMenu.Root>

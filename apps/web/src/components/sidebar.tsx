@@ -206,7 +206,7 @@ export default function Sidebar({
 }) {
 	const { collapsed, sidebarRef } = useCollapsedState({ defaultCollapsed });
 	const orpc = useORPC();
-	const { data: me } = useQuery(orpc.me.queryOptions());
+	const { data: me } = useQuery(orpc.users.me.queryOptions());
 
 	return (
 		<>

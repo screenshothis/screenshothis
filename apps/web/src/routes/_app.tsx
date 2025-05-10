@@ -13,7 +13,7 @@ export const Route = createFileRoute("/_app")({
 			});
 		}
 
-		await queryClient.ensureQueryData(orpc.me.queryOptions());
+		await queryClient.ensureQueryData(orpc.users.me.queryOptions());
 	},
 	component: PathlessLayoutComponent,
 });
