@@ -2,7 +2,9 @@
 	"name": "@screenshothis/server",
 	"type": "module",
 	"imports": {
-		"#/*": ["./src/*"]
+		"#/*": [
+			"./src/*"
+		]
 	},
 	"exports": {
 		"./routers": "./src/routers/index.ts"
@@ -59,5 +61,5 @@
 		"tsdown": "0.11.2",
 		"typescript": "5.8.3"
 	},
-	"packageManager": "bun@1.2.12"
+	"packageManager": "bun@1.2.13"
 }
