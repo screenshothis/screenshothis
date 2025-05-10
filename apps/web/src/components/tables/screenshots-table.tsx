@@ -32,7 +32,7 @@ const columns: ColumnDef<ScreenshotDataType>[] = [
 		cell({ row }) {
 			return (
 				<div className="text-(--text-sub-600) text-paragraph-sm">
-					{new URL(row.original.url).host}
+					{row.original.url ? new URL(row.original.url).host : "N/A"}
 				</div>
 			);
 		},
@@ -47,7 +47,7 @@ const columns: ColumnDef<ScreenshotDataType>[] = [
 		cell({ row }) {
 			return (
 				<div className="text-(--text-sub-600) text-paragraph-sm">
-					{new URL(row.original.url).pathname}
+					{row.original.url ? new URL(row.original.url).pathname : "N/A"}
 				</div>
 			);
 		},
