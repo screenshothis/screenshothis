@@ -11,9 +11,10 @@
 // Import Routes
 
 import { Route as rootRoute } from './routes/__root'
+import { Route as MarketingImport } from './routes/_marketing'
 import { Route as AuthImport } from './routes/_auth'
 import { Route as AppImport } from './routes/_app'
-import { Route as IndexImport } from './routes/index'
+import { Route as MarketingIndexImport } from './routes/_marketing/index'
 import { Route as AppScreenshotsImport } from './routes/_app/screenshots'
 import { Route as AppPlaygroundImport } from './routes/_app/playground'
 import { Route as AppDashboardImport } from './routes/_app/dashboard'
@@ -21,6 +22,11 @@ import { Route as AuthRegisterSplatImport } from './routes/_auth/register.$'
 import { Route as AuthLoginSplatImport } from './routes/_auth/login.$'
 
 // Create/Update Routes
+
+const MarketingRoute = MarketingImport.update({
+  id: '/_marketing',
+  getParentRoute: () => rootRoute,
+} as any)
 
 const AuthRoute = AuthImport.update({
   id: '/_auth',
@@ -32,10 +38,10 @@ const AppRoute = AppImport.update({
   getParentRoute: () => rootRoute,
 } as any)
 
-const IndexRoute = IndexImport.update({
+const MarketingIndexRoute = MarketingIndexImport.update({
   id: '/',
   path: '/',
-  getParentRoute: () => rootRoute,
+  getParentRoute: () => MarketingRoute,
 } as any)
 
 const AppScreenshotsRoute = AppScreenshotsImport.update({
@@ -72,13 +78,6 @@ const AuthLoginSplatRoute = AuthLoginSplatImport.update({
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/': {
-      id: '/'
-      path: '/'
-      fullPath: '/'
-      preLoaderRoute: typeof IndexImport
-      parentRoute: typeof rootRoute
-    }
     '/_app': {
       id: '/_app'
       path: ''
@@ -91,6 +90,13 @@ declare module '@tanstack/react-router' {
       path: ''
       fullPath: ''
       preLoaderRoute: typeof AuthImport
+      parentRoute: typeof rootRoute
+    }
+    '/_marketing': {
+      id: '/_marketing'
+      path: ''
+      fullPath: ''
+      preLoaderRoute: typeof MarketingImport
       parentRoute: typeof rootRoute
     }
     '/_app/dashboard': {
@@ -113,6 +119,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/screenshots'
       preLoaderRoute: typeof AppScreenshotsImport
       parentRoute: typeof AppImport
+    }
+    '/_marketing/': {
+      id: '/_marketing/'
+      path: '/'
+      fullPath: '/'
+      preLoaderRoute: typeof MarketingIndexImport
+      parentRoute: typeof MarketingImport
     }
     '/_auth/login/$': {
       id: '/_auth/login/$'
@@ -159,34 +172,47 @@ const AuthRouteChildren: AuthRouteChildren = {
 
 const AuthRouteWithChildren = AuthRoute._addFileChildren(AuthRouteChildren)
 
+interface MarketingRouteChildren {
+  MarketingIndexRoute: typeof MarketingIndexRoute
+}
+
+const MarketingRouteChildren: MarketingRouteChildren = {
+  MarketingIndexRoute: MarketingIndexRoute,
+}
+
+const MarketingRouteWithChildren = MarketingRoute._addFileChildren(
+  MarketingRouteChildren,
+)
+
 export interface FileRoutesByFullPath {
-  '/': typeof IndexRoute
-  '': typeof AuthRouteWithChildren
+  '': typeof MarketingRouteWithChildren
   '/dashboard': typeof AppDashboardRoute
   '/playground': typeof AppPlaygroundRoute
   '/screenshots': typeof AppScreenshotsRoute
+  '/': typeof MarketingIndexRoute
   '/login/$': typeof AuthLoginSplatRoute
   '/register/$': typeof AuthRegisterSplatRoute
 }
 
 export interface FileRoutesByTo {
-  '/': typeof IndexRoute
   '': typeof AuthRouteWithChildren
   '/dashboard': typeof AppDashboardRoute
   '/playground': typeof AppPlaygroundRoute
   '/screenshots': typeof AppScreenshotsRoute
+  '/': typeof MarketingIndexRoute
   '/login/$': typeof AuthLoginSplatRoute
   '/register/$': typeof AuthRegisterSplatRoute
 }
 
 export interface FileRoutesById {
   __root__: typeof rootRoute
-  '/': typeof IndexRoute
   '/_app': typeof AppRouteWithChildren
   '/_auth': typeof AuthRouteWithChildren
+  '/_marketing': typeof MarketingRouteWithChildren
   '/_app/dashboard': typeof AppDashboardRoute
   '/_app/playground': typeof AppPlaygroundRoute
   '/_app/screenshots': typeof AppScreenshotsRoute
+  '/_marketing/': typeof MarketingIndexRoute
   '/_auth/login/$': typeof AuthLoginSplatRoute
   '/_auth/register/$': typeof AuthRegisterSplatRoute
 }
@@ -194,45 +220,46 @@ export interface FileRoutesById {
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
-    | '/'
     | ''
     | '/dashboard'
     | '/playground'
     | '/screenshots'
+    | '/'
     | '/login/$'
     | '/register/$'
   fileRoutesByTo: FileRoutesByTo
   to:
-    | '/'
     | ''
     | '/dashboard'
     | '/playground'
     | '/screenshots'
+    | '/'
     | '/login/$'
     | '/register/$'
   id:
     | '__root__'
-    | '/'
     | '/_app'
     | '/_auth'
+    | '/_marketing'
     | '/_app/dashboard'
     | '/_app/playground'
     | '/_app/screenshots'
+    | '/_marketing/'
     | '/_auth/login/$'
     | '/_auth/register/$'
   fileRoutesById: FileRoutesById
 }
 
 export interface RootRouteChildren {
-  IndexRoute: typeof IndexRoute
   AppRoute: typeof AppRouteWithChildren
   AuthRoute: typeof AuthRouteWithChildren
+  MarketingRoute: typeof MarketingRouteWithChildren
 }
 
 const rootRouteChildren: RootRouteChildren = {
-  IndexRoute: IndexRoute,
   AppRoute: AppRouteWithChildren,
   AuthRoute: AuthRouteWithChildren,
+  MarketingRoute: MarketingRouteWithChildren,
 }
 
 export const routeTree = rootRoute
@@ -245,13 +272,10 @@ export const routeTree = rootRoute
     "__root__": {
       "filePath": "__root.tsx",
       "children": [
-        "/",
         "/_app",
-        "/_auth"
+        "/_auth",
+        "/_marketing"
       ]
-    },
-    "/": {
-      "filePath": "index.tsx"
     },
     "/_app": {
       "filePath": "_app.tsx",
@@ -268,6 +292,12 @@ export const routeTree = rootRoute
         "/_auth/register/$"
       ]
     },
+    "/_marketing": {
+      "filePath": "_marketing.tsx",
+      "children": [
+        "/_marketing/"
+      ]
+    },
     "/_app/dashboard": {
       "filePath": "_app/dashboard.tsx",
       "parent": "/_app"
@@ -279,6 +309,10 @@ export const routeTree = rootRoute
     "/_app/screenshots": {
       "filePath": "_app/screenshots.tsx",
       "parent": "/_app"
+    },
+    "/_marketing/": {
+      "filePath": "_marketing/index.tsx",
+      "parent": "/_marketing"
     },
     "/_auth/login/$": {
       "filePath": "_auth/login.$.tsx",

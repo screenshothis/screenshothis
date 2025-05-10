@@ -14,7 +14,6 @@ import { getWebRequest } from "@tanstack/react-start/server";
 import aosCss from "aos/dist/aos.css?url";
 import { ThemeProvider } from "next-themes";
 
-import { Aos } from "#/components/aos.tsx";
 import { Toaster } from "#/components/ui/sonner.tsx";
 import type { orpc } from "#/utils/orpc.ts";
 import { seo } from "#/utils/seo.ts";
@@ -169,7 +168,6 @@ function RootDocument({ children }: { children: React.ReactNode }) {
 			</head>
 			<body className="h-full bg-(--bg-white-0)" suppressHydrationWarning>
 				{children}
-				<Aos />
 				<Toaster richColors />
 				<TanStackRouterDevtools position="bottom-right" />
 				<ReactQueryDevtools position="bottom" buttonPosition="bottom-right" />

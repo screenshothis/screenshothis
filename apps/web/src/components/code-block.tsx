@@ -91,7 +91,7 @@ export const CodeBlock = (props: CodeBlockProps) => {
 		<div
 			{...wrapperProps}
 			className={cn(
-				"flex flex-col gap-2 rounded-20 bg-(--bg-weak-50) p-2 md:gap-3 md:p-3",
+				"flex flex-col gap-2 rounded-12 bg-(--bg-weak-50) p-2 md:gap-3 md:p-3",
 				wrapperClassName,
 			)}
 		>
@@ -121,7 +121,7 @@ export const CodeBlock = (props: CodeBlockProps) => {
 
 			<pre
 				className={cn(
-					"relative overflow-x-auto rounded-12 text-paragraph-xs",
+					"relative overflow-x-auto rounded-8 text-paragraph-xs",
 					className,
 				)}
 				{...rest}

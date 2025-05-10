@@ -1,31 +1,145 @@
+import Menu02Icon from "virtual:icons/hugeicons/menu-02";
+
+import { useUser } from "@clerk/tanstack-react-start";
 import { Link } from "@tanstack/react-router";
+import * as React from "react";
 
-import UserMenu from "./user-menu.tsx";
+import { useScroll } from "#/hooks/use-scroll.ts";
+import { cn } from "#/utils/cn.ts";
+import { Logo } from "./logo.tsx";
+import { Button } from "./ui/button.tsx";
+import * as Drawer from "./ui/drawer.tsx";
+import * as LinkButton from "./ui/link-button.tsx";
 
-export default function Header() {
-	const links = [
-		{ to: "/", label: "Home" },
-		{ to: "/dashboard", label: "Dashboard" },
-		{ to: "/ai", label: "AI Chat" },
-	];
+const navItems = [
+	{
+		label: "Home",
+		href: "/",
+	},
+	{
+		label: "Features",
+		href: "/#features",
+	},
+	{
+		label: "Pricing",
+		href: "/pricing",
+	},
+];
+
+const mobileNavItems = [
+	...navItems,
+	{ label: "Changelog", href: "/changelog" },
+	{
+		label: "Login",
+		href: "/login",
+	},
+	{
+		label: "Register",
+		href: "/register",
+	},
+];
+
+export function Header() {
+	const user = useUser();
+	const { scrollY } = useScroll();
 
 	return (
-		<div>
-			<div className="flex flex-row items-center justify-between px-2 py-1">
-				<nav className="flex gap-4 text-lg">
-					{links.map(({ to, label }) => {
-						return (
-							<Link key={to} to={to}>
-								{label}
+		<div
+			className={cn(
+				"fixed top-0 left-0 z-50 flex w-full items-center justify-center px-2 transition-all duration-300 lg:inset-x-0 lg:px-0",
+				scrollY > 64
+					? "h-16 lg:bg-(--bg-white-0)/80 lg:shadow-sm lg:backdrop-blur-sm"
+					: "h-16 lg:h-20",
+			)}
+		>
+			<div
+				className={cn(
+					"container mx-px flex max-w-6xl items-center justify-between border border-t-0 ring-inset transition-all duration-300 lg:mx-0 lg:px-8",
+					scrollY > 64
+						? "h-16 bg-(--bg-white-0) lg:border-0 lg:bg-transparent"
+						: "h-16 border-x bg-(--bg-white-0) lg:h-20",
+				)}
+			>
+				<div className="flex flex-row items-center justify-between">
+					<Link to="/" className="flex items-center gap-2">
+						<Logo className="h-8 w-auto text-primary" />
+						<span className="font-semibold">ScreenshoThis</span>
+					</Link>
+				</div>
+
+				<div className="flex items-center gap-10">
+					<ul className="hidden items-center gap-10 lg:flex">
+						{navItems.map((item) => (
+							<li key={item.href}>
+								<LinkButton.Root
+									asChild
+									className="aria-[current=page]:decoration-current"
+								>
+									<Link to={item.href}>{item.label}</Link>
+								</LinkButton.Root>
+							</li>
+						))}
+					</ul>
+
+					<div className="flex items-center gap-2">
+						<MobileMenu />
+
+						<Button asChild $type="neutral" $size="sm">
+							<Link to={user ? "/dashboard" : "/register/$"}>
+								{user ? "Dashboard" : "Get started now"}
 							</Link>
-						);
-					})}
-				</nav>
-				<div className="flex items-center gap-2">
-					<UserMenu />
+						</Button>
+					</div>
 				</div>
 			</div>
-			<hr />
 		</div>
+	);
+}
+
+function MobileMenu() {
+	const [isOpen, setOpen] = React.useState(false);
+
+	return (
+		<Drawer.Root onOpenChange={setOpen} open={isOpen}>
+			<Drawer.Trigger asChild>
+				<Button
+					leadingIcon={Menu02Icon}
+					$style="ghost"
+					$type="neutral"
+					className="lg:hidden"
+					onClick={() => setOpen(!isOpen)}
+				>
+					<span className="sr-only">Open menu</span>
+				</Button>
+			</Drawer.Trigger>
+
+			<Drawer.Content className="max-w-full">
+				<Drawer.Header>
+					<Link to="/">
+						<Logo className="h-8 w-auto" />
+					</Link>
+					<Drawer.Title className="sr-only">Menu</Drawer.Title>
+					<Drawer.Description className="sr-only">
+						This menu provides mobile navigation options for the marketing site.
+					</Drawer.Description>
+				</Drawer.Header>
+
+				<Drawer.Body className="flex w-full flex-col gap-5 p-6">
+					<ul className="flex flex-col gap-5">
+						{mobileNavItems.map((item) => (
+							<li key={item.href}>
+								<LinkButton.Root
+									asChild
+									className="text-paragraph-lg aria-[current=page]:decoration-current"
+									onClick={() => setOpen(false)}
+								>
+									<Link to={item.href}>{item.label}</Link>
+								</LinkButton.Root>
+							</li>
+						))}
+					</ul>
+				</Drawer.Body>
+			</Drawer.Content>
+		</Drawer.Root>
 	);
 }
