@@ -1,8 +1,6 @@
 import { Slot } from "radix-ui";
-import * as React from "react";
 
 import type { PolymorphicComponentProps } from "#/utils/polymorphic.ts";
-import { recursiveCloneChildren } from "#/utils/recursive-clone-children.tsx";
 import { type VariantProps, tv } from "#/utils/tv.ts";
 
 const BUTTON_ROOT_NAME = "ButtonRoot";
@@ -266,27 +264,12 @@ function ButtonRoot({
 	className,
 	...rest
 }: ButtonRootProps) {
-	const uniqueId = React.useId();
 	const Component = asChild ? Slot.Root : "button";
 	const { root } = buttonVariants({ $type, $style, $size });
 
-	const sharedProps: ButtonSharedProps = {
-		$type,
-		$style,
-		$size,
-	};
-
-	const extendedChildren = recursiveCloneChildren(
-		children as React.ReactElement[],
-		sharedProps,
-		[BUTTON_ICON_NAME],
-		uniqueId,
-		asChild,
-	);
-
 	return (
 		<Component className={root({ class: className })} type="button" {...rest}>
-			{extendedChildren}
+			{children}
 		</Component>
 	);
 }

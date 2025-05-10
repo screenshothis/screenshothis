@@ -1,0 +1,61 @@
+import ArrowRight01Icon from "virtual:icons/hugeicons/arrow-right-01";
+
+import { Link } from "@tanstack/react-router";
+
+import { Button } from "#/components/ui/button.tsx";
+
+export function HeroSection() {
+	return (
+		<section id="hero" className="relative">
+			<div className="container relative max-w-6xl overflow-hidden border-x p-4 py-32 lg:pb-80 2xl:max-w-[1400px]">
+				{/* TODO: add lime stripe */}
+
+				<div className="relative">
+					<div className="mx-auto max-w-2xl lg:mx-0 lg:shrink-0 lg:pt-8">
+						<h1
+							className="text-pretty font-semibold text-h2 tracking-tighter lg:text-h1"
+							data-aos="fade-up"
+							data-aos-duration="1000"
+						>
+							Powerful screenshots API for web artisans
+						</h1>
+
+						<p
+							data-aos="fade-up"
+							data-aos-duration="1500"
+							className="mt-4 text-pretty text-(--text-sub-600) lg:text-paragraph-lg"
+						>
+							Reliable, <strong>scalable</strong> screenshot capture for{" "}
+							<strong>integrating</strong> visual data into your applications
+							with ease.
+						</p>
+
+						<div
+							data-aos="fade-up"
+							data-aos-duration="2000"
+							className="mt-12 flex items-center gap-2"
+						>
+							<Button
+								trailingIcon={ArrowRight01Icon}
+								trailingIconClassName="easy-out-in duration-300 group-hover:translate-x-1"
+								className="w-full gap-2 lg:w-auto"
+								asChild
+							>
+								<Link to="/register/$">Get started now</Link>
+							</Button>
+							<Button
+								trailingIcon={ArrowRight01Icon}
+								trailingIconClassName="easy-out-in duration-300 group-hover:translate-x-1"
+								$style="lighter"
+								className="w-full gap-2 lg:w-auto"
+								asChild
+							>
+								<Link to="/">Contact sales</Link>
+							</Button>
+						</div>
+					</div>
+				</div>
+			</div>
+		</section>
+	);
+}

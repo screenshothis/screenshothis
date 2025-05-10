@@ -12,6 +12,10 @@ import { cn } from "#/utils/cn.ts";
 
 export type CodeBlockProps = React.ComponentPropsWithRef<"pre"> & {
 	wrapperClassName?: string;
+	wrapperProps?: React.ComponentPropsWithRef<"div"> & {
+		"data-aos"?: string;
+		"data-aos-duration"?: string;
+	};
 	children?: string;
 	lang: BundledLanguage;
 	title?: string;
@@ -24,6 +28,7 @@ export type CodeBlockProps = React.ComponentPropsWithRef<"pre"> & {
 export const CodeBlock = (props: CodeBlockProps) => {
 	const {
 		wrapperClassName,
+		wrapperProps,
 		children: code,
 		lang,
 		className,
@@ -47,13 +52,22 @@ export const CodeBlock = (props: CodeBlockProps) => {
 		// https://shiki.style/guide/install#fine-grained-bundle
 		import("shiki/core").then(async ({ createHighlighterCore }) => {
 			const highlighter = await createHighlighterCore({
-				themes: [import("shiki/themes/github-dark.mjs")],
+				themes: [
+					import("shiki/themes/github-light.mjs"),
+					import("shiki/themes/github-dark.mjs"),
+				],
 				langs: [import("shiki/langs/bash.mjs")],
 				engine: createOnigurumaEngine(import("shiki/wasm")),
 			});
 
 			setHighlightedCode(
-				highlighter.codeToHtml(code, { theme: "github-dark", lang }),
+				highlighter.codeToHtml(code, {
+					themes: {
+						light: "github-light",
+						dark: "github-dark",
+					},
+					lang,
+				}),
 			);
 		});
 	}, [code, lang]);
@@ -75,6 +89,7 @@ export const CodeBlock = (props: CodeBlockProps) => {
 
 	return (
 		<div
+			{...wrapperProps}
 			className={cn(
 				"flex flex-col gap-2 rounded-20 bg-(--bg-weak-50) p-2 md:gap-3 md:p-3",
 				wrapperClassName,
