@@ -11,7 +11,7 @@ import * as Avatar from "#/components/ui/avatar.tsx";
 import * as Divider from "#/components/ui/divider.tsx";
 import { Skeleton } from "#/components/ui/skeleton.tsx";
 import { UsageWidget } from "#/components/widgets/usage-widget.tsx";
-import { useORPC } from "#/utils/orpc.ts";
+import { useORPC } from "#/hooks/use-orpc.ts";
 
 export const Route = createFileRoute("/_app/dashboard")({
 	loader: async ({ context: { orpc, queryClient } }) => {

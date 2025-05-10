@@ -2,9 +2,7 @@
 	"name": "@screenshothis/server",
 	"type": "module",
 	"imports": {
-		"#/*": [
-			"./src/*"
-		]
+		"#/*": ["./src/*"]
 	},
 	"exports": {
 		"./routers": "./src/routers/index.ts"

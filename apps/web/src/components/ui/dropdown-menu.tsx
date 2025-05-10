@@ -1,5 +1,8 @@
-import { DropdownMenu as DropdownMenuPrimitive } from "radix-ui";
+"use client";
+
 import ArrowRight01Icon from "virtual:icons/hugeicons/arrow-right-01";
+
+import { DropdownMenu as DropdownMenuPrimitive } from "radix-ui";
 
 import { cn } from "#/utils/cn.ts";
 import type { PolymorphicComponentProps } from "#/utils/polymorphic.ts";

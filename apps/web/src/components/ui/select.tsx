@@ -1,11 +1,14 @@
+"use client";
+
+import ArrowDown01Icon from "virtual:icons/hugeicons/arrow-down-01";
+import Tick01Icon from "virtual:icons/hugeicons/tick-01";
+
 import {
 	ScrollArea as ScrollAreaPrimitives,
 	Select as SelectPrimitives,
 	Slot,
 } from "radix-ui";
 import * as React from "react";
-import ArrowDown01Icon from "virtual:icons/hugeicons/arrow-down-01";
-import Tick01Icon from "virtual:icons/hugeicons/tick-01";
 
 import { cn } from "#/utils/cn.ts";
 import type { PolymorphicComponentProps } from "#/utils/polymorphic.ts";

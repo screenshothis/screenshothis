@@ -5,13 +5,13 @@ import ArrowRight01Icon from "virtual:icons/hugeicons/arrow-right-01";
 import DashboardSquare02Icon from "virtual:icons/hugeicons/dashboard-square-02";
 import DocumentCode01Icon from "virtual:icons/hugeicons/document-code";
 
+import { useQuery } from "@tanstack/react-query";
 import { Link, useLocation } from "@tanstack/react-router";
 import * as React from "react";
 import { useHotkeys } from "react-hotkeys-hook";
 
+import { useORPC } from "#/hooks/use-orpc.ts";
 import { cn } from "#/utils/cn.ts";
-import { useORPC } from "#/utils/orpc.ts";
-import { useQuery } from "@tanstack/react-query";
 import * as Divider from "./ui/divider.tsx";
 import { UserButton } from "./user-button.tsx";
 import { UsageWidget } from "./widgets/usage-widget.tsx";

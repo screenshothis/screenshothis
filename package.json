@@ -23,5 +23,13 @@
 		"turbo": "2.5.3"
 	},
 	"packageManager": "bun@1.2.12",
-	"trustedDependencies": ["@biomejs/biome", "@clerk/shared", "@parcel/watcher"]
+	"trustedDependencies": [
+		"@biomejs/biome",
+		"@clerk/shared",
+		"@parcel/watcher",
+		"@tailwindcss/oxide",
+		"esbuild",
+		"puppeteer",
+		"unrs-resolver"
+	]
 }

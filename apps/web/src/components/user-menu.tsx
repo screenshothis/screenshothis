@@ -1,3 +1,5 @@
+"use client";
+
 import { SignOutButton, useUser } from "@clerk/tanstack-react-start";
 import { Link } from "@tanstack/react-router";
 

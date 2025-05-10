@@ -1,10 +1,12 @@
+"use client";
+
 import Tick02Icon from "virtual:icons/hugeicons/tick-02";
 import UnfoldMoreIcon from "virtual:icons/hugeicons/unfold-more";
 
 import { useQuery } from "@tanstack/react-query";
 
+import { useORPC } from "#/hooks/use-orpc.ts";
 import { cn } from "#/utils/cn.ts";
-import { useORPC } from "#/utils/orpc.ts";
 import * as Avatar from "./ui/avatar.tsx";
 import * as DropdownMenu from "./ui/dropdown-menu.tsx";
 import { Skeleton } from "./ui/skeleton.tsx";

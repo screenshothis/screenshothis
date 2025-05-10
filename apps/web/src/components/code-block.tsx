@@ -1,3 +1,5 @@
+"use client";
+
 import Copy01Icon from "virtual:icons/hugeicons/copy-01";
 import Tick02Icon from "virtual:icons/hugeicons/tick-02";
 

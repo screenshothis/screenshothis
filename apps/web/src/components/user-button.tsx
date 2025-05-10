@@ -14,8 +14,8 @@ import { useQuery } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
 import { useTheme } from "next-themes";
 
+import { useORPC } from "#/hooks/use-orpc.ts";
 import { cn } from "#/utils/cn.ts";
-import { useORPC } from "#/utils/orpc.ts";
 import * as Avatar from "./ui/avatar.tsx";
 import * as Divider from "./ui/divider.tsx";
 import * as DropdownMenu from "./ui/dropdown-menu.tsx";

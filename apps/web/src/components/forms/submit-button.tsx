@@ -1,3 +1,5 @@
+"use client";
+
 import Loading03Icon from "virtual:icons/hugeicons/loading-03";
 
 import { useFormContext } from "#/hooks/form-context.ts";

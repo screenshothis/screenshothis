@@ -24,8 +24,8 @@ import { useAppForm } from "#/components/forms/form.tsx";
 import { PageHeader } from "#/components/page-header.tsx";
 import * as Accordion from "#/components/ui/accordion.tsx";
 import { Skeleton } from "#/components/ui/skeleton.tsx";
+import { useORPC } from "#/hooks/use-orpc.ts";
 import { cn } from "#/utils/cn.ts";
-import { useORPC } from "#/utils/orpc.ts";
 
 export const Route = createFileRoute("/_app/playground")({
 	component: RouteComponent,

@@ -1,3 +1,5 @@
+"use client";
+
 import Search01Icon from "virtual:icons/hugeicons/search-01";
 
 import { ScreenshotsFilterSchema } from "@screenshothis/schemas/screenshots";

@@ -8,9 +8,10 @@ import { toast } from "sonner";
 
 import "./app.css";
 import Loader from "./components/loader.tsx";
+import { ORPCContext } from "./hooks/use-orpc.ts";
 import { routeTree } from "./routeTree.gen.ts";
 import "./tailwind.css";
-import { ORPCContext, orpc } from "./utils/orpc";
+import { orpc } from "./utils/orpc";
 
 export const createRouter = () => {
 	const queryClient = new QueryClient({
