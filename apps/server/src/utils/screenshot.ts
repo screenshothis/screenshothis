@@ -88,9 +88,9 @@ export async function getOrCreateScreenshot(
 			defaultViewport: {
 				width,
 				height,
-				isMobile: false,
-				isLandscape: false,
-				hasTouch: false,
+				isMobile,
+				isLandscape,
+				hasTouch,
 			},
 		});
 		const page = await browser.newPage();
