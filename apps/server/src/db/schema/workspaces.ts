@@ -12,6 +12,8 @@ export const workspaces = pgTable("workspaces", {
 		.$defaultFn(() => newId("workspace")),
 	name: text("name").notNull(),
 	isPersonal: boolean("is_personal").notNull().default(false),
+	polarCustomerId: text("polar_customer_id"),
+	polarSubscriptionId: text("polar_subscription_id"),
 	...timestamps,
 });
 

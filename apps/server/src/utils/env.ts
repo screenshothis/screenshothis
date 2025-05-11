@@ -15,6 +15,10 @@ const envSchema = z.object({
 	AWS_USE_PATH_STYLE_ENDPOINT: z.coerce.boolean().optional(),
 	UNKEY_API_ID: z.string(),
 	UNKEY_ROOT_KEY: z.string(),
+	POLAR_ACCESS_TOKEN: z.string(),
+	POLAR_SUCCESS_URL: z.string(),
+	POLAR_SERVER: z.enum(["sandbox", "production"]),
+	POLAR_WEBHOOK_SECRET: z.string(),
 });
 
 export const env = envSchema.parse(process.env);
