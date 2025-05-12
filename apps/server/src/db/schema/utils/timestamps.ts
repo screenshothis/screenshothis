@@ -1,11 +1,11 @@
 import { sql } from "drizzle-orm";
-import { integer } from "drizzle-orm/pg-core";
+import { timestamp } from "drizzle-orm/pg-core";
 
 export const timestamps = {
-	createdAt: integer("created_at")
-		.notNull()
-		.default(sql`extract(epoch from now()) * 1000`),
-	updatedAt: integer("updated_at").$onUpdateFn(
-		() => sql`extract(epoch from now()) * 1000`,
+	createdAt: timestamp({ withTimezone: true, mode: "string" }).default(
+		sql`(now() AT TIME ZONE 'utc'::text)`,
 	),
+	updatedAt: timestamp({ withTimezone: true, mode: "string" })
+		.default(sql`(now() AT TIME ZONE 'utc'::text)`)
+		.$onUpdate(() => sql`(now() AT TIME ZONE 'utc'::text)`),
 };

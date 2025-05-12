@@ -1,1 +1,0 @@
-ALTER TABLE "screenshots" ADD COLUMN "prefers_color_scheme" text DEFAULT 'light';
