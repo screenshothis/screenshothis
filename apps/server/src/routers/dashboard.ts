@@ -1,3 +1,4 @@
+import { ORPCError } from "@orpc/server";
 import { RangeSchema } from "@screenshothis/schemas/dashboard";
 import { sql } from "drizzle-orm";
 import { z } from "zod";
@@ -13,8 +14,8 @@ export const dashboardRouter = {
 			}),
 		)
 		.handler(async ({ context, input }) => {
-			if (!context.user?.currentWorkspaceId) {
-				throw new Error("Current workspace not found");
+			if (!context.session.session.activeWorkspaceId) {
+				throw new ORPCError("Current workspace not found");
 			}
 
 			let interval: string;
@@ -66,11 +67,11 @@ export const dashboardRouter = {
                 ) AS gs(date)
             LEFT JOIN (
                 SELECT
-                    date_trunc(${trunc}, to_timestamp(("created_at" / 1000)::double precision)) AS date,
+                    date_trunc(${trunc}, "created_at") AS date,
                     count(*) AS count
                 FROM screenshots
-                WHERE "workspace_id" = ${context.user.currentWorkspaceId}
-                    AND ("created_at")::bigint >= ${BigInt(fromDate.getTime())}
+                WHERE "workspace_id" = ${context.session.session.activeWorkspaceId}
+                    AND "created_at" >= to_timestamp(${fromSeconds})
                 GROUP BY date
             ) s ON gs.date = s.date
             ORDER BY gs.date
@@ -91,12 +92,12 @@ export const dashboardRouter = {
 				.execute(
 					sql`
             SELECT
-                date_trunc(${trunc}, to_timestamp(("created_at" / 1000)::double precision)) AS date,
+                date_trunc(${trunc}, "created_at") AS date,
                 count(*) AS count
             FROM screenshots
-            WHERE "workspace_id" = ${context.user.currentWorkspaceId}
-                AND ("created_at")::bigint >= ${BigInt(prevFromDate.getTime())}
-                AND ("created_at")::bigint < ${BigInt(prevToDate.getTime())}
+            WHERE "workspace_id" = ${context.session.session.activeWorkspaceId}
+                AND "created_at" >= to_timestamp(${prevFromDate.getTime() / 1000})
+                AND "created_at" < to_timestamp(${prevToDate.getTime() / 1000})
             GROUP BY date
         `,
 				)
@@ -110,6 +111,7 @@ export const dashboardRouter = {
 				prevMap.set(String(row.date), Number(row.count));
 			}
 
+			console.info(data.rows);
 			return {
 				data: data.rows.map((row) => {
 					const prevCount = prevMap.get(String(row.date)) ?? 0;

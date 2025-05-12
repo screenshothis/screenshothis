@@ -19,6 +19,9 @@ export const workspaces = pgTable("workspaces", {
 });
 
 export const workspaceMembers = pgTable("workspace_members", {
+	id: text()
+		.primaryKey()
+		.$defaultFn(() => newId("workspaceMember")),
 	workspaceId: text("workspace_id")
 		.notNull()
 		.references(() => workspaces.id, {
@@ -34,6 +37,9 @@ export const workspaceMembers = pgTable("workspace_members", {
 });
 
 export const workspaceInvitations = pgTable("workspace_invitations", {
+	id: text()
+		.primaryKey()
+		.$defaultFn(() => newId("workspaceInvitation")),
 	email: text("email").notNull(),
 	role: text("role"),
 	status: text("status").notNull(),
@@ -64,6 +70,20 @@ export const workspacesRelations = relations(workspaces, ({ one, many }) => ({
 	}),
 }));
 
+export const workspaceMembersRelations = relations(
+	workspaceMembers,
+	({ one }) => ({
+		workspace: one(workspaces, {
+			fields: [workspaceMembers.workspaceId],
+			references: [workspaces.id],
+		}),
+		user: one(users, {
+			fields: [workspaceMembers.userId],
+			references: [users.id],
+		}),
+	}),
+);
+
 export const workspaceInvitationsRelations = relations(
 	workspaceInvitations,
 	({ one }) => ({
@@ -71,15 +91,9 @@ export const workspaceInvitationsRelations = relations(
 			fields: [workspaceInvitations.workspaceId],
 			references: [workspaces.id],
 		}),
-	}),
-);
-
-export const workspaceMembersRelations = relations(
-	workspaceMembers,
-	({ one }) => ({
-		workspace: one(workspaces, {
-			fields: [workspaceMembers.workspaceId],
-			references: [workspaces.id],
+		inviter: one(users, {
+			fields: [workspaceInvitations.inviterId],
+			references: [users.id],
 		}),
 	}),
 );

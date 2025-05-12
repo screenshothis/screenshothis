@@ -5,6 +5,7 @@ import {
 	Outlet,
 	Scripts,
 	createRootRouteWithContext,
+	redirect,
 } from "@tanstack/react-router";
 import { TanStackRouterDevtools } from "@tanstack/react-router-devtools";
 import aosCss from "aos/dist/aos.css?url";
@@ -14,6 +15,8 @@ import { Toaster } from "#/components/ui/toast.tsx";
 import { authClient } from "#/lib/auth.ts";
 import type { orpc } from "#/utils/orpc.ts";
 import { seo } from "#/utils/seo.ts";
+import { createServerFn } from "@tanstack/react-start";
+import { getWebRequest } from "@tanstack/react-start/server";
 import appCss from "../app.css?url";
 import tailwindCss from "../tailwind.css?url";
 
@@ -21,6 +24,29 @@ export interface RouterAppContext {
 	orpc: typeof orpc;
 	queryClient: QueryClient;
 }
+
+const authStateFn = createServerFn({ method: "GET" }).handler(async () => {
+	const request = getWebRequest();
+	if (!request) throw new Error("No request found");
+	const { data } = await authClient.getSession({
+		fetchOptions: {
+			headers: {
+				cookie: request.headers.get("cookie") || "",
+			},
+		},
+	});
+
+	if (!data) {
+		// This will error because you're redirecting to a path that doesn't exist yet
+		// You can create a sign-in route to handle this
+		// See https://clerk.com/docs/references/tanstack-start/custom-sign-in-or-up-page
+		throw redirect({
+			to: "/login/$",
+		});
+	}
+
+	return data;
+});
 
 export const Route = createRootRouteWithContext<RouterAppContext>()({
 	head: () => ({
@@ -83,11 +109,9 @@ export const Route = createRootRouteWithContext<RouterAppContext>()({
 		],
 	}),
 	async beforeLoad() {
-		const session = await authClient.getSession();
+		const session = await authStateFn();
 
-		return {
-			...session.data,
-		};
+		return session;
 	},
 	component: RootComponent,
 });

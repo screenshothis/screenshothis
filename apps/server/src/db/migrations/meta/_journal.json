@@ -15,6 +15,13 @@
       "when": 1747083621850,
       "tag": "0001_bent_young_avengers",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1747084151961,
+      "tag": "0002_short_firebird",
+      "breakpoints": true
     }
   ]
 }

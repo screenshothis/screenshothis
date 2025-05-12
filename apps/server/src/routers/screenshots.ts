@@ -14,7 +14,7 @@ export const screenshotsRouter = {
 	create: protectedProcedure
 		.input(CreateScreenshotSchema.transform((data) => objectToCamel(data)))
 		.handler(async ({ context, input }) => {
-			if (!context.user?.currentWorkspaceId) {
+			if (!context.session.session.activeWorkspaceId) {
 				throw new ORPCError("UNAUTHORIZED", {
 					message: "Current workspace not found",
 				});
@@ -22,7 +22,7 @@ export const screenshotsRouter = {
 
 			try {
 				const { object, created } = await getOrCreateScreenshot(
-					context.user.currentWorkspaceId,
+					context.session.session.activeWorkspaceId,
 					input,
 				);
 
@@ -35,7 +35,7 @@ export const screenshotsRouter = {
 				const accessToken = await db.query.accessTokens.findFirst({
 					where: eq(
 						schema.accessTokens.workspaceId,
-						context.user.currentWorkspaceId,
+						context.session.session.activeWorkspaceId,
 					),
 					columns: {
 						token: true,
@@ -71,7 +71,7 @@ export const screenshotsRouter = {
 				.optional(),
 		)
 		.handler(async ({ context, input }) => {
-			if (!context.user?.currentWorkspaceId) {
+			if (!context.session.session.activeWorkspaceId) {
 				throw new ORPCError("UNAUTHORIZED", {
 					message: "Current workspace not found",
 				});
@@ -79,7 +79,10 @@ export const screenshotsRouter = {
 
 			const screenshots = await db.query.screenshots.findMany({
 				where: and(
-					eq(schema.screenshots.workspaceId, context.user.currentWorkspaceId),
+					eq(
+						schema.screenshots.workspaceId,
+						context.session.session.activeWorkspaceId,
+					),
 					input?.q ? like(schema.screenshots.url, `%${input.q}%`) : undefined,
 				),
 				columns: {

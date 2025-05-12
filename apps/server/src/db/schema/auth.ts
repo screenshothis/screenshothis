@@ -1,7 +1,9 @@
+import { relations } from "drizzle-orm";
 import { boolean, pgTable, text, timestamp } from "drizzle-orm/pg-core";
 
 import { newId } from "#/utils/generate-id";
 import { timestamps } from "./utils/timestamps";
+import { workspaces } from "./workspaces";
 
 export const users = pgTable("users", {
 	id: text("id")
@@ -57,3 +59,21 @@ export const verifications = pgTable("verifications", {
 	expiresAt: timestamp("expires_at").notNull(),
 	...timestamps,
 });
+
+export const userRelations = relations(users, ({ one }) => ({
+	session: one(sessions, {
+		fields: [users.id],
+		references: [sessions.userId],
+	}),
+}));
+
+export const sessionRelations = relations(sessions, ({ one }) => ({
+	user: one(users, {
+		fields: [sessions.userId],
+		references: [users.id],
+	}),
+	activeWorkspace: one(workspaces, {
+		fields: [sessions.activeWorkspaceId],
+		references: [workspaces.id],
+	}),
+}));

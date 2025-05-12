@@ -5,12 +5,12 @@ import { organization } from "better-auth/plugins";
 import { getActiveWorkspace } from "#/actions/get-active-workspace";
 import { env } from "#/utils/env";
 import { db } from "../db";
-import * as schema from "../db/schema/auth";
+import * as schema from "../db/schema";
 
 export const auth = betterAuth({
 	database: drizzleAdapter(db, {
 		provider: "pg",
-		schema: schema,
+		schema,
 	}),
 	basePath: "/auth",
 	trustedOrigins: [env.CORS_ORIGIN || ""],
@@ -45,13 +45,17 @@ export const auth = betterAuth({
 		user: {
 			create: {
 				async after(user) {
-					await auth.api.createOrganization({
-						body: {
-							name: `${user.name.split(" ")[0]}'s Workspace`,
-							slug: `ws-${user.name.split(" ")[0].toLowerCase()}`,
-							userId: user.id,
-						},
-					});
+					try {
+						await auth.api.createOrganization({
+							body: {
+								name: `${user.name.split(" ")[0]}'s Workspace`,
+								slug: `ws-${user.name.split(" ")[0].toLowerCase()}`,
+								userId: user.id,
+							},
+						});
+					} catch (error) {
+						console.error(error);
+					}
 				},
 			},
 		},
@@ -83,10 +87,16 @@ export const auth = betterAuth({
 					},
 				},
 				member: {
-					modelName: "workspace_members",
+					modelName: "workspaceMembers",
+					fields: {
+						organizationId: "workspaceId",
+					},
 				},
 				invitation: {
-					modelName: "workspace_invitations",
+					modelName: "workspaceInvitations",
+					fields: {
+						organizationId: "workspaceId",
+					},
 				},
 			},
 		}),

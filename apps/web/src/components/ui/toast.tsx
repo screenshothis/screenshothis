@@ -2,7 +2,7 @@ import { Toaster, type ToasterProps, toast as sonnerToast } from "sonner";
 
 const defaultOptions: ToasterProps = {
 	className: "group/toast",
-	position: "bottom-center",
+	position: "top-center",
 };
 
 const customToast = (

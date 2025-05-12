@@ -23,13 +23,13 @@ export const createRouter = () => {
 					<AlertToast.Root
 						t={t}
 						$status="error"
-						$variant="light"
+						$variant="lighter"
 						message={`Error: ${error.message}`}
 						dismissable={false}
 						action={
 							<Button
-								$size="sm"
-								$style="lighter"
+								$size="xxs"
+								$style="ghost"
 								$type="error"
 								onClick={() => queryClient.invalidateQueries()}
 							>
