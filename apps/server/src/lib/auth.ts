@@ -18,10 +18,14 @@ export const auth = betterAuth({
 		autoSignIn: true,
 	},
 	user: {
+		modelName: "users",
+	},
+	session: {
+		modelName: "sessions",
 		additionalFields: {
-			currentWorkspaceId: {
+			activeWorkspaceId: {
 				type: "string",
-				required: true,
+				required: false,
 				references: {
 					model: "workspaces",
 					field: "id",
@@ -29,10 +33,6 @@ export const auth = betterAuth({
 				},
 			},
 		},
-		modelName: "users",
-	},
-	session: {
-		modelName: "sessions",
 	},
 	account: {
 		modelName: "accounts",
