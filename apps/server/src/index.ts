@@ -27,7 +27,16 @@ const app = new OpenAPIHono<{ Variables: Variables }>({
 app.use(logger());
 app.use(requestId());
 
-app.on(["POST", "GET"], "/api/auth/**", (c) => auth.handler(c.req.raw));
+app.use(
+	"/auth/*",
+	cors({
+		origin: env.CORS_ORIGIN || "",
+		allowMethods: ["GET", "POST", "OPTIONS"],
+		allowHeaders: ["Content-Type", "Authorization"],
+		credentials: true,
+	}),
+);
+app.on(["POST", "GET"], "/auth/**", (c) => auth.handler(c.req.raw));
 
 const handler = new RPCHandler(appRouter);
 app.use(
