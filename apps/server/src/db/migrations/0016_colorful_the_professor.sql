@@ -1,0 +1,1 @@
+ALTER TABLE "polar_customer_state" ALTER COLUMN "name" DROP NOT NULL;

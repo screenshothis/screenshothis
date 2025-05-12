@@ -4,6 +4,7 @@ import { relations } from "drizzle-orm/relations";
 import { newId } from "#/utils/generate-id";
 import { accessTokens } from "./access-tokens";
 import { users } from "./auth";
+import { polarCustomerState } from "./polar";
 import { timestamps } from "./utils/timestamps";
 
 export const workspaces = pgTable("workspaces", {
@@ -12,8 +13,6 @@ export const workspaces = pgTable("workspaces", {
 		.$defaultFn(() => newId("workspace")),
 	name: text("name").notNull(),
 	isPersonal: boolean("is_personal").notNull().default(false),
-	polarCustomerId: text("polar_customer_id"),
-	polarSubscriptionId: text("polar_subscription_id"),
 	...timestamps,
 });
 
@@ -47,6 +46,10 @@ export const workspacesRelations = relations(workspaces, ({ one, many }) => ({
 	accessToken: one(accessTokens, {
 		fields: [workspaces.id],
 		references: [accessTokens.workspaceId],
+	}),
+	polarCustomerState: one(polarCustomerState, {
+		fields: [workspaces.id],
+		references: [polarCustomerState.externalId],
 	}),
 }));
 
