@@ -10,6 +10,9 @@ const prefixes = {
 	screenshot: "ss",
 	accessToken: "atok",
 	polarCustomerState: "pcs",
+	session: "sess",
+	account: "acct",
+	verification: "vrfy",
 } as const;
 
 export function newId<TPrefix extends keyof typeof prefixes>(prefix: TPrefix) {

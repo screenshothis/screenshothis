@@ -1,29 +1,19 @@
-import { getAuth } from "@hono/clerk-auth";
-import { eq } from "drizzle-orm";
 import type { Context as HonoContext } from "hono";
 
 import type { Variables } from "../common/environment";
-import { db } from "../db";
-import * as schema from "../db/schema";
+import { auth } from "./auth.js";
 
 export type CreateContextOptions = {
 	context: HonoContext<{ Variables: Variables }>;
 };
 
-export async function createContext(ctx: CreateContextOptions) {
-	const session = getAuth(ctx.context);
-	const user = session?.userId
-		? await db.query.users.findFirst({
-				where: eq(schema.users.externalId, session.userId),
-				columns: {
-					currentWorkspaceId: true,
-				},
-			})
-		: null;
+export async function createContext({ context }: CreateContextOptions) {
+	const session = await auth.api.getSession({
+		headers: context.req.raw.headers,
+	});
 
 	return {
 		session,
-		user,
 	};
 }
 

@@ -9,12 +9,12 @@ import SecurityCheckIcon from "virtual:icons/hugeicons/security-check";
 import Setting07Icon from "virtual:icons/hugeicons/setting-07";
 import UserCircle02Icon from "virtual:icons/hugeicons/user-circle-02";
 
-import { SignOutButton, useUser } from "@clerk/tanstack-react-start";
 import { useQuery } from "@tanstack/react-query";
-import { Link } from "@tanstack/react-router";
+import { Link, useNavigate } from "@tanstack/react-router";
 import { useTheme } from "next-themes";
 
 import { useORPC } from "#/hooks/use-orpc.ts";
+import { authClient } from "#/lib/auth.ts";
 import { cn } from "#/utils/cn.ts";
 import * as Avatar from "./ui/avatar.tsx";
 import * as Divider from "./ui/divider.tsx";
@@ -26,6 +26,7 @@ export function UserButton({ className }: { className?: string }) {
 	const orpc = useORPC();
 	const { data: me } = useQuery(orpc.users.me.queryOptions());
 	const { theme, setTheme } = useTheme();
+	const navigate = useNavigate();
 
 	return (
 		<DropdownMenu.Root>
@@ -115,12 +116,22 @@ export function UserButton({ className }: { className?: string }) {
 				<Divider.Root $type="line-spacing" />
 
 				<DropdownMenu.Group>
-					<SignOutButton>
-						<DropdownMenu.Item>
-							<DropdownMenu.ItemIcon as={Logout04Icon} />
-							Logout
-						</DropdownMenu.Item>
-					</SignOutButton>
+					<DropdownMenu.Item
+						onClick={() => {
+							authClient.signOut({
+								fetchOptions: {
+									onSuccess: () => {
+										navigate({
+											to: "/",
+										});
+									},
+								},
+							});
+						}}
+					>
+						<DropdownMenu.ItemIcon as={Logout04Icon} />
+						Logout
+					</DropdownMenu.Item>
 				</DropdownMenu.Group>
 
 				<div className="p-2 text-(--text-soft-400) text-paragraph-sm">
@@ -134,7 +145,9 @@ export function UserButton({ className }: { className?: string }) {
 
 export function UserButtonMobile({ className }: { className?: string }) {
 	const { theme, setTheme } = useTheme();
-	const { user } = useUser();
+	const orpc = useORPC();
+	const { data: me } = useQuery(orpc.users.me.queryOptions());
+	const navigate = useNavigate();
 
 	return (
 		<DropdownMenu.Root modal={false}>
@@ -145,21 +158,21 @@ export function UserButtonMobile({ className }: { className?: string }) {
 				)}
 			>
 				<Avatar.Root $color="blue" $size="48">
-					{user?.imageUrl ? (
+					{me?.imageUrl ? (
 						<Avatar.Image
-							alt={user?.fullName ?? ""}
-							src={user?.imageUrl ?? undefined}
+							alt={me?.fullName ?? ""}
+							src={me?.imageUrl ?? undefined}
 						/>
 					) : (
-						user?.fullName?.slice(0, 2)
+						me?.fullName?.slice(0, 2)
 					)}
 				</Avatar.Root>
 				<div className="flex-1 space-y-1">
 					<div className="flex items-center gap-0.5 text-label-md">
-						{user?.fullName}
+						{me?.fullName}
 					</div>
-					<div className="text-(--text-sub-600) text-paragraph-sm">
-						{user?.emailAddresses[0].emailAddress}
+					<div className="truncate text-(--text-sub-600) text-paragraph-sm">
+						{me?.email}
 					</div>
 				</div>
 				<div
@@ -222,12 +235,22 @@ export function UserButtonMobile({ className }: { className?: string }) {
 				<Divider.Root $type="line-spacing" />
 
 				<DropdownMenu.Group>
-					<SignOutButton>
-						<DropdownMenu.Item>
-							<DropdownMenu.ItemIcon as={Logout04Icon} />
-							Logout
-						</DropdownMenu.Item>
-					</SignOutButton>
+					<DropdownMenu.Item
+						onClick={() => {
+							authClient.signOut({
+								fetchOptions: {
+									onSuccess: () => {
+										navigate({
+											to: "/",
+										});
+									},
+								},
+							});
+						}}
+					>
+						<DropdownMenu.ItemIcon as={Logout04Icon} />
+						Logout
+					</DropdownMenu.Item>
 				</DropdownMenu.Group>
 			</DropdownMenu.Content>
 		</DropdownMenu.Root>

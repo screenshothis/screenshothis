@@ -1,4 +1,3 @@
-import { clerkMiddleware } from "@hono/clerk-auth";
 import { swaggerUI } from "@hono/swagger-ui";
 import { OpenAPIHono } from "@hono/zod-openapi";
 import { RPCHandler } from "@orpc/server/fetch";
@@ -9,6 +8,7 @@ import { logger } from "hono/logger";
 import { requestId } from "hono/request-id";
 
 import type { Variables } from "./common/environment";
+import { auth } from "./lib/auth";
 import { createContext } from "./lib/context";
 import { workspaceMiddleware } from "./middleware";
 import { appRouter } from "./routers";
@@ -27,6 +27,8 @@ const app = new OpenAPIHono<{ Variables: Variables }>({
 app.use(logger());
 app.use(requestId());
 
+app.on(["POST", "GET"], "/api/auth/**", (c) => auth.handler(c.req.raw));
+
 const handler = new RPCHandler(appRouter);
 app.use(
 	"/rpc/*",
@@ -37,7 +39,6 @@ app.use(
 		credentials: true,
 	}),
 );
-app.use("/rpc/*", clerkMiddleware());
 app.use("/rpc/*", async (c, next) => {
 	const context = await createContext({ context: c });
 	const { matched, response } = await handler.handle(c.req.raw, {

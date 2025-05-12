@@ -1,4 +1,3 @@
-import { createClerkHandler } from "@clerk/tanstack-react-start/server";
 import { getRouterManifest } from "@tanstack/react-start/router-manifest";
 import {
 	createStartHandler,
@@ -7,9 +6,7 @@ import {
 
 import { createRouter } from "./router.tsx";
 
-export default createClerkHandler(
-	createStartHandler({
-		createRouter,
-		getRouterManifest,
-	}),
-)(defaultStreamHandler);
+export default createStartHandler({
+	createRouter,
+	getRouterManifest,
+})(defaultStreamHandler);

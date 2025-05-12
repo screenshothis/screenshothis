@@ -9,8 +9,7 @@
 		"skipLibCheck": true,
 		"baseUrl": "./",
 		"paths": {
-			"#/*": ["./src/*"],
-			"#clerk/*": ["../../node_modules/@clerk/backend/dist/*"]
+			"#/*": ["./src/*"]
 		},
 		"outDir": "./dist",
 		"types": ["bun"],

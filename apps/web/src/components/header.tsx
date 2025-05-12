@@ -1,10 +1,10 @@
 import Menu02Icon from "virtual:icons/hugeicons/menu-02";
 
-import { useUser } from "@clerk/tanstack-react-start";
 import { Link } from "@tanstack/react-router";
 import * as React from "react";
 
 import { useScroll } from "#/hooks/use-scroll.ts";
+import { authClient } from "#/lib/auth.ts";
 import { cn } from "#/utils/cn.ts";
 import { Logo } from "./logo.tsx";
 import { Button } from "./ui/button.tsx";
@@ -40,7 +40,7 @@ const mobileNavItems = [
 ];
 
 export function Header() {
-	const user = useUser();
+	const { data: session } = authClient.useSession();
 	const { scrollY } = useScroll();
 
 	return (
@@ -85,8 +85,8 @@ export function Header() {
 						<MobileMenu />
 
 						<Button asChild $type="neutral" $size="sm">
-							<Link to={user ? "/dashboard" : "/register/$"}>
-								{user ? "Dashboard" : "Get started now"}
+							<Link to={session ? "/dashboard" : "/register/$"}>
+								{session ? "Dashboard" : "Get started now"}
 							</Link>
 						</Button>
 					</div>

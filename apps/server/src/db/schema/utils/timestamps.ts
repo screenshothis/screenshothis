@@ -4,8 +4,8 @@ import { integer } from "drizzle-orm/pg-core";
 export const timestamps = {
 	createdAt: integer("created_at")
 		.notNull()
-		.default(sql`extract(epoch from now())`),
+		.default(sql`extract(epoch from now()) * 1000`),
 	updatedAt: integer("updated_at").$onUpdateFn(
-		() => sql`extract(epoch from now())`,
+		() => sql`extract(epoch from now()) * 1000`,
 	),
 };

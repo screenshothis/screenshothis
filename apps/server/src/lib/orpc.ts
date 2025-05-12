@@ -8,11 +8,8 @@ export const o = os.$context<Context>();
 export const publicProcedure = o;
 
 export const requireAuth = o.middleware(({ context, next }) => {
-	if (!context.session?.sessionId) {
-		throw new ORPCError("UNAUTHORIZED", {
-			message: "Authentication required",
-			cause: "No session",
-		});
+	if (!context.session?.user) {
+		throw new ORPCError("UNAUTHORIZED");
 	}
 
 	return next({

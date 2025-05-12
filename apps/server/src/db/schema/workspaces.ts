@@ -1,4 +1,4 @@
-import { boolean, pgTable, text } from "drizzle-orm/pg-core";
+import { jsonb, pgTable, text, timestamp } from "drizzle-orm/pg-core";
 import { relations } from "drizzle-orm/relations";
 
 import { newId } from "#/utils/generate-id";
@@ -12,7 +12,9 @@ export const workspaces = pgTable("workspaces", {
 		.primaryKey()
 		.$defaultFn(() => newId("workspace")),
 	name: text("name").notNull(),
-	isPersonal: boolean("is_personal").notNull().default(false),
+	slug: text("slug").unique(),
+	logoUrl: text("logo_url"),
+	metadata: jsonb("metadata"),
 	...timestamps,
 });
 
@@ -27,11 +29,20 @@ export const workspaceMembers = pgTable("workspace_members", {
 		.references(() => users.id, {
 			onDelete: "cascade",
 		}),
+	role: text("role").notNull(),
 	...timestamps,
 });
 
 export const workspaceInvitations = pgTable("workspace_invitations", {
 	email: text("email").notNull(),
+	role: text("role"),
+	status: text("status").notNull(),
+	expiresAt: timestamp("expires_at").notNull(),
+	inviterId: text("inviter_id")
+		.notNull()
+		.references(() => users.id, {
+			onDelete: "cascade",
+		}),
 	workspaceId: text("workspace_id")
 		.notNull()
 		.references(() => workspaces.id, {

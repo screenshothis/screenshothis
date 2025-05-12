@@ -5,11 +5,8 @@ import type { Variables } from "#/common/environment";
 import { db } from "#/db";
 import * as schema from "#/db/schema";
 import { env } from "#/utils/env";
-import { handleClerkWebhook } from "#/webhooks/clerk";
 
 const webhooks = new Hono<{ Variables: Variables }>();
-
-webhooks.post("/clerk", handleClerkWebhook);
 
 webhooks.post(
 	"/polar",
