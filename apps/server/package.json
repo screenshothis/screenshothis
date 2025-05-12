@@ -21,7 +21,7 @@
 		"typecheck": "tsc --noEmit"
 	},
 	"dependencies": {
-		"@ai-sdk/google": "1.2.17",
+		"@ai-sdk/google": "1.2.18",
 		"@clerk/backend": "1.32.0",
 		"@ghostery/adblocker-playwright": "2.5.2",
 		"@ghostery/adblocker-puppeteer": "2.5.2",
@@ -55,11 +55,11 @@
 	},
 	"devDependencies": {
 		"@epic-web/config": "1.20.1",
-		"@types/bun": "1.2.12",
+		"@types/bun": "1.2.13",
 		"@types/pg": "8.15.1",
 		"drizzle-kit": "0.31.1",
 		"tsc-alias": "1.8.16",
-		"tsdown": "0.11.2",
+		"tsdown": "0.11.5",
 		"typescript": "5.8.3"
 	},
 	"packageManager": "bun@1.2.13"
