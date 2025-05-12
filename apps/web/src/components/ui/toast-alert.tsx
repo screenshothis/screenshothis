@@ -75,7 +75,7 @@ const AlertToast = React.forwardRef<
 				{action}
 				{dismissable && (
 					<button type="button" onClick={() => toast.dismiss(t)}>
-						<Alert.CloseIcon />
+						<Alert.CloseIcon className="size-4" />
 					</button>
 				)}
 			</Alert.Root>
