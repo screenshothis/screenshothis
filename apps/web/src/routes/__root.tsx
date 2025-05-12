@@ -10,7 +10,8 @@ import { TanStackRouterDevtools } from "@tanstack/react-router-devtools";
 import aosCss from "aos/dist/aos.css?url";
 import { ThemeProvider } from "next-themes";
 
-import { Toaster } from "#/components/ui/sonner.tsx";
+import { Toaster } from "#/components/ui/toast.tsx";
+import { authClient } from "#/lib/auth.ts";
 import type { orpc } from "#/utils/orpc.ts";
 import { seo } from "#/utils/seo.ts";
 import appCss from "../app.css?url";
@@ -81,6 +82,13 @@ export const Route = createRootRouteWithContext<RouterAppContext>()({
 			},
 		],
 	}),
+	async beforeLoad() {
+		const session = await authClient.getSession();
+
+		return {
+			...session.data,
+		};
+	},
 	component: RootComponent,
 });
 
@@ -120,7 +128,7 @@ function RootDocument({ children }: { children: React.ReactNode }) {
 				suppressHydrationWarning
 			>
 				{children}
-				<Toaster richColors />
+				<Toaster position="top-center" />
 				<TanStackRouterDevtools position="bottom-right" />
 				<ReactQueryDevtools position="bottom" buttonPosition="bottom-right" />
 				<Scripts />

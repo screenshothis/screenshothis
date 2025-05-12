@@ -4,7 +4,7 @@ import Sidebar from "#/components/sidebar.tsx";
 
 export const Route = createFileRoute("/_app")({
 	async beforeLoad({ context: { queryClient, orpc, ...context }, location }) {
-		if (!context.sessionId) {
+		if (!context.session?.id) {
 			throw redirect({
 				to: "/login/$",
 				search: {

@@ -31,7 +31,7 @@ export function TextField({
 	const generatedId = React.useId();
 	const id = rest.id || generatedId;
 
-	const error = errors.map((error) => error.message).join(" ");
+	const error = errors?.[0]?.message;
 
 	return (
 		<Field

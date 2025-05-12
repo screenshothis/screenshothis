@@ -41,7 +41,7 @@ const defaultConfig: PathConfig = {
 
 export const Route = createFileRoute("/_auth")({
 	async beforeLoad({ context }) {
-		if (context.sessionId) {
+		if (context.session?.id) {
 			throw redirect({
 				to: "/dashboard",
 			});

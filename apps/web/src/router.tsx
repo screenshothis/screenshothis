@@ -4,10 +4,12 @@ import {
 	QueryClientProvider,
 } from "@tanstack/react-query";
 import { createRouter as createTanstackRouter } from "@tanstack/react-router";
-import { toast } from "sonner";
 
 import "./app.css";
 import Loader from "./components/loader.tsx";
+import { Button } from "./components/ui/button.tsx";
+import * as AlertToast from "./components/ui/toast-alert.tsx";
+import { toast } from "./components/ui/toast.tsx";
 import { ORPCContext } from "./hooks/use-orpc.ts";
 import { routeTree } from "./routeTree.gen.ts";
 import "./tailwind.css";
@@ -17,14 +19,25 @@ export const createRouter = () => {
 	const queryClient = new QueryClient({
 		queryCache: new QueryCache({
 			onError: (error) => {
-				toast.error(`Error: ${error.message}`, {
-					action: {
-						label: "retry",
-						onClick: () => {
-							queryClient.invalidateQueries();
-						},
-					},
-				});
+				toast.custom((t) => (
+					<AlertToast.Root
+						t={t}
+						$status="error"
+						$variant="light"
+						message={`Error: ${error.message}`}
+						dismissable={false}
+						action={
+							<Button
+								$size="sm"
+								$style="lighter"
+								$type="error"
+								onClick={() => queryClient.invalidateQueries()}
+							>
+								Retry
+							</Button>
+						}
+					/>
+				));
 			},
 		}),
 	});

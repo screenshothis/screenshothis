@@ -4,7 +4,8 @@
 	"type": "module",
 	"exports": {
 		"./dashboard": "./src/dashboard.ts",
-		"./screenshots": "./src/screenshots.ts"
+		"./screenshots": "./src/screenshots.ts",
+		"./users": "./src/users.ts"
 	},
 	"module": "src/index.ts",
 	"dependencies": {
