@@ -72,8 +72,7 @@ function RouteComponent() {
 	const code = React.useMemo(() => {
 		return [
 			"https://api.screenshothis.com/v1/screenshots/take",
-			me?.currentWorkspace.accessToken.token &&
-				`   ?api_key=${me.currentWorkspace.accessToken.token}`,
+			me?.apiKey.key && `   ?api_key=${me.apiKey.key}`,
 			`   &url=${values.url || "https://polar.sh"}`,
 			values.selector && `   &selector=${values.selector}`,
 			values.width && `   &width=${values.width}`,
@@ -102,7 +101,7 @@ function RouteComponent() {
 		]
 			.filter(Boolean)
 			.join("\n");
-	}, [values, me?.currentWorkspace.accessToken.token]);
+	}, [values, me?.apiKey.key]);
 
 	return (
 		<>

@@ -3,7 +3,6 @@ import {
 	bigint,
 	boolean,
 	integer,
-	jsonb,
 	pgTable,
 	text,
 	timestamp,
@@ -38,7 +37,7 @@ export const apikeys = pgTable("api_keys", {
 	lastRequest: timestamp("last_request"),
 	expiresAt: timestamp("expires_at"),
 	permissions: text("permissions"),
-	metadata: jsonb("metadata"),
+	metadata: text("metadata"),
 	userId: text("user_id")
 		.notNull()
 		.references(() => users.id, { onDelete: "cascade" }),

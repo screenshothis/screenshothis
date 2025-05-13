@@ -32,8 +32,6 @@
 		"@orpc/server": "1.2.0",
 		"@polar-sh/hono": "0.3.0",
 		"@screenshothis/schemas": "workspace:*",
-		"@unkey/api": "0.36.0",
-		"@unkey/hono": "1.4.16",
 		"ai": "4.3.15",
 		"base-x": "5.0.1",
 		"better-auth": "1.2.7",

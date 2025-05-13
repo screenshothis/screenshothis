@@ -10,8 +10,6 @@ const envSchema = z.object({
 	AWS_URL: z.string().optional(),
 	AWS_ENDPOINT: z.string().optional(),
 	AWS_USE_PATH_STYLE_ENDPOINT: z.coerce.boolean().optional(),
-	UNKEY_API_ID: z.string(),
-	UNKEY_ROOT_KEY: z.string(),
 	POLAR_ACCESS_TOKEN: z.string(),
 	POLAR_SUCCESS_URL: z.string(),
 	POLAR_SERVER: z.enum(["sandbox", "production"]),

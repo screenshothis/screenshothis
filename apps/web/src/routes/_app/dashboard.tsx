@@ -88,8 +88,8 @@ function RouteComponent() {
 
 				<div className="shrink-0 min-[1100px]:w-[328px]">
 					<UsageWidget
-						totalRequests={me?.currentWorkspace?.usage?.totalRequests}
-						remainingRequests={me?.currentWorkspace?.usage?.remainingRequests}
+						totalRequests={me?.apiKey.usage.totalRequests}
+						remainingRequests={me?.apiKey.usage.remainingRequests}
 						className="px-1"
 					/>
 
@@ -99,9 +99,9 @@ function RouteComponent() {
 							isCopyable
 							title="API Key"
 							lang="bash"
-							textToCopy={me?.currentWorkspace?.accessToken?.token}
+							textToCopy={me?.apiKey.key}
 						>
-							{me?.currentWorkspace?.accessToken?.redactedToken}
+							{me?.apiKey.key}
 						</CodeBlock>
 					</div>
 				</div>

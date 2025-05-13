@@ -8,11 +8,21 @@ export type CreateContextOptions = {
 };
 
 export async function createContext({ context }: CreateContextOptions) {
-	const session = await auth.api.getSession({
-		headers: context.req.raw.headers,
-	});
+	const session = await auth.api.getSession(context.req.raw);
 
-	return { session };
+	if (!session) {
+		return {
+			session: null,
+			user: null,
+		};
+	}
+
+	return {
+		session: {
+			...session?.session,
+			user: session?.user,
+		},
+	};
 }
 
 export type Context = Awaited<ReturnType<typeof createContext>>;

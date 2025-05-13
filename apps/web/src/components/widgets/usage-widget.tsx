@@ -3,13 +3,13 @@ import * as LinkButton from "../ui/link-button.tsx";
 import * as ProgressBar from "../ui/progress-bar.tsx";
 
 type UsageWidgetProps = React.ComponentPropsWithRef<"div"> & {
-	totalRequests?: number;
-	remainingRequests?: number;
+	totalRequests?: number | null;
+	remainingRequests?: bigint | null;
 };
 
 export function UsageWidget({
 	totalRequests = 0,
-	remainingRequests = 0,
+	remainingRequests = BigInt(0),
 	className,
 	...props
 }: UsageWidgetProps) {
@@ -18,12 +18,13 @@ export function UsageWidget({
 			<div className="space-y-1.5">
 				<div className="flex justify-between gap-1.5">
 					<span className="text-label-sm">
-						Usage ({(totalRequests ?? 0) - (remainingRequests ?? 0)}/
+						Usage ({(totalRequests ?? 0) - Number(remainingRequests ?? 0)}/
 						{totalRequests ?? 0})
 					</span>
 					<span className="text-(--text-sub-600) text-paragraph-xs">
 						{Math.round(
-							((totalRequests - (remainingRequests ?? 0)) / totalRequests) *
+							(((totalRequests ?? 0) - Number(remainingRequests ?? 0)) /
+								(totalRequests ?? 0)) *
 								100 || 0,
 						)}
 						%
@@ -32,7 +33,8 @@ export function UsageWidget({
 				<ProgressBar.Root
 					value={
 						totalRequests
-							? ((totalRequests - (remainingRequests ?? 0)) / totalRequests) *
+							? ((totalRequests - Number(remainingRequests ?? 0)) /
+									totalRequests) *
 								100
 							: 0
 					}

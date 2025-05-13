@@ -1,13 +1,13 @@
 import { and, eq } from "drizzle-orm";
 
 import { db } from "#/db";
-import { workspaceMembers } from "#/db/schema/workspaces";
+import * as schema from "#/db/schema";
 
 export async function getActiveWorkspace(userId: string) {
-	const userMember = await db.query.workspaceMembers.findFirst({
+	const userMember = await db.query.workspaceMember.findFirst({
 		where: and(
-			eq(workspaceMembers.userId, userId),
-			eq(workspaceMembers.role, "owner"),
+			eq(schema.workspaceMember.userId, userId),
+			eq(schema.workspaceMember.role, "owner"),
 		),
 		with: {
 			workspace: true,

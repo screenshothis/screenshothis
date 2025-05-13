@@ -16,10 +16,10 @@ CREATE TABLE "api_keys" (
 	"last_request" timestamp,
 	"expires_at" timestamp,
 	"permissions" text,
-	"metadata" jsonb,
+	"metadata" text,
 	"user_id" text NOT NULL,
-	"created_at" timestamp DEFAULT (now() AT TIME ZONE 'utc'::text),
-	"updated_at" timestamp DEFAULT (now() AT TIME ZONE 'utc'::text)
+	"created_at" timestamp DEFAULT now() NOT NULL,
+	"updated_at" timestamp DEFAULT now() NOT NULL
 );
 --> statement-breakpoint
 CREATE TABLE "accounts" (
@@ -34,8 +34,8 @@ CREATE TABLE "accounts" (
 	"password" text,
 	"access_token_expires_at" timestamp,
 	"refresh_token_expires_at" timestamp,
-	"created_at" timestamp DEFAULT (now() AT TIME ZONE 'utc'::text),
-	"updated_at" timestamp DEFAULT (now() AT TIME ZONE 'utc'::text)
+	"created_at" timestamp DEFAULT now() NOT NULL,
+	"updated_at" timestamp DEFAULT now() NOT NULL
 );
 --> statement-breakpoint
 CREATE TABLE "sessions" (
@@ -46,8 +46,8 @@ CREATE TABLE "sessions" (
 	"expires_at" timestamp NOT NULL,
 	"user_id" text NOT NULL,
 	"active_workspace_id" text,
-	"created_at" timestamp DEFAULT (now() AT TIME ZONE 'utc'::text),
-	"updated_at" timestamp DEFAULT (now() AT TIME ZONE 'utc'::text),
+	"created_at" timestamp DEFAULT now() NOT NULL,
+	"updated_at" timestamp DEFAULT now() NOT NULL,
 	CONSTRAINT "sessions_token_unique" UNIQUE("token")
 );
 --> statement-breakpoint
@@ -57,8 +57,8 @@ CREATE TABLE "users" (
 	"email" text NOT NULL,
 	"email_verified" boolean NOT NULL,
 	"image_url" text,
-	"created_at" timestamp DEFAULT (now() AT TIME ZONE 'utc'::text),
-	"updated_at" timestamp DEFAULT (now() AT TIME ZONE 'utc'::text),
+	"created_at" timestamp DEFAULT now() NOT NULL,
+	"updated_at" timestamp DEFAULT now() NOT NULL,
 	CONSTRAINT "users_email_unique" UNIQUE("email")
 );
 --> statement-breakpoint
@@ -67,8 +67,8 @@ CREATE TABLE "verifications" (
 	"identifier" text NOT NULL,
 	"value" text NOT NULL,
 	"expires_at" timestamp NOT NULL,
-	"created_at" timestamp DEFAULT (now() AT TIME ZONE 'utc'::text),
-	"updated_at" timestamp DEFAULT (now() AT TIME ZONE 'utc'::text)
+	"created_at" timestamp DEFAULT now() NOT NULL,
+	"updated_at" timestamp DEFAULT now() NOT NULL
 );
 --> statement-breakpoint
 CREATE TABLE "polar_customer_state" (
@@ -80,8 +80,8 @@ CREATE TABLE "polar_customer_state" (
 	"active_subscriptions" jsonb DEFAULT '[]'::jsonb,
 	"granted_benefits" jsonb DEFAULT '[]'::jsonb,
 	"active_meters" jsonb DEFAULT '[]'::jsonb,
-	"created_at" timestamp DEFAULT (now() AT TIME ZONE 'utc'::text),
-	"updated_at" timestamp DEFAULT (now() AT TIME ZONE 'utc'::text)
+	"created_at" timestamp DEFAULT now() NOT NULL,
+	"updated_at" timestamp DEFAULT now() NOT NULL
 );
 --> statement-breakpoint
 CREATE TABLE "screenshots" (
@@ -104,8 +104,19 @@ CREATE TABLE "screenshots" (
 	"prefers_reduced_motion" text DEFAULT 'no-preference' NOT NULL,
 	"is_extra" boolean DEFAULT false NOT NULL,
 	"workspace_id" text NOT NULL,
-	"created_at" timestamp DEFAULT (now() AT TIME ZONE 'utc'::text),
-	"updated_at" timestamp DEFAULT (now() AT TIME ZONE 'utc'::text)
+	"created_at" timestamp DEFAULT now() NOT NULL,
+	"updated_at" timestamp DEFAULT now() NOT NULL
+);
+--> statement-breakpoint
+CREATE TABLE "workspaces" (
+	"id" text PRIMARY KEY NOT NULL,
+	"name" text NOT NULL,
+	"slug" text,
+	"logo_url" text,
+	"metadata" text,
+	"created_at" timestamp DEFAULT now() NOT NULL,
+	"updated_at" timestamp DEFAULT now() NOT NULL,
+	CONSTRAINT "workspaces_slug_unique" UNIQUE("slug")
 );
 --> statement-breakpoint
 CREATE TABLE "workspace_invitations" (
@@ -116,8 +127,8 @@ CREATE TABLE "workspace_invitations" (
 	"expires_at" timestamp NOT NULL,
 	"inviter_id" text NOT NULL,
 	"workspace_id" text NOT NULL,
-	"created_at" timestamp DEFAULT (now() AT TIME ZONE 'utc'::text),
-	"updated_at" timestamp DEFAULT (now() AT TIME ZONE 'utc'::text)
+	"created_at" timestamp DEFAULT now() NOT NULL,
+	"updated_at" timestamp DEFAULT now() NOT NULL
 );
 --> statement-breakpoint
 CREATE TABLE "workspace_members" (
@@ -125,19 +136,8 @@ CREATE TABLE "workspace_members" (
 	"workspace_id" text NOT NULL,
 	"user_id" text NOT NULL,
 	"role" text NOT NULL,
-	"created_at" timestamp DEFAULT (now() AT TIME ZONE 'utc'::text),
-	"updated_at" timestamp DEFAULT (now() AT TIME ZONE 'utc'::text)
-);
---> statement-breakpoint
-CREATE TABLE "workspaces" (
-	"id" text PRIMARY KEY NOT NULL,
-	"name" text NOT NULL,
-	"slug" text,
-	"logo_url" text,
-	"metadata" jsonb,
-	"created_at" timestamp DEFAULT (now() AT TIME ZONE 'utc'::text),
-	"updated_at" timestamp DEFAULT (now() AT TIME ZONE 'utc'::text),
-	CONSTRAINT "workspaces_slug_unique" UNIQUE("slug")
+	"created_at" timestamp DEFAULT now() NOT NULL,
+	"updated_at" timestamp DEFAULT now() NOT NULL
 );
 --> statement-breakpoint
 ALTER TABLE "api_keys" ADD CONSTRAINT "api_keys_user_id_users_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."users"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint

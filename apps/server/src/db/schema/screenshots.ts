@@ -17,7 +17,7 @@ import type { z } from "zod";
 
 import { newId } from "#/utils/generate-id";
 import { timestamps } from "./utils/timestamps";
-import { workspaces } from "./workspaces";
+import { workspace } from "./workspaces";
 
 export const screenshots = pgTable("screenshots", {
 	id: text()
@@ -54,15 +54,15 @@ export const screenshots = pgTable("screenshots", {
 	isExtra: boolean("is_extra").notNull().default(false),
 	workspaceId: text("workspace_id")
 		.notNull()
-		.references(() => workspaces.id, {
+		.references(() => workspace.id, {
 			onDelete: "cascade",
 		}),
 	...timestamps,
 });
 
 export const screenshotsRelations = relations(screenshots, ({ one }) => ({
-	workspace: one(workspaces, {
+	workspace: one(workspace, {
 		fields: [screenshots.workspaceId],
-		references: [workspaces.id],
+		references: [workspace.id],
 	}),
 }));

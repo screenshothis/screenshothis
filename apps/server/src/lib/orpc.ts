@@ -12,6 +12,10 @@ export const requireAuth = o.middleware(({ context, next }) => {
 		throw new ORPCError("UNAUTHORIZED");
 	}
 
+	if (!context.session.user) {
+		throw new ORPCError("UNAUTHORIZED");
+	}
+
 	return next({
 		context: {
 			...context,

@@ -4,7 +4,7 @@ import { boolean, pgTable, text, timestamp } from "drizzle-orm/pg-core";
 import { newId } from "#/utils/generate-id";
 import { apikeys } from "./api-keys";
 import { timestamps } from "./utils/timestamps";
-import { workspaces } from "./workspaces";
+import { workspace } from "./workspaces";
 
 export const users = pgTable("users", {
 	id: text("id")
@@ -77,8 +77,8 @@ export const sessionRelations = relations(sessions, ({ one }) => ({
 		fields: [sessions.userId],
 		references: [users.id],
 	}),
-	activeWorkspace: one(workspaces, {
+	activeWorkspace: one(workspace, {
 		fields: [sessions.activeWorkspaceId],
-		references: [workspaces.id],
+		references: [workspace.id],
 	}),
 }));

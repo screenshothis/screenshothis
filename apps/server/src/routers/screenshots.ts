@@ -14,7 +14,7 @@ export const screenshotsRouter = {
 	create: protectedProcedure
 		.input(CreateScreenshotSchema.transform((data) => objectToCamel(data)))
 		.handler(async ({ context, input }) => {
-			if (!context.session.session.activeWorkspaceId) {
+			if (!context.session.activeWorkspaceId) {
 				throw new ORPCError("UNAUTHORIZED", {
 					message: "Current workspace not found",
 				});
@@ -22,7 +22,7 @@ export const screenshotsRouter = {
 
 			try {
 				const { object, created } = await getOrCreateScreenshot(
-					context.session.session.activeWorkspaceId,
+					context.session.activeWorkspaceId,
 					input,
 				);
 
@@ -40,11 +40,25 @@ export const screenshotsRouter = {
 					},
 				});
 
-				if (apiKey?.id && !created) {
+				if (!apiKey) {
+					throw new ORPCError("NOT_FOUND", {
+						message: "API key not found",
+					});
+				}
+
+				await auth.api.updateApiKey({
+					body: {
+						keyId: apiKey.id,
+						remaining: Number(apiKey.remaining) - 1,
+						userId: context.session.user.id,
+					},
+				});
+				if (created) {
 					await auth.api.updateApiKey({
 						body: {
 							keyId: apiKey.id,
-							remaining: Number(apiKey.remaining) + 1,
+							remaining: Number(apiKey.remaining) - 1,
+							userId: context.session.user.id,
 						},
 					});
 				}
@@ -69,7 +83,7 @@ export const screenshotsRouter = {
 				.optional(),
 		)
 		.handler(async ({ context, input }) => {
-			if (!context.session.session.activeWorkspaceId) {
+			if (!context.session.activeWorkspaceId) {
 				throw new ORPCError("UNAUTHORIZED", {
 					message: "Current workspace not found",
 				});
@@ -77,10 +91,7 @@ export const screenshotsRouter = {
 
 			const screenshots = await db.query.screenshots.findMany({
 				where: and(
-					eq(
-						schema.screenshots.workspaceId,
-						context.session.session.activeWorkspaceId,
-					),
+					eq(schema.screenshots.workspaceId, context.session.activeWorkspaceId),
 					input?.q ? like(schema.screenshots.url, `%${input.q}%`) : undefined,
 				),
 				columns: {

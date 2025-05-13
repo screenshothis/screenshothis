@@ -1,7 +1,6 @@
 import { swaggerUI } from "@hono/swagger-ui";
 import { OpenAPIHono } from "@hono/zod-openapi";
 import { RPCHandler } from "@orpc/server/fetch";
-import { unkey } from "@unkey/hono";
 import "dotenv/config";
 import { cors } from "hono/cors";
 import { logger } from "hono/logger";
@@ -27,6 +26,19 @@ const app = new OpenAPIHono<{ Variables: Variables }>({
 app.use(logger());
 app.use(requestId());
 
+app.use("*", async (c, next) => {
+	const session = await auth.api.getSession({ headers: c.req.raw.headers });
+
+	if (!session) {
+		c.set("user", null);
+		c.set("session", null);
+		return next();
+	}
+
+	c.set("user", session.user);
+	c.set("session", session.session);
+	return next();
+});
 app.use(
 	"/auth/*",
 	cors({
@@ -62,13 +74,6 @@ app.use("/rpc/*", async (c, next) => {
 	await next();
 });
 
-app.use(
-	"/v1/*",
-	unkey({
-		apiId: env.UNKEY_API_ID,
-		getKey: (c) => c.req.query("api_key"),
-	}),
-);
 app.use("/v1/*", workspaceMiddleware);
 
 app.openAPIRegistry.registerComponent("securitySchemes", "ApiKeyQuery", {

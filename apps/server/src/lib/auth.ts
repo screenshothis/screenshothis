@@ -18,6 +18,7 @@ export const auth = betterAuth({
 		provider: "pg",
 		schema,
 		usePlural: true,
+		debugLogs: true,
 	}),
 	basePath: "/auth",
 	trustedOrigins: [env.CORS_ORIGIN || ""],
@@ -25,28 +26,18 @@ export const auth = betterAuth({
 		enabled: true,
 		autoSignIn: true,
 	},
-	user: {
-		modelName: "users",
-	},
 	session: {
-		modelName: "sessions",
 		additionalFields: {
 			activeWorkspaceId: {
 				type: "string",
 				required: false,
 				references: {
-					model: "workspaces",
+					model: "workspace",
 					field: "id",
 					onDelete: "set null",
 				},
 			},
 		},
-	},
-	account: {
-		modelName: "accounts",
-	},
-	verification: {
-		modelName: "verifications",
 	},
 	databaseHooks: {
 		user: {
@@ -97,7 +88,7 @@ export const auth = betterAuth({
 		organization({
 			schema: {
 				organization: {
-					modelName: "workspaces",
+					modelName: "workspace",
 					additionalFields: {
 						logoUrl: {
 							type: "string",
@@ -106,7 +97,7 @@ export const auth = betterAuth({
 					},
 				},
 				member: {
-					modelName: "workspaceMembers",
+					modelName: "workspaceMember",
 					fields: {
 						organizationId: "workspaceId",
 					},
@@ -115,7 +106,7 @@ export const auth = betterAuth({
 							type: "string",
 							required: true,
 							references: {
-								model: "workspaces",
+								model: "workspace",
 								field: "id",
 								onDelete: "set null",
 							},
@@ -123,7 +114,7 @@ export const auth = betterAuth({
 					},
 				},
 				invitation: {
-					modelName: "workspaceInvitations",
+					modelName: "workspaceInvitation",
 					fields: {
 						organizationId: "workspaceId",
 					},
@@ -132,7 +123,7 @@ export const auth = betterAuth({
 							type: "string",
 							required: true,
 							references: {
-								model: "workspaces",
+								model: "workspace",
 								field: "id",
 								onDelete: "set null",
 							},
@@ -140,7 +131,6 @@ export const auth = betterAuth({
 					},
 				},
 				session: {
-					modelName: "sessions",
 					fields: {
 						activeOrganizationId: "activeWorkspaceId",
 					},
@@ -149,6 +139,14 @@ export const auth = betterAuth({
 		}),
 		apiKey({
 			defaultPrefix: env.DEFAULT_API_KEY_PREFIX,
+			customAPIKeyGetter(ctx) {
+				if (!ctx.request?.url) {
+					return null;
+				}
+
+				const url = new URL(ctx.request?.url);
+				return url.searchParams.get("api_key");
+			},
 		}),
 	],
 });

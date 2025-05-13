@@ -8,7 +8,7 @@ import { protectedProcedure } from "#/lib/orpc";
 export const usersRouter = {
 	me: protectedProcedure.handler(async ({ context }) => {
 		const user = await db.query.users.findFirst({
-			where: eq(schema.users.id, context.session?.user.id),
+			where: eq(schema.users.id, context.session.user.id),
 			with: {
 				session: {
 					with: {
@@ -37,15 +37,15 @@ export const usersRouter = {
 
 		const userWorkspaces = await db
 			.select({
-				id: schema.workspaces.id,
-				name: schema.workspaces.name,
+				id: schema.workspace.id,
+				name: schema.workspace.name,
 			})
-			.from(schema.workspaceMembers)
+			.from(schema.workspaceMember)
 			.innerJoin(
-				schema.workspaces,
-				eq(schema.workspaceMembers.workspaceId, schema.workspaces.id),
+				schema.workspace,
+				eq(schema.workspaceMember.workspaceId, schema.workspace.id),
 			)
-			.where(eq(schema.workspaceMembers.userId, user.id));
+			.where(eq(schema.workspaceMember.userId, user.id));
 
 		return {
 			fullName: user.name,

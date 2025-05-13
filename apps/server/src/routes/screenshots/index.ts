@@ -1,9 +1,12 @@
 import { OpenAPIHono, createRoute, z } from "@hono/zod-openapi";
 import { CreateScreenshotSchema } from "@screenshothis/schemas/screenshots";
+import { eq } from "drizzle-orm";
 import { objectToCamel } from "ts-case-convert";
 
 import type { Variables } from "#/common/environment";
-import { unkey } from "#/lib/unkey";
+import { db } from "#/db";
+import * as schema from "#/db/schema";
+import { auth } from "#/lib/auth";
 import { createErrorResponse } from "#/utils/errors";
 import { getOrCreateScreenshot } from "#/utils/screenshot";
 
@@ -42,6 +45,12 @@ const screenshots = new OpenAPIHono<{ Variables: Variables }>().openapi(
 	}),
 	async (c) => {
 		try {
+			const session = await auth.api.getSession(c.req.raw);
+
+			if (!session) {
+				return c.json({ error: "Unauthorized" }, 401);
+			}
+
 			const { object, created } = await getOrCreateScreenshot(
 				c.get("workspaceId"),
 				c.req.valid("query"),
@@ -57,13 +66,21 @@ const screenshots = new OpenAPIHono<{ Variables: Variables }>().openapi(
 				headers.set("content-type", contentType);
 			}
 
-			if (created) {
-				const key = c.get("unkey");
-				if (key?.keyId) {
-					await unkey.keys.updateRemaining({
-						keyId: key.keyId,
-						op: "decrement",
-						value: 1,
+			if (!created) {
+				const apiKey = await db.query.apikeys.findFirst({
+					where: eq(schema.apikeys.userId, session?.user.id),
+					columns: {
+						id: true,
+						remaining: true,
+					},
+				});
+
+				if (apiKey?.id) {
+					await auth.api.updateApiKey({
+						body: {
+							keyId: apiKey.id,
+							remaining: Number(apiKey.remaining) + 1,
+						},
 					});
 				}
 			}

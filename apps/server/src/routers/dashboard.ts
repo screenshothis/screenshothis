@@ -1,4 +1,3 @@
-import { ORPCError } from "@orpc/server";
 import { RangeSchema } from "@screenshothis/schemas/dashboard";
 import { sql } from "drizzle-orm";
 import { z } from "zod";
@@ -14,10 +13,6 @@ export const dashboardRouter = {
 			}),
 		)
 		.handler(async ({ context, input }) => {
-			if (!context.session.session.activeWorkspaceId) {
-				throw new ORPCError("Current workspace not found");
-			}
-
 			let interval: string;
 			let trunc: string;
 			let fromDate: Date;
@@ -70,7 +65,7 @@ export const dashboardRouter = {
                     date_trunc(${trunc}, "created_at") AS date,
                     count(*) AS count
                 FROM screenshots
-                WHERE "workspace_id" = ${context.session.session.activeWorkspaceId}
+                WHERE "workspace_id" = ${context.session.activeWorkspaceId}
                     AND "created_at" >= to_timestamp(${fromSeconds})
                 GROUP BY date
             ) s ON gs.date = s.date
@@ -95,7 +90,7 @@ export const dashboardRouter = {
                 date_trunc(${trunc}, "created_at") AS date,
                 count(*) AS count
             FROM screenshots
-            WHERE "workspace_id" = ${context.session.session.activeWorkspaceId}
+            WHERE "workspace_id" = ${context.session.activeWorkspaceId}
                 AND "created_at" >= to_timestamp(${prevFromDate.getTime() / 1000})
                 AND "created_at" < to_timestamp(${prevToDate.getTime() / 1000})
             GROUP BY date
