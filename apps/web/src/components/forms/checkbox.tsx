@@ -4,7 +4,6 @@ import { useStore } from "@tanstack/react-form";
 import * as React from "react";
 
 import { useFieldContext } from "#/hooks/form-context.ts";
-import { cn } from "#/utils/cn.ts";
 import * as Checkbox from "../ui/checkbox.tsx";
 import { Field, type FieldProps } from "./field.tsx";
 
@@ -19,12 +18,13 @@ export function CheckboxField({
 	labelClassName,
 	hint,
 	hintClassName,
+	id: idProp,
 	...rest
 }: CheckboxFieldProps) {
 	const field = useFieldContext<boolean>();
 	const errors = useStore(field.store, (state) => state.meta.errors);
 	const generatedId = React.useId();
-	const id = rest.id || generatedId;
+	const id = idProp || generatedId;
 
 	const error = errors.map((error) => error.message).join(" ");
 
@@ -36,7 +36,7 @@ export function CheckboxField({
 			hint={hint}
 			hintClassName={hintClassName}
 			id={`${id}-form-item`}
-			className={cn("grid-cols-2", wrapperClassName)}
+			className={wrapperClassName}
 		>
 			<Checkbox.Root
 				data-slot="form-control"
