@@ -52,14 +52,7 @@ function RouteComponent() {
 					onSuccess() {
 						navigate({ to: "/dashboard" });
 
-						toast.custom((t) => (
-							<AlertToast.Root
-								t={t}
-								$status="success"
-								$variant="filled"
-								message="Account created successfully"
-							/>
-						));
+						form.reset();
 					},
 					onError({ error }) {
 						toast.custom((t) => (
@@ -104,6 +97,7 @@ function RouteComponent() {
 							name="email"
 							children={(field) => (
 								<field.TextField
+									autoComplete="email"
 									type="email"
 									leadingIcon={Mail01Icon}
 									placeholder="john@doe.com"
@@ -124,6 +118,7 @@ function RouteComponent() {
 									id="password"
 									name="password"
 									leadingIcon={LockPasswordIcon}
+									autoComplete="current-password"
 								/>
 							)}
 						/>
@@ -144,7 +139,7 @@ function RouteComponent() {
 						/>
 
 						<LinkButton.Root $style="gray" $size="md" $underline asChild>
-							<Link to="/">Forgot password?</Link>
+							<Link to="/forgot-password">Forgot password?</Link>
 						</LinkButton.Root>
 					</div>
 

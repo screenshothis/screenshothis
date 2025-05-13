@@ -7,7 +7,7 @@ import {
 } from "@tanstack/react-router";
 
 import { LanguageSelect } from "#/components/language-select.tsx";
-import * as Button from "#/components/ui/button-primitives";
+import * as Button from "#/components/ui/button-primitives.tsx";
 
 type PathConfig = {
 	message: string;
@@ -29,7 +29,7 @@ const pathConfig: Record<string, PathConfig> = {
 	"/reset-password": {
 		message: "Changed your mind?",
 		linkText: "Go back",
-		linkHref: "/",
+		linkHref: "/login",
 	},
 };
 

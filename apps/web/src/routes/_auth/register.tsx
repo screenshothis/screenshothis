@@ -37,6 +37,8 @@ function RouteComponent() {
 							message="Account created successfully"
 						/>
 					));
+
+					form.reset();
 				},
 				onError({ error }) {
 					toast.custom((t) => (
@@ -84,6 +86,7 @@ function RouteComponent() {
 									id="name"
 									name="name"
 									placeholder="John Doe"
+									autoComplete="name"
 								/>
 							)}
 						/>
@@ -99,6 +102,7 @@ function RouteComponent() {
 									id="email"
 									label="Email"
 									name="email"
+									autoComplete="email"
 								/>
 							)}
 						/>
@@ -113,6 +117,7 @@ function RouteComponent() {
 									id="password"
 									name="password"
 									leadingIcon={LockPasswordIcon}
+									autoComplete="new-password"
 								/>
 							)}
 						/>

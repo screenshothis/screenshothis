@@ -17,6 +17,7 @@ import { Route as AppImport } from './routes/_app'
 import { Route as MarketingIndexImport } from './routes/_marketing/index'
 import { Route as AuthRegisterImport } from './routes/_auth/register'
 import { Route as AuthLoginImport } from './routes/_auth/login'
+import { Route as AuthForgotPasswordImport } from './routes/_auth/forgot-password'
 import { Route as AppScreenshotsImport } from './routes/_app/screenshots'
 import { Route as AppPlaygroundImport } from './routes/_app/playground'
 import { Route as AppDashboardImport } from './routes/_app/dashboard'
@@ -53,6 +54,12 @@ const AuthRegisterRoute = AuthRegisterImport.update({
 const AuthLoginRoute = AuthLoginImport.update({
   id: '/login',
   path: '/login',
+  getParentRoute: () => AuthRoute,
+} as any)
+
+const AuthForgotPasswordRoute = AuthForgotPasswordImport.update({
+  id: '/forgot-password',
+  path: '/forgot-password',
   getParentRoute: () => AuthRoute,
 } as any)
 
@@ -120,6 +127,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppScreenshotsImport
       parentRoute: typeof AppImport
     }
+    '/_auth/forgot-password': {
+      id: '/_auth/forgot-password'
+      path: '/forgot-password'
+      fullPath: '/forgot-password'
+      preLoaderRoute: typeof AuthForgotPasswordImport
+      parentRoute: typeof AuthImport
+    }
     '/_auth/login': {
       id: '/_auth/login'
       path: '/login'
@@ -161,11 +175,13 @@ const AppRouteChildren: AppRouteChildren = {
 const AppRouteWithChildren = AppRoute._addFileChildren(AppRouteChildren)
 
 interface AuthRouteChildren {
+  AuthForgotPasswordRoute: typeof AuthForgotPasswordRoute
   AuthLoginRoute: typeof AuthLoginRoute
   AuthRegisterRoute: typeof AuthRegisterRoute
 }
 
 const AuthRouteChildren: AuthRouteChildren = {
+  AuthForgotPasswordRoute: AuthForgotPasswordRoute,
   AuthLoginRoute: AuthLoginRoute,
   AuthRegisterRoute: AuthRegisterRoute,
 }
@@ -189,6 +205,7 @@ export interface FileRoutesByFullPath {
   '/dashboard': typeof AppDashboardRoute
   '/playground': typeof AppPlaygroundRoute
   '/screenshots': typeof AppScreenshotsRoute
+  '/forgot-password': typeof AuthForgotPasswordRoute
   '/login': typeof AuthLoginRoute
   '/register': typeof AuthRegisterRoute
   '/': typeof MarketingIndexRoute
@@ -199,6 +216,7 @@ export interface FileRoutesByTo {
   '/dashboard': typeof AppDashboardRoute
   '/playground': typeof AppPlaygroundRoute
   '/screenshots': typeof AppScreenshotsRoute
+  '/forgot-password': typeof AuthForgotPasswordRoute
   '/login': typeof AuthLoginRoute
   '/register': typeof AuthRegisterRoute
   '/': typeof MarketingIndexRoute
@@ -212,6 +230,7 @@ export interface FileRoutesById {
   '/_app/dashboard': typeof AppDashboardRoute
   '/_app/playground': typeof AppPlaygroundRoute
   '/_app/screenshots': typeof AppScreenshotsRoute
+  '/_auth/forgot-password': typeof AuthForgotPasswordRoute
   '/_auth/login': typeof AuthLoginRoute
   '/_auth/register': typeof AuthRegisterRoute
   '/_marketing/': typeof MarketingIndexRoute
@@ -224,6 +243,7 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/playground'
     | '/screenshots'
+    | '/forgot-password'
     | '/login'
     | '/register'
     | '/'
@@ -233,6 +253,7 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/playground'
     | '/screenshots'
+    | '/forgot-password'
     | '/login'
     | '/register'
     | '/'
@@ -244,6 +265,7 @@ export interface FileRouteTypes {
     | '/_app/dashboard'
     | '/_app/playground'
     | '/_app/screenshots'
+    | '/_auth/forgot-password'
     | '/_auth/login'
     | '/_auth/register'
     | '/_marketing/'
@@ -288,6 +310,7 @@ export const routeTree = rootRoute
     "/_auth": {
       "filePath": "_auth.tsx",
       "children": [
+        "/_auth/forgot-password",
         "/_auth/login",
         "/_auth/register"
       ]
@@ -309,6 +332,10 @@ export const routeTree = rootRoute
     "/_app/screenshots": {
       "filePath": "_app/screenshots.tsx",
       "parent": "/_app"
+    },
+    "/_auth/forgot-password": {
+      "filePath": "_auth/forgot-password.tsx",
+      "parent": "/_auth"
     },
     "/_auth/login": {
       "filePath": "_auth/login.tsx",

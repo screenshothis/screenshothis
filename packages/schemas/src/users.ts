@@ -1,13 +1,8 @@
 import { z } from "zod";
+import { EmailSchema } from "./common.ts";
 
 export const SignInSchema = z.object({
-	email: z
-		.string({
-			required_error: "Email is required",
-		})
-		.email({
-			message: "Invalid email address",
-		}),
+	email: EmailSchema,
 	password: z.string({ required_error: "Password is required" }).min(8, {
 		message: "Password must be at least 8 characters long",
 	}),
@@ -22,13 +17,7 @@ export const SignUpSchema = z.object({
 		.min(1, {
 			message: "Full name is required",
 		}),
-	email: z
-		.string({
-			required_error: "Email is required",
-		})
-		.email({
-			message: "Invalid email address",
-		}),
+	email: EmailSchema,
 	password: z
 		.string({ required_error: "Password is required" })
 		.min(8, {
@@ -47,4 +36,8 @@ export const SignUpSchema = z.object({
 			message:
 				"Password must contain at least one special character (.!@#$%^&*)",
 		}),
+});
+
+export const ForgotPasswordSchema = z.object({
+	email: EmailSchema,
 });
