@@ -36,7 +36,7 @@ const pathConfig: Record<string, PathConfig> = {
 const defaultConfig: PathConfig = {
 	message: "Changed your mind?",
 	linkText: "Go back",
-	linkHref: "/",
+	linkHref: "/login",
 };
 
 export const Route = createFileRoute("/_auth")({
