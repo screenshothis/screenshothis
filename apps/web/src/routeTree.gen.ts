@@ -15,6 +15,7 @@ import { Route as MarketingImport } from './routes/_marketing'
 import { Route as AuthImport } from './routes/_auth'
 import { Route as AppImport } from './routes/_app'
 import { Route as MarketingIndexImport } from './routes/_marketing/index'
+import { Route as AuthResetPasswordImport } from './routes/_auth/reset-password'
 import { Route as AuthRegisterImport } from './routes/_auth/register'
 import { Route as AuthLoginImport } from './routes/_auth/login'
 import { Route as AuthForgotPasswordImport } from './routes/_auth/forgot-password'
@@ -43,6 +44,12 @@ const MarketingIndexRoute = MarketingIndexImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => MarketingRoute,
+} as any)
+
+const AuthResetPasswordRoute = AuthResetPasswordImport.update({
+  id: '/reset-password',
+  path: '/reset-password',
+  getParentRoute: () => AuthRoute,
 } as any)
 
 const AuthRegisterRoute = AuthRegisterImport.update({
@@ -148,6 +155,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthRegisterImport
       parentRoute: typeof AuthImport
     }
+    '/_auth/reset-password': {
+      id: '/_auth/reset-password'
+      path: '/reset-password'
+      fullPath: '/reset-password'
+      preLoaderRoute: typeof AuthResetPasswordImport
+      parentRoute: typeof AuthImport
+    }
     '/_marketing/': {
       id: '/_marketing/'
       path: '/'
@@ -178,12 +192,14 @@ interface AuthRouteChildren {
   AuthForgotPasswordRoute: typeof AuthForgotPasswordRoute
   AuthLoginRoute: typeof AuthLoginRoute
   AuthRegisterRoute: typeof AuthRegisterRoute
+  AuthResetPasswordRoute: typeof AuthResetPasswordRoute
 }
 
 const AuthRouteChildren: AuthRouteChildren = {
   AuthForgotPasswordRoute: AuthForgotPasswordRoute,
   AuthLoginRoute: AuthLoginRoute,
   AuthRegisterRoute: AuthRegisterRoute,
+  AuthResetPasswordRoute: AuthResetPasswordRoute,
 }
 
 const AuthRouteWithChildren = AuthRoute._addFileChildren(AuthRouteChildren)
@@ -208,6 +224,7 @@ export interface FileRoutesByFullPath {
   '/forgot-password': typeof AuthForgotPasswordRoute
   '/login': typeof AuthLoginRoute
   '/register': typeof AuthRegisterRoute
+  '/reset-password': typeof AuthResetPasswordRoute
   '/': typeof MarketingIndexRoute
 }
 
@@ -219,6 +236,7 @@ export interface FileRoutesByTo {
   '/forgot-password': typeof AuthForgotPasswordRoute
   '/login': typeof AuthLoginRoute
   '/register': typeof AuthRegisterRoute
+  '/reset-password': typeof AuthResetPasswordRoute
   '/': typeof MarketingIndexRoute
 }
 
@@ -233,6 +251,7 @@ export interface FileRoutesById {
   '/_auth/forgot-password': typeof AuthForgotPasswordRoute
   '/_auth/login': typeof AuthLoginRoute
   '/_auth/register': typeof AuthRegisterRoute
+  '/_auth/reset-password': typeof AuthResetPasswordRoute
   '/_marketing/': typeof MarketingIndexRoute
 }
 
@@ -246,6 +265,7 @@ export interface FileRouteTypes {
     | '/forgot-password'
     | '/login'
     | '/register'
+    | '/reset-password'
     | '/'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -256,6 +276,7 @@ export interface FileRouteTypes {
     | '/forgot-password'
     | '/login'
     | '/register'
+    | '/reset-password'
     | '/'
   id:
     | '__root__'
@@ -268,6 +289,7 @@ export interface FileRouteTypes {
     | '/_auth/forgot-password'
     | '/_auth/login'
     | '/_auth/register'
+    | '/_auth/reset-password'
     | '/_marketing/'
   fileRoutesById: FileRoutesById
 }
@@ -312,7 +334,8 @@ export const routeTree = rootRoute
       "children": [
         "/_auth/forgot-password",
         "/_auth/login",
-        "/_auth/register"
+        "/_auth/register",
+        "/_auth/reset-password"
       ]
     },
     "/_marketing": {
@@ -343,6 +366,10 @@ export const routeTree = rootRoute
     },
     "/_auth/register": {
       "filePath": "_auth/register.tsx",
+      "parent": "/_auth"
+    },
+    "/_auth/reset-password": {
+      "filePath": "_auth/reset-password.tsx",
       "parent": "/_auth"
     },
     "/_marketing/": {
