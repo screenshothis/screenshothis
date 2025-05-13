@@ -17,16 +17,19 @@ export const usersRouter = {
 								id: true,
 								name: true,
 							},
-							with: {
-								accessToken: true,
-							},
 						},
+					},
+				},
+				apiKey: {
+					columns: {
+						prefix: true,
+						key: true,
+						remaining: true,
+						refillAmount: true,
 					},
 				},
 			},
 		});
-
-		console.info(user);
 
 		if (!user) {
 			throw new ORPCError("User not found");
@@ -51,13 +54,12 @@ export const usersRouter = {
 			currentWorkspace: {
 				id: user.session.activeWorkspace?.id,
 				name: user.session.activeWorkspace?.name,
+			},
+			apiKey: {
+				key: `${user.apiKey.prefix}${user.apiKey.key}`,
 				usage: {
-					totalRequests: 0,
-					remainingRequests: 0,
-				},
-				accessToken: {
-					token: user.session.activeWorkspace?.accessToken?.token,
-					redactedToken: "",
+					totalRequests: user.apiKey.remaining,
+					remainingRequests: user.apiKey.refillAmount,
 				},
 			},
 			workspaces: userWorkspaces,

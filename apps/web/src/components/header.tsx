@@ -85,7 +85,7 @@ export function Header() {
 						<MobileMenu />
 
 						<Button asChild $type="neutral" $size="sm">
-							<Link to={session ? "/dashboard" : "/register/$"}>
+							<Link to={session ? "/dashboard" : "/register"}>
 								{session ? "Dashboard" : "Get started now"}
 							</Link>
 						</Button>

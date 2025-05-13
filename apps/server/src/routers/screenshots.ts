@@ -6,8 +6,8 @@ import { z } from "zod";
 
 import { db } from "#/db";
 import * as schema from "#/db/schema";
+import { auth } from "#/lib/auth";
 import { protectedProcedure } from "#/lib/orpc";
-import { unkey } from "#/lib/unkey";
 import { getOrCreateScreenshot } from "#/utils/screenshot";
 
 export const screenshotsRouter = {
@@ -32,22 +32,20 @@ export const screenshotsRouter = {
 					});
 				}
 
-				const accessToken = await db.query.accessTokens.findFirst({
-					where: eq(
-						schema.accessTokens.workspaceId,
-						context.session.session.activeWorkspaceId,
-					),
+				const apiKey = await db.query.apikeys.findFirst({
+					where: eq(schema.apikeys.userId, context.session.user.id),
 					columns: {
-						token: true,
-						externalId: true,
+						id: true,
+						remaining: true,
 					},
 				});
 
-				if (accessToken?.externalId && created) {
-					await unkey.keys.updateRemaining({
-						keyId: accessToken.externalId,
-						op: "decrement",
-						value: 1,
+				if (apiKey?.id && !created) {
+					await auth.api.updateApiKey({
+						body: {
+							keyId: apiKey.id,
+							remaining: Number(apiKey.remaining) + 1,
+						},
 					});
 				}
 
@@ -93,6 +91,7 @@ export const screenshotsRouter = {
 					height: true,
 					isMobile: true,
 					isLandscape: true,
+					deviceScaleFactor: true,
 					hasTouch: true,
 					format: true,
 					blockAds: true,

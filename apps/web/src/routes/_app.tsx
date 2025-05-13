@@ -6,7 +6,7 @@ export const Route = createFileRoute("/_app")({
 	async beforeLoad({ context: { queryClient, orpc, ...context }, location }) {
 		if (!context.session?.id) {
 			throw redirect({
-				to: "/login/$",
+				to: "/login",
 				search: {
 					redirect_url: location.href,
 				},

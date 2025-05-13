@@ -49,6 +49,7 @@
 		"puppeteer-extra-plugin-stealth": "2.11.2",
 		"svix": "1.65.0",
 		"ts-case-convert": "2.1.0",
+		"unique-username-generator": "1.4.0",
 		"wildcard-match": "5.1.4",
 		"zod": "3.24.4"
 	},

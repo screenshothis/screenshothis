@@ -51,7 +51,7 @@ export function HeroSection() {
 								className="w-full gap-2 lg:w-auto"
 								asChild
 							>
-								<Link to="/register/$">Get started now</Link>
+								<Link to="/register">Get started now</Link>
 							</Button>
 							<Button
 								trailingIcon={ArrowRight01Icon}

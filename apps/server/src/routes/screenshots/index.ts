@@ -57,7 +57,6 @@ const screenshots = new OpenAPIHono<{ Variables: Variables }>().openapi(
 				headers.set("content-type", contentType);
 			}
 
-			console.info({ created });
 			if (created) {
 				const key = c.get("unkey");
 				if (key?.keyId) {

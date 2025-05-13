@@ -70,7 +70,7 @@ export const ScreenshotSchema = z.object({
 	prefers_color_scheme: PrefersColorSchemeSchema.optional().default("light"),
 	prefers_reduced_motion:
 		PrefersReducedMotionSchema.optional().default("no-preference"),
-	created_at: z.date(),
+	created_at: z.date().nullish(),
 	updated_at: z.date().nullish(),
 });
 

@@ -2,7 +2,6 @@ import { jsonb, pgTable, text, timestamp } from "drizzle-orm/pg-core";
 import { relations } from "drizzle-orm/relations";
 
 import { newId } from "#/utils/generate-id";
-import { accessTokens } from "./access-tokens";
 import { users } from "./auth";
 import { polarCustomerState } from "./polar";
 import { timestamps } from "./utils/timestamps";
@@ -60,10 +59,6 @@ export const workspaceInvitations = pgTable("workspace_invitations", {
 export const workspacesRelations = relations(workspaces, ({ one, many }) => ({
 	members: many(workspaceMembers),
 	invitations: many(workspaceInvitations),
-	accessToken: one(accessTokens, {
-		fields: [workspaces.id],
-		references: [accessTokens.workspaceId],
-	}),
 	polarCustomerState: one(polarCustomerState, {
 		fields: [workspaces.id],
 		references: [polarCustomerState.externalId],

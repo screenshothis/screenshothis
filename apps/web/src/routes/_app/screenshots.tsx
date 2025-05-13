@@ -8,7 +8,7 @@ import { objectToCamel } from "ts-case-convert";
 import { DashedDivider } from "#/components/dashed-divider.tsx";
 import { ScreenshotsFilter } from "#/components/filters/screenshots-filter.tsx";
 import { PageHeader } from "#/components/page-header.tsx";
-import { ScreenshotsTable } from "#/components/tables/screenshots-table";
+import { ScreenshotsTable } from "#/components/tables/screenshots-table.tsx";
 
 export const Route = createFileRoute("/_app/screenshots")({
 	component: RouteComponent,

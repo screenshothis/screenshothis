@@ -14,7 +14,7 @@ import { toast } from "#/components/ui/toast.tsx";
 import { authClient } from "#/lib/auth.ts";
 import { cn } from "#/utils/cn.ts";
 
-export const Route = createFileRoute("/_auth/register/$")({
+export const Route = createFileRoute("/_auth/register")({
 	component: RouteComponent,
 });
 

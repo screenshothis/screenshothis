@@ -5,7 +5,6 @@ import {
 	Outlet,
 	Scripts,
 	createRootRouteWithContext,
-	redirect,
 } from "@tanstack/react-router";
 import { TanStackRouterDevtools } from "@tanstack/react-router-devtools";
 import aosCss from "aos/dist/aos.css?url";
@@ -35,15 +34,6 @@ const authStateFn = createServerFn({ method: "GET" }).handler(async () => {
 			},
 		},
 	});
-
-	if (!data) {
-		// This will error because you're redirecting to a path that doesn't exist yet
-		// You can create a sign-in route to handle this
-		// See https://clerk.com/docs/references/tanstack-start/custom-sign-in-or-up-page
-		throw redirect({
-			to: "/login/$",
-		});
-	}
 
 	return data;
 });
@@ -111,7 +101,14 @@ export const Route = createRootRouteWithContext<RouterAppContext>()({
 	async beforeLoad() {
 		const session = await authStateFn();
 
-		return session;
+		return {
+			session: session
+				? {
+						...session.session,
+						user: session.user,
+					}
+				: null,
+		};
 	},
 	component: RootComponent,
 });

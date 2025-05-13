@@ -2,6 +2,7 @@ import { relations } from "drizzle-orm";
 import { boolean, pgTable, text, timestamp } from "drizzle-orm/pg-core";
 
 import { newId } from "#/utils/generate-id";
+import { apikeys } from "./api-keys";
 import { timestamps } from "./utils/timestamps";
 import { workspaces } from "./workspaces";
 
@@ -64,6 +65,10 @@ export const userRelations = relations(users, ({ one }) => ({
 	session: one(sessions, {
 		fields: [users.id],
 		references: [sessions.userId],
+	}),
+	apiKey: one(apikeys, {
+		fields: [users.id],
+		references: [apikeys.userId],
 	}),
 }));
 

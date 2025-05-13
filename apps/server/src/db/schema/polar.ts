@@ -5,8 +5,8 @@ import { jsonb, pgTable, text } from "drizzle-orm/pg-core";
 
 import { newId } from "#/utils/generate-id";
 import { relations } from "drizzle-orm";
+import { users } from "./auth";
 import { timestamps } from "./utils/timestamps";
-import { workspaces } from "./workspaces";
 
 export const polarCustomerState = pgTable("polar_customer_state", {
 	id: text("id")
@@ -15,7 +15,7 @@ export const polarCustomerState = pgTable("polar_customer_state", {
 	metadata: jsonb("metadata")
 		.$type<Record<string, string | number | boolean>>()
 		.default({}),
-	externalId: text("external_id").references(() => workspaces.id),
+	externalId: text("external_id").references(() => users.id),
 	email: text("email").notNull(),
 	name: text("name"),
 	activeSubscriptions: jsonb("active_subscriptions")
@@ -33,9 +33,9 @@ export const polarCustomerState = pgTable("polar_customer_state", {
 export const polarCustomerStateRelations = relations(
 	polarCustomerState,
 	({ one }) => ({
-		workspace: one(workspaces, {
+		user: one(users, {
 			fields: [polarCustomerState.externalId],
-			references: [workspaces.id],
+			references: [users.id],
 		}),
 	}),
 );

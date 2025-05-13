@@ -15,11 +15,11 @@ import { Route as MarketingImport } from './routes/_marketing'
 import { Route as AuthImport } from './routes/_auth'
 import { Route as AppImport } from './routes/_app'
 import { Route as MarketingIndexImport } from './routes/_marketing/index'
+import { Route as AuthRegisterImport } from './routes/_auth/register'
+import { Route as AuthLoginImport } from './routes/_auth/login'
 import { Route as AppScreenshotsImport } from './routes/_app/screenshots'
 import { Route as AppPlaygroundImport } from './routes/_app/playground'
 import { Route as AppDashboardImport } from './routes/_app/dashboard'
-import { Route as AuthRegisterSplatImport } from './routes/_auth/register.$'
-import { Route as AuthLoginSplatImport } from './routes/_auth/login.$'
 
 // Create/Update Routes
 
@@ -44,6 +44,18 @@ const MarketingIndexRoute = MarketingIndexImport.update({
   getParentRoute: () => MarketingRoute,
 } as any)
 
+const AuthRegisterRoute = AuthRegisterImport.update({
+  id: '/register',
+  path: '/register',
+  getParentRoute: () => AuthRoute,
+} as any)
+
+const AuthLoginRoute = AuthLoginImport.update({
+  id: '/login',
+  path: '/login',
+  getParentRoute: () => AuthRoute,
+} as any)
+
 const AppScreenshotsRoute = AppScreenshotsImport.update({
   id: '/screenshots',
   path: '/screenshots',
@@ -60,18 +72,6 @@ const AppDashboardRoute = AppDashboardImport.update({
   id: '/dashboard',
   path: '/dashboard',
   getParentRoute: () => AppRoute,
-} as any)
-
-const AuthRegisterSplatRoute = AuthRegisterSplatImport.update({
-  id: '/register/$',
-  path: '/register/$',
-  getParentRoute: () => AuthRoute,
-} as any)
-
-const AuthLoginSplatRoute = AuthLoginSplatImport.update({
-  id: '/login/$',
-  path: '/login/$',
-  getParentRoute: () => AuthRoute,
 } as any)
 
 // Populate the FileRoutesByPath interface
@@ -120,26 +120,26 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppScreenshotsImport
       parentRoute: typeof AppImport
     }
+    '/_auth/login': {
+      id: '/_auth/login'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof AuthLoginImport
+      parentRoute: typeof AuthImport
+    }
+    '/_auth/register': {
+      id: '/_auth/register'
+      path: '/register'
+      fullPath: '/register'
+      preLoaderRoute: typeof AuthRegisterImport
+      parentRoute: typeof AuthImport
+    }
     '/_marketing/': {
       id: '/_marketing/'
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof MarketingIndexImport
       parentRoute: typeof MarketingImport
-    }
-    '/_auth/login/$': {
-      id: '/_auth/login/$'
-      path: '/login/$'
-      fullPath: '/login/$'
-      preLoaderRoute: typeof AuthLoginSplatImport
-      parentRoute: typeof AuthImport
-    }
-    '/_auth/register/$': {
-      id: '/_auth/register/$'
-      path: '/register/$'
-      fullPath: '/register/$'
-      preLoaderRoute: typeof AuthRegisterSplatImport
-      parentRoute: typeof AuthImport
     }
   }
 }
@@ -161,13 +161,13 @@ const AppRouteChildren: AppRouteChildren = {
 const AppRouteWithChildren = AppRoute._addFileChildren(AppRouteChildren)
 
 interface AuthRouteChildren {
-  AuthLoginSplatRoute: typeof AuthLoginSplatRoute
-  AuthRegisterSplatRoute: typeof AuthRegisterSplatRoute
+  AuthLoginRoute: typeof AuthLoginRoute
+  AuthRegisterRoute: typeof AuthRegisterRoute
 }
 
 const AuthRouteChildren: AuthRouteChildren = {
-  AuthLoginSplatRoute: AuthLoginSplatRoute,
-  AuthRegisterSplatRoute: AuthRegisterSplatRoute,
+  AuthLoginRoute: AuthLoginRoute,
+  AuthRegisterRoute: AuthRegisterRoute,
 }
 
 const AuthRouteWithChildren = AuthRoute._addFileChildren(AuthRouteChildren)
@@ -189,9 +189,9 @@ export interface FileRoutesByFullPath {
   '/dashboard': typeof AppDashboardRoute
   '/playground': typeof AppPlaygroundRoute
   '/screenshots': typeof AppScreenshotsRoute
+  '/login': typeof AuthLoginRoute
+  '/register': typeof AuthRegisterRoute
   '/': typeof MarketingIndexRoute
-  '/login/$': typeof AuthLoginSplatRoute
-  '/register/$': typeof AuthRegisterSplatRoute
 }
 
 export interface FileRoutesByTo {
@@ -199,9 +199,9 @@ export interface FileRoutesByTo {
   '/dashboard': typeof AppDashboardRoute
   '/playground': typeof AppPlaygroundRoute
   '/screenshots': typeof AppScreenshotsRoute
+  '/login': typeof AuthLoginRoute
+  '/register': typeof AuthRegisterRoute
   '/': typeof MarketingIndexRoute
-  '/login/$': typeof AuthLoginSplatRoute
-  '/register/$': typeof AuthRegisterSplatRoute
 }
 
 export interface FileRoutesById {
@@ -212,9 +212,9 @@ export interface FileRoutesById {
   '/_app/dashboard': typeof AppDashboardRoute
   '/_app/playground': typeof AppPlaygroundRoute
   '/_app/screenshots': typeof AppScreenshotsRoute
+  '/_auth/login': typeof AuthLoginRoute
+  '/_auth/register': typeof AuthRegisterRoute
   '/_marketing/': typeof MarketingIndexRoute
-  '/_auth/login/$': typeof AuthLoginSplatRoute
-  '/_auth/register/$': typeof AuthRegisterSplatRoute
 }
 
 export interface FileRouteTypes {
@@ -224,18 +224,18 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/playground'
     | '/screenshots'
+    | '/login'
+    | '/register'
     | '/'
-    | '/login/$'
-    | '/register/$'
   fileRoutesByTo: FileRoutesByTo
   to:
     | ''
     | '/dashboard'
     | '/playground'
     | '/screenshots'
+    | '/login'
+    | '/register'
     | '/'
-    | '/login/$'
-    | '/register/$'
   id:
     | '__root__'
     | '/_app'
@@ -244,9 +244,9 @@ export interface FileRouteTypes {
     | '/_app/dashboard'
     | '/_app/playground'
     | '/_app/screenshots'
+    | '/_auth/login'
+    | '/_auth/register'
     | '/_marketing/'
-    | '/_auth/login/$'
-    | '/_auth/register/$'
   fileRoutesById: FileRoutesById
 }
 
@@ -288,8 +288,8 @@ export const routeTree = rootRoute
     "/_auth": {
       "filePath": "_auth.tsx",
       "children": [
-        "/_auth/login/$",
-        "/_auth/register/$"
+        "/_auth/login",
+        "/_auth/register"
       ]
     },
     "/_marketing": {
@@ -310,17 +310,17 @@ export const routeTree = rootRoute
       "filePath": "_app/screenshots.tsx",
       "parent": "/_app"
     },
+    "/_auth/login": {
+      "filePath": "_auth/login.tsx",
+      "parent": "/_auth"
+    },
+    "/_auth/register": {
+      "filePath": "_auth/register.tsx",
+      "parent": "/_auth"
+    },
     "/_marketing/": {
       "filePath": "_marketing/index.tsx",
       "parent": "/_marketing"
-    },
-    "/_auth/login/$": {
-      "filePath": "_auth/login.$.tsx",
-      "parent": "/_auth"
-    },
-    "/_auth/register/$": {
-      "filePath": "_auth/register.$.tsx",
-      "parent": "/_auth"
     }
   }
 }

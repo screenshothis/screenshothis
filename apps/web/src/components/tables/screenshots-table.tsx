@@ -55,11 +55,13 @@ const columns: ColumnDef<ScreenshotDataType>[] = [
 	{
 		header: "Generated at",
 		accessorKey: "createdAt",
-		accessorFn: (row) => row.createdAt * 1000,
+		accessorFn: (row) => row.createdAt,
 		cell({ row }) {
 			return (
 				<div className="text-(--text-sub-600) text-paragraph-sm">
-					{format(row.original.createdAt * 1000, "MMM d, yyyy")}
+					{row.original.createdAt
+						? format(row.original.createdAt, "MMM d, yyyy")
+						: "N/A"}
 				</div>
 			);
 		},

@@ -111,7 +111,6 @@ export const dashboardRouter = {
 				prevMap.set(String(row.date), Number(row.count));
 			}
 
-			console.info(data.rows);
 			return {
 				data: data.rows.map((row) => {
 					const prevCount = prevMap.get(String(row.date)) ?? 0;
