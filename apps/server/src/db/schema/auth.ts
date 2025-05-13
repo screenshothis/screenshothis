@@ -1,7 +1,7 @@
+import { generateId } from "@screenshothis/id";
 import { relations } from "drizzle-orm";
 import { boolean, pgTable, text, timestamp } from "drizzle-orm/pg-core";
 
-import { newId } from "#/utils/generate-id";
 import { apikeys } from "./api-keys";
 import { timestamps } from "./utils/timestamps";
 import { workspace } from "./workspaces";
@@ -9,7 +9,7 @@ import { workspace } from "./workspaces";
 export const users = pgTable("users", {
 	id: text("id")
 		.primaryKey()
-		.$defaultFn(() => newId("user")),
+		.$defaultFn(() => generateId("user")),
 	name: text("name").notNull(),
 	email: text("email").notNull().unique(),
 	emailVerified: boolean("email_verified").notNull(),
@@ -20,7 +20,7 @@ export const users = pgTable("users", {
 export const sessions = pgTable("sessions", {
 	id: text("id")
 		.primaryKey()
-		.$defaultFn(() => newId("session")),
+		.$defaultFn(() => generateId("session")),
 	token: text("token").notNull().unique(),
 	ipAddress: text("ip_address"),
 	userAgent: text("user_agent"),
@@ -35,7 +35,7 @@ export const sessions = pgTable("sessions", {
 export const accounts = pgTable("accounts", {
 	id: text("id")
 		.primaryKey()
-		.$defaultFn(() => newId("account")),
+		.$defaultFn(() => generateId("account")),
 	accountId: text("account_id").notNull(),
 	providerId: text("provider_id").notNull(),
 	userId: text("user_id")
@@ -54,7 +54,7 @@ export const accounts = pgTable("accounts", {
 export const verifications = pgTable("verifications", {
 	id: text("id")
 		.primaryKey()
-		.$defaultFn(() => newId("verification")),
+		.$defaultFn(() => generateId("verification")),
 	identifier: text("identifier").notNull(),
 	value: text("value").notNull(),
 	expiresAt: timestamp("expires_at").notNull(),

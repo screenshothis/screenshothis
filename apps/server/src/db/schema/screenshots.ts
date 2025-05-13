@@ -1,3 +1,4 @@
+import { generateId } from "@screenshothis/id";
 import type {
 	FormatSchema,
 	PrefersColorSchemeSchema,
@@ -15,14 +16,13 @@ import {
 } from "drizzle-orm/pg-core";
 import type { z } from "zod";
 
-import { newId } from "#/utils/generate-id";
 import { timestamps } from "./utils/timestamps";
 import { workspace } from "./workspaces";
 
 export const screenshots = pgTable("screenshots", {
 	id: text()
 		.primaryKey()
-		.$defaultFn(() => newId("screenshot")),
+		.$defaultFn(() => generateId("screenshot")),
 	url: text("url").notNull(),
 	selector: text("selector"),
 	width: integer("width").notNull(),

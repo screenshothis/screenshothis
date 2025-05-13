@@ -1,3 +1,4 @@
+import { generateId } from "@screenshothis/id";
 import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { apiKey, organization } from "better-auth/plugins";
@@ -147,6 +148,9 @@ export const auth = betterAuth({
 
 				const url = new URL(ctx.request?.url);
 				return url.searchParams.get("api_key");
+			},
+			customKeyGenerator(options) {
+				return generateId(options.prefix ?? "api", options.length);
 			},
 		}),
 	],

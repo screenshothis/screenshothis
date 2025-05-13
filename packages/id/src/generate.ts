@@ -15,8 +15,13 @@ const prefixes = {
 	verification: "vrfy",
 } as const;
 
-export function newId<TPrefix extends keyof typeof prefixes>(prefix: TPrefix) {
-	const buf = crypto.getRandomValues(new Uint8Array(12));
+export function generateId<TPrefix extends keyof typeof prefixes>(
+	prefix: TPrefix | string,
+	numRandomBytes = 8,
+) {
+	const timestampBytes = 4;
+	const totalBytes = timestampBytes + numRandomBytes;
+	const buf = crypto.getRandomValues(new Uint8Array(totalBytes));
 
 	/**
 	 * epoch starts more recently so that the 32-bit number space gives a
@@ -33,5 +38,5 @@ export function newId<TPrefix extends keyof typeof prefixes>(prefix: TPrefix) {
 	buf[2] = (t >>> 8) & 255;
 	buf[3] = t & 255;
 
-	return `${prefixes[prefix]}_${b58.encode(buf)}` as const;
+	return `${prefixes[prefix as keyof typeof prefixes] ?? prefix}_${b58.encode(buf)}` as const;
 }
