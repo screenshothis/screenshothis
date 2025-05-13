@@ -139,6 +139,7 @@ export const auth = betterAuth({
 		}),
 		apiKey({
 			defaultPrefix: env.DEFAULT_API_KEY_PREFIX,
+			enableMetadata: true,
 			customAPIKeyGetter(ctx) {
 				if (!ctx.request?.url) {
 					return null;
