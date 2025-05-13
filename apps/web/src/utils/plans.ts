@@ -1,7 +1,8 @@
 type Plan = {
 	name: string;
-	price: number;
+	price?: number;
 	isFeatured?: boolean;
+	isCustom?: boolean;
 	features: string[];
 };
 
@@ -31,7 +32,7 @@ export const plans: Record<"lite" | "pro" | "enterprise", Plan> = {
 	},
 	enterprise: {
 		name: "Enterprise",
-		price: 99,
+		isCustom: true,
 		features: [
 			"<strong>100,000 Screenshots</strong> are included",
 			"<strong>6,000 requests</strong> each minute",

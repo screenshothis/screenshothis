@@ -1,3 +1,5 @@
+import { polar } from "@polar-sh/better-auth";
+import { Polar } from "@polar-sh/sdk";
 import { generateId } from "@screenshothis/id";
 import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
@@ -13,6 +15,11 @@ import { env } from "#/utils/env";
 import { keyLimits } from "#/utils/keys";
 import { db } from "../db";
 import * as schema from "../db/schema";
+
+const polarClient = new Polar({
+	accessToken: env.POLAR_ACCESS_TOKEN,
+	server: env.POLAR_SERVER,
+});
 
 export const auth = betterAuth({
 	database: drizzleAdapter(db, {
@@ -151,6 +158,50 @@ export const auth = betterAuth({
 			},
 			customKeyGenerator(options) {
 				return generateId(options.prefix ?? "api", options.length);
+			},
+		}),
+		polar({
+			client: polarClient,
+			createCustomerOnSignUp: true,
+			enableCustomerPortal: true,
+			checkout: {
+				enabled: true,
+				products: [
+					{
+						productId: env.POLAR_LITE_PRODUCT_ID,
+						slug: "lite",
+					},
+					{
+						productId: env.POLAR_PRO_PRODUCT_ID,
+						slug: "pro",
+					},
+				],
+				successUrl: env.POLAR_SUCCESS_URL,
+			},
+			webhooks: {
+				secret: env.POLAR_WEBHOOK_SECRET,
+				async onCustomerStateChanged(payload) {
+					await db
+						.insert(schema.polarCustomerState)
+						.values({
+							metadata: payload.data.metadata,
+							externalId: payload.data.externalId,
+							email: payload.data.email,
+							name: payload.data.name,
+							activeSubscriptions: payload.data.activeSubscriptions,
+							grantedBenefits: payload.data.grantedBenefits,
+							activeMeters: payload.data.activeMeters,
+						})
+						.onConflictDoUpdate({
+							target: schema.polarCustomerState.externalId,
+							set: {
+								metadata: payload.data.metadata,
+								activeSubscriptions: payload.data.activeSubscriptions,
+								grantedBenefits: payload.data.grantedBenefits,
+								activeMeters: payload.data.activeMeters,
+							},
+						});
+				},
 			},
 		}),
 	],

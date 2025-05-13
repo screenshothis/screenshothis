@@ -12,7 +12,6 @@ import { createContext } from "./lib/context";
 import { workspaceMiddleware } from "./middleware";
 import { appRouter } from "./routers";
 import screenshotsRoutes from "./routes/screenshots";
-import webhooksRoutes from "./routes/webhooks";
 import { env } from "./utils/env";
 
 const app = new OpenAPIHono<{ Variables: Variables }>({
@@ -104,9 +103,7 @@ app.doc("/openapi", {
 	],
 });
 
-const appRoutes = app
-	.route("/v1/screenshots", screenshotsRoutes)
-	.route("/webhooks", webhooksRoutes);
+const appRoutes = app.route("/v1/screenshots", screenshotsRoutes);
 
 export type AppType = typeof appRoutes;
 
