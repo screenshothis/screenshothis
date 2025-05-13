@@ -27,7 +27,7 @@ export const keyLimits: Record<"free" | "lite" | "pro" | "enterprise", Limit> =
 			rateLimitMax: 60, // 60 requests per minute
 			rateLimitEnabled: true,
 			metadata: {
-				totalRequests: 100,
+				totalRequests: 0,
 				remainingRequests: 100,
 				plan: "free",
 				refillAmount: 100,
@@ -40,7 +40,7 @@ export const keyLimits: Record<"free" | "lite" | "pro" | "enterprise", Limit> =
 			rateLimitMax: 300, // 300 requests per minute
 			rateLimitEnabled: true,
 			metadata: {
-				totalRequests: 1000,
+				totalRequests: 0,
 				remainingRequests: 1000,
 				plan: "lite",
 				refillAmount: 1000,
@@ -53,7 +53,7 @@ export const keyLimits: Record<"free" | "lite" | "pro" | "enterprise", Limit> =
 			rateLimitMax: 600, // 600 requests per minute
 			rateLimitEnabled: true,
 			metadata: {
-				totalRequests: 10000,
+				totalRequests: 0,
 				remainingRequests: 10000,
 				plan: "pro",
 				refillAmount: 10000,
@@ -66,7 +66,7 @@ export const keyLimits: Record<"free" | "lite" | "pro" | "enterprise", Limit> =
 			rateLimitMax: 6000, // 6000 requests per minute
 			rateLimitEnabled: true,
 			metadata: {
-				totalRequests: 100000,
+				totalRequests: 0,
 				remainingRequests: 100000,
 				plan: "enterprise",
 				refillAmount: 100000,

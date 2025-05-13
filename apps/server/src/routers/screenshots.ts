@@ -36,7 +36,7 @@ export const screenshotsRouter = {
 					where: eq(schema.apikeys.userId, context.session.user.id),
 					columns: {
 						id: true,
-						remaining: true,
+						metadata: true,
 					},
 				});
 
@@ -46,19 +46,17 @@ export const screenshotsRouter = {
 					});
 				}
 
-				await auth.api.updateApiKey({
-					body: {
-						keyId: apiKey.id,
-						remaining: Number(apiKey.remaining) - 1,
-						userId: context.session.user.id,
-					},
-				});
 				if (created) {
+					const metadata = JSON.parse(apiKey.metadata || "{}");
 					await auth.api.updateApiKey({
 						body: {
 							keyId: apiKey.id,
-							remaining: Number(apiKey.remaining) - 1,
 							userId: context.session.user.id,
+							metadata: {
+								...metadata,
+								totalRequests: Number(metadata.totalRequests) + 1,
+								remainingRequests: Number(metadata.remainingRequests) - 1,
+							},
 						},
 					});
 				}
