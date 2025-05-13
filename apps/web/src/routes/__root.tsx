@@ -8,6 +8,7 @@ import {
 } from "@tanstack/react-router";
 import { TanStackRouterDevtools } from "@tanstack/react-router-devtools";
 import aosCss from "aos/dist/aos.css?url";
+import { LazyMotion, domAnimation } from "motion/react";
 import { ThemeProvider } from "next-themes";
 
 import { Toaster } from "#/components/ui/toast.tsx";
@@ -121,7 +122,9 @@ function RootComponent() {
 			defaultTheme="light"
 		>
 			<RootDocument>
-				<Outlet />
+				<LazyMotion features={domAnimation}>
+					<Outlet />
+				</LazyMotion>
 			</RootDocument>
 		</ThemeProvider>
 	);

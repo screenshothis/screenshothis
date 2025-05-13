@@ -1,3 +1,4 @@
+import * as m from "motion/react-m";
 import * as React from "react";
 
 import { cn } from "#/utils/cn.ts";
@@ -16,6 +17,8 @@ export type FieldProps = {
 	children: React.ReactNode;
 	hintClassName?: string;
 };
+
+const HintRootMotion = m.create(Hint.Root);
 
 export function Field({
 	error,
@@ -48,7 +51,7 @@ export function Field({
 			{children}
 
 			{error || hint ? (
-				<Hint.Root
+				<HintRootMotion
 					data-slot={error ? "form-message" : "form-description"}
 					$disabled={props.disabled}
 					$error={!!error}
@@ -59,10 +62,13 @@ export function Field({
 						.filter(Boolean)
 						.join(" ")}
 					className={hintClassName}
+					initial={{ opacity: 0, height: 0 }}
+					animate={{ opacity: 1, height: "auto" }}
+					exit={{ opacity: 0, height: 0 }}
 				>
 					<Hint.Icon />
 					<span className="mt-px">{error || hint}</span>
-				</Hint.Root>
+				</HintRootMotion>
 			) : null}
 		</div>
 	);
