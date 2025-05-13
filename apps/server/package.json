@@ -40,7 +40,7 @@
 		"drizzle-orm": "0.43.1",
 		"hono": "4.7.9",
 		"p-limit": "6.2.0",
-		"pg": "8.15.6",
+		"pg": "8.16.0",
 		"playwright-extra": "4.3.6",
 		"puppeteer": "24.8.2",
 		"puppeteer-extra": "3.3.6",
@@ -57,7 +57,7 @@
 		"@types/pg": "8.15.1",
 		"drizzle-kit": "0.31.1",
 		"tsc-alias": "1.8.16",
-		"tsdown": "0.11.5",
+		"tsdown": "0.11.6",
 		"typescript": "5.8.3"
 	},
 	"packageManager": "bun@1.2.13"
