@@ -1,12 +1,11 @@
 import { ORPCError } from "@orpc/server";
 import { CreateScreenshotSchema } from "@screenshothis/schemas/screenshots";
-import { and, eq, like } from "drizzle-orm";
+import { and, eq, like, sql } from "drizzle-orm";
 import { objectToCamel } from "ts-case-convert";
 import { z } from "zod";
 
 import { db } from "#/db";
 import * as schema from "#/db/schema";
-import { auth } from "#/lib/auth";
 import { protectedProcedure } from "#/lib/orpc";
 import { getOrCreateScreenshot } from "#/utils/screenshot";
 
@@ -32,33 +31,14 @@ export const screenshotsRouter = {
 					});
 				}
 
-				const apiKey = await db.query.apikeys.findFirst({
-					where: eq(schema.apikeys.userId, context.session.user.id),
-					columns: {
-						id: true,
-						metadata: true,
-					},
-				});
-
-				if (!apiKey) {
-					throw new ORPCError("NOT_FOUND", {
-						message: "API key not found",
-					});
-				}
-
 				if (created) {
-					const metadata = JSON.parse(apiKey.metadata || "{}");
-					await auth.api.updateApiKey({
-						body: {
-							keyId: apiKey.id,
-							userId: context.session.user.id,
-							metadata: {
-								...metadata,
-								totalRequests: Number(metadata.totalRequests) + 1,
-								remainingRequests: Number(metadata.remainingRequests) - 1,
-							},
-						},
-					});
+					await db
+						.update(schema.requestLimits)
+						.set({
+							totalRequests: sql`${schema.requestLimits.totalRequests} + 1`,
+							remainingRequests: sql`${schema.requestLimits.remainingRequests} - 1`,
+						})
+						.where(eq(schema.requestLimits.userId, context.session.user.id));
 				}
 
 				return {

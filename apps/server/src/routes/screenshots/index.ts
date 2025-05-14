@@ -1,6 +1,6 @@
 import { OpenAPIHono, createRoute, z } from "@hono/zod-openapi";
 import { CreateScreenshotSchema } from "@screenshothis/schemas/screenshots";
-import { eq } from "drizzle-orm";
+import { eq, sql } from "drizzle-orm";
 import { objectToCamel } from "ts-case-convert";
 
 import type { Variables } from "#/common/environment";
@@ -66,23 +66,14 @@ const screenshots = new OpenAPIHono<{ Variables: Variables }>().openapi(
 				headers.set("content-type", contentType);
 			}
 
-			if (!created) {
-				const apiKey = await db.query.apikeys.findFirst({
-					where: eq(schema.apikeys.userId, session?.user.id),
-					columns: {
-						id: true,
-						remaining: true,
-					},
-				});
-
-				if (apiKey?.id) {
-					await auth.api.updateApiKey({
-						body: {
-							keyId: apiKey.id,
-							remaining: Number(apiKey.remaining) + 1,
-						},
-					});
-				}
+			if (created) {
+				await db
+					.update(schema.requestLimits)
+					.set({
+						totalRequests: sql`${schema.requestLimits.totalRequests} + 1`,
+						remainingRequests: sql`${schema.requestLimits.remainingRequests} - 1`,
+					})
+					.where(eq(schema.requestLimits.userId, session.user.id));
 			}
 
 			return c.body(object, {
