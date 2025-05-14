@@ -177,6 +177,7 @@ export const auth = betterAuth({
 					},
 				],
 				successUrl: env.POLAR_SUCCESS_URL,
+				authenticatedUsersOnly: true,
 			},
 			webhooks: {
 				secret: env.POLAR_WEBHOOK_SECRET,
