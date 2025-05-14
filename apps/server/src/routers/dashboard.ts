@@ -52,14 +52,14 @@ export const dashboardRouter = {
 				.execute(
 					sql`
             SELECT
-                gs.date,
+                date_trunc(${trunc}, gs.series_point) AS date,
                 COALESCE(s.count, 0) AS count
             FROM
                 generate_series(
                     to_timestamp(${fromSeconds}),
                     to_timestamp(${toSeconds}),
                     (${interval})::interval
-                ) AS gs(date)
+                ) AS gs(series_point)
             LEFT JOIN (
                 SELECT
                     date_trunc(${trunc}, "created_at") AS date,
@@ -67,9 +67,10 @@ export const dashboardRouter = {
                 FROM screenshots
                 WHERE "workspace_id" = ${context.session.activeWorkspaceId}
                     AND "created_at" >= to_timestamp(${fromSeconds})
+                    AND "created_at" <= to_timestamp(${toSeconds})
                 GROUP BY date
-            ) s ON gs.date = s.date
-            ORDER BY gs.date
+            ) s ON date_trunc(${trunc}, gs.series_point) = s.date
+            ORDER BY date
         `,
 				)
 				.catch((error) => {
@@ -105,6 +106,8 @@ export const dashboardRouter = {
 			for (const row of prevDataRows.rows) {
 				prevMap.set(String(row.date), Number(row.count));
 			}
+
+			console.info(data.rows);
 
 			return {
 				data: data.rows.map((row) => {

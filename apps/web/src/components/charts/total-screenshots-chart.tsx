@@ -224,11 +224,11 @@ export function TotalScreenshotsChart({
 					}
 				/>
 				<Line
-					// type='monotone'
+					type="monotone"
 					dataKey="value"
-					stroke="hsl(var(--color-primary))"
+					stroke="var(--color-primary)"
 					strokeWidth={2}
-					dot={false}
+					dot={true}
 					strokeLinejoin="round"
 					isAnimationActive={isFirstLoad.current}
 					activeDot={{
