@@ -5,14 +5,16 @@ const b58 = baseX("123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz");
 const prefixes = {
 	user: "user",
 	workspace: "ws",
-	workspaceMember: "wsm",
-	workspaceInvitation: "wsi",
+	organization: "ws", // better-auth/organization
+	workspaceMember: "wsmem",
+	member: "wsmem", // better-auth/organization
+	workspaceInvitation: "wsinv",
+	invitation: "wsinv", // better-auth/organization
 	screenshot: "ss",
-	accessToken: "atok",
-	polarCustomerState: "pcs",
-	session: "sess",
+	polarCustomerState: "plrcs",
+	session: "se",
 	account: "acct",
-	verification: "vrfy",
+	verification: "vrf",
 	requestLimit: "rl",
 } as const;
 

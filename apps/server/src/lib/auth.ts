@@ -1,5 +1,6 @@
 import { polar } from "@polar-sh/better-auth";
 import { Polar } from "@polar-sh/sdk";
+import { generateId } from "@screenshothis/id";
 import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { apiKey, organization } from "better-auth/plugins";
@@ -31,6 +32,13 @@ export const auth = betterAuth({
 	emailAndPassword: {
 		enabled: true,
 		autoSignIn: true,
+	},
+	advanced: {
+		database: {
+			generateId(options) {
+				return generateId(options.model, options.size);
+			},
+		},
 	},
 	session: {
 		additionalFields: {
