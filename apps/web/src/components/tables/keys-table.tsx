@@ -58,7 +58,7 @@ const columns: ColumnDef<KeyDataType>[] = [
 			return (
 				<div className="text-(--text-sub-600) text-paragraph-sm">
 					{row.original.lastRequest
-						? formatDistanceToNow(row.original.lastRequest)
+						? formatDistanceToNow(row.original.lastRequest, { addSuffix: true })
 						: "N/A"}
 				</div>
 			);
