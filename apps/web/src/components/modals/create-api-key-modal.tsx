@@ -46,7 +46,7 @@ export function CreateApiKeyModal() {
 			const { data, error } = await createApiKeyAction({
 				data: {
 					...value,
-					plan: value.plan === userPlan ? userPlan : userPlan, // Ensure server-side value takes precedence
+					plan: userPlan, // Ensure server-side value takes precedence
 				},
 			});
 

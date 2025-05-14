@@ -9,6 +9,17 @@ This package provides shared type definitions and configurations for API key rat
 
 ## Usage Example
 
+```ts
+import { keyLimits, Limit } from '@screenshothis/common';
+
+// Access rate limits for a specific plan
+const freePlanLimits = keyLimits.free;
+
+// Example of working with the Limit type
+const customLimit: Limit = {
+    rateLimitMax: 100,
+}
+```
 
 To install dependencies:
 
