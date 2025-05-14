@@ -53,7 +53,7 @@
 		"zod": "3.24.4"
 	},
 	"devDependencies": {
-		"@epic-web/config": "1.20.1",
+		"@epic-web/config": "1.21.0",
 		"@types/bun": "1.2.13",
 		"@types/pg": "8.15.1",
 		"drizzle-kit": "0.31.1",
