@@ -26,6 +26,13 @@ export const PrefersReducedMotionSchema = z.enum(["no-preference", "reduce"]);
 
 export const ScreenshotSchema = z.object({
 	id: z.string(),
+	api_key: z
+		.string({
+			required_error: "API key is required",
+		})
+		.min(32, {
+			message: "Invalid API key",
+		}),
 	url: z
 		.string({
 			required_error: "URL is required",

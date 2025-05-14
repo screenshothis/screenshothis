@@ -6,6 +6,7 @@ import { z } from "zod";
 
 import { db } from "#/db";
 import * as schema from "#/db/schema";
+import { auth } from "#/lib/auth.js";
 import { protectedProcedure } from "#/lib/orpc";
 import { getOrCreateScreenshot } from "#/utils/screenshot";
 
@@ -16,6 +17,18 @@ export const screenshotsRouter = {
 			if (!context.session.activeWorkspaceId) {
 				throw new ORPCError("UNAUTHORIZED", {
 					message: "Current workspace not found",
+				});
+			}
+
+			try {
+				await auth.api.verifyApiKey({
+					body: {
+						key: input.apiKey,
+					},
+				});
+			} catch (error) {
+				throw new ORPCError("UNAUTHORIZED", {
+					message: "Invalid API key",
 				});
 			}
 

@@ -45,9 +45,17 @@ const screenshots = new OpenAPIHono<{ Variables: Variables }>().openapi(
 	}),
 	async (c) => {
 		try {
-			const session = await auth.api.getSession(c.req.raw);
+			const { valid, key } = await auth.api.verifyApiKey({
+				body: {
+					key: c.req.valid("query").apiKey,
+				},
+			});
 
-			if (!session) {
+			if (!valid) {
+				return c.json({ error: "Unauthorized" }, 401);
+			}
+
+			if (!key) {
 				return c.json({ error: "Unauthorized" }, 401);
 			}
 
@@ -73,7 +81,7 @@ const screenshots = new OpenAPIHono<{ Variables: Variables }>().openapi(
 						totalRequests: sql`${schema.requestLimits.totalRequests} + 1`,
 						remainingRequests: sql`${schema.requestLimits.remainingRequests} - 1`,
 					})
-					.where(eq(schema.requestLimits.userId, session.user.id));
+					.where(eq(schema.requestLimits.userId, key.userId));
 			}
 
 			return c.body(object, {

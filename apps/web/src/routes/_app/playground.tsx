@@ -42,6 +42,7 @@ function RouteComponent() {
 		validators: { onSubmit: CreateScreenshotSchema },
 		defaultValues: {
 			url: "",
+			api_key: "",
 			block_ads: true,
 			block_cookie_banners: true,
 			block_trackers: true,
@@ -71,7 +72,7 @@ function RouteComponent() {
 	const code = React.useMemo(() => {
 		return [
 			"https://api.screenshothis.com/v1/screenshots/take",
-			"   ?api_key=<your-api-key>",
+			`   ?api_key=${values.api_key || "your-api-key"}`,
 			`   &url=${values.url || "https://polar.sh"}`,
 			values.selector && `   &selector=${values.selector}`,
 			values.width && `   &width=${values.width}`,
@@ -148,6 +149,19 @@ function RouteComponent() {
 
 						<div className="grid grid-cols-1 items-start gap-3 lg:grid-cols-2">
 							<div className="grid gap-5">
+								<form.AppField
+									name="api_key"
+									children={(field) => (
+										<field.TextField
+											label="API key"
+											name="api_key"
+											id="api_key"
+											placeholder="your-api-key"
+											hint="The API key to use for the screenshot. We don't save it."
+										/>
+									)}
+								/>
+
 								<form.AppField
 									name="selector"
 									children={(field) => (
