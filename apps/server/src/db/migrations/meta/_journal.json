@@ -8,6 +8,13 @@
       "when": 1747117367032,
       "tag": "0000_fixed_hawkeye",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1747191463444,
+      "tag": "0001_curved_slyde",
+      "breakpoints": true
     }
   ]
 }

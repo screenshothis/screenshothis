@@ -241,8 +241,9 @@ export default function Sidebar({
 
 						{!collapsed ? (
 							<UsageWidget
-								totalRequests={me?.apiKey.usage.totalRequests}
-								remainingRequests={me?.apiKey.usage.remainingRequests}
+								totalRequests={me?.requestLimits?.totalRequests}
+								totalAllowedRequests={me?.requestLimits?.totalAllowedRequests}
+								remainingRequests={me?.requestLimits?.remainingRequests}
 								className="mt-auto"
 							/>
 						) : null}

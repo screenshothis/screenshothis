@@ -3,6 +3,7 @@ import { relations } from "drizzle-orm";
 import { boolean, pgTable, text, timestamp } from "drizzle-orm/pg-core";
 
 import { apikeys } from "./api-keys";
+import { requestLimits } from "./request-limits";
 import { timestamps } from "./utils/timestamps";
 import { workspace } from "./workspaces";
 
@@ -61,15 +62,13 @@ export const verifications = pgTable("verifications", {
 	...timestamps,
 });
 
-export const userRelations = relations(users, ({ one }) => ({
+export const userRelations = relations(users, ({ one, many }) => ({
 	session: one(sessions, {
 		fields: [users.id],
 		references: [sessions.userId],
 	}),
-	apiKey: one(apikeys, {
-		fields: [users.id],
-		references: [apikeys.userId],
-	}),
+	apiKeys: many(apikeys),
+	requestLimits: one(requestLimits),
 }));
 
 export const sessionRelations = relations(sessions, ({ one }) => ({

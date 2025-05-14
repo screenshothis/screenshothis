@@ -13,6 +13,7 @@ const prefixes = {
 	session: "sess",
 	account: "acct",
 	verification: "vrfy",
+	requestLimit: "rl",
 } as const;
 
 export function generateId<TPrefix extends keyof typeof prefixes>(

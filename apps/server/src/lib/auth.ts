@@ -1,6 +1,5 @@
 import { polar } from "@polar-sh/better-auth";
 import { Polar } from "@polar-sh/sdk";
-import { generateId } from "@screenshothis/id";
 import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { apiKey, organization } from "better-auth/plugins";
@@ -26,7 +25,6 @@ export const auth = betterAuth({
 		provider: "pg",
 		schema,
 		usePlural: true,
-		debugLogs: true,
 	}),
 	basePath: "/auth",
 	trustedOrigins: [env.CORS_ORIGIN || ""],
@@ -64,12 +62,10 @@ export const auth = betterAuth({
 							},
 						});
 
-						await auth.api.createApiKey({
-							body: {
-								name: `${user.name.split(" ")[0]}'s API Key`,
-								...keyLimits.free,
-								userId: user.id,
-							},
+						await db.insert(schema.requestLimits).values({
+							...keyLimits.free.metadata,
+							userId: user.id,
+							plan: "free",
 						});
 					} catch (error) {
 						console.error(error);
@@ -155,9 +151,6 @@ export const auth = betterAuth({
 
 				const url = new URL(ctx.request?.url);
 				return url.searchParams.get("api_key");
-			},
-			customKeyGenerator(options) {
-				return generateId(options.prefix ?? "api", options.length);
 			},
 		}),
 		polar({

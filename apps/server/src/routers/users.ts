@@ -20,12 +20,16 @@ export const usersRouter = {
 						},
 					},
 				},
-				apiKey: {
+				apiKeys: {
 					columns: {
-						prefix: true,
-						key: true,
-						remaining: true,
-						refillAmount: true,
+						id: true,
+					},
+				},
+				requestLimits: {
+					columns: {
+						totalRequests: true,
+						totalAllowedRequests: true,
+						remainingRequests: true,
 					},
 				},
 			},
@@ -55,14 +59,9 @@ export const usersRouter = {
 				id: user.session.activeWorkspace?.id,
 				name: user.session.activeWorkspace?.name,
 			},
-			apiKey: {
-				key: `${user.apiKey.prefix}${user.apiKey.key}`,
-				usage: {
-					totalRequests: user.apiKey.remaining,
-					remainingRequests: user.apiKey.refillAmount,
-				},
-			},
+			apiKeys: user.apiKeys,
 			workspaces: userWorkspaces,
+			requestLimits: user.requestLimits,
 		};
 	}),
 };

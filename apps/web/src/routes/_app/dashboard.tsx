@@ -3,7 +3,6 @@ import { useQueries } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 import { zodValidator } from "@tanstack/zod-adapter";
 
-import { CodeBlock } from "#/components/code-block.tsx";
 import { DashedDivider } from "#/components/dashed-divider.tsx";
 import { PageHeader } from "#/components/page-header.tsx";
 import { TotalScreenshots } from "#/components/total-screenshots.tsx";
@@ -88,22 +87,11 @@ function RouteComponent() {
 
 				<div className="shrink-0 min-[1100px]:w-[328px]">
 					<UsageWidget
-						totalRequests={me?.apiKey.usage.totalRequests}
-						remainingRequests={me?.apiKey.usage.remainingRequests}
+						totalRequests={me?.requestLimits?.totalRequests}
+						totalAllowedRequests={me?.requestLimits?.totalAllowedRequests}
+						remainingRequests={me?.requestLimits?.remainingRequests}
 						className="px-1"
 					/>
-
-					<div className="mt-8">
-						<CodeBlock
-							wrapperClassName="rounded-16"
-							isCopyable
-							title="API Key"
-							lang="bash"
-							textToCopy={me?.apiKey.key}
-						>
-							{me?.apiKey.key}
-						</CodeBlock>
-					</div>
 				</div>
 			</div>
 		</>

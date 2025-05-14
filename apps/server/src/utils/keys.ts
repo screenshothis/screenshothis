@@ -17,7 +17,15 @@ type Limit = {
 	 * The metadata of the API key.
 	 * This is used to store additional information about the API key.
 	 */
-	metadata: Record<string, string | number | boolean>;
+	metadata: {
+		totalRequests: number;
+		totalAllowedRequests: number;
+		remainingRequests: number;
+		plan: "free" | "lite" | "pro" | "enterprise";
+		refillAmount: number;
+		refillInterval: bigint;
+		isExtraEnabled: boolean;
+	};
 };
 
 export const keyLimits: Record<"free" | "lite" | "pro" | "enterprise", Limit> =
@@ -28,10 +36,11 @@ export const keyLimits: Record<"free" | "lite" | "pro" | "enterprise", Limit> =
 			rateLimitEnabled: true,
 			metadata: {
 				totalRequests: 0,
+				totalAllowedRequests: 100,
 				remainingRequests: 100,
 				plan: "free",
 				refillAmount: 100,
-				refillInterval: 30 * 24 * 60 * 60 * 1000, // 30 days
+				refillInterval: BigInt(30 * 24 * 60 * 60 * 1000), // 30 days
 				isExtraEnabled: false,
 			},
 		},
@@ -41,10 +50,11 @@ export const keyLimits: Record<"free" | "lite" | "pro" | "enterprise", Limit> =
 			rateLimitEnabled: true,
 			metadata: {
 				totalRequests: 0,
+				totalAllowedRequests: 1000,
 				remainingRequests: 1000,
 				plan: "lite",
 				refillAmount: 1000,
-				refillInterval: 30 * 24 * 60 * 60 * 1000, // 30 days
+				refillInterval: BigInt(30 * 24 * 60 * 60 * 1000), // 30 days
 				isExtraEnabled: true,
 			},
 		},
@@ -54,10 +64,11 @@ export const keyLimits: Record<"free" | "lite" | "pro" | "enterprise", Limit> =
 			rateLimitEnabled: true,
 			metadata: {
 				totalRequests: 0,
+				totalAllowedRequests: 10000,
 				remainingRequests: 10000,
 				plan: "pro",
 				refillAmount: 10000,
-				refillInterval: 30 * 24 * 60 * 60 * 1000, // 30 days
+				refillInterval: BigInt(30 * 24 * 60 * 60 * 1000), // 30 days
 				isExtraEnabled: true,
 			},
 		},
@@ -67,10 +78,11 @@ export const keyLimits: Record<"free" | "lite" | "pro" | "enterprise", Limit> =
 			rateLimitEnabled: true,
 			metadata: {
 				totalRequests: 0,
+				totalAllowedRequests: 100000,
 				remainingRequests: 100000,
 				plan: "enterprise",
 				refillAmount: 100000,
-				refillInterval: 30 * 24 * 60 * 60 * 1000, // 30 days
+				refillInterval: BigInt(30 * 24 * 60 * 60 * 1000), // 30 days
 				isExtraEnabled: true,
 			},
 		},
