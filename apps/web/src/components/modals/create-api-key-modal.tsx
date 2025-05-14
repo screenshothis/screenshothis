@@ -24,14 +24,14 @@ export function CreateApiKeyModal() {
 	const queryClient = useQueryClient();
 	const orpc = useORPC();
 	const { data: me } = useQuery(orpc.users.me.queryOptions());
+	const userPlan = me?.requestLimits?.plan ?? "free";
 	const form = useAppForm({
 		defaultValues: {
 			name: "",
-			plan: me?.requestLimits?.plan ?? "free",
+			plan: userPlan,
 		},
 		async onSubmit({ value }) {
-			const currentPlan = me?.requestLimits?.plan ?? "free";
-			if (!currentPlan) {
+			if (!userPlan) {
 				toast.custom((t) => (
 					<AlertToast.Root
 						t={t}
@@ -46,7 +46,7 @@ export function CreateApiKeyModal() {
 			const { data, error } = await createApiKeyAction({
 				data: {
 					...value,
-					plan: currentPlan,
+					plan: userPlan,
 				},
 			});
 
@@ -126,12 +126,7 @@ export function CreateApiKeyModal() {
 							>
 								<div className="grid gap-3">
 									{/* Hidden input to include plan in form data for validation and submission */}
-									<input
-										type="hidden"
-										id="plan"
-										name="plan"
-										value={me?.requestLimits?.plan ?? "free"}
-									/>
+									<input type="hidden" id="plan" name="plan" value={userPlan} />
 
 									<form.AppField
 										name="name"

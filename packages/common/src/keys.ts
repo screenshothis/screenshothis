@@ -33,6 +33,13 @@ export type Limit = {
  */
 const THIRTY_DAYS_MS = BigInt(30 * 24 * 60 * 60 * 1000); // 30 days
 
+/**
+ * Defines the API key limits for different subscription plans.
+ * These values are based on a combination of expected usage patterns for each tier,
+ * competitive analysis of similar services, and a desire to provide clear, graduated steps
+ * in service level as users upgrade their plans. The goal is to offer fair and scalable
+ * access that aligns with typical needs at each subscription level.
+ */
 export const keyLimits: Record<"free" | "lite" | "pro" | "enterprise", Limit> =
 	{
 		free: {
