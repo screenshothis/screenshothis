@@ -10,17 +10,23 @@ export const createApiKeyAction = createServerFn({ method: "POST" })
 	.validator(CreateApiKeySchema)
 	.handler(async ({ data: { plan, ...values }, context }) => {
 		if (!keyLimits[plan]) {
+			const validPlans = Object.keys(keyLimits).join(", ");
 			return {
 				data: null,
-				error: { message: `Invalid plan: ${plan}` },
+				error: {
+					message: `Invalid plan: ${plan}. Valid plans are: ${validPlans}`,
+				},
 			};
 		}
+		// Ensure type safety for rate limit parameters
+		type PlanLimits = (typeof keyLimits)[keyof typeof keyLimits];
+		const limits: PlanLimits = keyLimits[plan];
 
 		const { data, error } = await authClient.apiKey.create({
 			...values,
-			rateLimitTimeWindow: keyLimits[plan].rateLimitTimeWindow,
-			rateLimitMax: keyLimits[plan].rateLimitMax,
-			rateLimitEnabled: keyLimits[plan].rateLimitEnabled,
+			rateLimitTimeWindow: limits.rateLimitTimeWindow,
+			rateLimitMax: limits.rateLimitMax,
+			rateLimitEnabled: limits.rateLimitEnabled,
 			userId: context.user.id,
 		});
 
