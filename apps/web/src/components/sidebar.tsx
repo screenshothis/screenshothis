@@ -4,6 +4,7 @@ import Album02Icon from "virtual:icons/hugeicons/album-02";
 import ArrowRight01Icon from "virtual:icons/hugeicons/arrow-right-01";
 import DashboardSquare02Icon from "virtual:icons/hugeicons/dashboard-square-02";
 import DocumentCode01Icon from "virtual:icons/hugeicons/document-code";
+import Key01Icon from "virtual:icons/hugeicons/key-01";
 
 import { useQuery } from "@tanstack/react-query";
 import { Link, useLocation } from "@tanstack/react-router";
@@ -28,6 +29,7 @@ export const navigationLinks: NavigationLink[] = [
 	{ icon: DashboardSquare02Icon, label: "Overview", to: "/dashboard" },
 	{ icon: DocumentCode01Icon, label: "Playground", to: "/playground" },
 	{ icon: Album02Icon, label: "Screenshots", to: "/screenshots" },
+	{ icon: Key01Icon, label: "API Keys", to: "/api-keys" },
 ];
 
 function useCollapsedState({

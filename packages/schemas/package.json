@@ -3,6 +3,7 @@
 	"private": true,
 	"type": "module",
 	"exports": {
+		"./api-keys": "./src/api-keys.ts",
 		"./common": "./src/common.ts",
 		"./dashboard": "./src/dashboard.ts",
 		"./screenshots": "./src/screenshots.ts",

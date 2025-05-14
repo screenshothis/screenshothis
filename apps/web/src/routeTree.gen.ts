@@ -22,6 +22,7 @@ import { Route as AuthForgotPasswordImport } from './routes/_auth/forgot-passwor
 import { Route as AppScreenshotsImport } from './routes/_app/screenshots'
 import { Route as AppPlaygroundImport } from './routes/_app/playground'
 import { Route as AppDashboardImport } from './routes/_app/dashboard'
+import { Route as AppApiKeysImport } from './routes/_app/api-keys'
 
 // Create/Update Routes
 
@@ -88,6 +89,12 @@ const AppDashboardRoute = AppDashboardImport.update({
   getParentRoute: () => AppRoute,
 } as any)
 
+const AppApiKeysRoute = AppApiKeysImport.update({
+  id: '/api-keys',
+  path: '/api-keys',
+  getParentRoute: () => AppRoute,
+} as any)
+
 // Populate the FileRoutesByPath interface
 
 declare module '@tanstack/react-router' {
@@ -112,6 +119,13 @@ declare module '@tanstack/react-router' {
       fullPath: ''
       preLoaderRoute: typeof MarketingImport
       parentRoute: typeof rootRoute
+    }
+    '/_app/api-keys': {
+      id: '/_app/api-keys'
+      path: '/api-keys'
+      fullPath: '/api-keys'
+      preLoaderRoute: typeof AppApiKeysImport
+      parentRoute: typeof AppImport
     }
     '/_app/dashboard': {
       id: '/_app/dashboard'
@@ -175,12 +189,14 @@ declare module '@tanstack/react-router' {
 // Create and export the route tree
 
 interface AppRouteChildren {
+  AppApiKeysRoute: typeof AppApiKeysRoute
   AppDashboardRoute: typeof AppDashboardRoute
   AppPlaygroundRoute: typeof AppPlaygroundRoute
   AppScreenshotsRoute: typeof AppScreenshotsRoute
 }
 
 const AppRouteChildren: AppRouteChildren = {
+  AppApiKeysRoute: AppApiKeysRoute,
   AppDashboardRoute: AppDashboardRoute,
   AppPlaygroundRoute: AppPlaygroundRoute,
   AppScreenshotsRoute: AppScreenshotsRoute,
@@ -218,6 +234,7 @@ const MarketingRouteWithChildren = MarketingRoute._addFileChildren(
 
 export interface FileRoutesByFullPath {
   '': typeof MarketingRouteWithChildren
+  '/api-keys': typeof AppApiKeysRoute
   '/dashboard': typeof AppDashboardRoute
   '/playground': typeof AppPlaygroundRoute
   '/screenshots': typeof AppScreenshotsRoute
@@ -230,6 +247,7 @@ export interface FileRoutesByFullPath {
 
 export interface FileRoutesByTo {
   '': typeof AuthRouteWithChildren
+  '/api-keys': typeof AppApiKeysRoute
   '/dashboard': typeof AppDashboardRoute
   '/playground': typeof AppPlaygroundRoute
   '/screenshots': typeof AppScreenshotsRoute
@@ -245,6 +263,7 @@ export interface FileRoutesById {
   '/_app': typeof AppRouteWithChildren
   '/_auth': typeof AuthRouteWithChildren
   '/_marketing': typeof MarketingRouteWithChildren
+  '/_app/api-keys': typeof AppApiKeysRoute
   '/_app/dashboard': typeof AppDashboardRoute
   '/_app/playground': typeof AppPlaygroundRoute
   '/_app/screenshots': typeof AppScreenshotsRoute
@@ -259,6 +278,7 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | ''
+    | '/api-keys'
     | '/dashboard'
     | '/playground'
     | '/screenshots'
@@ -270,6 +290,7 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | ''
+    | '/api-keys'
     | '/dashboard'
     | '/playground'
     | '/screenshots'
@@ -283,6 +304,7 @@ export interface FileRouteTypes {
     | '/_app'
     | '/_auth'
     | '/_marketing'
+    | '/_app/api-keys'
     | '/_app/dashboard'
     | '/_app/playground'
     | '/_app/screenshots'
@@ -324,6 +346,7 @@ export const routeTree = rootRoute
     "/_app": {
       "filePath": "_app.tsx",
       "children": [
+        "/_app/api-keys",
         "/_app/dashboard",
         "/_app/playground",
         "/_app/screenshots"
@@ -343,6 +366,10 @@ export const routeTree = rootRoute
       "children": [
         "/_marketing/"
       ]
+    },
+    "/_app/api-keys": {
+      "filePath": "_app/api-keys.tsx",
+      "parent": "/_app"
     },
     "/_app/dashboard": {
       "filePath": "_app/dashboard.tsx",

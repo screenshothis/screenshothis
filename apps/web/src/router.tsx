@@ -13,7 +13,7 @@ import { toast } from "./components/ui/toast.tsx";
 import { ORPCContext } from "./hooks/use-orpc.ts";
 import { routeTree } from "./routeTree.gen.ts";
 import "./tailwind.css";
-import { orpc } from "./utils/orpc";
+import { orpc } from "./utils/orpc.ts";
 
 export const createRouter = () => {
 	const queryClient = new QueryClient({

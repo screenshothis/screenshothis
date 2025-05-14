@@ -63,7 +63,7 @@ function RouteComponent() {
 		(e: React.FormEvent) => {
 			e.preventDefault();
 			e.stopPropagation();
-			form.handleSubmit();
+			void form.handleSubmit();
 		},
 		[form],
 	);

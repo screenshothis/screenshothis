@@ -1,3 +1,5 @@
+"use client";
+
 import * as m from "motion/react-m";
 import * as React from "react";
 

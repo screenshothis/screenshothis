@@ -2,25 +2,25 @@
 
 import Search01Icon from "virtual:icons/hugeicons/search-01";
 
-import { ScreenshotsFilterSchema } from "@screenshothis/schemas/screenshots";
+import { ApiKeysFilterSchema } from "@screenshothis/schemas/api-keys";
 import { useNavigate, useSearch } from "@tanstack/react-router";
 import * as React from "react";
 import type { z } from "zod";
 
 import { useAppForm } from "../forms/form.tsx";
 
-export function ScreenshotsFilter() {
+export function ApiKeysFilter() {
 	const navigate = useNavigate();
 	const searchParams = useSearch({
-		from: "/_app/screenshots",
+		from: "/_app/api-keys",
 	});
 	const form = useAppForm({
 		validators: {
-			onChange: ScreenshotsFilterSchema,
+			onChange: ApiKeysFilterSchema,
 		},
 		defaultValues: {
 			q: searchParams.q || "",
-		} as z.input<typeof ScreenshotsFilterSchema>,
+		} as z.input<typeof ApiKeysFilterSchema>,
 		onSubmit({ value }) {
 			navigate({
 				to: ".",
@@ -71,7 +71,7 @@ export function ScreenshotsFilter() {
 							id="q"
 							type="search"
 							inputMode="search"
-							placeholder="Search screenshots..."
+							placeholder="Search your API keys..."
 						/>
 					)}
 				/>

@@ -1,3 +1,4 @@
+import { ApiKeysFilterSchema } from "@screenshothis/schemas/api-keys";
 import { z } from "zod";
 
 import { auth } from "#/lib/auth";
@@ -21,5 +22,17 @@ export const apiKeysRouter = {
 			return {
 				key: apiKey.key,
 			};
+		}),
+	list: protectedProcedure
+		.input(ApiKeysFilterSchema.optional())
+		.handler(async ({ context, input }) => {
+			const apiKeys = await auth.api.listApiKeys();
+
+			return apiKeys.map((apiKey) => ({
+				id: apiKey.id,
+				name: apiKey.name,
+				createdAt: apiKey.createdAt,
+				updatedAt: apiKey.updatedAt,
+			}));
 		}),
 };
