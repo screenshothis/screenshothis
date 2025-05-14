@@ -1,5 +1,6 @@
 import { polar } from "@polar-sh/better-auth";
 import { Polar } from "@polar-sh/sdk";
+import { keyLimits } from "@screenshothis/common/keys";
 import { generateId } from "@screenshothis/id";
 import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
@@ -12,7 +13,6 @@ import {
 
 import { getActiveWorkspace } from "#/actions/get-active-workspace";
 import { env } from "#/utils/env";
-import { keyLimits } from "#/utils/keys";
 import { db } from "../db";
 import * as schema from "../db/schema";
 

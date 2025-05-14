@@ -1,4 +1,4 @@
-type Limit = {
+export type Limit = {
 	/**
 	 * The duration in milliseconds where each request is counted.
 	 * Once the `rateLimitMax` is reached, the request will be rejected
@@ -28,6 +28,11 @@ type Limit = {
 	};
 };
 
+/**
+ * Represents a 30-day period in milliseconds, used as the default refill interval.
+ */
+const THIRTY_DAYS_MS = BigInt(30 * 24 * 60 * 60 * 1000); // 30 days
+
 export const keyLimits: Record<"free" | "lite" | "pro" | "enterprise", Limit> =
 	{
 		free: {
@@ -40,7 +45,7 @@ export const keyLimits: Record<"free" | "lite" | "pro" | "enterprise", Limit> =
 				remainingRequests: 100,
 				plan: "free",
 				refillAmount: 100,
-				refillInterval: BigInt(30 * 24 * 60 * 60 * 1000), // 30 days
+				refillInterval: THIRTY_DAYS_MS,
 				isExtraEnabled: false,
 			},
 		},
@@ -54,7 +59,7 @@ export const keyLimits: Record<"free" | "lite" | "pro" | "enterprise", Limit> =
 				remainingRequests: 1000,
 				plan: "lite",
 				refillAmount: 1000,
-				refillInterval: BigInt(30 * 24 * 60 * 60 * 1000), // 30 days
+				refillInterval: THIRTY_DAYS_MS,
 				isExtraEnabled: true,
 			},
 		},
@@ -68,7 +73,7 @@ export const keyLimits: Record<"free" | "lite" | "pro" | "enterprise", Limit> =
 				remainingRequests: 10000,
 				plan: "pro",
 				refillAmount: 10000,
-				refillInterval: BigInt(30 * 24 * 60 * 60 * 1000), // 30 days
+				refillInterval: THIRTY_DAYS_MS,
 				isExtraEnabled: true,
 			},
 		},
@@ -82,7 +87,7 @@ export const keyLimits: Record<"free" | "lite" | "pro" | "enterprise", Limit> =
 				remainingRequests: 100000,
 				plan: "enterprise",
 				refillAmount: 100000,
-				refillInterval: BigInt(30 * 24 * 60 * 60 * 1000), // 30 days
+				refillInterval: THIRTY_DAYS_MS,
 				isExtraEnabled: true,
 			},
 		},

@@ -30,6 +30,7 @@ export const usersRouter = {
 						totalRequests: true,
 						totalAllowedRequests: true,
 						remainingRequests: true,
+						plan: true,
 					},
 				},
 			},

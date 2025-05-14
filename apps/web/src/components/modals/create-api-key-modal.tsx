@@ -4,10 +4,12 @@ import Alert01SolidIcon from "virtual:icons/hugeicons/alert-01-solid";
 import Key01Icon from "virtual:icons/hugeicons/key-01";
 
 import { CreateApiKeySchema } from "@screenshothis/schemas/api-keys";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import * as React from "react";
 
 import { createApiKeyAction } from "#/actions/create-api-key-action.ts";
 import { useActionsParams } from "#/hooks/use-actions-params.ts";
+import { useORPC } from "#/hooks/use-orpc.ts";
 import { CodeBlock } from "../code-block.tsx";
 import { useAppForm } from "../forms/form.tsx";
 import * as Alert from "../ui/alert.tsx";
@@ -19,12 +21,34 @@ import { toast } from "../ui/toast.tsx";
 export function CreateApiKeyModal() {
 	const { setParams, ...params } = useActionsParams();
 	const [key, setKey] = React.useState<string | null>(null);
+	const queryClient = useQueryClient();
+	const orpc = useORPC();
+	const { data: me } = useQuery(orpc.users.me.queryOptions());
 	const form = useAppForm({
 		defaultValues: {
 			name: "",
+			plan: me?.requestLimits?.plan ?? "free",
 		},
 		async onSubmit({ value }) {
-			const { data, error } = await createApiKeyAction(value);
+			const currentPlan = me?.requestLimits?.plan ?? "free";
+			if (!currentPlan) {
+				toast.custom((t) => (
+					<AlertToast.Root
+						t={t}
+						$status="error"
+						$variant="filled"
+						message="You need to have a valid plan to create an API key"
+					/>
+				));
+				return;
+			}
+
+			const { data, error } = await createApiKeyAction({
+				data: {
+					...value,
+					plan: currentPlan,
+				},
+			});
 
 			if (error) {
 				toast.custom((t) => (
@@ -39,6 +63,7 @@ export function CreateApiKeyModal() {
 			}
 
 			setKey(data.key);
+			await queryClient.invalidateQueries({ queryKey: ["api-keys"] });
 		},
 		validators: {
 			onSubmit: CreateApiKeySchema,
@@ -100,6 +125,14 @@ export function CreateApiKeyModal() {
 								}}
 							>
 								<div className="grid gap-3">
+									{/* Hidden input to include plan in form data for validation and submission */}
+									<input
+										type="hidden"
+										id="plan"
+										name="plan"
+										value={me?.requestLimits?.plan ?? "free"}
+									/>
+
 									<form.AppField
 										name="name"
 										children={(field) => (

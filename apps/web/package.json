@@ -16,6 +16,7 @@
 		"@orpc/client": "1.2.0",
 		"@orpc/react-query": "1.2.0",
 		"@orpc/server": "1.2.0",
+		"@screenshothis/common": "workspace:*",
 		"@screenshothis/schemas": "workspace:*",
 		"@screenshothis/server": "workspace:*",
 		"@tailwindcss/vite": "4.1.6",

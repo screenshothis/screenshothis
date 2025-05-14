@@ -59,6 +59,7 @@
         "@orpc/client": "1.2.0",
         "@orpc/react-query": "1.2.0",
         "@orpc/server": "1.2.0",
+        "@screenshothis/common": "workspace:*",
         "@screenshothis/schemas": "workspace:*",
         "@screenshothis/server": "workspace:*",
         "@tailwindcss/vite": "4.1.6",
@@ -79,9 +80,9 @@
         "better-auth": "1.2.7",
         "clsx": "2.1.1",
         "date-fns": "4.1.0",
-        "nuqs": "https://pkg.pr.new/nuqs@953",
         "motion": "12.11.0",
         "next-themes": "0.4.6",
+        "nuqs": "https://pkg.pr.new/nuqs@953",
         "radix-ui": "1.4.1",
         "react": "19.1.0",
         "react-dom": "19.1.0",
@@ -117,6 +118,15 @@
         "vite": "6.3.5",
         "vite-plugin-node-polyfills": "0.23.0",
         "vite-tsconfig-paths": "5.1.4",
+      },
+    },
+    "packages/common": {
+      "name": "@screenshothis/common",
+      "devDependencies": {
+        "@types/bun": "1.2.13",
+      },
+      "peerDependencies": {
+        "typescript": "5.8.3",
       },
     },
     "packages/id": {
@@ -802,6 +812,8 @@
     "@rollup/rollup-win32-ia32-msvc": ["@rollup/rollup-win32-ia32-msvc@4.40.2", "", { "os": "win32", "cpu": "ia32" }, "sha512-dt1llVSGEsGKvzeIO76HToiYPNPYPkmjhMHhP00T9S4rDern8P2ZWvWAQUEJ+R1UdMWJ/42i/QqJ2WV765GZcA=="],
 
     "@rollup/rollup-win32-x64-msvc": ["@rollup/rollup-win32-x64-msvc@4.40.2", "", { "os": "win32", "cpu": "x64" }, "sha512-bwspbWB04XJpeElvsp+DCylKfF4trJDa2Y9Go8O6A7YLX2LIKGcNK/CYImJN6ZP4DcuOHB4Utl3iCbnR62DudA=="],
+
+    "@screenshothis/common": ["@screenshothis/common@workspace:packages/common"],
 
     "@screenshothis/id": ["@screenshothis/id@workspace:packages/id"],
 

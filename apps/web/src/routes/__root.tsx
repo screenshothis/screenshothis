@@ -26,19 +26,22 @@ export interface RouterAppContext {
 	queryClient: QueryClient;
 }
 
-const authStateFn = createServerFn({ method: "GET" }).handler(async () => {
-	const request = getWebRequest();
-	if (!request) throw new Error("No request found");
-	const { data } = await authClient.getSession({
-		fetchOptions: {
-			headers: {
-				cookie: request.headers.get("cookie") || "",
+export const authStateFn = createServerFn({ method: "GET" }).handler(
+	async () => {
+		const request = getWebRequest();
+		if (!request)
+			throw new Error("No request found in current execution context");
+		const { data } = await authClient.getSession({
+			fetchOptions: {
+				headers: {
+					cookie: request.headers.get("cookie") || "",
+				},
 			},
-		},
-	});
+		});
 
-	return data;
-});
+		return data;
+	},
+);
 
 export const Route = createRootRouteWithContext<RouterAppContext>()({
 	head: () => ({

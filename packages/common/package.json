@@ -1,0 +1,16 @@
+{
+	"name": "@screenshothis/common",
+	"private": true,
+	"type": "module",
+	"exports": {
+		".": "./src/index.ts",
+		"./keys": "./src/keys.ts"
+	},
+	"module": "src/index.ts",
+	"devDependencies": {
+		"@types/bun": "1.2.13"
+	},
+	"peerDependencies": {
+		"typescript": "5.8.3"
+	}
+}
