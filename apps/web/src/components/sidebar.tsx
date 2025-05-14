@@ -29,7 +29,7 @@ export const navigationLinks: NavigationLink[] = [
 	{ icon: DashboardSquare02Icon, label: "Overview", to: "/dashboard" },
 	{ icon: DocumentCode01Icon, label: "Playground", to: "/playground" },
 	{ icon: Album02Icon, label: "Screenshots", to: "/screenshots" },
-	{ icon: Key01Icon, label: "API Keys", to: "/api-keys" },
+	{ icon: Key01Icon, label: "API Keys", to: "/keys" },
 ];
 
 function useCollapsedState({

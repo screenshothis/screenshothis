@@ -1,40 +1,31 @@
+import AddCircleIcon from "virtual:icons/hugeicons/add-circle";
 import Key01Icon from "virtual:icons/hugeicons/key-01";
 
 import { ApiKeysFilterSchema } from "@screenshothis/schemas/api-keys";
+import { useQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 import { zodValidator } from "@tanstack/zod-adapter";
-import { objectToCamel } from "ts-case-convert";
 
 import { DashedDivider } from "#/components/dashed-divider.tsx";
 import { ApiKeysFilter } from "#/components/filters/api-keys-filter.tsx";
 import { PageHeader } from "#/components/page-header.tsx";
+import { KeysTable } from "#/components/tables/keys-table.tsx";
+import { Button } from "#/components/ui/button.tsx";
+import { useActionsParams } from "#/hooks/use-actions-params.ts";
+import { authClient } from "#/lib/auth.ts";
 
-export const Route = createFileRoute("/_app/api-keys")({
+export const Route = createFileRoute("/_app/keys")({
 	validateSearch: zodValidator(ApiKeysFilterSchema),
-	loaderDeps: ({ search: { q } }) => ({ q }),
-	async loader({ context: { queryClient, orpc }, deps }) {
-		const apiKeys = await queryClient
-			.fetchQuery(
-				orpc.apiKeys.list.queryOptions({
-					input: {
-						q: deps.q,
-					},
-				}),
-			)
-			.catch((error) => {
-				console.error(error);
-
-				return [];
-			});
-
-		return {
-			apiKeys: apiKeys.map(objectToCamel),
-		};
-	},
 	component: RouteComponent,
 });
 
 function RouteComponent() {
+	const { data: apiKeys } = useQuery({
+		queryKey: ["api-keys"],
+		queryFn: () => authClient.apiKey.list().then((res) => res.data),
+	});
+	const { setParams } = useActionsParams();
+
 	return (
 		<>
 			<PageHeader
@@ -45,12 +36,22 @@ function RouteComponent() {
 				}
 				title="API Keys"
 				description="Manage your API keys"
-			/>
+			>
+				<Button
+					$type="neutral"
+					onClick={() => setParams({ action: "create", resource: "api-key" })}
+					trailingIcon={AddCircleIcon}
+				>
+					Create API Key
+				</Button>
+			</PageHeader>
 
 			<div className="grid gap-4 px-4 pb-6 lg:px-8">
 				<DashedDivider />
 
 				<ApiKeysFilter />
+
+				<KeysTable data={apiKeys ?? []} total={apiKeys?.length ?? 0} />
 			</div>
 		</>
 	);

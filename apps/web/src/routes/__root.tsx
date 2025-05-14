@@ -12,6 +12,7 @@ import { getWebRequest } from "@tanstack/react-start/server";
 import aosCss from "aos/dist/aos.css?url";
 import { LazyMotion, domAnimation } from "motion/react";
 import { ThemeProvider } from "next-themes";
+import { NuqsAdapter } from "nuqs/adapters/tanstack-router";
 
 import { Toaster } from "#/components/ui/toast.tsx";
 import { authClient } from "#/lib/auth.ts";
@@ -122,9 +123,11 @@ function RootComponent() {
 			defaultTheme="light"
 		>
 			<RootDocument>
-				<LazyMotion features={domAnimation}>
-					<Outlet />
-				</LazyMotion>
+				<NuqsAdapter>
+					<LazyMotion features={domAnimation}>
+						<Outlet />
+					</LazyMotion>
+				</NuqsAdapter>
 			</RootDocument>
 		</ThemeProvider>
 	);
@@ -152,6 +155,7 @@ function RootDocument({ children }: { children: React.ReactNode }) {
 				suppressHydrationWarning
 			>
 				{children}
+
 				<Toaster position="top-center" />
 				<TanStackRouterDevtools position="bottom-right" />
 				<ReactQueryDevtools position="bottom" buttonPosition="bottom-right" />

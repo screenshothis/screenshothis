@@ -96,7 +96,12 @@ export const CodeBlock = (props: CodeBlockProps) => {
 			)}
 		>
 			{title || isCopyable ? (
-				<div className="flex w-full items-center justify-between px-2">
+				<div
+					className={cn(
+						"flex w-full items-center px-2",
+						title ? "justify-between" : "justify-end",
+					)}
+				>
 					{title ? (
 						<div className="font-medium font-mono text-(--text-sub-600) text-paragraph-xs tracking-normal md:text-paragraph-sm">
 							{title}

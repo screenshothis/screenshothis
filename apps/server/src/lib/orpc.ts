@@ -9,10 +9,12 @@ export const publicProcedure = o;
 
 export const requireAuth = o.middleware(({ context, next }) => {
 	if (!context.session) {
+		console.info("No session");
 		throw new ORPCError("UNAUTHORIZED");
 	}
 
 	if (!context.session.user) {
+		console.info("No user");
 		throw new ORPCError("UNAUTHORIZED");
 	}
 

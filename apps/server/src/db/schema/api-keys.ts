@@ -18,19 +18,19 @@ export const apikeys = pgTable("api_keys", {
 	prefix: text("prefix"),
 	key: text("key").notNull(),
 	refillInterval: bigint("refill_interval", {
-		mode: "bigint",
+		mode: "number",
 	}),
 	refillAmount: bigint("refill_amount", {
-		mode: "bigint",
+		mode: "number",
 	}),
 	lastRefillAt: timestamp("last_refill_at"),
 	enabled: boolean("enabled"),
 	rateLimitEnabled: boolean("rate_limit_enabled"),
 	rateLimitTimeWindow: bigint("rate_limit_time_window", {
-		mode: "bigint",
+		mode: "number",
 	}),
 	rateLimitMax: bigint("rate_limit_max", {
-		mode: "bigint",
+		mode: "number",
 	}),
 	requestCount: integer("request_count"),
 	remaining: integer("remaining"),

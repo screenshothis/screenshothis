@@ -12,7 +12,7 @@ import { useAppForm } from "../forms/form.tsx";
 export function ApiKeysFilter() {
 	const navigate = useNavigate();
 	const searchParams = useSearch({
-		from: "/_app/api-keys",
+		from: "/_app/keys",
 	});
 	const form = useAppForm({
 		validators: {

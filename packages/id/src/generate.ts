@@ -16,6 +16,7 @@ const prefixes = {
 	account: "acct",
 	verification: "vrf",
 	requestLimit: "rl",
+	apikey: "key",
 } as const;
 
 export function generateId<TPrefix extends keyof typeof prefixes>(

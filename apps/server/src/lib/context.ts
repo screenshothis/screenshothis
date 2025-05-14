@@ -1,7 +1,7 @@
 import type { Context as HonoContext } from "hono";
 
 import type { Variables } from "../common/environment";
-import { auth } from "./auth.js";
+import { auth } from "./auth";
 
 export type CreateContextOptions = {
 	context: HonoContext<{ Variables: Variables }>;

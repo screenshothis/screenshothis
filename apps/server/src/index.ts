@@ -25,7 +25,7 @@ const app = new OpenAPIHono<{ Variables: Variables }>({
 app.use(logger());
 app.use(requestId());
 
-app.use("*", async (c, next) => {
+app.use("/rpc/*", async (c, next) => {
 	const session = await auth.api.getSession({ headers: c.req.raw.headers });
 
 	if (!session) {
@@ -38,6 +38,7 @@ app.use("*", async (c, next) => {
 	c.set("session", session.session);
 	return next();
 });
+
 app.use(
 	"/auth/*",
 	cors({
