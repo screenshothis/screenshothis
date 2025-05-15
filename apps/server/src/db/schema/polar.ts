@@ -2,9 +2,9 @@ import type { CustomerStateBenefitGrant } from "@polar-sh/sdk/models/components/
 import type { CustomerStateMeter } from "@polar-sh/sdk/models/components/customerstatemeter";
 import type { CustomerStateSubscription } from "@polar-sh/sdk/models/components/customerstatesubscription";
 import { generateId } from "@screenshothis/id";
+import { relations } from "drizzle-orm";
 import { jsonb, pgTable, text } from "drizzle-orm/pg-core";
 
-import { relations } from "drizzle-orm";
 import { users } from "./auth";
 import { timestamps } from "./utils/timestamps";
 
