@@ -93,7 +93,7 @@ app.doc("/openapi", {
 	openapi: "3.1.0",
 	info: {
 		version: "1.0.0",
-		title: "ScreenshoThis API",
+		title: "ScreenshotThis API",
 		description: "API designed to take screenshots of websites",
 	},
 	servers: [

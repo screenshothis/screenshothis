@@ -7,7 +7,7 @@ import { Button } from "#/components/ui/button.tsx";
 export function HeroSection() {
 	return (
 		<section id="hero" className="relative">
-			<div className="container relative max-w-6xl overflow-hidden border-x bg-(--bg-white-0) p-4 py-32 lg:px-8 lg:pb-80 2xl:max-w-[1400px]">
+			<div className="container relative max-w-6xl overflow-hidden border-x bg-(--bg-white-0) p-4 py-32 lg:px-8 lg:pb-80">
 				<div
 					aria-hidden="true"
 					className="-mr-96 sm:-mr-80 lg:-mr-96 absolute inset-y-0 right-1/2 w-[200%] origin-top-right skew-x-[-30deg] bg-(--bg-white-0) shadow-orange-600/10 shadow-xl ring-1 ring-orange-50"
@@ -30,7 +30,7 @@ export function HeroSection() {
 						>
 							Whether you need to <strong>capture</strong>,{" "}
 							<strong>store</strong>, or <strong>integrate screenshots</strong>,
-							ScreenshoThis offers the tools you need with a simple API.
+							ScreenshotThis offers the tools you need with a simple API.
 						</p>
 
 						<div

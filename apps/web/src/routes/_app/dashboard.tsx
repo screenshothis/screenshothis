@@ -61,7 +61,7 @@ function RouteComponent() {
 						<Skeleton className="h-6" />
 					)
 				}
-				description="Welcome back to ScreenshoThis 👋🏻"
+				description="Welcome back to ScreenshotThis 👋🏻"
 			/>
 
 			<div className="px-4 lg:px-8">
