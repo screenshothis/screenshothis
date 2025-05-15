@@ -13,7 +13,7 @@ import {
 
 import { getActiveWorkspace } from "#/actions/get-active-workspace";
 import { getProductSlugById } from "#/actions/get-product-slug-by-id";
-import { updateUserRequestLimits } from "#/actions/update-user-request-limits.js";
+import { updateUserRequestLimits } from "#/actions/update-user-request-limits";
 import { env } from "#/utils/env";
 import { db } from "../db";
 import * as schema from "../db/schema";
