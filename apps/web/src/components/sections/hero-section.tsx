@@ -8,13 +8,6 @@ export function HeroSection() {
 	return (
 		<section id="hero" className="relative">
 			<div className="container relative max-w-6xl overflow-hidden border-x bg-(--bg-white-0) p-4 py-32 lg:px-8 lg:pb-80 2xl:max-w-[1400px]">
-				{/* TODO: add lime stripe */}
-				{/* <img
-					src="/img/orange-stripe.png"
-					alt=""
-					className="mask-b-from-90% mask-from-[var(--bg-white-0)] pointer-events-none absolute inset-0 top-100 size-full rotate-x-170 scale-180 opacity-85 blur-2xl"
-				/> */}
-
 				<div
 					aria-hidden="true"
 					className="-mr-96 sm:-mr-80 lg:-mr-96 absolute inset-y-0 right-1/2 w-[200%] origin-top-right skew-x-[-30deg] bg-(--bg-white-0) shadow-orange-600/10 shadow-xl ring-1 ring-orange-50"
@@ -60,7 +53,13 @@ export function HeroSection() {
 								className="w-full gap-2 lg:w-auto"
 								asChild
 							>
-								<Link to="/">Contact sales</Link>
+								<a
+									href="mailto:sales@screenshothis.com"
+									target="_blank"
+									rel="noreferrer noopener"
+								>
+									Contact sales
+								</a>
 							</Button>
 						</div>
 					</div>
