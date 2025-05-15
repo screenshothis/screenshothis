@@ -55,11 +55,15 @@
 		"zod": "3.24.4"
 	},
 	"devDependencies": {
+		"@content-collections/core": "0.8.2",
+		"@content-collections/markdown": "0.1.4",
+		"@content-collections/vite": "0.2.4",
 		"@epic-web/config": "1.21.0",
 		"@iconify-json/hugeicons": "1.2.5",
 		"@iconify-json/logos": "1.2.4",
 		"@svgr/core": "8.1.0",
 		"@svgr/plugin-jsx": "8.1.0",
+		"@tailwindcss/typography": "0.5.16",
 		"@tanstack/react-query-devtools": "5.76.1",
 		"@tanstack/react-router-devtools": "1.120.3",
 		"@testing-library/dom": "10.4.0",

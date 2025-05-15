@@ -54,14 +54,14 @@ export const Route = createRootRouteWithContext<RouterAppContext>()({
 				content: "width=device-width, initial-scale=1",
 			},
 			{
-				title: "ScreenshoThis",
+				title: "ScreenshotThis",
 			},
 			{
 				name: "apple-mobile-web-app-title",
-				content: "ScreenshoThis",
+				content: "ScreenshotThis",
 			},
 			...seo({
-				title: "ScreenshoThis",
+				title: "ScreenshotThis",
 			}),
 		],
 		links: [

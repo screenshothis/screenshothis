@@ -1,5 +1,6 @@
 import { Outlet, createFileRoute } from "@tanstack/react-router";
 
+import { Footer } from "#/components/footer.tsx";
 import { Header } from "#/components/header.tsx";
 
 export const Route = createFileRoute("/_marketing")({
@@ -16,7 +17,7 @@ function RouteComponent() {
 					<Outlet />
 				</main>
 
-				{/* <Footer /> */}
+				<Footer />
 			</div>
 		</div>
 	);

@@ -23,6 +23,7 @@ import { Route as AppScreenshotsImport } from './routes/_app/screenshots'
 import { Route as AppPlaygroundImport } from './routes/_app/playground'
 import { Route as AppKeysImport } from './routes/_app/keys'
 import { Route as AppDashboardImport } from './routes/_app/dashboard'
+import { Route as MarketingLegalSplatImport } from './routes/_marketing/legal.$'
 
 // Create/Update Routes
 
@@ -93,6 +94,12 @@ const AppDashboardRoute = AppDashboardImport.update({
   id: '/dashboard',
   path: '/dashboard',
   getParentRoute: () => AppRoute,
+} as any)
+
+const MarketingLegalSplatRoute = MarketingLegalSplatImport.update({
+  id: '/legal/$',
+  path: '/legal/$',
+  getParentRoute: () => MarketingRoute,
 } as any)
 
 // Populate the FileRoutesByPath interface
@@ -183,6 +190,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof MarketingIndexImport
       parentRoute: typeof MarketingImport
     }
+    '/_marketing/legal/$': {
+      id: '/_marketing/legal/$'
+      path: '/legal/$'
+      fullPath: '/legal/$'
+      preLoaderRoute: typeof MarketingLegalSplatImport
+      parentRoute: typeof MarketingImport
+    }
   }
 }
 
@@ -222,10 +236,12 @@ const AuthRouteWithChildren = AuthRoute._addFileChildren(AuthRouteChildren)
 
 interface MarketingRouteChildren {
   MarketingIndexRoute: typeof MarketingIndexRoute
+  MarketingLegalSplatRoute: typeof MarketingLegalSplatRoute
 }
 
 const MarketingRouteChildren: MarketingRouteChildren = {
   MarketingIndexRoute: MarketingIndexRoute,
+  MarketingLegalSplatRoute: MarketingLegalSplatRoute,
 }
 
 const MarketingRouteWithChildren = MarketingRoute._addFileChildren(
@@ -243,6 +259,7 @@ export interface FileRoutesByFullPath {
   '/register': typeof AuthRegisterRoute
   '/reset-password': typeof AuthResetPasswordRoute
   '/': typeof MarketingIndexRoute
+  '/legal/$': typeof MarketingLegalSplatRoute
 }
 
 export interface FileRoutesByTo {
@@ -256,6 +273,7 @@ export interface FileRoutesByTo {
   '/register': typeof AuthRegisterRoute
   '/reset-password': typeof AuthResetPasswordRoute
   '/': typeof MarketingIndexRoute
+  '/legal/$': typeof MarketingLegalSplatRoute
 }
 
 export interface FileRoutesById {
@@ -272,6 +290,7 @@ export interface FileRoutesById {
   '/_auth/register': typeof AuthRegisterRoute
   '/_auth/reset-password': typeof AuthResetPasswordRoute
   '/_marketing/': typeof MarketingIndexRoute
+  '/_marketing/legal/$': typeof MarketingLegalSplatRoute
 }
 
 export interface FileRouteTypes {
@@ -287,6 +306,7 @@ export interface FileRouteTypes {
     | '/register'
     | '/reset-password'
     | '/'
+    | '/legal/$'
   fileRoutesByTo: FileRoutesByTo
   to:
     | ''
@@ -299,6 +319,7 @@ export interface FileRouteTypes {
     | '/register'
     | '/reset-password'
     | '/'
+    | '/legal/$'
   id:
     | '__root__'
     | '/_app'
@@ -313,6 +334,7 @@ export interface FileRouteTypes {
     | '/_auth/register'
     | '/_auth/reset-password'
     | '/_marketing/'
+    | '/_marketing/legal/$'
   fileRoutesById: FileRoutesById
 }
 
@@ -364,7 +386,8 @@ export const routeTree = rootRoute
     "/_marketing": {
       "filePath": "_marketing.tsx",
       "children": [
-        "/_marketing/"
+        "/_marketing/",
+        "/_marketing/legal/$"
       ]
     },
     "/_app/dashboard": {
@@ -401,6 +424,10 @@ export const routeTree = rootRoute
     },
     "/_marketing/": {
       "filePath": "_marketing/index.tsx",
+      "parent": "/_marketing"
+    },
+    "/_marketing/legal/$": {
+      "filePath": "_marketing/legal.$.tsx",
       "parent": "/_marketing"
     }
   }

@@ -1,3 +1,4 @@
+import contentCollections from "@content-collections/vite";
 import tailwindcss from "@tailwindcss/vite";
 import { defineConfig } from "@tanstack/react-start/config";
 import { FileSystemIconLoader } from "unplugin-icons/loaders";
@@ -31,6 +32,7 @@ export default defineConfig({
 				projects: ["./tsconfig.json"],
 			}),
 			tailwindcss(),
+			contentCollections(),
 		],
 	},
 });
