@@ -6,7 +6,7 @@ import { z } from "zod";
 
 import { db } from "#/db";
 import * as schema from "#/db/schema";
-import { auth } from "#/lib/auth.js";
+import { auth } from "#/lib/auth";
 import { protectedProcedure } from "#/lib/orpc";
 import { getOrCreateScreenshot } from "#/utils/screenshot";
 

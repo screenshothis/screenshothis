@@ -1,7 +1,7 @@
 import type { Context, Next } from "hono";
 
 import type { Variables } from "./common/environment";
-import { auth } from "./lib/auth.js";
+import { auth } from "./lib/auth";
 
 export async function workspaceMiddleware(
 	c: Context<{ Variables: Variables }, "/v1/*">,
