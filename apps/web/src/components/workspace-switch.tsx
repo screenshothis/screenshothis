@@ -26,16 +26,7 @@ export function WorkspaceItem({ workspace, isCurrent }: WorkspaceItem) {
 			type="button"
 		>
 			<div className="flex size-10 items-center justify-center rounded-full shadow-xs ring-(--stroke-soft-200) ring-1 ring-inset">
-				<Avatar.Root $size="40" placeholderType="workspace">
-					{/* TODO: Add workspace avatar */}
-
-					{workspace.name
-						.split(" ")
-						.slice(0, 2)
-						.map((word: string) => word[0])
-						.join("")
-						.toUpperCase()}
-				</Avatar.Root>
+				<Avatar.Root $size="40" placeholderType="workspace" />
 			</div>
 			<div className="flex-1 space-y-1">
 				<div className="text-label-sm">{workspace.name}</div>
@@ -65,16 +56,7 @@ export function WorkspaceSwitch({ className }: { className?: string }) {
 						className="fade-in animate-in duration-300"
 						$size="40"
 						placeholderType="workspace"
-					>
-						{/* TODO: Add workspace avatar */}
-
-						{me.currentWorkspace.name
-							.split(" ")
-							.slice(0, 2)
-							.map((word: string) => word[0])
-							.join("")
-							.toUpperCase()}
-					</Avatar.Root>
+					/>
 				) : (
 					<Skeleton className="size-10 rounded-full" />
 				)}

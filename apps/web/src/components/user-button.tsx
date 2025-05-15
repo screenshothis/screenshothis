@@ -47,9 +47,7 @@ export function UserButton({ className }: { className?: string }) {
 								alt={me.fullName ?? ""}
 								src={me.imageUrl ?? undefined}
 							/>
-						) : (
-							me.fullName?.slice(0, 2)
-						)}
+						) : null}
 					</Avatar.Root>
 				) : (
 					<Skeleton className="size-10 rounded-full" />
