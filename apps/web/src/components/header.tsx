@@ -10,6 +10,7 @@ import { Logo } from "./logo.tsx";
 import { Button } from "./ui/button.tsx";
 import * as Drawer from "./ui/drawer.tsx";
 import * as LinkButton from "./ui/link-button.tsx";
+import { Skeleton } from "./ui/skeleton.tsx";
 
 const navItems = [
 	{
@@ -40,7 +41,7 @@ const mobileNavItems = [
 ];
 
 export function Header() {
-	const { data: session } = authClient.useSession();
+	const { data: session, isPending } = authClient.useSession();
 	const { scrollY } = useScroll();
 
 	return (
@@ -84,11 +85,15 @@ export function Header() {
 					<div className="flex items-center gap-2">
 						<MobileMenu />
 
-						<Button asChild $type="neutral" $size="sm">
-							<Link to={session ? "/dashboard" : "/register"}>
-								{session ? "Dashboard" : "Get started now"}
-							</Link>
-						</Button>
+						{isPending ? (
+							<Skeleton className="h-8 min-w-32" />
+						) : (
+							<Button asChild $type="neutral" $size="sm">
+								<Link to={session ? "/dashboard" : "/register"}>
+									{session ? "Dashboard" : "Get started now"}
+								</Link>
+							</Button>
+						)}
 					</div>
 				</div>
 			</div>
