@@ -10,16 +10,17 @@ export async function updateUserRequestLimits(userId: string, plan: PlanType) {
 		throw new Error(`Unknown plan: ${plan}`);
 	}
 
-	const limits = keyLimits[plan].metadata;
+	const { totalAllowedRequests, refillAmount, isExtraEnabled } =
+		keyLimits[plan].metadata;
 
 	await db
 		.update(schema.requestLimits)
 		.set({
-			totalAllowedRequests: limits.totalAllowedRequests,
-			remainingRequests: limits.totalAllowedRequests,
+			totalAllowedRequests,
+			remainingRequests: totalAllowedRequests,
 			plan,
-			refillAmount: limits.refillAmount,
-			isExtraEnabled: limits.isExtraEnabled,
+			refillAmount,
+			isExtraEnabled,
 		})
 		.where(eq(schema.requestLimits.userId, userId));
 }
