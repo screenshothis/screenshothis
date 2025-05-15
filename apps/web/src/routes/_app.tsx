@@ -14,7 +14,7 @@ export const Route = createFileRoute("/_app")({
 			});
 		}
 
-		await queryClient.ensureQueryData(orpc.users.me.queryOptions());
+		await queryClient.prefetchQuery(orpc.users.me.queryOptions());
 	},
 	component: PathlessLayoutComponent,
 });
