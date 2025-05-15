@@ -30,7 +30,7 @@ export function HeroSection() {
 						>
 							Whether you need to <strong>capture</strong>,{" "}
 							<strong>store</strong>, or <strong>integrate screenshots</strong>,
-							ScreenshotThis offers the tools you need with a simple API.
+							Screenshothis offers the tools you need with a simple API.
 						</p>
 
 						<div

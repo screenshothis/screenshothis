@@ -1,6 +1,8 @@
 import { defineCollection, defineConfig } from "@content-collections/core";
 import { compileMarkdown } from "@content-collections/markdown";
 
+import { createExcerpt } from "#/actions/create-excerpt.ts";
+
 const legalPages = defineCollection({
 	name: "legalPages",
 	directory: "src/content/legal",
@@ -15,6 +17,7 @@ const legalPages = defineCollection({
 		return {
 			...document,
 			slug: document._meta.path,
+			excerpt: createExcerpt(document.content),
 			html,
 		};
 	},

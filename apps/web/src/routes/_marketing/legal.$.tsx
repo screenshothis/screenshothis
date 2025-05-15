@@ -1,5 +1,6 @@
 import LegalDocument01Icon from "virtual:icons/hugeicons/legal-document-01";
 
+import { seo } from "#/utils/seo.ts";
 import { createFileRoute, notFound } from "@tanstack/react-router";
 import { createServerFn } from "@tanstack/react-start";
 import { setHeaders } from "@tanstack/react-start/server";
@@ -26,9 +27,12 @@ const fetchLegalPage = createServerFn({ method: "GET" })
 			"cdn-cache-control": "max-age=300, stale-while-revalidate=300, durable",
 		});
 
+		console.log(page.excerpt);
+
 		return {
 			title: page.title,
 			lastUpdated: page.lastUpdated,
+			excerpt: page.excerpt,
 			html: page.html,
 			filePath,
 		};
@@ -37,6 +41,18 @@ const fetchLegalPage = createServerFn({ method: "GET" })
 export const Route = createFileRoute("/_marketing/legal/$")({
 	staleTime: Number.POSITIVE_INFINITY,
 	loader: ({ params }) => fetchLegalPage({ data: params._splat }),
+	head: ({ loaderData }) => {
+		return {
+			meta: loaderData
+				? [
+						...seo({
+							title: `${loaderData?.title ?? "Legal"} | Screenshothis`,
+							description: loaderData?.excerpt,
+						}),
+					]
+				: [],
+		};
+	},
 	component: RouteComponent,
 });
 

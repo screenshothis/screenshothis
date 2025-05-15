@@ -1,12 +1,16 @@
+import type { ButtonProps } from "#/components/ui/button.tsx";
 import type { PlanType } from "@screenshothis/schemas/plan";
 
-type Plan = {
+export type Plan = {
 	name: string;
 	price?: number;
 	isFeatured?: boolean;
 	isCustom?: boolean;
 	features: string[];
 	extraScreenshotsCost?: number;
+	buttonStyle?: ButtonProps["$style"];
+	buttonType?: ButtonProps["$type"];
+	buttonLabel?: string;
 };
 
 export const plans: Record<Exclude<PlanType, "free">, Plan> = {
@@ -18,9 +22,12 @@ export const plans: Record<Exclude<PlanType, "free">, Plan> = {
 			"<strong>300 requests</strong> each minute",
 			"Blocks ads and cookie banners",
 			"Takes full-page screenshots",
-			"Includes caching <span class='text-(--text-sub-600)'>(you only pay for each screenshot made)</span>",
+			"Includes caching <sup class='text-sub text-primary'>1</sup>",
 		],
 		extraScreenshotsCost: 0.005,
+		buttonStyle: "stroke",
+		buttonType: "primary",
+		buttonLabel: "Get Started",
 	},
 	pro: {
 		name: "Pro",
@@ -31,9 +38,12 @@ export const plans: Record<Exclude<PlanType, "free">, Plan> = {
 			"<strong>600 requests</strong> each minute",
 			"Blocks ads and cookie banners",
 			"Takes full-page screenshots",
-			"Includes caching <span class='text-(--text-sub-600)'>(you only pay for each screenshot made)</span>",
+			"Includes caching <sup class='text-sub text-white'>1</sup>",
 		],
 		extraScreenshotsCost: 0.001,
+		buttonStyle: "filled",
+		buttonType: "neutral",
+		buttonLabel: "Get Started",
 	},
 	enterprise: {
 		name: "Enterprise",
@@ -43,8 +53,11 @@ export const plans: Record<Exclude<PlanType, "free">, Plan> = {
 			"<strong>6,000 requests</strong> each minute",
 			"Blocks ads and cookie banners",
 			"Takes full-page screenshots",
-			"Includes caching <span class='text-(--text-sub-600)'>(you only pay for each screenshot made)</span>",
+			"Includes caching <sup class='text-sub text-primary'>1</sup>",
 		],
 		extraScreenshotsCost: 0.0005,
+		buttonStyle: "stroke",
+		buttonType: "primary",
+		buttonLabel: "Contact Us",
 	},
 };

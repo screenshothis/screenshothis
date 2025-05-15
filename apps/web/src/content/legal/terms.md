@@ -1,12 +1,12 @@
 ---
 title: "Terms of Service"
-summary: "The terms and conditions for using the ScreenshotThis application."
+summary: "The terms and conditions for using the Screenshothis application."
 lastUpdated: "05-14-2025"
 ---
 
 ## 1. Introduction
 
-Welcome to ScreenshotThis! These Terms of Service ("**Terms**") govern your use of the ScreenshotThis application (the "**Service**"), operated by danestves, LLC ("**us**", "**we**", or "**our**"). By accessing or using our Service, you agree to be bound by these Terms. If you disagree with any part of the terms, then you may not access the Service.
+Welcome to Screenshothis! These Terms of Service ("**Terms**") govern your use of the Screenshothis application (the "**Service**"), operated by danestves, LLC ("**us**", "**we**", or "**our**"). By accessing or using our Service, you agree to be bound by these Terms. If you disagree with any part of the terms, then you may not access the Service.
 
 ## 2. Accounts
 

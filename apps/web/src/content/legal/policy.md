@@ -4,10 +4,10 @@ lastUpdated: "05-14-2025"
 ---
 
 ## Introduction
-danestves, LLC ("**us**", "**we**", or "**our**") operates the ScreenshotThis application (the "**Service**"). This page informs you of our policies regarding the collection, use, and disclosure of personal data when you use our Service and the choices you have associated with that data. We take your privacy seriously and are committed to protecting your personal information. By using the Service, you agree to the collection and use of information in accordance with this policy.
+danestves, LLC ("**us**", "**we**", or "**our**") operates the Screenshothis application (the "**Service**"). This page informs you of our policies regarding the collection, use, and disclosure of personal data when you use our Service and the choices you have associated with that data. We take your privacy seriously and are committed to protecting your personal information. By using the Service, you agree to the collection and use of information in accordance with this policy.
 
 ## Definitions
-- **Service**: The ScreenshotThis application operated by danestves, LLC
+- **Service**: The Screenshothis application operated by danestves, LLC
 - **Personal Data**: Data about a living individual who can be identified from that data
 - **Usage Data**: Data collected automatically from the Service
 - **Cookies**: Small files stored on your device

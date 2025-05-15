@@ -1,10 +1,16 @@
 import ArrowRight01Icon from "virtual:icons/hugeicons/arrow-right-01";
+import CheckmarkCircle02SolidIcon from "virtual:icons/hugeicons/checkmark-circle-02-solid";
 import CreditCardIcon from "virtual:icons/hugeicons/credit-card";
+import InformationCircleSolidIcon from "virtual:icons/hugeicons/information-circle-solid";
+
+import type { Format } from "@number-flow/react";
+import NumberFlow from "@number-flow/react";
+import { resolveCurrencyFormat } from "@sumup/intl";
+import { Link } from "@tanstack/react-router";
+import * as React from "react";
 
 import { cn } from "#/utils/cn.ts";
-import type { Format } from "@number-flow/react";
-import { resolveCurrencyFormat } from "@sumup/intl";
-import * as React from "react";
+import { type Plan, plans } from "#/utils/plans.ts";
 import { Button } from "../ui/button.tsx";
 
 type PricingSectionProps = React.ComponentPropsWithRef<"section"> & {
@@ -85,7 +91,158 @@ export function PricingSection({
 						</Button>
 					</div>
 				</div>
+
+				<div className="mx-auto mt-12 grid gap-2.5">
+					<div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
+						{Object.entries(plans).map(([key, plan]) => {
+							return (
+								<div
+									data-aos="fade-up"
+									data-aos-duration={
+										// if is first or last 1000 otherwise 1500
+										key === "lite" || key === "enterprise" ? "1250" : "1000"
+									}
+									className={cn(
+										"rounded-24 p-8 shadow-sm",
+										plan.isFeatured
+											? "bg-primary"
+											: "bg-(--bg-white-0) ring-(--stroke-soft-200)/40 ring-1 ring-inset",
+									)}
+									key={key}
+								>
+									<div className="block flex-shrink-0">
+										<p
+											className={cn(
+												"font-medium",
+												plan.isFeatured ? "text-white" : "",
+											)}
+										>
+											{plan.name}
+										</p>
+									</div>
+
+									<div className="mt-6">
+										<p
+											className={cn(
+												"text-paragraph-sm",
+												plan.isFeatured
+													? "text-white"
+													: "text-(--text-sub-600)",
+											)}
+										>
+											{/* {plan.description} */}
+										</p>
+										<p className="mt-8 h-15 font-semibold tracking-tight">
+											{key === "enterprise" ? (
+												<span className="font-semibold text-h4 lg:text-h3">
+													Custom
+												</span>
+											) : (
+												<NumberFlow
+													className={cn(
+														"font-semibold text-h4 lg:text-h3 [&::part(suffix)]:font-normal [&::part(suffix)]:text-(--text-sub-600) [&::part(suffix)]:text-paragraph-xs",
+														plan.isFeatured
+															? "text-white [&::part(suffix)]:text-white"
+															: "",
+													)}
+													suffix="/month"
+													format={format}
+													value={plan.price || 0}
+												/>
+											)}
+										</p>
+									</div>
+
+									<div className="mt-8">
+										<PlanButton planKey={key} plan={plan} />
+									</div>
+
+									<ul className="order-last mt-10 flex flex-col gap-y-3">
+										{plan.features.map((feature) => (
+											<li className="flex items-start gap-2" key={feature}>
+												<CheckmarkCircle02SolidIcon
+													className={cn(
+														"mt-0.5 size-4",
+														plan.isFeatured
+															? "text-white"
+															: "text-(--text-sub-600)",
+													)}
+												/>
+												<span
+													className={cn(
+														"flex-1 text-paragraph-sm",
+														plan.isFeatured
+															? "text-white"
+															: "text-(--text-sub-600)",
+													)}
+													// biome-ignore lint/security/noDangerouslySetInnerHtml: we control the content
+													dangerouslySetInnerHTML={{ __html: feature }}
+												/>
+											</li>
+										))}
+										<li className="flex items-start gap-2">
+											<InformationCircleSolidIcon
+												className={cn(
+													"mt-0.5 size-4",
+													plan.isFeatured
+														? "text-white"
+														: "text-(--text-sub-600)",
+												)}
+											/>
+											<span
+												className={cn(
+													"flex-1 text-paragraph-sm",
+													plan.isFeatured
+														? "text-white"
+														: "text-(--text-sub-600)",
+												)}
+											>
+												{plan.extraScreenshotsCost
+													? `Additional screenshots cost ${plan.extraScreenshotsCost} USD each`
+													: ""}
+											</span>
+										</li>
+									</ul>
+								</div>
+							);
+						})}
+					</div>
+
+					<p className="text-(--text-sub-600) text-paragraph-sm">
+						<sup className="text-primary">1</sup> We only charge per screenshot
+						generated, not cached ones.
+					</p>
+				</div>
 			</div>
 		</section>
+	);
+}
+
+function PlanButton({ plan, planKey }: { plan: Plan; planKey: string }) {
+	return (
+		<Button
+			$style={plan.buttonStyle}
+			$type={plan.buttonType}
+			asChild
+			className={cn(
+				"w-full",
+				plan.isFeatured &&
+					"bg-white text-primary hover:bg-orange-600 hover:text-white",
+			)}
+		>
+			{planKey === "enterprise" ? (
+				<a
+					href={
+						planKey === "enterprise"
+							? "mailto:sales@expensetrackr.app"
+							: `${import.meta.env.VITE_SERVER_URL}/auth/checkout/${planKey}`
+					}
+				>
+					{plan.buttonLabel}
+				</a>
+			) : (
+				<Link to="/register">{plan.buttonLabel}</Link>
+			)}
+		</Button>
 	);
 }
