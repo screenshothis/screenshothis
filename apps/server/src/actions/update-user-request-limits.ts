@@ -6,6 +6,10 @@ import { db } from "#/db";
 import * as schema from "#/db/schema";
 
 export async function updateUserRequestLimits(userId: string, plan: PlanType) {
+	if (!keyLimits[plan]) {
+		throw new Error(`Unknown plan: ${plan}`);
+	}
+
 	const limits = keyLimits[plan].metadata;
 
 	await db
