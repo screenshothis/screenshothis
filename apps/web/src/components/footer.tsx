@@ -29,11 +29,11 @@ const links = [
 		links: [
 			{
 				label: "Privacy Policy",
-				href: "/privacy",
+				href: "/legal/policy",
 			},
 			{
 				label: "Terms of Service",
-				href: "/terms",
+				href: "/legal/terms",
 			},
 		],
 	},
@@ -41,7 +41,7 @@ const links = [
 
 export function Footer() {
 	return (
-		<footer className="relative overflow-hidden">
+		<footer className="relative overflow-hidden px-2">
 			<div className="container max-w-6xl border-x border-t bg-(--bg-white-0) py-12 lg:px-12">
 				<div className="grid grid-cols-1 gap-y-8 sm:grid-cols-2 lg:col-span-4 lg:grid-cols-4">
 					<div className="lg:pr-8">

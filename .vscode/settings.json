@@ -20,7 +20,8 @@
     },
     "javascript.preferences.importModuleSpecifierEnding": "js",
     "search.exclude": {
-        "**/routeTree.gen.ts": true
+        "**/routeTree.gen.ts": true,
+        "**/.content-collections/**": true
     },
     "typescript.preferences.importModuleSpecifierEnding": "js",
     "typescript.tsdk": "node_modules/typescript/lib"
