@@ -1,3 +1,5 @@
+import type { PlanType } from "@screenshothis/schemas/plan";
+
 type Plan = {
 	name: string;
 	price?: number;
@@ -6,7 +8,7 @@ type Plan = {
 	features: string[];
 };
 
-export const plans: Record<"lite" | "pro" | "enterprise", Plan> = {
+export const plans: Record<Exclude<PlanType, "free">, Plan> = {
 	lite: {
 		name: "Lite",
 		price: 5,

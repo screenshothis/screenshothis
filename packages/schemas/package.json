@@ -6,11 +6,13 @@
 		"./api-keys": "./src/api-keys.ts",
 		"./common": "./src/common.ts",
 		"./dashboard": "./src/dashboard.ts",
+		"./plan": "./src/plan.ts",
 		"./screenshots": "./src/screenshots.ts",
 		"./users": "./src/users.ts"
 	},
 	"module": "src/index.ts",
 	"dependencies": {
+		"@screenshothis/schemas": "workspace:*",
 		"@tanstack/zod-adapter": "1.120.3",
 		"ts-case-convert": "2.1.0",
 		"zod": "3.24.4"

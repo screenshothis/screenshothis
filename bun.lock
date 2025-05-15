@@ -122,6 +122,9 @@
     },
     "packages/common": {
       "name": "@screenshothis/common",
+      "dependencies": {
+        "zod": "3.24.4",
+      },
       "devDependencies": {
         "@types/bun": "1.2.13",
       },
@@ -144,6 +147,7 @@
     "packages/schemas": {
       "name": "@screenshothis/schemas",
       "dependencies": {
+        "@screenshothis/schemas": "workspace:*",
         "@tanstack/zod-adapter": "1.120.3",
         "ts-case-convert": "2.1.0",
         "zod": "3.24.4",

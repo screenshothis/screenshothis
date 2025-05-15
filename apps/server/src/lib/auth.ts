@@ -12,6 +12,8 @@ import {
 } from "unique-username-generator";
 
 import { getActiveWorkspace } from "#/actions/get-active-workspace";
+import { getProductSlugById } from "#/actions/get-product-slug-by-id";
+import { updateUserRequestLimits } from "#/actions/update-user-request-limits.js";
 import { env } from "#/utils/env";
 import { db } from "../db";
 import * as schema from "../db/schema";
@@ -203,6 +205,17 @@ export const auth = betterAuth({
 								activeMeters: payload.data.activeMeters,
 							},
 						});
+				},
+				async onSubscriptionCreated(payload) {
+					const data = payload.data;
+
+					const productSlug = await getProductSlugById(data.productId);
+
+					if (!data.customer.externalId) {
+						throw new Error("Customer external ID is required");
+					}
+
+					await updateUserRequestLimits(data.customer.externalId, productSlug);
 				},
 			},
 		}),

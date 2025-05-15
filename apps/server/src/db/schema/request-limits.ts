@@ -1,4 +1,5 @@
 import { generateId } from "@screenshothis/id";
+import type { PlanType } from "@screenshothis/schemas/plan";
 import { relations } from "drizzle-orm";
 import { bigint, boolean, integer, pgTable, text } from "drizzle-orm/pg-core";
 
@@ -12,7 +13,7 @@ export const requestLimits = pgTable("request_limits", {
 	totalRequests: integer("total_requests"),
 	totalAllowedRequests: integer("total_allowed_requests"),
 	remainingRequests: integer("remaining_requests"),
-	plan: text("plan").$type<"free" | "lite" | "pro" | "enterprise">().notNull(),
+	plan: text("plan").$type<PlanType>().notNull(),
 	refillAmount: integer("refill_amount"),
 	refillInterval: bigint({
 		mode: "bigint",

@@ -1,7 +1,4 @@
-/**
- * Defines the available subscription plan types.
- */
-export type PlanType = "free" | "lite" | "pro" | "enterprise";
+import type { PlanType } from "@screenshothis/schemas/plan";
 
 export type LimitMetadata = {
 	totalRequests: number;
