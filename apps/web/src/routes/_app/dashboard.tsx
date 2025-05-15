@@ -86,12 +86,7 @@ function RouteComponent() {
 				<div className="w-px bg-(--stroke-soft-200) lg:block" />
 
 				<div className="shrink-0 min-[1100px]:w-[328px]">
-					<UsageWidget
-						totalRequests={me?.requestLimits?.totalRequests}
-						totalAllowedRequests={me?.requestLimits?.totalAllowedRequests}
-						remainingRequests={me?.requestLimits?.remainingRequests}
-						className="px-1"
-					/>
+					<UsageWidget className="px-1" />
 				</div>
 			</div>
 		</>

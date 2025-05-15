@@ -6,6 +6,7 @@ type Plan = {
 	isFeatured?: boolean;
 	isCustom?: boolean;
 	features: string[];
+	extraScreenshotsCost?: number;
 };
 
 export const plans: Record<Exclude<PlanType, "free">, Plan> = {
@@ -19,6 +20,7 @@ export const plans: Record<Exclude<PlanType, "free">, Plan> = {
 			"Takes full-page screenshots",
 			"Includes caching <span class='text-(--text-sub-600)'>(you only pay for each screenshot made)</span>",
 		],
+		extraScreenshotsCost: 0.005,
 	},
 	pro: {
 		name: "Pro",
@@ -31,6 +33,7 @@ export const plans: Record<Exclude<PlanType, "free">, Plan> = {
 			"Takes full-page screenshots",
 			"Includes caching <span class='text-(--text-sub-600)'>(you only pay for each screenshot made)</span>",
 		],
+		extraScreenshotsCost: 0.001,
 	},
 	enterprise: {
 		name: "Enterprise",
@@ -42,5 +45,6 @@ export const plans: Record<Exclude<PlanType, "free">, Plan> = {
 			"Takes full-page screenshots",
 			"Includes caching <span class='text-(--text-sub-600)'>(you only pay for each screenshot made)</span>",
 		],
+		extraScreenshotsCost: 0.0005,
 	},
 };

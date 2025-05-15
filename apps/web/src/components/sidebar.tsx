@@ -241,14 +241,7 @@ export default function Sidebar({
 						<NavigationMenu collapsed={collapsed} />
 						{/* <SettingsAndSupport collapsed={collapsed} /> */}
 
-						{!collapsed ? (
-							<UsageWidget
-								totalRequests={me?.requestLimits?.totalRequests}
-								totalAllowedRequests={me?.requestLimits?.totalAllowedRequests}
-								remainingRequests={me?.requestLimits?.remainingRequests}
-								className="mt-auto"
-							/>
-						) : null}
+						{!collapsed ? <UsageWidget className="mt-auto" /> : null}
 					</div>
 
 					<SidebarDivider collapsed={collapsed} />
