@@ -1,8 +1,8 @@
 import { defineCollection, defineConfig } from "@content-collections/core";
 import { compileMarkdown } from "@content-collections/markdown";
 
-const legal = defineCollection({
-	name: "legal",
+const legalPages = defineCollection({
+	name: "legalPages",
 	directory: "src/content/legal",
 	include: "**/*.md",
 	schema: (z) => ({
@@ -21,5 +21,5 @@ const legal = defineCollection({
 });
 
 export default defineConfig({
-	collections: [legal],
+	collections: [legalPages],
 });

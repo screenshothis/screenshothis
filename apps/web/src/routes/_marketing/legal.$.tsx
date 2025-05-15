@@ -3,9 +3,7 @@ import LegalDocument01Icon from "virtual:icons/hugeicons/legal-document-01";
 import { createFileRoute, notFound } from "@tanstack/react-router";
 import { createServerFn } from "@tanstack/react-start";
 import { setHeaders } from "@tanstack/react-start/server";
-import { allLegals } from "content-collections";
-import createDOMPurify from "dompurify";
-import { JSDOM } from "jsdom";
+import { allLegalPages } from "content-collections";
 import { z } from "zod";
 
 const fetchLegalPage = createServerFn({ method: "GET" })
@@ -17,9 +15,9 @@ const fetchLegalPage = createServerFn({ method: "GET" })
 
 		const filePath = `src/content/legal/${legalPath}.md`;
 
-		const post = allLegals.find((legal) => legal.slug === legalPath);
+		const page = allLegalPages.find((legal) => legal.slug === legalPath);
 
-		if (!post) {
+		if (!page) {
 			throw notFound();
 		}
 
@@ -28,13 +26,10 @@ const fetchLegalPage = createServerFn({ method: "GET" })
 			"cdn-cache-control": "max-age=300, stale-while-revalidate=300, durable",
 		});
 
-		const window = new JSDOM("").window;
-		const DOMPurify = createDOMPurify(window);
-
 		return {
-			title: post.title,
-			lastUpdated: post.lastUpdated,
-			html: DOMPurify.sanitize(post.html),
+			title: page.title,
+			lastUpdated: page.lastUpdated,
+			html: page.html,
 			filePath,
 		};
 	});
