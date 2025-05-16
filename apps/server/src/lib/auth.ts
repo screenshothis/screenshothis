@@ -41,6 +41,12 @@ export const auth = betterAuth({
 			enabled: true,
 			domain: ".screenshothis.com",
 		},
+		defaultCookieAttributes: {
+			secure: true,
+			httpOnly: true,
+			sameSite: "none",
+			partitioned: true,
+		},
 		database: {
 			generateId(options) {
 				return generateId(options.model, options.size);
