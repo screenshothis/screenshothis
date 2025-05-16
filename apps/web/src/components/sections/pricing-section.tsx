@@ -225,27 +225,46 @@ function PlanButton({ plan, planKey }: { plan: Plan; planKey: string }) {
 	});
 	const isLoggedIn = !!context.session?.id;
 
+	// TODO: this is handy for now, but we should use the auth client to handle this
+	const handleSubscribe = async () => {
+		const response = await fetch(
+			`${env.VITE_SERVER_URL}/auth/checkout/${planKey}`,
+			{
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json",
+				},
+				body: JSON.stringify({
+					slug: planKey,
+				}),
+				credentials: "include",
+				redirect: "follow",
+			},
+		);
+
+		if (response.ok) {
+			const data = (await response.json()) as { url: string };
+
+			window.location.href = data.url;
+		}
+	};
+
 	return (
 		<Button
 			$style={plan.buttonStyle}
 			$type={plan.buttonType}
-			asChild
+			asChild={isLoggedIn}
 			className={cn(
 				"w-full",
 				plan.isFeatured &&
 					"bg-white text-primary hover:bg-orange-600 hover:text-white",
 			)}
+			onClick={isLoggedIn ? handleSubscribe : undefined}
 		>
-			{planKey === "enterprise" || isLoggedIn ? (
-				<a
-					href={
-						planKey === "enterprise"
-							? "mailto:sales@expensetrackr.app"
-							: `${env.VITE_SERVER_URL}/auth/checkout/${planKey}`
-					}
-				>
-					{plan.buttonLabel}
-				</a>
+			{planKey === "enterprise" ? (
+				<a href="mailto:sales@expensetrackr.app">{plan.buttonLabel}</a>
+			) : isLoggedIn ? (
+				plan.buttonLabel
 			) : (
 				<Link to="/register">{plan.buttonLabel}</Link>
 			)}
