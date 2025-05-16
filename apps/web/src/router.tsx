@@ -7,6 +7,7 @@ import { createRouter as createTanstackRouter } from "@tanstack/react-router";
 
 import "./app.css";
 import Loader from "./components/loader.tsx";
+import { NotFound } from "./components/not-found.tsx";
 import { Button } from "./components/ui/button.tsx";
 import * as AlertToast from "./components/ui/toast-alert.tsx";
 import { toast } from "./components/ui/toast.tsx";
@@ -49,7 +50,7 @@ export const createRouter = () => {
 		defaultPreloadStaleTime: 0,
 		context: { orpc, queryClient },
 		defaultPendingComponent: () => <Loader />,
-		defaultNotFoundComponent: () => <div>Not Found</div>,
+		defaultNotFoundComponent: () => <NotFound />,
 		defaultViewTransition: true,
 		Wrap: ({ children }) => (
 			<QueryClientProvider client={queryClient}>
