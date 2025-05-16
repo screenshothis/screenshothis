@@ -1,15 +1,16 @@
 import ThirdBracketSquareIcon from "virtual:icons/hugeicons/3rd-bracket-square";
 import ArrowRight01Icon from "virtual:icons/hugeicons/arrow-right-01";
 import ArtboardToolIcon from "virtual:icons/hugeicons/artboard-tool";
+import ChipIcon from "virtual:icons/hugeicons/chip";
 import CleanIcon from "virtual:icons/hugeicons/clean";
 import Clock01Icon from "virtual:icons/hugeicons/clock-01";
 import GroupItemsIcon from "virtual:icons/hugeicons/group-items";
 import Image02Icon from "virtual:icons/hugeicons/image-02";
 import MouseScroll01Icon from "virtual:icons/hugeicons/mouse-scroll-01";
 import Settings02Icon from "virtual:icons/hugeicons/settings-02";
-import ToolsIcon from "virtual:icons/hugeicons/tools";
 
 import { Link } from "@tanstack/react-router";
+
 import { Button } from "../ui/button.tsx";
 
 const features = [
@@ -82,7 +83,7 @@ export function FeaturesSection(props: React.ComponentPropsWithRef<"section">) {
 							data-aos-duration="1000"
 							className="flex items-center gap-2"
 						>
-							<ToolsIcon className="size-4 text-primary" />
+							<ChipIcon className="size-4 text-primary" />
 							<span className="font-medium text-(--text-sub-600) text-paragraph-sm uppercase">
 								YOUR SCREENSHOT AUTOMATION HUB
 							</span>
