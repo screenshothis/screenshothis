@@ -1,4 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
+import { Link } from "@tanstack/react-router";
 
 import { useORPC } from "#/hooks/use-orpc.ts";
 import { cn } from "#/utils/cn.ts";
@@ -39,9 +40,9 @@ export function UsageWidget({ className, ...props }: UsageWidgetProps) {
 				{(requestLimits?.plan === "free" || percentageUsed >= 80) && (
 					<div className="text-(--text-sub-600) text-paragraph-xs">
 						<LinkButton.Root $style="primary" $size="sm" $underline asChild>
-							<a href="/#pricing">
+							<Link to="/" hash="pricing">
 								Upgrade
-							</a>
+							</Link>
 						</LinkButton.Root>{" "}
 						to unlock more screenshots.
 					</div>
