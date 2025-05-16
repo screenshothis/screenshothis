@@ -37,7 +37,7 @@ export function PricingSection({
 	);
 
 	return (
-		<section {...props}>
+		<section id="pricing" {...props}>
 			<div
 				className={cn(
 					"container max-w-6xl border-x border-t bg-(--bg-white-0) py-12 lg:px-12",
