@@ -18,6 +18,7 @@ import * as LinkButton from "#/components/ui/link-button.tsx";
 import * as AlertToast from "#/components/ui/toast-alert.tsx";
 import { toast } from "#/components/ui/toast.tsx";
 import { authClient } from "#/lib/auth.ts";
+import { getScreenshotUrl, seo } from "#/utils/seo.ts";
 
 export const Route = createFileRoute("/_auth/login")({
 	validateSearch: zodValidator(
@@ -27,6 +28,15 @@ export const Route = createFileRoute("/_auth/login")({
 			})
 			.optional(),
 	),
+	head({ match }) {
+		return {
+			meta: seo({
+				title: "Login to your account",
+				description: "Enter your details to login.",
+				image: getScreenshotUrl(`https://screenshothis.com${match.pathname}`),
+			}),
+		};
+	},
 	component: RouteComponent,
 });
 

@@ -5,7 +5,7 @@ export const getScreenshotUrl = (url: string) => {
 export const seo = ({
 	title = "Screenshot API: Capture, Automate & Integrate | Screenshothis",
 	description = "Screenshothis provides a robust screenshot API to effortlessly capture web pages, automate visual content, and integrate screenshots into your apps. Your all-in-one solution for programmatic image generation.",
-	keywords,
+	keywords = "Screenshot API, Automated Screenshots, Programmatic Screenshots, Website Screenshot API, Full Page Screenshot API, Capture Website API, Integrate Screenshots, Developer-Friendly Screenshot API, Scalable Screenshot API, Web Screenshot Generator, URL to Image API, Screen Capture API",
 	image,
 }: {
 	title?: string;

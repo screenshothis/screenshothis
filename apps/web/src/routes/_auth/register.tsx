@@ -10,8 +10,18 @@ import { useAppForm } from "#/components/forms/form.tsx";
 import * as AlertToast from "#/components/ui/toast-alert.tsx";
 import { toast } from "#/components/ui/toast.tsx";
 import { authClient } from "#/lib/auth.ts";
+import { getScreenshotUrl, seo } from "#/utils/seo.ts";
 
 export const Route = createFileRoute("/_auth/register")({
+	head({ match }) {
+		return {
+			meta: seo({
+				title: "Create a new account",
+				description: "Enter your details to register.",
+				image: getScreenshotUrl(`https://screenshothis.com${match.pathname}`),
+			}),
+		};
+	},
 	component: RouteComponent,
 });
 

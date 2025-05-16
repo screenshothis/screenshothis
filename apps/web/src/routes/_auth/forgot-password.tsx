@@ -9,8 +9,18 @@ import { useAppForm } from "#/components/forms/form.tsx";
 import * as AlertToast from "#/components/ui/toast-alert.tsx";
 import { toast } from "#/components/ui/toast.tsx";
 import { authClient } from "#/lib/auth.ts";
+import { getScreenshotUrl, seo } from "#/utils/seo.ts";
 
 export const Route = createFileRoute("/_auth/forgot-password")({
+	head({ match }) {
+		return {
+			meta: seo({
+				title: "Forgot your password?",
+				description: "Enter your email to reset your password.",
+				image: getScreenshotUrl(`https://screenshothis.com${match.pathname}`),
+			}),
+		};
+	},
 	component: RouteComponent,
 });
 
