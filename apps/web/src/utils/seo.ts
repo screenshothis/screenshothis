@@ -1,10 +1,10 @@
 export const seo = ({
-	title,
-	description,
+	title = "Screenshot API: Capture, Automate & Integrate | Screenshothis",
+	description = "Screenshothis provides a robust screenshot API to effortlessly capture web pages, automate visual content, and integrate screenshots into your apps. Your all-in-one solution for programmatic image generation.",
 	keywords,
 	image,
 }: {
-	title: string;
+	title?: string;
 	description?: string;
 	image?: string;
 	keywords?: string;

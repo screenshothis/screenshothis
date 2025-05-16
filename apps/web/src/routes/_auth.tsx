@@ -72,7 +72,7 @@ function PathlessLayoutComponent() {
 					{/* Footer */}
 					<div className="mt-auto flex items-center justify-between gap-4 pb-4 lg:pb-0">
 						<div className="text-(--text-sub-600) text-paragraph-sm">
-							© {new Date().getFullYear()} ScreenshotThis
+							© {new Date().getFullYear()} Screenshothis
 						</div>
 
 						<LanguageSelect />

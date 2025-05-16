@@ -64,7 +64,7 @@ export function Header() {
 				<div className="flex flex-row items-center justify-between">
 					<Link to="/" className="flex items-center gap-2">
 						<Logo className="h-8 w-auto text-primary" />
-						<span className="font-semibold">ScreenshotThis</span>
+						<span className="font-semibold">Screenshothis</span>
 					</Link>
 				</div>
 
