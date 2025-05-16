@@ -14,7 +14,15 @@ export function currencyFormatter(opts?: CurrencyFormatterOptions | null) {
 	const value = amount ?? 0;
 
 	if (!format) {
-		throw new Error("Currency format not found");
+		console.warn(
+			`Currency format not found for locale:${locale}, currency:${currency}`,
+		);
+
+		return new Intl.NumberFormat(locale, {
+			style: "currency",
+			currency,
+			...options,
+		}).format(value);
 	}
 
 	return new Intl.NumberFormat(locale, {

@@ -4,6 +4,7 @@ import {
 	QueryClientProvider,
 } from "@tanstack/react-query";
 import { createRouter as createTanstackRouter } from "@tanstack/react-router";
+import * as React from "react";
 
 import "./app.css";
 import Loader from "./components/loader.tsx";
@@ -50,7 +51,11 @@ export const createRouter = () => {
 		defaultPreloadStaleTime: 0,
 		context: { orpc, queryClient },
 		defaultPendingComponent: () => <Loader />,
-		defaultNotFoundComponent: () => <NotFound />,
+		defaultNotFoundComponent: () => (
+			<React.Suspense fallback={<Loader />}>
+				<NotFound />
+			</React.Suspense>
+		),
 		defaultViewTransition: true,
 		Wrap: ({ children }) => (
 			<QueryClientProvider client={queryClient}>

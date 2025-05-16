@@ -1,9 +1,27 @@
 "use client";
 
+import * as React from "react";
 import ReactConfetti from "react-confetti";
 
 export function Confetti({ id }: { id?: string | null }) {
 	if (!id) return null;
+
+	const [dimensions, setDimensions] = React.useState({
+		width: window.innerWidth,
+		height: window.innerHeight,
+	});
+
+	React.useEffect(() => {
+		const handleResize = () => {
+			setDimensions({
+				width: window.innerWidth,
+				height: window.innerHeight,
+			});
+		};
+
+		window.addEventListener("resize", handleResize);
+		return () => window.removeEventListener("resize", handleResize);
+	}, []);
 
 	return (
 		<ReactConfetti
@@ -11,8 +29,8 @@ export function Confetti({ id }: { id?: string | null }) {
 			run={Boolean(id)}
 			recycle={false}
 			numberOfPieces={500}
-			width={window.innerWidth}
-			height={window.innerHeight}
+			width={dimensions.width}
+			height={dimensions.height}
 		/>
 	);
 }

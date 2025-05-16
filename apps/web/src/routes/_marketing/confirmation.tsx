@@ -13,9 +13,13 @@ import { currencyFormatter } from "#/utils/currency.ts";
 export const Route = createFileRoute("/_marketing/confirmation")({
 	validateSearch: zodValidator(
 		z.object({
-			checkout_id: z.string({
-				required_error: "Checkout ID is required",
-			}),
+			checkout_id: z
+				.string({
+					required_error: "Checkout ID is required",
+				})
+				.uuid({
+					message: "Invalid checkout ID",
+				}),
 		}),
 	),
 	beforeLoad: async ({ search }) => {
@@ -46,7 +50,13 @@ export const Route = createFileRoute("/_marketing/confirmation")({
 
 			return { checkout };
 		} catch (error) {
-			console.error("Failed to fetch checkout:", error);
+			if (error instanceof Response && error.status === 404) {
+				console.error("Checkout not found:", checkoutId);
+			} else if (error instanceof Error) {
+				console.error("Failed to fetch checkout:", error.message);
+			} else {
+				console.error("Unknown error fetching checkout:", error);
+			}
 
 			throw redirect({
 				to: "/",
@@ -118,7 +128,12 @@ function RouteComponent() {
 								trailingIcon={ArrowRight01Icon}
 								trailingIconClassName="easy-out-in size-4 duration-300 group-hover:translate-x-1"
 							>
-								<Link to="/playground">Check out the Playground</Link>
+								<Link
+									to="/playground"
+									aria-label="Go to interactive playground environment"
+								>
+									Check out the Playground
+								</Link>
 							</Button>
 							<Button
 								asChild
@@ -126,7 +141,12 @@ function RouteComponent() {
 								trailingIcon={ArrowRight01Icon}
 								trailingIconClassName="easy-out-in size-4 duration-300 group-hover:translate-x-1"
 							>
-								<Link to="/dashboard">Go to Dashboard</Link>
+								<Link
+									to="/dashboard"
+									aria-label="Navigate to your personal dashboard"
+								>
+									Go to Dashboard
+								</Link>
 							</Button>
 						</div>
 					</div>
