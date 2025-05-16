@@ -63,7 +63,6 @@
 		"@content-collections/markdown": "0.1.4",
 		"@content-collections/vite": "0.2.4",
 		"@epic-web/config": "1.21.0",
-		"@iconify-json/heroicons": "^1.2.2",
 		"@iconify-json/hugeicons": "1.2.5",
 		"@iconify-json/logos": "1.2.4",
 		"@svgr/core": "8.1.0",

@@ -6,8 +6,9 @@ import { z } from "zod";
 
 import { getCheckoutServerFn } from "#/actions/get-checkout.ts";
 import { Aos } from "#/components/aos.tsx";
-import { Confetti } from "#/components/cofetti.tsx";
+import { Confetti } from "#/components/confetti.tsx";
 import { Button } from "#/components/ui/button.tsx";
+import { currencyFormatter } from "#/utils/currency.ts";
 
 export const Route = createFileRoute("/_marketing/confirmation")({
 	validateSearch: zodValidator(
@@ -23,25 +24,41 @@ export const Route = createFileRoute("/_marketing/confirmation")({
 				to: "/",
 			});
 		}
+	},
+	loaderDeps({ search }) {
+		return {
+			checkoutId: search.checkout_id,
+		};
+	},
+	loader: async ({ deps: { checkoutId } }) => {
+		try {
+			const checkout = await getCheckoutServerFn({
+				data: {
+					checkoutId,
+				},
+			});
 
-		const checkout = await getCheckoutServerFn({
-			data: {
-				checkoutId: search.checkout_id,
-			},
-		});
+			if (!checkout) {
+				throw redirect({
+					to: "/",
+				});
+			}
 
-		if (!checkout) {
+			return { checkout };
+		} catch (error) {
+			console.error("Failed to fetch checkout:", error);
+
 			throw redirect({
 				to: "/",
 			});
 		}
-
-		return { checkout };
 	},
 	component: RouteComponent,
 });
 
 function RouteComponent() {
+	const { checkout } = Route.useLoaderData();
+
 	return (
 		<>
 			<Aos />
@@ -69,6 +86,26 @@ function RouteComponent() {
 						>
 							Your purchase has been confirmed.
 						</p>
+
+						{checkout && (
+							<div
+								data-aos="fade-up"
+								data-aos-duration="1800"
+								className="mt-4 text-(--text-sub-600) text-paragraph-md"
+							>
+								<p>Order ID: {checkout.id}</p>
+								{checkout.totalAmount && (
+									<p>
+										<span>Total Amount: </span>
+										<span>
+											{currencyFormatter({
+												amount: checkout.totalAmount,
+											})}
+										</span>
+									</p>
+								)}
+							</div>
+						)}
 
 						<div
 							data-aos="fade-up"

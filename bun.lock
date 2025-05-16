@@ -105,7 +105,6 @@
         "@content-collections/markdown": "0.1.4",
         "@content-collections/vite": "0.2.4",
         "@epic-web/config": "1.21.0",
-        "@iconify-json/heroicons": "^1.2.2",
         "@iconify-json/hugeicons": "1.2.5",
         "@iconify-json/logos": "1.2.4",
         "@svgr/core": "8.1.0",
@@ -479,8 +478,6 @@
     "@humanwhocodes/module-importer": ["@humanwhocodes/module-importer@1.0.1", "", {}, "sha512-bxveV4V8v5Yb4ncFTT3rPSgZBOpCkjfK0y4oVVVJwIuDVBRMDXrPyXRL988i5ap9m9bnyEEjWfm5WkBmtffLfA=="],
 
     "@humanwhocodes/retry": ["@humanwhocodes/retry@0.4.3", "", {}, "sha512-bV0Tgo9K4hfPCek+aMAn81RppFKv2ySDQeMoSZuvTASywNTnVJCArCZE2FWqpvIatKu7VMRLWlR1EazvVhDyhQ=="],
-
-    "@iconify-json/heroicons": ["@iconify-json/heroicons@1.2.2", "", { "dependencies": { "@iconify/types": "*" } }, "sha512-qoW4pXr5kTTL6juEjgTs83OJIwpePu7q1tdtKVEdj+i0zyyVHgg/dd9grsXJQnpTpBt6/VwNjrXBvFjRsKPENg=="],
 
     "@iconify-json/hugeicons": ["@iconify-json/hugeicons@1.2.5", "", { "dependencies": { "@iconify/types": "*" } }, "sha512-luPAFcmQU7eQFHzjtYdYbF5j2h8/6SCv+FGQP7FNJNVBjVGQOyuyum5wXDFEx13F8lGk/AGPVWGqMHp7+HdmJg=="],
 
