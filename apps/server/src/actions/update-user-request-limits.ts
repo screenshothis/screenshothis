@@ -16,6 +16,8 @@ export async function updateUserRequestLimits(userId: string, plan: PlanType) {
 	await db
 		.update(schema.requestLimits)
 		.set({
+			// Set the total requests to 0 to avoid double counting
+			totalRequests: 0,
 			totalAllowedRequests,
 			remainingRequests: totalAllowedRequests,
 			plan,
