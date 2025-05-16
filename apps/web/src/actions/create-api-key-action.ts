@@ -28,6 +28,9 @@ export const createApiKeyAction = createServerFn({ method: "POST" })
 			rateLimitMax: limits.rateLimitMax,
 			rateLimitEnabled: limits.rateLimitEnabled,
 			userId: context.user.id,
+			metadata: {
+				workspaceId: context.session.activeOrganizationId,
+			},
 		});
 
 		if (error) {
