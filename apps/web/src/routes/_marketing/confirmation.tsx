@@ -22,13 +22,7 @@ export const Route = createFileRoute("/_marketing/confirmation")({
 				}),
 		}),
 	),
-	beforeLoad: async ({ search }) => {
-		if (!search.checkout_id) {
-			throw redirect({
-				to: "/",
-			});
-		}
-	},
+
 	loaderDeps({ search }) {
 		return {
 			checkoutId: search.checkout_id,
@@ -52,6 +46,10 @@ export const Route = createFileRoute("/_marketing/confirmation")({
 		} catch (error) {
 			if (error instanceof Response && error.status === 404) {
 				console.error("Checkout not found:", checkoutId);
+			} else if (error instanceof Response && error.status === 401) {
+				console.error("Authentication failed when fetching checkout");
+			} else if (error instanceof Response && error.status === 429) {
+				console.error("Rate limited when fetching checkout");
 			} else if (error instanceof Error) {
 				console.error("Failed to fetch checkout:", error.message);
 			} else {
@@ -141,12 +139,14 @@ function RouteComponent() {
 								trailingIcon={ArrowRight01Icon}
 								trailingIconClassName="easy-out-in size-4 duration-300 group-hover:translate-x-1"
 							>
-								<Link
-									to="/dashboard"
-									aria-label="Navigate to your personal dashboard"
+								<a
+									href={`${import.meta.env.VITE_SERVER_URL}/auth/portal`}
+									aria-label="Navigate to your customer portal"
+									target="_blank"
+									rel="noopener noreferrer"
 								>
-									Go to Dashboard
-								</Link>
+									Go to Customer Portal
+								</a>
 							</Button>
 						</div>
 					</div>

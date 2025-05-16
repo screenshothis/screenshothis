@@ -1,26 +1,17 @@
 "use client";
 
+import { useWindowSize } from "@uidotdev/usehooks";
 import * as React from "react";
 import ReactConfetti from "react-confetti";
 
 export function Confetti({ id }: { id?: string | null }) {
+	const { width, height } = useWindowSize();
+
 	if (!id) return null;
 
-	const [dimensions, setDimensions] = React.useState({
-		width: window.innerWidth,
-		height: window.innerHeight,
-	});
-
-	React.useEffect(() => {
-		const handleResize = () => {
-			setDimensions({
-				width: window.innerWidth,
-				height: window.innerHeight,
-			});
-		};
-
-		window.addEventListener("resize", handleResize);
-		return () => window.removeEventListener("resize", handleResize);
+	const prefersReducedMotion = React.useMemo(() => {
+		if (typeof window === "undefined") return false;
+		return window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 	}, []);
 
 	return (
@@ -28,9 +19,9 @@ export function Confetti({ id }: { id?: string | null }) {
 			key={id}
 			run={Boolean(id)}
 			recycle={false}
-			numberOfPieces={500}
-			width={dimensions.width}
-			height={dimensions.height}
+			numberOfPieces={prefersReducedMotion ? 50 : 500}
+			width={width || 0}
+			height={height || 0}
 		/>
 	);
 }
