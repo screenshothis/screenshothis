@@ -1,7 +1,6 @@
 import type { Sitemap } from "tanstack-router-sitemap";
 
 import type { FileRouteTypes } from "#/routeTree.gen.ts";
-import { allLegalPages } from "../../.content-collections/generated";
 
 // This will become a string literal union of all your routes
 export type TRoutes = FileRouteTypes["fullPaths"];
@@ -23,9 +22,13 @@ export const sitemap: Sitemap<TRoutes> = {
 			priority: 0.8,
 			changeFrequency: "daily",
 		},
+		"/forgot-password": {
+			priority: 0.8,
+			changeFrequency: "daily",
+		},
 		"/legal/$": async () => {
-			return allLegalPages.map((post) => ({
-				path: `/legal/${post.slug}`,
+			return ["privacy", "terms"].map((page) => ({
+				path: `/legal/${page}`,
 				priority: 0.8,
 				changeFrequency: "daily",
 			}));
