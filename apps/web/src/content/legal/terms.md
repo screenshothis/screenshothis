@@ -1,7 +1,7 @@
 ---
 title: "Terms of Service"
 summary: "The terms and conditions for using the Screenshothis application."
-lastUpdated: "05-14-2025"
+lastUpdated: "14-05-2025"
 ---
 
 ## 1. Introduction
