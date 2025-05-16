@@ -5,9 +5,9 @@ import { Link } from "@tanstack/react-router";
 import { CodeBlock } from "../code-block.tsx";
 import { Button } from "../ui/button.tsx";
 
-export function CodeSection() {
+export function CodeSection(props: React.ComponentPropsWithRef<"section">) {
 	return (
-		<section id="code">
+		<section id="code" {...props}>
 			<div className="container relative max-w-6xl border-x bg-(--bg-white-0) p-4 pt-24 lg:px-8">
 				<div className="-mt-40 lg:-mt-80 z-40 grid grid-cols-1 items-start gap-12 lg:grid-cols-2 lg:gap-24">
 					<div className="grid gap-2">

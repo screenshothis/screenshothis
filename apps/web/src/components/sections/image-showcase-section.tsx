@@ -1,8 +1,10 @@
 import DocumentCode01Icon from "virtual:icons/hugeicons/document-code";
 
-export function ImageShowcaseSection() {
+export function ImageShowcaseSection(
+	props: React.ComponentPropsWithRef<"section">,
+) {
 	return (
-		<section id="view-financial-data">
+		<section id="image-showcase" {...props}>
 			<div className="container max-w-6xl overflow-hidden border-x border-t bg-(--bg-white-0) py-12 lg:px-12">
 				<div className="mx-auto max-w-xl text-center">
 					<p
