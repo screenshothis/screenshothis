@@ -114,6 +114,13 @@ export const Route = createRootRouteWithContext<RouterAppContext>()({
 				href: appCss,
 			},
 		],
+		scripts: [
+			{
+				src: "https://athena.danestves.com/js/script.hash.outbound-links.pageview-props.tagged-events.js",
+				defer: true,
+				"data-domain": "screenshothis.com",
+			},
+		],
 	}),
 	async beforeLoad() {
 		const session = await authStateFn();
