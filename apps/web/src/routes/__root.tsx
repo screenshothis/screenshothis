@@ -114,13 +114,6 @@ export const Route = createRootRouteWithContext<RouterAppContext>()({
 				href: appCss,
 			},
 		],
-		scripts: [
-			{
-				src: "https://athena.danestves.com/js/script.hash.outbound-links.pageview-props.tagged-events.js",
-				defer: true,
-				"data-domain": "screenshothis.com",
-			},
-		],
 	}),
 	async beforeLoad() {
 		const session = await authStateFn();
@@ -182,6 +175,11 @@ function RootDocument({ children }: { children: React.ReactNode }) {
 				<TanStackRouterDevtools position="bottom-right" />
 				<ReactQueryDevtools position="bottom" buttonPosition="bottom-right" />
 				<Scripts />
+				<script
+					defer
+					data-domain="screenshothis.com"
+					src="https://athena.danestves.com/js/script.hash.outbound-links.pageview-props.tagged-events.js"
+				/>
 			</body>
 		</html>
 	);
