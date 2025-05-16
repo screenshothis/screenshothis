@@ -8,6 +8,8 @@ import { getCheckoutServerFn } from "#/actions/get-checkout.ts";
 import { Aos } from "#/components/aos.tsx";
 import { Confetti } from "#/components/confetti.tsx";
 import { Button } from "#/components/ui/button.tsx";
+import * as AlertToast from "#/components/ui/toast-alert.tsx";
+import { toast } from "#/components/ui/toast.tsx";
 import { currencyFormatter } from "#/utils/currency.ts";
 
 export const Route = createFileRoute("/_marketing/confirmation")({
@@ -37,6 +39,14 @@ export const Route = createFileRoute("/_marketing/confirmation")({
 			});
 
 			if (!checkout) {
+				toast.custom((t) => (
+					<AlertToast.Root
+						t={t}
+						$status="error"
+						$variant="filled"
+						message="Checkout information not found"
+					/>
+				));
 				throw redirect({
 					to: "/",
 				});
@@ -55,6 +65,15 @@ export const Route = createFileRoute("/_marketing/confirmation")({
 			} else {
 				console.error("Unknown error fetching checkout:", error);
 			}
+
+			toast.custom((t) => (
+				<AlertToast.Root
+					t={t}
+					$status="error"
+					$variant="filled"
+					message="Failed to fetch checkout"
+				/>
+			));
 
 			throw redirect({
 				to: "/",
