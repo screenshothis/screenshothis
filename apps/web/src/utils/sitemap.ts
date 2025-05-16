@@ -23,10 +23,6 @@ export const sitemap: Sitemap<TRoutes> = {
 			priority: 0.8,
 			changeFrequency: "daily",
 		},
-		"/forgot-password": {
-			priority: 0.8,
-			changeFrequency: "daily",
-		},
 		"/legal/$": async () => {
 			return allLegalPages.map((post) => ({
 				path: `/legal/${post.slug}`,
