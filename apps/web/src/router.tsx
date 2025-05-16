@@ -4,9 +4,11 @@ import {
 	QueryClientProvider,
 } from "@tanstack/react-query";
 import { createRouter as createTanstackRouter } from "@tanstack/react-router";
+import * as React from "react";
 
 import "./app.css";
 import Loader from "./components/loader.tsx";
+import { NotFound } from "./components/not-found.tsx";
 import { Button } from "./components/ui/button.tsx";
 import * as AlertToast from "./components/ui/toast-alert.tsx";
 import { toast } from "./components/ui/toast.tsx";
@@ -49,7 +51,11 @@ export const createRouter = () => {
 		defaultPreloadStaleTime: 0,
 		context: { orpc, queryClient },
 		defaultPendingComponent: () => <Loader />,
-		defaultNotFoundComponent: () => <div>Not Found</div>,
+		defaultNotFoundComponent: () => (
+			<React.Suspense fallback={<Loader />}>
+				<NotFound />
+			</React.Suspense>
+		),
 		defaultViewTransition: true,
 		Wrap: ({ children }) => (
 			<QueryClientProvider client={queryClient}>

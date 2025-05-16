@@ -15,6 +15,7 @@ import { Route as MarketingImport } from './routes/_marketing'
 import { Route as AuthImport } from './routes/_auth'
 import { Route as AppImport } from './routes/_app'
 import { Route as MarketingIndexImport } from './routes/_marketing/index'
+import { Route as MarketingConfirmationImport } from './routes/_marketing/confirmation'
 import { Route as AuthResetPasswordImport } from './routes/_auth/reset-password'
 import { Route as AuthRegisterImport } from './routes/_auth/register'
 import { Route as AuthLoginImport } from './routes/_auth/login'
@@ -45,6 +46,12 @@ const AppRoute = AppImport.update({
 const MarketingIndexRoute = MarketingIndexImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => MarketingRoute,
+} as any)
+
+const MarketingConfirmationRoute = MarketingConfirmationImport.update({
+  id: '/confirmation',
+  path: '/confirmation',
   getParentRoute: () => MarketingRoute,
 } as any)
 
@@ -183,6 +190,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthResetPasswordImport
       parentRoute: typeof AuthImport
     }
+    '/_marketing/confirmation': {
+      id: '/_marketing/confirmation'
+      path: '/confirmation'
+      fullPath: '/confirmation'
+      preLoaderRoute: typeof MarketingConfirmationImport
+      parentRoute: typeof MarketingImport
+    }
     '/_marketing/': {
       id: '/_marketing/'
       path: '/'
@@ -235,11 +249,13 @@ const AuthRouteChildren: AuthRouteChildren = {
 const AuthRouteWithChildren = AuthRoute._addFileChildren(AuthRouteChildren)
 
 interface MarketingRouteChildren {
+  MarketingConfirmationRoute: typeof MarketingConfirmationRoute
   MarketingIndexRoute: typeof MarketingIndexRoute
   MarketingLegalSplatRoute: typeof MarketingLegalSplatRoute
 }
 
 const MarketingRouteChildren: MarketingRouteChildren = {
+  MarketingConfirmationRoute: MarketingConfirmationRoute,
   MarketingIndexRoute: MarketingIndexRoute,
   MarketingLegalSplatRoute: MarketingLegalSplatRoute,
 }
@@ -258,6 +274,7 @@ export interface FileRoutesByFullPath {
   '/login': typeof AuthLoginRoute
   '/register': typeof AuthRegisterRoute
   '/reset-password': typeof AuthResetPasswordRoute
+  '/confirmation': typeof MarketingConfirmationRoute
   '/': typeof MarketingIndexRoute
   '/legal/$': typeof MarketingLegalSplatRoute
 }
@@ -272,6 +289,7 @@ export interface FileRoutesByTo {
   '/login': typeof AuthLoginRoute
   '/register': typeof AuthRegisterRoute
   '/reset-password': typeof AuthResetPasswordRoute
+  '/confirmation': typeof MarketingConfirmationRoute
   '/': typeof MarketingIndexRoute
   '/legal/$': typeof MarketingLegalSplatRoute
 }
@@ -289,6 +307,7 @@ export interface FileRoutesById {
   '/_auth/login': typeof AuthLoginRoute
   '/_auth/register': typeof AuthRegisterRoute
   '/_auth/reset-password': typeof AuthResetPasswordRoute
+  '/_marketing/confirmation': typeof MarketingConfirmationRoute
   '/_marketing/': typeof MarketingIndexRoute
   '/_marketing/legal/$': typeof MarketingLegalSplatRoute
 }
@@ -305,6 +324,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/register'
     | '/reset-password'
+    | '/confirmation'
     | '/'
     | '/legal/$'
   fileRoutesByTo: FileRoutesByTo
@@ -318,6 +338,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/register'
     | '/reset-password'
+    | '/confirmation'
     | '/'
     | '/legal/$'
   id:
@@ -333,6 +354,7 @@ export interface FileRouteTypes {
     | '/_auth/login'
     | '/_auth/register'
     | '/_auth/reset-password'
+    | '/_marketing/confirmation'
     | '/_marketing/'
     | '/_marketing/legal/$'
   fileRoutesById: FileRoutesById
@@ -386,6 +408,7 @@ export const routeTree = rootRoute
     "/_marketing": {
       "filePath": "_marketing.tsx",
       "children": [
+        "/_marketing/confirmation",
         "/_marketing/",
         "/_marketing/legal/$"
       ]
@@ -421,6 +444,10 @@ export const routeTree = rootRoute
     "/_auth/reset-password": {
       "filePath": "_auth/reset-password.tsx",
       "parent": "/_auth"
+    },
+    "/_marketing/confirmation": {
+      "filePath": "_marketing/confirmation.tsx",
+      "parent": "/_marketing"
     },
     "/_marketing/": {
       "filePath": "_marketing/index.tsx",
