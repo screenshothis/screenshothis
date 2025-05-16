@@ -2,12 +2,11 @@ import { z } from "zod";
 
 const envSchema = z.object({
 	VITE_SERVER_URL: z.string().url(),
-	POLAR_ACCESS_TOKEN: z.string(),
 });
 
 export const env = (() => {
 	try {
-		return envSchema.parse(process.env);
+		return envSchema.parse(import.meta.env);
 	} catch (error) {
 		console.error("Environment validation failed:", error);
 

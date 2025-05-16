@@ -3,41 +3,6 @@ import { z } from "zod";
 
 import { polar } from "#/lib/polar.ts";
 
-export async function getCheckout(checkoutId: string) {
-	const controller = new AbortController();
-	const timeoutId = setTimeout(() => controller.abort(), 10000);
-
-	try {
-		const checkout = await polar.checkouts.get(
-			{
-				id: checkoutId,
-			},
-			{
-				signal: controller.signal,
-			},
-		);
-
-		clearTimeout(timeoutId);
-
-		return checkout;
-	} catch (error) {
-		clearTimeout(timeoutId);
-		console.error("Failed to fetch checkout:", error);
-
-		if (error instanceof Error && error.name === "AbortError") {
-			throw new Error("Request timed out. Please try again later.");
-		}
-
-		if (error instanceof Response && error.status === 404) {
-			throw new Error("Checkout not found. Please check the ID and try again.");
-		}
-
-		throw new Error(
-			"Failed to fetch checkout details. Please try again later.",
-		);
-	}
-}
-
 export const getCheckoutServerFn = createServerFn({ method: "GET" })
 	.validator(
 		z.object({
@@ -48,5 +13,38 @@ export const getCheckoutServerFn = createServerFn({ method: "GET" })
 		}),
 	)
 	.handler(async ({ data }) => {
-		return getCheckout(data.checkoutId);
+		const controller = new AbortController();
+		const timeoutId = setTimeout(() => controller.abort(), 10000);
+
+		try {
+			const checkout = await polar.checkouts.get(
+				{
+					id: data.checkoutId,
+				},
+				{
+					signal: controller.signal,
+				},
+			);
+
+			clearTimeout(timeoutId);
+
+			return checkout;
+		} catch (error) {
+			clearTimeout(timeoutId);
+			console.error("Failed to fetch checkout:", error);
+
+			if (error instanceof Error && error.name === "AbortError") {
+				throw new Error("Request timed out. Please try again later.");
+			}
+
+			if (error instanceof Response && error.status === 404) {
+				throw new Error(
+					"Checkout not found. Please check the ID and try again.",
+				);
+			}
+
+			throw new Error(
+				"Failed to fetch checkout details. Please try again later.",
+			);
+		}
 	});
