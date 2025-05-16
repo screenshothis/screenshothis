@@ -23,13 +23,12 @@ const navItems = [
 	},
 	{
 		label: "Pricing",
-		href: "/pricing",
+		href: "/#pricing",
 	},
 ];
 
 const mobileNavItems = [
 	...navItems,
-	{ label: "Changelog", href: "/changelog" },
 	{
 		label: "Login",
 		href: "/login",
