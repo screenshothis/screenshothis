@@ -75,7 +75,7 @@ const features = [
 export function FeaturesSection(props: React.ComponentPropsWithRef<"section">) {
 	return (
 		<section id="features" {...props}>
-			<div className="container border-x border-t bg-(--bg-white-0) py-12 lg:px-12">
+			<div className="container max-w-6xl border-x border-t bg-(--bg-white-0) py-12 lg:px-12">
 				<div className="grid grid-cols-1 gap-8 lg:grid-cols-3 lg:items-end">
 					<div className="lg:col-span-2">
 						<p
