@@ -60,6 +60,14 @@ export const Route = createRootRouteWithContext<RouterAppContext>()({
 				name: "apple-mobile-web-app-title",
 				content: "Screenshothis",
 			},
+			{
+				property: "og:url",
+				content: `https://screenshothis.com${match.pathname}`,
+			},
+			{
+				property: "og:site_name",
+				content: "Screenshothis",
+			},
 			...seo({
 				image: getScreenshotUrl(`https://screenshothis.com${match.pathname}`),
 			}),
