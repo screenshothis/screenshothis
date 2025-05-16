@@ -13,7 +13,6 @@ import { zodValidator } from "@tanstack/zod-adapter";
 import { z } from "zod";
 
 import { AuthHeader } from "#/components/auth/auth-header.tsx";
-import { SocialLogin } from "#/components/auth/social-login.tsx";
 import { useAppForm } from "#/components/forms/form.tsx";
 import * as LinkButton from "#/components/ui/link-button.tsx";
 import * as AlertToast from "#/components/ui/toast-alert.tsx";
@@ -80,7 +79,8 @@ function RouteComponent() {
 				description="Enter your details to login."
 			/>
 
-			<SocialLogin />
+			{/* TODO: enable when Google auth is enabled */}
+			{/* <SocialLogin /> */}
 
 			<form.AppForm>
 				<form

@@ -6,7 +6,6 @@ import { SignUpSchema } from "@screenshothis/schemas/users";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 
 import { AuthHeader } from "#/components/auth/auth-header.tsx";
-import { SocialLogin } from "#/components/auth/social-login.tsx";
 import { useAppForm } from "#/components/forms/form.tsx";
 import * as AlertToast from "#/components/ui/toast-alert.tsx";
 import { toast } from "#/components/ui/toast.tsx";
@@ -65,7 +64,8 @@ function RouteComponent() {
 				description="Enter your details to register."
 			/>
 
-			<SocialLogin />
+			{/* TODO: enable when Google auth is enabled */}
+			{/* <SocialLogin /> */}
 
 			<form.AppForm>
 				<form
