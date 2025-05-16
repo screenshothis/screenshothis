@@ -80,6 +80,8 @@ function RouteComponent() {
 			values.is_mobile && `   &is_mobile=${values.is_mobile}`,
 			values.is_landscape && `   &is_landscape=${values.is_landscape}`,
 			values.has_touch && `   &has_touch=${values.has_touch}`,
+			values.device_scale_factor &&
+				`   &device_scale_factor=${values.device_scale_factor}`,
 			values.format && `   &format=${values.format}`,
 			values.block_ads && `   &block_ads=${values.block_ads}`,
 			values.block_cookie_banners &&
