@@ -184,8 +184,6 @@ export const auth = betterAuth({
 			client: polarClient,
 			createCustomerOnSignUp: true,
 			use: [
-				portal(),
-				usage(),
 				checkout({
 					products: [
 						{
@@ -200,6 +198,8 @@ export const auth = betterAuth({
 					successUrl: env.POLAR_SUCCESS_URL,
 					authenticatedUsersOnly: true,
 				}),
+				portal(),
+				usage(),
 				webhooks({
 					secret: env.POLAR_WEBHOOK_SECRET,
 					async onCustomerStateChanged(payload) {
