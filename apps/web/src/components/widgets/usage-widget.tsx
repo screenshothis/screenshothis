@@ -39,7 +39,9 @@ export function UsageWidget({ className, ...props }: UsageWidgetProps) {
 				{(requestLimits?.plan === "free" || percentageUsed >= 80) && (
 					<div className="text-(--text-sub-600) text-paragraph-xs">
 						<LinkButton.Root $style="primary" $size="sm" $underline>
-							Upgrade
+							<a href="/#pricing">
+								Upgrade
+							</a>
 						</LinkButton.Root>{" "}
 						to unlock more screenshots.
 					</div>
