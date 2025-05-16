@@ -17,7 +17,7 @@ import { NuqsAdapter } from "nuqs/adapters/tanstack-router";
 import { Toaster } from "#/components/ui/toast.tsx";
 import { authClient } from "#/lib/auth.ts";
 import type { orpc } from "#/utils/orpc.ts";
-import { seo } from "#/utils/seo.ts";
+import { getScreenshotUrl, seo } from "#/utils/seo.ts";
 import appCss from "../app.css?url";
 import tailwindCss from "../tailwind.css?url";
 
@@ -44,7 +44,7 @@ export const authStateFn = createServerFn({ method: "GET" }).handler(
 );
 
 export const Route = createRootRouteWithContext<RouterAppContext>()({
-	head: () => ({
+	head: ({ match }) => ({
 		meta: [
 			{
 				charSet: "utf-8",
@@ -60,7 +60,13 @@ export const Route = createRootRouteWithContext<RouterAppContext>()({
 				name: "apple-mobile-web-app-title",
 				content: "Screenshothis",
 			},
-			...seo({}),
+			{
+				name: "canonical",
+				href: `https://screenshothis.com${match.pathname}`,
+			},
+			...seo({
+				image: getScreenshotUrl(`https://screenshothis.com${match.pathname}`),
+			}),
 		],
 		links: [
 			{

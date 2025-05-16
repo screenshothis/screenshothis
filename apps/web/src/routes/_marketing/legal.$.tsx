@@ -1,11 +1,12 @@
 import LegalDocument01Icon from "virtual:icons/hugeicons/legal-document-01";
 
-import { seo } from "#/utils/seo.ts";
 import { createFileRoute, notFound } from "@tanstack/react-router";
 import { createServerFn } from "@tanstack/react-start";
 import { setHeaders } from "@tanstack/react-start/server";
 import { allLegalPages } from "content-collections";
 import { z } from "zod";
+
+import { getScreenshotUrl, seo } from "#/utils/seo.ts";
 
 const fetchLegalPage = createServerFn({ method: "GET" })
 	.validator(z.string().optional())
@@ -41,13 +42,16 @@ const fetchLegalPage = createServerFn({ method: "GET" })
 export const Route = createFileRoute("/_marketing/legal/$")({
 	staleTime: Number.POSITIVE_INFINITY,
 	loader: ({ params }) => fetchLegalPage({ data: params._splat }),
-	head: ({ loaderData }) => {
+	head: ({ loaderData, match }) => {
 		return {
 			meta: loaderData
 				? [
 						...seo({
 							title: `${loaderData?.title ?? "Legal"} | Screenshothis`,
 							description: loaderData?.excerpt,
+							image: getScreenshotUrl(
+								`https://screenshothis.com${match.pathname}`,
+							),
 						}),
 					]
 				: [],
