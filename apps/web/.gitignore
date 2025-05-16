@@ -51,3 +51,4 @@ next-env.d.ts
 # Other
 dev-dist
 .content-collections
+public/sitemap.xml

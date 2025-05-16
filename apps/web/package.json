@@ -53,6 +53,7 @@
 		"sonner": "2.0.3",
 		"tailwind-merge": "3.3.0",
 		"tailwind-variants": "1.0.0",
+		"tanstack-router-sitemap": "1.0.12",
 		"ts-case-convert": "2.1.0",
 		"unenv": "1.10.0",
 		"vinxi": "0.5.6",

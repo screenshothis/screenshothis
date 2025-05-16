@@ -1,9 +1,12 @@
 import contentCollections from "@content-collections/vite";
 import tailwindcss from "@tailwindcss/vite";
 import { defineConfig } from "@tanstack/react-start/config";
+import { generateSitemap } from "tanstack-router-sitemap";
 import { FileSystemIconLoader } from "unplugin-icons/loaders";
 import Icons from "unplugin-icons/vite";
 import viteTsConfigPaths from "vite-tsconfig-paths";
+
+import { sitemap } from "./src/utils/sitemap.ts";
 
 export default defineConfig({
 	server: {
@@ -33,6 +36,7 @@ export default defineConfig({
 			}),
 			tailwindcss(),
 			contentCollections(),
+			generateSitemap(sitemap),
 		],
 	},
 });
