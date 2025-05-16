@@ -1,4 +1,10 @@
-import { polar } from "@polar-sh/better-auth";
+import {
+	checkout,
+	polar,
+	portal,
+	usage,
+	webhooks,
+} from "@polar-sh/better-auth";
 import { Polar } from "@polar-sh/sdk";
 import { keyLimits } from "@screenshothis/common/keys";
 import { generateId } from "@screenshothis/id";
@@ -177,58 +183,63 @@ export const auth = betterAuth({
 		polar({
 			client: polarClient,
 			createCustomerOnSignUp: true,
-			enableCustomerPortal: true,
-			checkout: {
-				enabled: true,
-				products: [
-					{
-						productId: env.POLAR_LITE_PRODUCT_ID,
-						slug: "lite",
-					},
-					{
-						productId: env.POLAR_PRO_PRODUCT_ID,
-						slug: "pro",
-					},
-				],
-				successUrl: env.POLAR_SUCCESS_URL,
-				authenticatedUsersOnly: true,
-			},
-			webhooks: {
-				secret: env.POLAR_WEBHOOK_SECRET,
-				async onCustomerStateChanged(payload) {
-					await db
-						.insert(schema.polarCustomerState)
-						.values({
-							metadata: payload.data.metadata,
-							externalId: payload.data.externalId,
-							email: payload.data.email,
-							name: payload.data.name,
-							activeSubscriptions: payload.data.activeSubscriptions,
-							grantedBenefits: payload.data.grantedBenefits,
-							activeMeters: payload.data.activeMeters,
-						})
-						.onConflictDoUpdate({
-							target: schema.polarCustomerState.externalId,
-							set: {
+			use: [
+				portal(),
+				usage(),
+				checkout({
+					products: [
+						{
+							productId: env.POLAR_LITE_PRODUCT_ID,
+							slug: "lite",
+						},
+						{
+							productId: env.POLAR_PRO_PRODUCT_ID,
+							slug: "pro",
+						},
+					],
+					successUrl: env.POLAR_SUCCESS_URL,
+					authenticatedUsersOnly: true,
+				}),
+				webhooks({
+					secret: env.POLAR_WEBHOOK_SECRET,
+					async onCustomerStateChanged(payload) {
+						await db
+							.insert(schema.polarCustomerState)
+							.values({
 								metadata: payload.data.metadata,
+								externalId: payload.data.externalId,
+								email: payload.data.email,
+								name: payload.data.name,
 								activeSubscriptions: payload.data.activeSubscriptions,
 								grantedBenefits: payload.data.grantedBenefits,
 								activeMeters: payload.data.activeMeters,
-							},
-						});
-				},
-				async onSubscriptionCreated(payload) {
-					const data = payload.data;
+							})
+							.onConflictDoUpdate({
+								target: schema.polarCustomerState.externalId,
+								set: {
+									metadata: payload.data.metadata,
+									activeSubscriptions: payload.data.activeSubscriptions,
+									grantedBenefits: payload.data.grantedBenefits,
+									activeMeters: payload.data.activeMeters,
+								},
+							});
+					},
+					async onSubscriptionCreated(payload) {
+						const data = payload.data;
 
-					const productSlug = await getProductSlugById(data.productId);
+						const productSlug = await getProductSlugById(data.productId);
 
-					if (!data.customer.externalId) {
-						throw new Error("Customer external ID is required");
-					}
+						if (!data.customer.externalId) {
+							throw new Error("Customer external ID is required");
+						}
 
-					await updateUserRequestLimits(data.customer.externalId, productSlug);
-				},
-			},
+						await updateUserRequestLimits(
+							data.customer.externalId,
+							productSlug,
+						);
+					},
+				}),
+			],
 		}),
 	],
 });
