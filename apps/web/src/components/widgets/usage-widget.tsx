@@ -38,7 +38,7 @@ export function UsageWidget({ className, ...props }: UsageWidgetProps) {
 				<ProgressBar.Root value={progressBarValue} max={100} />
 				{(requestLimits?.plan === "free" || percentageUsed >= 80) && (
 					<div className="text-(--text-sub-600) text-paragraph-xs">
-						<LinkButton.Root $style="primary" $size="sm" $underline>
+						<LinkButton.Root $style="primary" $size="sm" $underline asChild>
 							<a href="/#pricing">
 								Upgrade
 							</a>
