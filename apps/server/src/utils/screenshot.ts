@@ -87,6 +87,7 @@ export async function getOrCreateScreenshot(
 
 		const browser = await puppeteer.launch({
 			headless: true,
+			args: ["--no-sandbox", "--disable-setuid-sandbox"],
 			defaultViewport: {
 				width: width / deviceScaleFactor,
 				height: height / deviceScaleFactor,
