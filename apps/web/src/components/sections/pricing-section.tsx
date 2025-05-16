@@ -6,14 +6,12 @@ import InformationCircleSolidIcon from "virtual:icons/hugeicons/information-circ
 import type { Format } from "@number-flow/react";
 import NumberFlow from "@number-flow/react";
 import { resolveCurrencyFormat } from "@sumup/intl";
-import { Link } from "@tanstack/react-router";
+import { Link, useRouteContext } from "@tanstack/react-router";
 import * as React from "react";
 
-import { useORPC } from "#/hooks/use-orpc.ts";
 import { cn } from "#/utils/cn.ts";
 import { env } from "#/utils/env.client.ts";
 import { type Plan, plans } from "#/utils/plans.ts";
-import { useQuery } from "@tanstack/react-query";
 import { Button } from "../ui/button.tsx";
 
 type PricingSectionProps = React.ComponentPropsWithRef<"section"> & {
@@ -222,10 +220,10 @@ export function PricingSection({
 }
 
 function PlanButton({ plan, planKey }: { plan: Plan; planKey: string }) {
-	const orpc = useORPC();
-	const { data: me } = useQuery(orpc.users.me.queryOptions());
-
-	const isLoggedIn = !!me;
+	const context = useRouteContext({
+		from: "__root__",
+	});
+	const isLoggedIn = !!context.session?.id;
 
 	return (
 		<Button

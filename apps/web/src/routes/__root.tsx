@@ -10,6 +10,7 @@ import { TanStackRouterDevtools } from "@tanstack/react-router-devtools";
 import { createServerFn } from "@tanstack/react-start";
 import { getWebRequest } from "@tanstack/react-start/server";
 import aosCss from "aos/dist/aos.css?url";
+import type { Session, User } from "better-auth";
 import { LazyMotion, domAnimation } from "motion/react";
 import { ThemeProvider } from "next-themes";
 import { NuqsAdapter } from "nuqs/adapters/tanstack-router";
@@ -24,6 +25,7 @@ import tailwindCss from "../tailwind.css?url";
 export interface RouterAppContext {
 	orpc: typeof orpc;
 	queryClient: QueryClient;
+	session: (Session & { user: User }) | null;
 }
 
 export const authStateFn = createServerFn({ method: "GET" }).handler(
