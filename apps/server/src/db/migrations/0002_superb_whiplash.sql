@@ -1,0 +1,1 @@
+ALTER TABLE "polar_customer_state" ADD CONSTRAINT "polar_customer_state_external_id_unique" UNIQUE("external_id");

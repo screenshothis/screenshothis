@@ -15,7 +15,9 @@ export const polarCustomerState = pgTable("polar_customer_state", {
 	metadata: jsonb("metadata")
 		.$type<Record<string, string | number | boolean>>()
 		.default({}),
-	externalId: text("external_id").references(() => users.id),
+	externalId: text("external_id")
+		.references(() => users.id)
+		.unique(),
 	email: text("email").notNull(),
 	name: text("name"),
 	activeSubscriptions: jsonb("active_subscriptions")
