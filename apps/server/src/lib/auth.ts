@@ -36,6 +36,11 @@ export const auth = betterAuth({
 		autoSignIn: true,
 	},
 	advanced: {
+		cookiePrefix: "screenshothis",
+		crossSubDomainCookies: {
+			enabled: true,
+			domain: ".screenshothis.com",
+		},
 		database: {
 			generateId(options) {
 				return generateId(options.model, options.size);
