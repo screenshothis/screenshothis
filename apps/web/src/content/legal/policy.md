@@ -1,6 +1,6 @@
 ---
 title: "Privacy Policy"
-lastUpdated: "05-14-2025"
+lastUpdated: "14-05-2025"
 ---
 
 ## Introduction
