@@ -10,6 +10,7 @@ import { Link } from "@tanstack/react-router";
 import * as React from "react";
 
 import { cn } from "#/utils/cn.ts";
+import { env } from "#/utils/env.client.ts";
 import { type Plan, plans } from "#/utils/plans.ts";
 import { Button } from "../ui/button.tsx";
 
@@ -235,7 +236,7 @@ function PlanButton({ plan, planKey }: { plan: Plan; planKey: string }) {
 					href={
 						planKey === "enterprise"
 							? "mailto:sales@expensetrackr.app"
-							: `${import.meta.env.VITE_SERVER_URL}/auth/checkout/${planKey}`
+							: `${env.VITE_SERVER_URL}/auth/checkout/${planKey}`
 					}
 				>
 					{plan.buttonLabel}

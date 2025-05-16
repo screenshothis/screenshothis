@@ -11,6 +11,7 @@ import { Button } from "#/components/ui/button.tsx";
 import * as AlertToast from "#/components/ui/toast-alert.tsx";
 import { toast } from "#/components/ui/toast.tsx";
 import { currencyFormatter } from "#/utils/currency.ts";
+import { env } from "#/utils/env.client.ts";
 
 export const Route = createFileRoute("/_marketing/confirmation")({
 	validateSearch: zodValidator(
@@ -159,7 +160,7 @@ function RouteComponent() {
 								trailingIconClassName="easy-out-in size-4 duration-300 group-hover:translate-x-1"
 							>
 								<a
-									href={`${import.meta.env.VITE_SERVER_URL}/auth/portal`}
+									href={`${env.VITE_SERVER_URL}/auth/portal`}
 									aria-label="Navigate to your customer portal"
 									target="_blank"
 									rel="noopener noreferrer"

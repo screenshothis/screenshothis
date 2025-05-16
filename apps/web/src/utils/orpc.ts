@@ -6,12 +6,14 @@ import type { appRouter } from "@screenshothis/server/routers";
 import { createServerFn } from "@tanstack/react-start";
 import { getHeaders } from "@tanstack/react-start/server";
 
+import { env } from "./env.client.ts";
+
 export const getServerHeaders = createServerFn().handler(() => {
 	return getHeaders();
 });
 
 export const link = new RPCLink({
-	url: `${import.meta.env.VITE_SERVER_URL}/rpc`,
+	url: `${env.VITE_SERVER_URL}/rpc`,
 	fetch(url, options) {
 		return fetch(url, {
 			...options,
