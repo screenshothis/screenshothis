@@ -59,8 +59,12 @@ const screenshots = new OpenAPIHono<{ Variables: Variables }>().openapi(
 				return c.json({ error: "Unauthorized" }, 401);
 			}
 
+			if (!key.metadata?.workspaceId) {
+				return c.json({ error: "Unauthorized" }, 401);
+			}
+
 			const { object, created } = await getOrCreateScreenshot(
-				c.get("workspaceId"),
+				key.metadata.workspaceId,
 				c.req.valid("query"),
 			);
 
