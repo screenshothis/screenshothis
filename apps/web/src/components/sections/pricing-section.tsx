@@ -227,20 +227,17 @@ function PlanButton({ plan, planKey }: { plan: Plan; planKey: string }) {
 
 	// TODO: this is handy for now, but we should use the auth client to handle this
 	const handleSubscribe = async () => {
-		const response = await fetch(
-			`${env.VITE_SERVER_URL}/auth/checkout/${planKey}`,
-			{
-				method: "POST",
-				headers: {
-					"Content-Type": "application/json",
-				},
-				body: JSON.stringify({
-					slug: planKey,
-				}),
-				credentials: "include",
-				redirect: "follow",
+		const response = await fetch(`${env.VITE_SERVER_URL}/auth/checkout`, {
+			method: "POST",
+			headers: {
+				"Content-Type": "application/json",
 			},
-		);
+			body: JSON.stringify({
+				slug: planKey,
+			}),
+			credentials: "include",
+			redirect: "follow",
+		});
 
 		if (response.ok) {
 			const data = (await response.json()) as { url: string };
