@@ -253,7 +253,7 @@ function PlanButton({ plan, planKey }: { plan: Plan; planKey: string }) {
 		<Button
 			$style={plan.buttonStyle}
 			$type={plan.buttonType}
-			asChild={isLoggedIn}
+			asChild={!isLoggedIn}
 			className={cn(
 				"w-full",
 				plan.isFeatured &&
