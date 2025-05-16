@@ -9,7 +9,6 @@ import { requestId } from "hono/request-id";
 import type { Variables } from "./common/environment";
 import { auth } from "./lib/auth";
 import { createContext } from "./lib/context";
-import { workspaceMiddleware } from "./middleware";
 import { appRouter } from "./routers";
 import screenshotsRoutes from "./routes/screenshots";
 import { env } from "./utils/env";
@@ -73,8 +72,6 @@ app.use("/rpc/*", async (c, next) => {
 
 	await next();
 });
-
-app.use("/v1/*", workspaceMiddleware);
 
 app.openAPIRegistry.registerComponent("securitySchemes", "ApiKeyQuery", {
 	type: "apiKey",
