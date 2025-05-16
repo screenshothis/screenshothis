@@ -84,6 +84,12 @@ const screenshots = new OpenAPIHono<{ Variables: Variables }>().openapi(
 					.where(eq(schema.requestLimits.userId, key.userId));
 			}
 
+			headers.set("cache-control", "public, max-age=3600");
+			headers.set(
+				"cdn-cache-control",
+				"max-age=3600, stale-while-revalidate=3600, durable",
+			);
+
 			return c.body(object, {
 				headers,
 			});
