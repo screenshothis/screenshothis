@@ -27,6 +27,7 @@
         "@screenshothis/schemas": "workspace:*",
         "ai": "4.3.15",
         "better-auth": "1.2.8",
+        "better-auth-harmony": "1.2.4",
         "cross-fetch": "4.1.0",
         "dotenv": "16.5.0",
         "drizzle-orm": "0.43.1",
@@ -1364,6 +1365,8 @@
 
     "better-auth": ["better-auth@1.2.8", "", { "dependencies": { "@better-auth/utils": "0.2.5", "@better-fetch/fetch": "^1.1.18", "@noble/ciphers": "^0.6.0", "@noble/hashes": "^1.6.1", "@simplewebauthn/browser": "^13.0.0", "@simplewebauthn/server": "^13.0.0", "better-call": "^1.0.8", "defu": "^6.1.4", "jose": "^5.9.6", "kysely": "^0.28.1", "nanostores": "^0.11.3", "zod": "^3.24.1" } }, "sha512-y8ry7ZW3/3ZIr82Eo1zUDtMzdoQlFnwNuZ0+b0RxoNZgqmvgTIc/0tCDC7NDJerqSu4UCzer0dvYxBsv3WMIGg=="],
 
+    "better-auth-harmony": ["better-auth-harmony@1.2.4", "", { "dependencies": { "libphonenumber-js": "^1.12.5", "mailchecker": "^6.0.16", "validator": "^13.12.0" }, "peerDependencies": { "better-auth": "^1.0.3" } }, "sha512-a5Qe+fEWcOR7c9bmy+g/FmRf3TuJqv3pdz6WD/seuh/ykkxi93u6lG++/L0BIFNhSZkXeIrrosmfBFTycfL3XA=="],
+
     "better-call": ["better-call@1.0.9", "", { "dependencies": { "@better-fetch/fetch": "^1.1.4", "rou3": "^0.5.1", "set-cookie-parser": "^2.7.1", "uncrypto": "^0.1.3" } }, "sha512-Qfm0gjk0XQz0oI7qvTK1hbqTsBY4xV2hsHAxF8LZfUYl3RaECCIifXuVqtPpZJWvlCCMlQSvkvhhyuApGUba6g=="],
 
     "binary-extensions": ["binary-extensions@2.3.0", "", {}, "sha512-Ceh+7ox5qe7LJuLHoY0feh3pHuUDHAcRUeyL2VYghZwfpkNIy/+8Ocg0a3UuSoYzavmylwuLWQOf3hl0jjMMIw=="],
@@ -2198,6 +2201,8 @@
 
     "levn": ["levn@0.4.1", "", { "dependencies": { "prelude-ls": "^1.2.1", "type-check": "~0.4.0" } }, "sha512-+bT2uH4E5LGE7h/n3evcS/sQlJXCpIp6ym8OWJ5eV6+67Dsql/LaaT7qJBAt2rzfoa/5QBGBhxDix1dMt2kQKQ=="],
 
+    "libphonenumber-js": ["libphonenumber-js@1.12.8", "", {}, "sha512-f1KakiQJa9tdc7w1phC2ST+DyxWimy9c3g3yeF+84QtEanJr2K77wAmBPP22riU05xldniHsvXuflnLZ4oysqA=="],
+
     "lightningcss": ["lightningcss@1.29.2", "", { "dependencies": { "detect-libc": "^2.0.3" }, "optionalDependencies": { "lightningcss-darwin-arm64": "1.29.2", "lightningcss-darwin-x64": "1.29.2", "lightningcss-freebsd-x64": "1.29.2", "lightningcss-linux-arm-gnueabihf": "1.29.2", "lightningcss-linux-arm64-gnu": "1.29.2", "lightningcss-linux-arm64-musl": "1.29.2", "lightningcss-linux-x64-gnu": "1.29.2", "lightningcss-linux-x64-musl": "1.29.2", "lightningcss-win32-arm64-msvc": "1.29.2", "lightningcss-win32-x64-msvc": "1.29.2" } }, "sha512-6b6gd/RUXKaw5keVdSEtqFVdzWnU5jMxTUjA2bVcMNPLwSQ08Sv/UodBVtETLCn7k4S1Ibxwh7k68IwLZPgKaA=="],
 
     "lightningcss-darwin-arm64": ["lightningcss-darwin-arm64@1.29.2", "", { "os": "darwin", "cpu": "arm64" }, "sha512-cK/eMabSViKn/PG8U/a7aCorpeKLMlK0bQeNHmdb7qUnBkNPnL+oV5DjJUo0kqWsJUapZsM4jCfYItbqBDvlcA=="],
@@ -2267,6 +2272,8 @@
     "magic-string": ["magic-string@0.30.17", "", { "dependencies": { "@jridgewell/sourcemap-codec": "^1.5.0" } }, "sha512-sNPKHvyjVf7gyjwS4xGTaW/mCnF8wnjtifKBEhxfZ7E/S8tQ0rssrwGNn6q8JH/ohItJfSQp9mBtQYuTlH5QnA=="],
 
     "magicast": ["magicast@0.3.5", "", { "dependencies": { "@babel/parser": "^7.25.4", "@babel/types": "^7.25.4", "source-map-js": "^1.2.0" } }, "sha512-L0WhttDl+2BOsybvEOLK7fW3UA0OQ0IQ2d6Zl2x/a6vVRs3bAY0ECOSHHeL5jD+SbOpOCUEi0y1DgHEn9Qn1AQ=="],
+
+    "mailchecker": ["mailchecker@6.0.17", "", {}, "sha512-7wfgNChUp7mqzoh31l8aII2swlalW9Wfxqa6XrNVCyf2pardtSzNKatf4OWng4bQnXN5lvgk7Pd9kLrWbs/ylA=="],
 
     "make-dir": ["make-dir@3.1.0", "", { "dependencies": { "semver": "^6.0.0" } }, "sha512-g3FeP20LNwhALb/6Cz6Dd4F2ngze0jz7tbzrD2wAV+o9FeNHe4rL+yK2md0J/fiSf1sa1ADhXqi5+oVwOM/eGw=="],
 
@@ -3131,6 +3138,8 @@
     "uuid": ["uuid@9.0.1", "", { "bin": { "uuid": "dist/bin/uuid" } }, "sha512-b+1eJOlsR9K8HJpow9Ok3fiWOWSIcIzXodvv0rQjVoOVNpWMpxf1wZNpt4y9h10odCNrqnYp1OBzRktckBe3sA=="],
 
     "validate-npm-package-license": ["validate-npm-package-license@3.0.4", "", { "dependencies": { "spdx-correct": "^3.0.0", "spdx-expression-parse": "^3.0.0" } }, "sha512-DpKm2Ui/xN7/HQKCtpZxoRWBhZ9Z0kqtygG8XCgNQ8ZlDnxuQmWhj566j8fN4Cu3/JmbhsDo7fcAJq4s9h27Ew=="],
+
+    "validator": ["validator@13.15.0", "", {}, "sha512-36B2ryl4+oL5QxZ3AzD0t5SsMNGvTtQHpjgFO5tbNxfXbMFkY822ktCDe1MnlqV3301QQI9SLHDNJokDI+Z9pA=="],
 
     "vary": ["vary@1.1.2", "", {}, "sha512-BNGbWLfd0eUPabhkXUVm0j8uuvREyTh5ovRa/dyow/BqAbZJyC+5fU+IzQOzmAKzYqYRAISoRhdQr3eIZ/PXqg=="],
 

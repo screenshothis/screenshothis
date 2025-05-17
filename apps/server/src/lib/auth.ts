@@ -9,6 +9,7 @@ import { Polar } from "@polar-sh/sdk";
 import { keyLimits } from "@screenshothis/common/keys";
 import { generateId } from "@screenshothis/id";
 import { betterAuth } from "better-auth";
+import { emailHarmony } from "better-auth-harmony";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { apiKey, organization } from "better-auth/plugins";
 import {
@@ -241,5 +242,6 @@ export const auth = betterAuth({
 				}),
 			],
 		}),
+		emailHarmony(),
 	],
 });
