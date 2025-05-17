@@ -44,16 +44,20 @@ export const auth = betterAuth({
 	},
 	advanced: {
 		cookiePrefix: "screenshothis",
-		crossSubDomainCookies: {
-			enabled: true,
-			domain: ".screenshothis.com",
-		},
-		defaultCookieAttributes: {
-			secure: true,
-			httpOnly: true,
-			sameSite: "none",
-			partitioned: true,
-		},
+		...(process.env.NODE_ENV === "production"
+			? {
+					crossSubDomainCookies: {
+						enabled: true,
+						domain: ".screenshothis.com",
+					},
+					defaultCookieAttributes: {
+						secure: true,
+						httpOnly: true,
+						sameSite: "none",
+						partitioned: true,
+					},
+				}
+			: {}),
 		database: {
 			generateId(options) {
 				return generateId(options.model, options.size);
