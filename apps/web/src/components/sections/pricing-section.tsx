@@ -3,13 +3,11 @@ import CheckmarkCircle02SolidIcon from "virtual:icons/hugeicons/checkmark-circle
 import CreditCardIcon from "virtual:icons/hugeicons/credit-card";
 import InformationCircleSolidIcon from "virtual:icons/hugeicons/information-circle-solid";
 
-import type { Format } from "@number-flow/react";
-import NumberFlow from "@number-flow/react";
-import { resolveCurrencyFormat } from "@sumup/intl";
 import { Link, useRouteContext } from "@tanstack/react-router";
-import * as React from "react";
+import type * as React from "react";
 
 import { cn } from "#/utils/cn.ts";
+import { currencyFormatter } from "#/utils/currency.ts";
 import { env } from "#/utils/env.client.ts";
 import { type Plan, plans } from "#/utils/plans.ts";
 import { Button } from "../ui/button.tsx";
@@ -22,20 +20,6 @@ export function PricingSection({
 	containerClassName,
 	...props
 }: PricingSectionProps) {
-	const currencyFormat = resolveCurrencyFormat("en", "USD");
-	const format: Format = React.useMemo(
-		() => ({
-			style: "currency",
-			currency: "USD",
-			minimumFractionDigits: currencyFormat?.minimumFractionDigits,
-			maximumFractionDigits: currencyFormat?.maximumFractionDigits,
-		}),
-		[
-			currencyFormat?.maximumFractionDigits,
-			currencyFormat?.minimumFractionDigits,
-		],
-	);
-
 	return (
 		<section id="pricing" {...props}>
 			<div
@@ -139,17 +123,26 @@ export function PricingSection({
 													Custom
 												</span>
 											) : (
-												<NumberFlow
+												<span
 													className={cn(
-														"font-semibold text-h4 lg:text-h3 [&::part(suffix)]:font-normal [&::part(suffix)]:text-(--text-sub-600) [&::part(suffix)]:text-paragraph-xs",
-														plan.isFeatured
-															? "text-white [&::part(suffix)]:text-white"
-															: "",
+														"font-semibold text-h4 lg:text-h3",
+														plan.isFeatured && "text-white",
 													)}
-													suffix="/month"
-													format={format}
-													value={plan.price || 0}
-												/>
+												>
+													{currencyFormatter({
+														amount: plan.price || 0,
+													})}
+													<span
+														className={cn(
+															"text-paragraph-xs",
+															plan.isFeatured
+																? "text-white"
+																: "text-(--text-sub-600)",
+														)}
+													>
+														/month
+													</span>
+												</span>
 											)}
 										</p>
 									</div>

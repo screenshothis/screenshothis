@@ -13,7 +13,6 @@
 		"typecheck": "tsc --noEmit"
 	},
 	"dependencies": {
-		"@number-flow/react": "0.5.9",
 		"@orpc/client": "1.2.0",
 		"@orpc/react-query": "1.2.0",
 		"@orpc/server": "1.2.0",
