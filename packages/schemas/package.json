@@ -12,7 +12,7 @@
 	},
 	"module": "src/index.ts",
 	"dependencies": {
-		"@tanstack/zod-adapter": "1.120.4",
+		"@tanstack/zod-adapter": "1.120.5",
 		"ts-case-convert": "2.1.0",
 		"zod": "3.24.4"
 	},
