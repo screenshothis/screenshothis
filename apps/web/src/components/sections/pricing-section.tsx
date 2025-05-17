@@ -18,10 +18,11 @@ type PricingSectionProps = React.ComponentPropsWithRef<"section"> & {
 
 export function PricingSection({
 	containerClassName,
+	className,
 	...props
 }: PricingSectionProps) {
 	return (
-		<section id="pricing" {...props}>
+		<section id="pricing" className={cn("px-2 lg:px-0", className)} {...props}>
 			<div
 				className={cn(
 					"container max-w-6xl border-x border-t bg-(--bg-white-0) py-12 lg:px-12",

@@ -2,12 +2,16 @@ import PlayCircleSolidIcon from "virtual:icons/hugeicons/play-circle-solid";
 
 import { Link } from "@tanstack/react-router";
 
+import { cn } from "#/utils/cn.ts";
 import { CodeBlock } from "../code-block.tsx";
 import { Button } from "../ui/button.tsx";
 
-export function CodeSection(props: React.ComponentPropsWithRef<"section">) {
+export function CodeSection({
+	className,
+	...props
+}: React.ComponentPropsWithRef<"section">) {
 	return (
-		<section id="code" {...props}>
+		<section id="code" className={cn("px-2 lg:px-0", className)} {...props}>
 			<div className="container relative max-w-6xl border-x bg-(--bg-white-0) p-4 pt-24 lg:px-8">
 				<div className="-mt-40 lg:-mt-80 z-40 grid grid-cols-1 items-start gap-12 lg:grid-cols-2 lg:gap-24">
 					<div className="grid gap-2">

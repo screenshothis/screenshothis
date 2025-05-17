@@ -2,11 +2,19 @@ import ArrowRight01Icon from "virtual:icons/hugeicons/arrow-right-01";
 
 import { Link } from "@tanstack/react-router";
 
-import { Button } from "#/components/ui/button.tsx";
+import { cn } from "#/utils/cn.ts";
+import { Button } from "../ui/button.tsx";
 
-export function HeroSection() {
+export function HeroSection({
+	className,
+	...props
+}: React.ComponentPropsWithRef<"section">) {
 	return (
-		<section id="hero" className="relative">
+		<section
+			id="hero"
+			className={cn("relative px-2 lg:px-0", className)}
+			{...props}
+		>
 			<div className="container relative max-w-6xl overflow-hidden border-x bg-(--bg-white-0) p-4 py-32 lg:px-8 lg:pb-80">
 				<div
 					aria-hidden="true"

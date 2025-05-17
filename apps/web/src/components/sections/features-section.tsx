@@ -11,6 +11,7 @@ import Settings02Icon from "virtual:icons/hugeicons/settings-02";
 
 import { Link } from "@tanstack/react-router";
 
+import { cn } from "#/utils/cn.ts";
 import { Button } from "../ui/button.tsx";
 
 const features = [
@@ -72,9 +73,12 @@ const features = [
 	},
 ];
 
-export function FeaturesSection(props: React.ComponentPropsWithRef<"section">) {
+export function FeaturesSection({
+	className,
+	...props
+}: React.ComponentPropsWithRef<"section">) {
 	return (
-		<section id="features" {...props}>
+		<section id="features" className={cn("px-2 lg:px-0", className)} {...props}>
 			<div className="container max-w-6xl border-x border-t bg-(--bg-white-0) py-12 lg:px-12">
 				<div className="grid grid-cols-1 gap-8 lg:grid-cols-3 lg:items-end">
 					<div className="lg:col-span-2">
