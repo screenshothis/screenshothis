@@ -14,6 +14,7 @@ import { env } from "#/utils/env";
 export async function uploadFile(
 	file: File | Blob | ArrayBuffer | Uint8Array,
 	key: string,
+	options: { maxSizeBytes?: number } = {},
 ): Promise<string> {
 	let data: Uint8Array;
 
@@ -30,6 +31,12 @@ export async function uploadFile(
 		data = new Uint8Array(await file.arrayBuffer());
 	} else {
 		throw new TypeError("Unsupported file type passed to image()");
+	}
+
+	if (options.maxSizeBytes && data.byteLength > options.maxSizeBytes) {
+		throw new Error(
+			`File size exceeds the maximum allowed size of ${options.maxSizeBytes} bytes`,
+		);
 	}
 
 	try {
