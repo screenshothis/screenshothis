@@ -74,7 +74,7 @@ const screenshots = new OpenAPIHono<{ Variables: Variables }>().openapi(
 
 			const contentType = `image/${c.req.valid("query").format}`;
 			const headers = new Headers();
-			headers.set("content-type", contentType);
+			headers.set("Content-Type", contentType);
 
 			if (created) {
 				await db
@@ -86,9 +86,9 @@ const screenshots = new OpenAPIHono<{ Variables: Variables }>().openapi(
 					.where(eq(schema.requestLimits.userId, key.userId));
 			}
 
-			headers.set("cache-control", "public, max-age=3600");
+			headers.set("Cache-Control", "public, max-age=3600");
 			headers.set(
-				"cdn-cache-control",
+				"CDN-Cache-Control",
 				"max-age=3600, stale-while-revalidate=3600, durable",
 			);
 
