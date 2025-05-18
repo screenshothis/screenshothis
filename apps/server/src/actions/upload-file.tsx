@@ -17,6 +17,11 @@ export async function uploadFile(
 ): Promise<string> {
 	let data: Uint8Array;
 
+	// Validate key to prevent path traversal
+	if (key.includes("..") || key.startsWith("/")) {
+		throw new Error("Invalid key: path traversal not allowed");
+	}
+
 	if (file instanceof Uint8Array) {
 		data = file;
 	} else if (file instanceof ArrayBuffer) {
