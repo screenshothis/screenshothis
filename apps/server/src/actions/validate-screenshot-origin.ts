@@ -54,7 +54,6 @@ export async function isScreenshotOriginAllowed(
 	try {
 		const targetUrl = new URL(urlString);
 		const match = wildcardMatch(allowedOrigins, { separator: false });
-		// Also try matching against just the hostname with wildcard at beginning
 		return (
 			match(targetUrl.origin) ||
 			match(targetUrl.hostname) ||
