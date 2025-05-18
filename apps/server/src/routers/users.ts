@@ -3,6 +3,7 @@ import { UpdateUserSchema } from "@screenshothis/schemas/users";
 import { eq } from "drizzle-orm";
 
 import { checkExistingEmail } from "#/actions/check-existing-email";
+import { uploadFile } from "#/actions/upload-file";
 import { db } from "#/db";
 import * as schema from "#/db/schema";
 import { protectedProcedure } from "#/lib/orpc";
@@ -79,12 +80,22 @@ export const usersRouter = {
 				throw new ORPCError("Email already in use by another account");
 			}
 
+			const updateData: Partial<typeof schema.users.$inferInsert> = {
+				name: input.name,
+				email: input.email,
+			};
+
+			if (input.image) {
+				const imageUrl = await uploadFile(
+					input.image,
+					`avatars/${context.session.user.id}_${Date.now()}.png`,
+				);
+				updateData.imageUrl = imageUrl;
+			}
+
 			const user = await db
 				.update(schema.users)
-				.set({
-					name: input.name,
-					email: input.email,
-				})
+				.set(updateData)
 				.where(eq(schema.users.id, context.session.user.id))
 				.returning({
 					id: schema.users.id,
