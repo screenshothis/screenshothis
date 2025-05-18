@@ -131,7 +131,7 @@ export function FeaturesSection({
 								asChild
 								className="gap-2"
 							>
-								<a href="mailto:sales@screenshothis.com">Contact sales </Link>
+								<a href="mailto:sales@screenshothis.com">Contact sales</a>
 							</Button>
 						</div>
 					</div>
