@@ -225,6 +225,7 @@ function SettingsAndSupport({ collapsed }: { collapsed: boolean }) {
 						<div className="flex-1 text-label-sm">Settings</div>
 					</div>
 				</button>
+
 				{links.map(({ icon: Icon, label, href }) => {
 					const isActivePage = pathname.startsWith(href);
 
