@@ -31,29 +31,17 @@ export function PricingSection({
 			>
 				<div className="grid grid-cols-1 items-end gap-8 lg:grid-cols-3">
 					<div className="lg:col-span-2">
-						<p
-							data-aos="fade-up"
-							data-aos-duration="1000"
-							className="flex items-center gap-2"
-						>
+						<p className="flex items-center gap-2">
 							<CreditCardIcon className="size-4 text-primary" />
 							<span className="font-medium text-(--text-sub-600) text-paragraph-sm uppercase">
 								pricing
 							</span>
 						</p>
 
-						<h3
-							data-aos="fade-up"
-							data-aos-duration="1000"
-							className="mt-8 font-bold text-h4 tracking-tight"
-						>
+						<h3 className="mt-8 font-bold text-h4 tracking-tight">
 							Simple Pricing
 						</h3>
-						<p
-							data-aos="fade-up"
-							data-aos-duration="1500"
-							className="mt-2 text-(--text-sub-600) text-paragraph-lg"
-						>
+						<p className="mt-2 text-(--text-sub-600) text-paragraph-lg">
 							Find the perfect plan for your screenshot needs. Start small and{" "}
 							<strong>easily scale up</strong> as your usage grows, from{" "}
 							<strong>individual projects</strong> to enterprise-level demands.
@@ -83,11 +71,6 @@ export function PricingSection({
 						{Object.entries(plans).map(([key, plan]) => {
 							return (
 								<div
-									data-aos="fade-up"
-									data-aos-duration={
-										// if is first or last 1000 otherwise 1500
-										key === "lite" || key === "enterprise" ? "1250" : "1000"
-									}
 									className={cn(
 										"rounded-24 p-8 shadow-sm",
 										plan.isFeatured

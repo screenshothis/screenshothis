@@ -23,29 +23,17 @@ export function HeroSection({
 
 				<div className="relative">
 					<div className="mx-auto max-w-2xl lg:mx-0 lg:shrink-0 lg:pt-8">
-						<h1
-							className="text-pretty font-semibold text-h2 tracking-tighter lg:text-h1"
-							data-aos="fade-up"
-							data-aos-duration="1000"
-						>
+						<h1 className="text-pretty font-semibold text-h2 tracking-tighter lg:text-h1">
 							Your All-in-One Screenshot Solution
 						</h1>
 
-						<p
-							data-aos="fade-up"
-							data-aos-duration="1500"
-							className="mt-4 text-pretty text-(--text-sub-600) lg:text-paragraph-lg"
-						>
+						<p className="mt-4 text-pretty text-(--text-sub-600) lg:text-paragraph-lg">
 							Whether you need to <strong>capture</strong>,{" "}
 							<strong>store</strong>, or <strong>integrate screenshots</strong>,
 							Screenshothis offers the tools you need with a simple API.
 						</p>
 
-						<div
-							data-aos="fade-up"
-							data-aos-duration="2000"
-							className="mt-12 flex items-center gap-2"
-						>
+						<div className="mt-12 flex items-center gap-2">
 							<Button
 								trailingIcon={ArrowRight01Icon}
 								trailingIconClassName="easy-out-in duration-300 group-hover:translate-x-1"
