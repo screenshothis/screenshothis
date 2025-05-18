@@ -14,7 +14,7 @@ import { env } from "#/utils/env";
 export async function uploadFile(
 	file: File | Blob | ArrayBuffer | Uint8Array,
 	key: string,
-	options: { maxSizeBytes?: number } = {},
+	options: { maxSizeBytes?: number; contentType?: string } = {},
 ): Promise<string> {
 	let data: Uint8Array;
 
@@ -40,9 +40,12 @@ export async function uploadFile(
 	}
 
 	try {
-		await s3.write(key, data);
+		await s3.write(key, data, {
+			type: options.contentType,
+		});
 	} catch (error) {
 		console.error(`Failed to upload file to ${key}:`, error);
+
 		throw new Error(
 			`Failed to upload file: ${error instanceof Error ? error.message : String(error)}`,
 		);
