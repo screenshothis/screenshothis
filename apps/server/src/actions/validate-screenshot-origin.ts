@@ -31,7 +31,15 @@ export async function isScreenshotOriginAllowed(
 	try {
 		if (workspaceRecord.metadata) {
 			const parsed = JSON.parse(workspaceRecord.metadata as string);
-			allowedOrigins = parsed?.allowedOrigins as string[] | undefined;
+			if (
+				parsed?.allowedOrigins &&
+				Array.isArray(parsed.allowedOrigins) &&
+				parsed.allowedOrigins.every(
+					(origin: unknown) => typeof origin === "string",
+				)
+			) {
+				allowedOrigins = parsed.allowedOrigins;
+			}
 		}
 	} catch (error) {
 		console.error(
