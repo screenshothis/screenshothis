@@ -74,9 +74,7 @@ const screenshots = new OpenAPIHono<{ Variables: Variables }>().openapi(
 
 			const contentType = `image/${c.req.valid("query").format}`;
 			const headers = new Headers();
-			if (!headers.has("content-type")) {
-				headers.set("content-type", contentType);
-			}
+			headers.set("content-type", contentType);
 
 			if (created) {
 				await db
