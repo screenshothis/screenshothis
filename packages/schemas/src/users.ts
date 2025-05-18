@@ -42,5 +42,8 @@ export const UpdateUserSchema = z.object({
 				),
 			{ message: "Invalid image file type" },
 		)
+		.refine((file) => file.size <= 5 * 1024 * 1024, {
+			message: "Image file size must be less than 5MB",
+		})
 		.nullable(),
 });
