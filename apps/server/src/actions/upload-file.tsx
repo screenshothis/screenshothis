@@ -27,7 +27,14 @@ export async function uploadFile(
 		throw new TypeError("Unsupported file type passed to image()");
 	}
 
-	await s3.write(key, data);
+	try {
+		await s3.write(key, data);
+	} catch (error) {
+		console.error(`Failed to upload file to ${key}:`, error);
+		throw new Error(
+			`Failed to upload file: ${error instanceof Error ? error.message : String(error)}`,
+		);
+	}
 
 	// Build a public-access URL for the new object
 	const baseUrl =
