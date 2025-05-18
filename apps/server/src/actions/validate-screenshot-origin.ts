@@ -33,8 +33,10 @@ export async function isScreenshotOriginAllowed(
 			const parsed = JSON.parse(workspaceRecord.metadata as string);
 			allowedOrigins = parsed?.allowedOrigins as string[] | undefined;
 		}
-	} catch {
-		// If metadata is invalid JSON, default to unrestricted.
+	} catch (error) {
+		console.error(
+			`Invalid JSON in workspace metadata: ${error instanceof Error ? error.message : "Unknown error"}`,
+		);
 	}
 
 	if (!allowedOrigins || allowedOrigins.length === 0) {
