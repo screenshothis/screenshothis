@@ -8,8 +8,8 @@ import { env } from "#/utils/env";
  * @param key   Destination key (e.g. "avatars/12345.jpg")
  *
  * @example
- *   import { image } from "#/actions/image";
- *   await image(file, `avatars/${userId}.png`);
+ * import { uploadFile } from "#/actions/upload-file";
+ * await uploadFile(file, `avatars/${userId}.png`);
  */
 export async function uploadFile(
 	file: File | Blob | ArrayBuffer | Uint8Array,
