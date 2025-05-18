@@ -4,6 +4,7 @@ import { Dialog as DialogPrimitives } from "radix-ui";
 
 import { useSettingsStore } from "#/store/settings.ts";
 import { cn } from "#/utils/cn.ts";
+import { SettingsContent } from "./settings-content.tsx";
 
 export function SettingsModal() {
 	const { isOpen, setOpen } = useSettingsStore();
@@ -31,7 +32,7 @@ export function SettingsModal() {
 							"data-[state=closed]:slide-out-to-top-6",
 						)}
 					>
-						{/* <SettingsContent /> */}
+						<SettingsContent />
 					</DialogPrimitives.Content>
 				</DialogPrimitives.Overlay>
 			</DialogPrimitives.Portal>

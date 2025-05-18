@@ -29,3 +29,18 @@ export const ResetPasswordSchema = z.object({
 	newPassword: NewPasswordSchema,
 	token: z.string({ required_error: "Token is required" }),
 });
+
+export const UpdateUserSchema = z.object({
+	name: z.string().min(1),
+	email: z.string().email(),
+	image: z
+		.instanceof(File)
+		.refine(
+			(file) =>
+				["image/png", "image/jpeg", "image/jpg", "image/webp"].includes(
+					file.type,
+				),
+			{ message: "Invalid image file type" },
+		)
+		.nullable(),
+});

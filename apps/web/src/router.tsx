@@ -49,7 +49,7 @@ export const createRouter = () => {
 		scrollRestoration: true,
 		defaultPreload: "intent",
 		defaultPreloadStaleTime: 0,
-		context: { orpc, queryClient },
+		context: { orpc, queryClient, session: null },
 		defaultPendingComponent: () => <Loader />,
 		defaultNotFoundComponent: () => (
 			<React.Suspense fallback={<Loader />}>

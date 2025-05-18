@@ -1,4 +1,5 @@
 import { ORPCError } from "@orpc/server";
+import { UpdateUserSchema } from "@screenshothis/schemas/users";
 import { eq } from "drizzle-orm";
 
 import { db } from "#/db";
@@ -65,4 +66,20 @@ export const usersRouter = {
 			requestLimits: user.requestLimits,
 		};
 	}),
+	update: protectedProcedure
+		.input(UpdateUserSchema)
+		.handler(async ({ context, input }) => {
+			const user = await db
+				.update(schema.users)
+				.set({
+					name: input.name,
+					email: input.email,
+				})
+				.where(eq(schema.users.id, context.session.user.id))
+				.returning({
+					id: schema.users.id,
+				});
+
+			return user;
+		}),
 };
