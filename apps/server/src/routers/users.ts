@@ -2,6 +2,7 @@ import { ORPCError } from "@orpc/server";
 import { UpdateUserSchema } from "@screenshothis/schemas/users";
 import { eq } from "drizzle-orm";
 
+import { checkExistingEmail } from "#/actions/check-existing-email";
 import { db } from "#/db";
 import * as schema from "#/db/schema";
 import { protectedProcedure } from "#/lib/orpc";
@@ -69,6 +70,15 @@ export const usersRouter = {
 	update: protectedProcedure
 		.input(UpdateUserSchema)
 		.handler(async ({ context, input }) => {
+			const existingUser = await checkExistingEmail(
+				input.email,
+				context.session.user.id,
+			);
+
+			if (existingUser) {
+				throw new ORPCError("Email already in use by another account");
+			}
+
 			const user = await db
 				.update(schema.users)
 				.set({
