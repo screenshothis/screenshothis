@@ -1,6 +1,7 @@
 import { Outlet, createFileRoute, redirect } from "@tanstack/react-router";
 
 import { CreateApiKeyModal } from "#/components/modals/create-api-key-modal.tsx";
+import { SettingsModal } from "#/components/modals/settings-modal/settings-modal.tsx";
 import Sidebar from "#/components/sidebar.tsx";
 
 export const Route = createFileRoute("/_app")({
@@ -32,6 +33,8 @@ function PathlessLayoutComponent() {
 			</div>
 
 			<CreateApiKeyModal />
+
+			<SettingsModal />
 
 			{/* <DynamicSettingsModal /> */}
 		</>
