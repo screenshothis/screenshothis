@@ -12,10 +12,7 @@ import { cn } from "#/utils/cn.ts";
 
 export type CodeBlockProps = React.ComponentPropsWithRef<"pre"> & {
 	wrapperClassName?: string;
-	wrapperProps?: React.ComponentPropsWithRef<"div"> & {
-		"data-aos"?: string;
-		"data-aos-duration"?: string;
-	};
+	wrapperProps?: React.ComponentPropsWithRef<"div">;
 	children?: string;
 	lang: BundledLanguage;
 	title?: string;

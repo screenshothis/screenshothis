@@ -5,7 +5,6 @@ import { zodValidator } from "@tanstack/zod-adapter";
 import { z } from "zod";
 
 import { getCheckoutServerFn } from "#/actions/get-checkout.ts";
-import { Aos } from "#/components/aos.tsx";
 import { Confetti } from "#/components/confetti.tsx";
 import { Button } from "#/components/ui/button.tsx";
 import * as AlertToast from "#/components/ui/toast-alert.tsx";
@@ -89,7 +88,6 @@ function RouteComponent() {
 
 	return (
 		<>
-			<Aos />
 			<Confetti id="confirmation" />
 			<section>
 				<div className="container relative grid min-h-dvh max-w-6xl items-center overflow-hidden border-x bg-(--bg-white-0) p-4 py-32 lg:px-8 lg:pb-80">
@@ -99,28 +97,16 @@ function RouteComponent() {
 					/>
 
 					<div className="mx-auto text-center">
-						<h1
-							data-aos="fade-up"
-							data-aos-duration="1000"
-							className="font-bold text-h2 tracking-tight lg:text-h1"
-						>
+						<h1 className="font-bold text-h2 tracking-tight lg:text-h1">
 							Thank you for your purchase!
 						</h1>
 
-						<p
-							data-aos="fade-up"
-							data-aos-duration="1500"
-							className="mt-4 text-(--text-sub-600) text-paragraph-lg"
-						>
+						<p className="mt-4 text-(--text-sub-600) text-paragraph-lg">
 							Your purchase has been confirmed.
 						</p>
 
 						{checkout && (
-							<div
-								data-aos="fade-up"
-								data-aos-duration="1800"
-								className="mt-4 text-(--text-sub-600) text-paragraph-md"
-							>
+							<div className="mt-4 text-(--text-sub-600) text-paragraph-md">
 								<p>Order ID: {checkout.id}</p>
 								{checkout.totalAmount && (
 									<p>
@@ -135,11 +121,7 @@ function RouteComponent() {
 							</div>
 						)}
 
-						<div
-							data-aos="fade-up"
-							data-aos-duration="2000"
-							className="mx-auto mt-12 flex max-w-xs flex-col items-center justify-center gap-2"
-						>
+						<div className="mx-auto mt-12 flex max-w-xs flex-col items-center justify-center gap-2">
 							<Button
 								asChild
 								$type="neutral"

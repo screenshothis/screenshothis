@@ -82,40 +82,24 @@ export function FeaturesSection({
 			<div className="container max-w-6xl border-x border-t bg-(--bg-white-0) py-12 lg:px-12">
 				<div className="grid grid-cols-1 gap-8 lg:grid-cols-3 lg:items-end">
 					<div className="lg:col-span-2">
-						<p
-							data-aos="fade-up"
-							data-aos-duration="1000"
-							className="flex items-center gap-2"
-						>
+						<p className="flex items-center gap-2">
 							<ChipIcon className="size-4 text-primary" />
 							<span className="font-medium text-(--text-sub-600) text-paragraph-sm uppercase">
 								YOUR SCREENSHOT AUTOMATION HUB
 							</span>
 						</p>
 
-						<h3
-							data-aos="fade-up"
-							data-aos-duration="1000"
-							className="mt-8 font-semibold text-h4 tracking-tight"
-						>
+						<h3 className="mt-8 font-semibold text-h4 tracking-tight">
 							Powerful Screenshots, Programmatically Controlled
 						</h3>
-						<p
-							data-aos="fade-up"
-							data-aos-duration="1500"
-							className="mt-2 text-(--text-sub-600) text-paragraph-lg"
-						>
+						<p className="mt-2 text-(--text-sub-600) text-paragraph-lg">
 							Capture any webpage, customize every detail, and integrate
 							stunning visuals into your applications with our robust,
 							developer-friendly API—no more manual captures or inconsistent
 							results.
 						</p>
 
-						<div
-							data-aos="fade-up"
-							data-aos-duration="2000"
-							className="mt-8 flex items-center gap-2"
-						>
+						<div className="mt-8 flex items-center gap-2">
 							<Button
 								asChild
 								trailingIcon={ArrowRight01Icon}
@@ -131,7 +115,7 @@ export function FeaturesSection({
 								asChild
 								className="gap-2"
 							>
-								<Link to="/">Contact sales </Link>
+								<a href="mailto:sales@screenshothis.com">Contact sales</a>
 							</Button>
 						</div>
 					</div>

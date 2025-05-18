@@ -9,7 +9,6 @@ import {
 import { TanStackRouterDevtools } from "@tanstack/react-router-devtools";
 import { createServerFn } from "@tanstack/react-start";
 import { getWebRequest } from "@tanstack/react-start/server";
-import aosCss from "aos/dist/aos.css?url";
 import type { Session, User } from "better-auth";
 import { LazyMotion, domAnimation } from "motion/react";
 import { ThemeProvider } from "next-themes";
@@ -102,10 +101,6 @@ export const Route = createRootRouteWithContext<RouterAppContext>()({
 			{
 				rel: "manifest",
 				href: "/site.webmanifest",
-			},
-			{
-				rel: "stylesheet",
-				href: aosCss,
 			},
 			{
 				rel: "stylesheet",

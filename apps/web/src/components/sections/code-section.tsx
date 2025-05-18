@@ -16,10 +16,6 @@ export function CodeSection({
 				<div className="-mt-40 lg:-mt-80 z-40 grid grid-cols-1 items-start gap-12 lg:grid-cols-2 lg:gap-24">
 					<div className="grid gap-2">
 						<CodeBlock
-							wrapperProps={{
-								"data-aos": "fade-up",
-								"data-aos-duration": "2000",
-							}}
 							wrapperClassName="shadow-2xl"
 							lang="bash"
 							children={[
@@ -37,11 +33,7 @@ export function CodeSection({
 							].join("\n")}
 							className="rounded-4 text-paragraph-sm"
 						/>
-						<div
-							className="flex justify-end"
-							data-aos="fade-up"
-							data-aos-duration="2500"
-						>
+						<div className="flex justify-end">
 							<Button
 								asChild
 								trailingIconClassName="easy-out-in duration-300 group-hover:translate-x-0.5"
@@ -54,8 +46,6 @@ export function CodeSection({
 					</div>
 
 					<img
-						data-aos="fade-up"
-						data-aos-duration="2500"
 						src="/img/tanstack.jpeg"
 						alt="Showcase showing Tanstack.com"
 						className="aspect-video rounded-8 bg-(--bg-white-0) shadow-2xl outline outline-(--stroke-soft-200)"
