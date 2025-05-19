@@ -14,6 +14,7 @@ import { Button } from "#/components/ui/button.tsx";
 import * as Divider from "#/components/ui/divider.tsx";
 import * as ToastAlert from "#/components/ui/toast-alert.tsx";
 import { toast } from "#/components/ui/toast.tsx";
+import { useDelayedPending } from "#/hooks/use-delayed-pending.ts";
 import { useMe } from "#/hooks/use-me.ts";
 import { useORPC } from "#/hooks/use-orpc.ts";
 import { useSettingsStore } from "#/store/settings.ts";
@@ -55,6 +56,9 @@ export function AccountSettings() {
 		},
 	});
 	const [imagePreview, setImagePreview] = React.useState<string | null>(null);
+	const delayedPending = useDelayedPending({
+		isPending: form.state.isSubmitting,
+	});
 
 	return (
 		<form.AppForm>
@@ -83,7 +87,7 @@ export function AccountSettings() {
 							className="rounded-10"
 							form="account-settings-form"
 						>
-							Save Changes
+							{delayedPending ? "Saving..." : "Save Changes"}
 						</form.SubmitButton>
 					</div>
 				</div>
