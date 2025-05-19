@@ -33,7 +33,7 @@ export const workspacesRouter = {
 						name,
 					})
 					.where(eq(schema.workspace.id, id))
-					.returning();
+					.returning({ id: schema.workspace.id });
 
 				if (workspace.length === 0) {
 					throw new ORPCError("NOT_FOUND", {
@@ -41,7 +41,7 @@ export const workspacesRouter = {
 					});
 				}
 
-				return workspace;
+				return workspace[0];
 			} catch (error) {
 				console.error("Failed to update workspace:", error);
 
