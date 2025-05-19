@@ -22,7 +22,9 @@ export const workspacesRouter = {
 				});
 
 				if (!workspaceMember) {
-					throw new ORPCError("You are not the owner of this workspace");
+					throw new ORPCError("UNAUTHORIZED", {
+						message: "You are not the owner of this workspace",
+					});
 				}
 
 				const workspace = await db
@@ -34,14 +36,18 @@ export const workspacesRouter = {
 					.returning();
 
 				if (workspace.length === 0) {
-					throw new ORPCError(`Workspace with id ${id} not found`);
+					throw new ORPCError("NOT_FOUND", {
+						message: `Workspace with id ${id} not found`,
+					});
 				}
 
 				return workspace;
 			} catch (error) {
 				console.error("Failed to update workspace:", error);
 
-				throw new ORPCError("Failed to update workspace");
+				throw new ORPCError("BAD_REQUEST", {
+					message: "Failed to update workspace",
+				});
 			}
 		}),
 };
