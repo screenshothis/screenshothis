@@ -34,7 +34,7 @@ export function SocialLogin() {
 		try {
 			const socialParams = {
 				provider: provider,
-				callbackURL: `${env.VITE_SERVER_URL}/auth/callback/${provider}`,
+				callbackURL: `${env.VITE_SERVER_URL}/auth/callback/${provider}?redirectTo=https://screenshothis.com/dashboard`,
 				fetchOptions: { throw: true },
 			};
 
