@@ -45,7 +45,11 @@ export const workspacesRouter = {
 			} catch (error) {
 				console.error("Failed to update workspace:", error);
 
-				throw new ORPCError("BAD_REQUEST", {
+				if (error instanceof ORPCError) {
+					throw error;
+				}
+
+				throw new ORPCError("INTERNAL_SERVER_ERROR", {
 					message: "Failed to update workspace",
 				});
 			}
