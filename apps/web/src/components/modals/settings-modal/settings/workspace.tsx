@@ -1,11 +1,11 @@
 "use client";
 
 import { UpdateWorkspaceSchema } from "@screenshothis/schemas/workspaces";
-import { useMutation } from "@tanstack/react-query";
 import { useRouteContext } from "@tanstack/react-router";
 import { Dialog as DialogPrimitives } from "radix-ui";
 import type { z } from "zod";
 
+import { DashedDivider } from "#/components/dashed-divider.tsx";
 import { useAppForm } from "#/components/forms/form.tsx";
 import { Button } from "#/components/ui/button.tsx";
 import * as Divider from "#/components/ui/divider.tsx";
@@ -13,6 +13,7 @@ import * as ToastAlert from "#/components/ui/toast-alert.tsx";
 import { toast } from "#/components/ui/toast.tsx";
 import { useMe } from "#/hooks/use-me.ts";
 import { useORPC } from "#/hooks/use-orpc.ts";
+import { authClient } from "#/lib/auth.ts";
 import { useSettingsStore } from "#/store/settings.ts";
 
 export function WorkspaceSettings() {
@@ -22,32 +23,49 @@ export function WorkspaceSettings() {
 	const me = useMe();
 	const { setOpen } = useSettingsStore();
 	const orpc = useORPC();
-	const { mutateAsync } = useMutation(orpc.workspaces.update.mutationOptions());
 	const form = useAppForm({
 		defaultValues: {
 			id: me?.currentWorkspace?.id ?? "",
 			name: me?.currentWorkspace?.name ?? "",
+			metadata: {
+				allowedOrigins: me?.currentWorkspace?.metadata?.allowedOrigins ?? [],
+			},
 		} as z.input<typeof UpdateWorkspaceSchema>,
 		validators: {
 			onSubmit: UpdateWorkspaceSchema,
 		},
 		async onSubmit({ value }) {
-			await mutateAsync(value, {
-				onSuccess() {
-					toast.custom((t) => (
-						<ToastAlert.Root
-							t={t}
-							$status="success"
-							$variant="filled"
-							message="Workspace updated successfully"
-						/>
-					));
+			try {
+				await authClient.organization.update({
+					data: {
+						name: value.name,
+						metadata: value.metadata,
+					},
+					organizationId: value.id,
+				});
 
-					queryClient.invalidateQueries({
-						queryKey: orpc.users.me.queryOptions().queryKey,
-					});
-				},
-			});
+				toast.custom((t) => (
+					<ToastAlert.Root
+						t={t}
+						$status="success"
+						$variant="filled"
+						message="Workspace updated successfully"
+					/>
+				));
+
+				queryClient.invalidateQueries({
+					queryKey: orpc.users.me.queryOptions().queryKey,
+				});
+			} catch (error) {
+				toast.custom((t) => (
+					<ToastAlert.Root
+						t={t}
+						$status="error"
+						$variant="filled"
+						message="Failed to update workspace"
+					/>
+				));
+			}
 		},
 	});
 
@@ -114,6 +132,42 @@ export function WorkspaceSettings() {
 									labelClassName="sr-only"
 									name="name"
 									id="name"
+								/>
+							)}
+						/>
+					</div>
+
+					<DashedDivider />
+
+					{/* Allowed Origins */}
+					<div className="grid items-center gap-4 sm:grid-cols-[minmax(0,1fr)_312px] sm:gap-6">
+						<div>
+							<div className="text-(--text-strong-950) text-label-sm">
+								Allowed Origins
+							</div>
+							<div className="mt-1 text-(--text-sub-600) text-paragraph-xs">
+								Specify the origins that are allowed to generate screenshots.
+							</div>
+						</div>
+
+						<form.AppField
+							name="metadata.allowedOrigins"
+							children={(field) => (
+								<field.Textarea
+									wrapperClassName="col-span-full"
+									label="Allowed origins"
+									labelClassName="sr-only"
+									name="metadata.allowedOrigins"
+									rows={5}
+									placeholder={["example.com", "*.example.com"].join("\n")}
+									hint="One pattern per line. Supports wildcards."
+									value={field.state.value?.join("\n")}
+									onChange={(e) => {
+										const origins = e.target.value
+											.split("\n")
+											.filter((origin) => origin.trim() !== "");
+										field.handleChange(origins);
+									}}
 								/>
 							)}
 						/>

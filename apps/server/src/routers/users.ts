@@ -1,6 +1,8 @@
 import { ORPCError } from "@orpc/server";
 import { UpdateUserSchema } from "@screenshothis/schemas/users";
+import type { WorkspaceMetadataSchema } from "@screenshothis/schemas/workspaces";
 import { eq } from "drizzle-orm";
+import type { z } from "zod";
 
 import { checkExistingEmail } from "#/actions/check-existing-email";
 import { uploadFile } from "#/actions/upload-file";
@@ -19,6 +21,7 @@ export const usersRouter = {
 							columns: {
 								id: true,
 								name: true,
+								metadata: true,
 							},
 						},
 					},
@@ -62,6 +65,9 @@ export const usersRouter = {
 			currentWorkspace: {
 				id: user.session.activeWorkspace?.id,
 				name: user.session.activeWorkspace?.name,
+				metadata: JSON.parse(
+					user.session.activeWorkspace?.metadata ?? "{}",
+				) as z.input<typeof WorkspaceMetadataSchema>,
 			},
 			apiKeys: user.apiKeys,
 			workspaces: userWorkspaces,
