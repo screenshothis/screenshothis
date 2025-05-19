@@ -5,7 +5,6 @@ import {
 	usage,
 	webhooks,
 } from "@polar-sh/better-auth";
-import { Polar } from "@polar-sh/sdk";
 import { keyLimits } from "@screenshothis/common/keys";
 import { generateId } from "@screenshothis/id";
 import { betterAuth } from "better-auth";
@@ -18,17 +17,13 @@ import {
 	uniqueUsernameGenerator,
 } from "unique-username-generator";
 
-import { getActiveWorkspace } from "#/actions/get-active-workspace";
-import { getProductSlugById } from "#/actions/get-product-slug-by-id";
-import { updateUserRequestLimits } from "#/actions/update-user-request-limits";
-import { env } from "#/utils/env";
+import { getActiveWorkspace } from "../actions/get-active-workspace";
+import { getProductSlugById } from "../actions/get-product-slug-by-id";
+import { updateUserRequestLimits } from "../actions/update-user-request-limits";
 import { db } from "../db";
 import * as schema from "../db/schema";
-
-const polarClient = new Polar({
-	accessToken: env.POLAR_ACCESS_TOKEN,
-	server: env.POLAR_SERVER,
-});
+import { env } from "../utils/env";
+import { polarClient } from "./polar";
 
 export const auth = betterAuth({
 	database: drizzleAdapter(db, {
@@ -65,11 +60,8 @@ export const auth = betterAuth({
 		},
 	},
 	user: {
-		additionalFields: {
-			imageUrl: {
-				type: "string",
-				required: false,
-			},
+		fields: {
+			image: "imageUrl",
 		},
 	},
 	session: {

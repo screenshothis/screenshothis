@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { EmailSchema, NewPasswordSchema } from "./common.ts";
+import { EmailSchema, NewPasswordSchema } from "./common";
 
 export const SignInSchema = z.object({
 	email: EmailSchema,
