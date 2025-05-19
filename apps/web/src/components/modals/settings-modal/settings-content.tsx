@@ -7,7 +7,7 @@ import ToggleOnIcon from "virtual:icons/hugeicons/toggle-on";
 import UserIcon from "virtual:icons/hugeicons/user";
 import UserGroupIcon from "virtual:icons/hugeicons/user-group";
 
-import { Tabs as TabPrimitives } from "radix-ui";
+import { Dialog as DialogPrimitives, Tabs as TabPrimitives } from "radix-ui";
 import * as React from "react";
 
 import * as Divider from "#/components/ui/divider.tsx";
@@ -102,6 +102,7 @@ export function SettingsContent() {
 												"bg-(--bg-weak-50) text-(--text-strong-950)":
 													activePage === key,
 											},
+											"disabled:text-(--text-disabled-300)",
 										)}
 									>
 										<Icon
@@ -111,6 +112,7 @@ export function SettingsContent() {
 													"text-primary": activePage === key,
 													"group-hover:text-(--text-sub-600)":
 														activePage !== key,
+													"text-(--text-disabled-300)": v.disabled,
 												},
 											)}
 										/>
@@ -165,6 +167,26 @@ export function SettingsContent() {
 				<TabPrimitives.Content className="fade-in animate-in" value="workspace">
 					<WorkspaceSettings />
 				</TabPrimitives.Content>
+
+				{/* Placeholder for future tabs */}
+				{["privacy-security", "integrations", "billing"].map((tabValue) => (
+					<TabPrimitives.Content
+						key={tabValue}
+						className="fade-in animate-in"
+						value={tabValue}
+					>
+						<div className="flex w-full flex-col gap-3.5 px-5 py-4 sm:flex-row sm:items-center">
+							<div className="flex-1">
+								<DialogPrimitives.Title className="text-(--text-strong-950) text-label-md">
+									Coming Soon
+								</DialogPrimitives.Title>
+								<DialogPrimitives.Description className="mt-1 text-(--text-sub-600) text-paragraph-sm">
+									This feature is currently under development.
+								</DialogPrimitives.Description>
+							</div>
+						</div>
+					</TabPrimitives.Content>
+				))}
 			</div>
 		</TabPrimitives.Root>
 	);
