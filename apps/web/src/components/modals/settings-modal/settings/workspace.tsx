@@ -159,8 +159,12 @@ export function WorkspaceSettings() {
 									labelClassName="sr-only"
 									name="metadata.allowedOrigins"
 									rows={5}
-									placeholder={["example.com", "*.example.com"].join("\n")}
-									hint="One pattern per line. Supports wildcards."
+									placeholder={[
+										"example.com",
+										"*.example.com",
+										"sub.example.com",
+									].join("\n")}
+									hint="One pattern per line. Use exact domains (example.com) or wildcards for subdomains (*.example.com)."
 									value={field.state.value?.join("\n")}
 									onChange={(e) => {
 										const origins = e.target.value
