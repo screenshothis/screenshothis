@@ -1,6 +1,7 @@
+import type { S3Options } from "bun";
+
 import { s3 } from "#/lib/s3";
 import { env } from "#/utils/env";
-import type { S3Options } from "bun";
 
 /**
  * Saves an arbitrary file/byte-array to the specified key (path) in S3/R2.
@@ -15,13 +16,25 @@ import type { S3Options } from "bun";
 export async function uploadFile(
 	file: File | Blob | ArrayBuffer | Uint8Array,
 	key: string,
-	options: { maxSizeBytes?: number } & S3Options = {},
+	options: { maxSizeBytes?: number; allowedTypes?: string[] } & S3Options = {},
 ): Promise<string> {
 	let data: Uint8Array;
 
 	// Validate key to prevent path traversal
 	if (key.includes("..") || key.startsWith("/")) {
 		throw new Error("Invalid key: path traversal not allowed");
+	}
+
+	// Validate allowed MIME types (only applies to Blob/File)
+	if (options.allowedTypes && file instanceof Blob) {
+		const fileType = file.type;
+		if (!options.allowedTypes.includes(fileType)) {
+			throw new Error(
+				`File type "${fileType}" is not allowed. Allowed types: ${options.allowedTypes.join(
+					", ",
+				)}`,
+			);
+		}
 	}
 
 	if (file instanceof Uint8Array) {
