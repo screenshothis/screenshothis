@@ -32,11 +32,7 @@ export const auth = betterAuth({
 		usePlural: true,
 	}),
 	basePath: "/auth",
-	trustedOrigins: [
-		process.env.BETTER_AUTH_URL || "",
-		`${process.env.BETTER_AUTH_URL}/auth`,
-		env.CORS_ORIGIN || "",
-	],
+	trustedOrigins: [env.CORS_ORIGIN || ""],
 	emailAndPassword: {
 		enabled: true,
 		autoSignIn: true,
@@ -46,7 +42,6 @@ export const auth = betterAuth({
 			prompt: "select_account",
 			clientId: env.GOOGLE_CLIENT_ID,
 			clientSecret: env.GOOGLE_CLIENT_SECRET,
-			redirectURI: `${process.env.BETTER_AUTH_URL}/auth/callback/google`,
 		},
 	},
 	advanced: {
