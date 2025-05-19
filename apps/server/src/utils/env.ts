@@ -18,6 +18,8 @@ const envSchema = z.object({
 	POLAR_PRO_PRODUCT_ID: z.string(),
 	BETTER_AUTH_SECRET: z.string(),
 	DEFAULT_API_KEY_PREFIX: z.string(),
+	GOOGLE_CLIENT_ID: z.string(),
+	GOOGLE_CLIENT_SECRET: z.string(),
 });
 
 export const env = envSchema.parse(process.env);
