@@ -92,7 +92,6 @@ export function WorkspaceSettings() {
 						e.stopPropagation();
 						void form.handleSubmit();
 					}}
-					encType="multipart/form-data"
 					className="flex flex-col gap-5 p-6"
 				>
 					{/* Name */}
