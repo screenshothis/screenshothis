@@ -96,7 +96,7 @@ export function WorkspaceSettings() {
 							className="rounded-10"
 							form="workspace-settings-form"
 						>
-							Save Changes
+							{form.state.isSubmitting ? "Saving..." : "Save Changes"}
 						</form.SubmitButton>
 					</div>
 				</div>
