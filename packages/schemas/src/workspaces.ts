@@ -22,7 +22,7 @@ export const WorkspaceMetadataSchema = z.object({
 export const WorkspaceSchema = z.object({
 	id: z.string(),
 	name: z.string().min(1),
-	metadata: WorkspaceMetadataSchema.partial(),
+	metadata: WorkspaceMetadataSchema.partial().optional(),
 });
 
 export const UpdateWorkspaceSchema = WorkspaceSchema;
