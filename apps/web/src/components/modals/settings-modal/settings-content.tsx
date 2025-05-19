@@ -85,43 +85,42 @@ export function SettingsContent() {
 					<React.Fragment key={group}>
 						<div className="flex flex-col gap-2">
 							<Divider.Root $type="text">{group}</Divider.Root>
-							{Object.entries(items)
-								.filter(([_, v]) => !v.disabled)
-								.map(([key, v]) => {
-									const Icon = v.icon;
+							{Object.entries(items).map(([key, v]) => {
+								const Icon = v.icon;
 
-									return (
-										<TabPrimitives.Trigger
-											key={key}
-											value={key}
+								return (
+									<TabPrimitives.Trigger
+										key={key}
+										value={key}
+										disabled={v.disabled}
+										className={cn(
+											"group flex h-9 w-full items-center gap-2 rounded-10 bg-(--bg-white-0) px-2 text-left text-(--text-sub-600) text-label-sm",
+											"transition duration-200 ease-out",
+											"hover:bg-(--bg-weak-50)",
+											"focus:outline-none",
+											{
+												"bg-(--bg-weak-50) text-(--text-strong-950)":
+													activePage === key,
+											},
+										)}
+									>
+										<Icon
 											className={cn(
-												"group flex h-9 w-full items-center gap-2 rounded-10 bg-(--bg-white-0) px-2 text-left text-(--text-sub-600) text-label-sm",
-												"transition duration-200 ease-out",
-												"hover:bg-(--bg-weak-50)",
-												"focus:outline-none",
+												"size-5 shrink-0 text-(--text-soft-400) transition duration-200 ease-out",
 												{
-													"bg-(--bg-weak-50) text-(--text-strong-950)":
-														activePage === key,
+													"text-primary": activePage === key,
+													"group-hover:text-(--text-sub-600)":
+														activePage !== key,
 												},
 											)}
-										>
-											<Icon
-												className={cn(
-													"size-5 shrink-0 text-(--text-soft-400) transition duration-200 ease-out",
-													{
-														"text-primary": activePage === key,
-														"group-hover:text-(--text-sub-600)":
-															activePage !== key,
-													},
-												)}
-											/>
-											<div className="flex-1">{v.label}</div>
-											{activePage === key && (
-												<ArrowRight01Icon className="size-[18px] shrink-0 text-(--text-sub-600)" />
-											)}
-										</TabPrimitives.Trigger>
-									);
-								})}
+										/>
+										<div className="flex-1">{v.label}</div>
+										{activePage === key && (
+											<ArrowRight01Icon className="size-[18px] shrink-0 text-(--text-sub-600)" />
+										)}
+									</TabPrimitives.Trigger>
+								);
+							})}
 						</div>
 						{i < arr.length - 1 && <Divider.Root $type="line-spacing" />}
 					</React.Fragment>
@@ -146,7 +145,7 @@ export function SettingsContent() {
 									const Icon = v.icon;
 
 									return (
-										<Select.Item key={key} value={key}>
+										<Select.Item key={key} value={key} disabled={v.disabled}>
 											<Select.ItemIcon as={Icon} />
 											{v.label}
 										</Select.Item>
