@@ -1,3 +1,4 @@
+import { ORPCError } from "@orpc/server";
 import { UpdateWorkspaceSchema } from "@screenshothis/schemas/workspaces";
 import { eq } from "drizzle-orm";
 
@@ -11,14 +12,24 @@ export const workspacesRouter = {
 		.handler(async ({ input }) => {
 			const { id, name } = input;
 
-			const workspace = await db
-				.update(schema.workspace)
-				.set({
-					name,
-				})
-				.where(eq(schema.workspace.id, id))
-				.returning();
+			try {
+				const workspace = await db
+					.update(schema.workspace)
+					.set({
+						name,
+					})
+					.where(eq(schema.workspace.id, id))
+					.returning();
 
-			return workspace;
+				if (workspace.length === 0) {
+					throw new ORPCError(`Workspace with id ${id} not found`);
+				}
+
+				return workspace;
+			} catch (error) {
+				console.error("Failed to update workspace:", error);
+
+				throw new ORPCError("Failed to update workspace");
+			}
 		}),
 };
