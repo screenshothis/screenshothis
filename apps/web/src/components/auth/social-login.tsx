@@ -67,6 +67,12 @@ export function SocialLogin() {
 						$mode="stroke"
 						$brand={provider.provider}
 						disabled={isSubmitting}
+						aria-busy={isSubmitting && selectedProvider === provider.provider}
+						aria-live={
+							isSubmitting && selectedProvider === provider.provider
+								? "polite"
+								: "off"
+						}
 						onClick={() => handleLogin(provider.provider)}
 					>
 						<SocialButton.Icon as={provider.icon} />
