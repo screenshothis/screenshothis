@@ -124,7 +124,8 @@ export function WorkspaceSettings() {
 							</div>
 							<div className="mt-1 text-(--text-sub-600) text-paragraph-xs">
 								The name of your workspace will be visible to all workspace
-								members.
+								members in the dashboard, navigation, and collaborative
+								features.
 							</div>
 						</div>
 
