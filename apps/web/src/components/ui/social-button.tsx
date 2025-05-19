@@ -12,12 +12,14 @@ export const socialButtonVariants = tv({
 	slots: {
 		root: [
 			// base
-			"relative inline-flex h-10 items-center justify-center gap-3.5 whitespace-nowrap rounded-10 px-4 text-label-sm outline-none",
+			"group relative inline-flex h-10 items-center justify-center gap-3.5 whitespace-nowrap rounded-10 px-4 text-label-sm outline-none",
 			"transition duration-200 ease-out",
 			// focus
 			"focus:outline-none",
+			// disabled
+			"disabled:pointer-events-none disabled:bg-(--bg-weak-50) disabled:text-(--text-disabled-300) disabled:ring-transparent",
 		],
-		icon: "-mx-1.5 relative z-10 size-5 shrink-0",
+		icon: "-mx-1.5 relative z-10 size-5 shrink-0 group-disabled:opacity-50",
 	},
 	variants: {
 		$brand: {

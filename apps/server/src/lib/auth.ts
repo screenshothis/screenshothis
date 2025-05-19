@@ -10,7 +10,7 @@ import { generateId } from "@screenshothis/id";
 import { betterAuth } from "better-auth";
 import { emailHarmony } from "better-auth-harmony";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
-import { apiKey, organization } from "better-auth/plugins";
+import { apiKey, oneTap, organization } from "better-auth/plugins";
 import {
 	adjectives,
 	nouns,
@@ -36,6 +36,13 @@ export const auth = betterAuth({
 	emailAndPassword: {
 		enabled: true,
 		autoSignIn: true,
+	},
+	socialProviders: {
+		google: {
+			prompt: "select_account",
+			clientId: env.GOOGLE_CLIENT_ID,
+			clientSecret: env.GOOGLE_CLIENT_SECRET,
+		},
 	},
 	advanced: {
 		cookiePrefix: "screenshothis",
@@ -247,5 +254,8 @@ export const auth = betterAuth({
 			],
 		}),
 		emailHarmony(),
+		oneTap({
+			clientId: env.GOOGLE_CLIENT_ID,
+		}),
 	],
 });
