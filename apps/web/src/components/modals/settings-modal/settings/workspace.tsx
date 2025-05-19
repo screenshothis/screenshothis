@@ -172,13 +172,6 @@ export function WorkspaceSettings() {
 										"sub.example.com",
 									].join("\n")}
 									hint="One pattern per line. Use exact domains (example.com) or wildcards for subdomains (*.example.com)."
-									value={field.state.value?.join("\n")}
-									onChange={(e) => {
-										const origins = e.target.value
-											.split("\n")
-											.filter((origin) => origin.trim() !== "");
-										field.handleChange(origins);
-									}}
 								/>
 							)}
 						/>
