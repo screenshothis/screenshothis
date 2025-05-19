@@ -1,11 +1,11 @@
 "use client";
 
-import CancelCircleSolidIcon from "virtual:icons/hugeicons/cancel-circle-solid";
-
 import { UpdateUserSchema } from "@screenshothis/schemas/users";
 import { useMutation } from "@tanstack/react-query";
 import { useRouteContext } from "@tanstack/react-router";
 import { Dialog as DialogPrimitives } from "radix-ui";
+import * as React from "react";
+import type { z } from "zod";
 
 import { DashedDivider } from "#/components/dashed-divider.tsx";
 import { useAppForm } from "#/components/forms/form.tsx";
@@ -18,19 +18,19 @@ import { useORPC } from "#/hooks/use-orpc.ts";
 import { useSettingsStore } from "#/store/settings.ts";
 
 export function AccountSettings() {
-	const me = useMe();
 	const { queryClient } = useRouteContext({
 		from: "__root__",
 	});
+	const me = useMe();
 	const { setOpen } = useSettingsStore();
 	const orpc = useORPC();
 	const { mutateAsync } = useMutation(orpc.users.update.mutationOptions());
 	const form = useAppForm({
 		defaultValues: {
-			name: me?.user.name ?? "",
-			email: me?.user.email ?? "",
-			image: null as File | null,
-		},
+			name: me?.fullName ?? "",
+			email: me?.email ?? "",
+			image: me?.imageUrl ?? "",
+		} as z.input<typeof UpdateUserSchema>,
 		validators: {
 			onSubmit: UpdateUserSchema,
 		},
@@ -53,6 +53,7 @@ export function AccountSettings() {
 			});
 		},
 	});
+	const [imagePreview, setImagePreview] = React.useState<string | null>(null);
 
 	return (
 		<form.AppForm>
@@ -93,6 +94,7 @@ export function AccountSettings() {
 						e.stopPropagation();
 						void form.handleSubmit();
 					}}
+					encType="multipart/form-data"
 					className="flex flex-col gap-5 p-6"
 				>
 					{/* Profile Photo */}
@@ -106,19 +108,40 @@ export function AccountSettings() {
 							</div>
 						</div>
 						<div className="flex items-center gap-5">
-							<Avatar.Root $size="40">
-								{me?.user.image && (
-									<>
-										<Avatar.Image src={me.user.image} />
-										<Avatar.Indicator position="top">
-											<CancelCircleSolidIcon />
-										</Avatar.Indicator>
-									</>
+							<Avatar.Root $size="80">
+								{(imagePreview || me?.imageUrl) && (
+									<Avatar.Image src={imagePreview || me?.imageUrl || ""} />
 								)}
 							</Avatar.Root>
-							<Button $type="neutral" $style="stroke" $size="xxs">
-								Change
-							</Button>
+
+							<label htmlFor="image">
+								<Button asChild $type="neutral" $style="stroke" $size="xs">
+									<div>Change</div>
+								</Button>
+
+								<form.AppField
+									name="image"
+									children={(field) => (
+										<input
+											type="file"
+											multiple={false}
+											tabIndex={-1}
+											accept="image/*"
+											name="image"
+											id="image"
+											className="sr-only"
+											onBlur={field.handleBlur}
+											onChange={(e) => {
+												const file = e.target.files?.[0] || null;
+												field.handleChange(file);
+												setImagePreview(
+													file ? URL.createObjectURL(file) : null,
+												);
+											}}
+										/>
+									)}
+								/>
+							</label>
 						</div>
 					</div>
 

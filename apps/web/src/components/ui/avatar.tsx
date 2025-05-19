@@ -222,10 +222,13 @@ function AvatarIndicator({
 
 	return (
 		<div
-			className={cn(indicator({ class: className }), {
-				"top-0 origin-top-right": position === "top",
-				"bottom-0 origin-bottom-right": position === "bottom",
-			})}
+			className={cn(
+				{
+					"top-0 origin-top-right": position === "top",
+					"bottom-0 origin-bottom-right": position === "bottom",
+				},
+				indicator({ class: className }),
+			)}
 			{...rest}
 		/>
 	);

@@ -1,10 +1,10 @@
-import { useRouteContext } from "@tanstack/react-router";
-import type { Session, User } from "better-auth/types";
+import { useQuery } from "@tanstack/react-query";
 
-export function useMe(): (Session & { user: User }) | null {
-	const { session } = useRouteContext({
-		from: "__root__",
-	});
+import { useORPC } from "./use-orpc.ts";
 
-	return session;
+export function useMe() {
+	const orpc = useORPC();
+	const { data: me } = useQuery(orpc.users.me.queryOptions());
+
+	return me;
 }

@@ -9,11 +9,10 @@ import SecurityCheckIcon from "virtual:icons/hugeicons/security-check";
 import Setting07Icon from "virtual:icons/hugeicons/setting-07";
 import UserCircle02Icon from "virtual:icons/hugeicons/user-circle-02";
 
-import { useQuery } from "@tanstack/react-query";
 import { Link, useNavigate } from "@tanstack/react-router";
 import { useTheme } from "next-themes";
 
-import { useORPC } from "#/hooks/use-orpc.ts";
+import { useMe } from "#/hooks/use-me.ts";
 import { authClient } from "#/lib/auth.ts";
 import { useSettingsStore } from "#/store/settings.ts";
 import { cn } from "#/utils/cn.ts";
@@ -24,8 +23,7 @@ import { Skeleton } from "./ui/skeleton.tsx";
 import * as Switch from "./ui/switch.tsx";
 
 export function UserButton({ className }: { className?: string }) {
-	const orpc = useORPC();
-	const { data: me } = useQuery(orpc.users.me.queryOptions());
+	const me = useMe();
 	const { theme, setTheme } = useTheme();
 	const navigate = useNavigate();
 	const { setOpen } = useSettingsStore();
@@ -150,8 +148,7 @@ export function UserButton({ className }: { className?: string }) {
 
 export function UserButtonMobile({ className }: { className?: string }) {
 	const { theme, setTheme } = useTheme();
-	const orpc = useORPC();
-	const { data: me } = useQuery(orpc.users.me.queryOptions());
+	const me = useMe();
 	const navigate = useNavigate();
 	const { setOpen } = useSettingsStore();
 

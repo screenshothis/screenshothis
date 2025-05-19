@@ -64,6 +64,14 @@ export const auth = betterAuth({
 			},
 		},
 	},
+	user: {
+		additionalFields: {
+			imageUrl: {
+				type: "string",
+				required: false,
+			},
+		},
+	},
 	session: {
 		additionalFields: {
 			activeWorkspaceId: {

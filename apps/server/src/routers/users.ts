@@ -85,10 +85,14 @@ export const usersRouter = {
 				email: input.email,
 			};
 
-			if (input.image) {
+			if (input.image && typeof input.image === "object") {
 				const imageUrl = await uploadFile(
 					input.image,
 					`avatars/${context.session.user.id}_${Date.now()}.png`,
+					{
+						type: input.image.type,
+						acl: "public-read",
+					},
 				);
 				updateData.imageUrl = imageUrl;
 			}

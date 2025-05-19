@@ -34,16 +34,20 @@ export const UpdateUserSchema = z.object({
 	name: z.string().min(1),
 	email: z.string().email(),
 	image: z
-		.instanceof(File)
-		.refine(
-			(file) =>
-				["image/png", "image/jpeg", "image/jpg", "image/webp"].includes(
-					file.type,
-				),
-			{ message: "Invalid image file type" },
-		)
-		.refine((file) => file.size <= 5 * 1024 * 1024, {
-			message: "Image file size must be less than 5MB",
-		})
+		.union([
+			z
+				.instanceof(File)
+				.refine(
+					(file) =>
+						["image/png", "image/jpeg", "image/jpg", "image/webp"].includes(
+							file.type,
+						),
+					{ message: "Invalid image file type" },
+				)
+				.refine((file) => file.size <= 5 * 1024 * 1024, {
+					message: "Image file size must be less than 5MB",
+				}),
+			z.string().url(),
+		])
 		.nullable(),
 });

@@ -1,5 +1,6 @@
 import { s3 } from "#/lib/s3";
 import { env } from "#/utils/env";
+import type { S3Options } from "bun";
 
 /**
  * Saves an arbitrary file/byte-array to the specified key (path) in S3/R2.
@@ -14,7 +15,7 @@ import { env } from "#/utils/env";
 export async function uploadFile(
 	file: File | Blob | ArrayBuffer | Uint8Array,
 	key: string,
-	options: { maxSizeBytes?: number; contentType?: string } = {},
+	options: { maxSizeBytes?: number } & S3Options = {},
 ): Promise<string> {
 	let data: Uint8Array;
 
@@ -40,9 +41,7 @@ export async function uploadFile(
 	}
 
 	try {
-		await s3.write(key, data, {
-			type: options.contentType,
-		});
+		await s3.write(key, data, options);
 	} catch (error) {
 		console.error(`Failed to upload file to ${key}:`, error);
 
