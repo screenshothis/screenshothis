@@ -11,6 +11,7 @@ import { DashedDivider } from "#/components/dashed-divider.tsx";
 import { useAppForm } from "#/components/forms/form.tsx";
 import * as Avatar from "#/components/ui/avatar.tsx";
 import { Button } from "#/components/ui/button.tsx";
+import * as Divider from "#/components/ui/divider.tsx";
 import * as ToastAlert from "#/components/ui/toast-alert.tsx";
 import { toast } from "#/components/ui/toast.tsx";
 import { useMe } from "#/hooks/use-me.ts";
@@ -86,6 +87,8 @@ export function AccountSettings() {
 						</form.SubmitButton>
 					</div>
 				</div>
+
+				<Divider.Root />
 
 				<form
 					id="account-settings-form"

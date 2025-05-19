@@ -8,7 +8,8 @@
 		"./dashboard": "./src/dashboard.ts",
 		"./plan": "./src/plan.ts",
 		"./screenshots": "./src/screenshots.ts",
-		"./users": "./src/users.ts"
+		"./users": "./src/users.ts",
+		"./workspaces": "./src/workspaces.ts"
 	},
 	"module": "src/index.ts",
 	"dependencies": {

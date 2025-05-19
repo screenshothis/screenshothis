@@ -14,6 +14,7 @@ import * as Divider from "#/components/ui/divider.tsx";
 import * as Select from "#/components/ui/select.tsx";
 import { cn } from "#/utils/cn.ts";
 import { AccountSettings } from "./settings/account.tsx";
+import { WorkspaceSettings } from "./settings/workspace.tsx";
 
 type PersonalSettingKeys = "account" | "privacy-security" | "integrations";
 type GeneralSettingKeys = "workspace" | "billing";
@@ -25,6 +26,7 @@ type SettingPageItem = {
 		[K in AllSettingKeys]?: {
 			icon: React.ForwardRefExoticComponent<React.SVGProps<SVGSVGElement>>;
 			label: string;
+			disabled?: boolean;
 		};
 	};
 };
@@ -40,10 +42,12 @@ const settingPageItems: SettingPageItem[] = [
 			"privacy-security": {
 				icon: SecurityLockIcon,
 				label: "Privacy & Security",
+				disabled: true,
 			},
 			integrations: {
 				icon: ToggleOnIcon,
 				label: "Integrations",
+				disabled: true,
 			},
 		},
 	},
@@ -57,6 +61,7 @@ const settingPageItems: SettingPageItem[] = [
 			billing: {
 				icon: CreditCardIcon,
 				label: "Payment & Billing",
+				disabled: true,
 			},
 		},
 	},
@@ -80,41 +85,43 @@ export function SettingsContent() {
 					<React.Fragment key={group}>
 						<div className="flex flex-col gap-2">
 							<Divider.Root $type="text">{group}</Divider.Root>
-							{Object.entries(items).map(([key, v]) => {
-								const Icon = v.icon;
+							{Object.entries(items)
+								.filter(([_, v]) => !v.disabled)
+								.map(([key, v]) => {
+									const Icon = v.icon;
 
-								return (
-									<TabPrimitives.Trigger
-										key={key}
-										value={key}
-										className={cn(
-											"group flex h-9 w-full items-center gap-2 rounded-10 bg-(--bg-white-0) px-2 text-left text-(--text-sub-600) text-label-sm",
-											"transition duration-200 ease-out",
-											"hover:bg-(--bg-weak-50)",
-											"focus:outline-none",
-											{
-												"bg-(--bg-weak-50) text-(--text-strong-950)":
-													activePage === key,
-											},
-										)}
-									>
-										<Icon
+									return (
+										<TabPrimitives.Trigger
+											key={key}
+											value={key}
 											className={cn(
-												"size-5 shrink-0 text-(--text-soft-400) transition duration-200 ease-out",
+												"group flex h-9 w-full items-center gap-2 rounded-10 bg-(--bg-white-0) px-2 text-left text-(--text-sub-600) text-label-sm",
+												"transition duration-200 ease-out",
+												"hover:bg-(--bg-weak-50)",
+												"focus:outline-none",
 												{
-													"text-primary": activePage === key,
-													"group-hover:text-(--text-sub-600)":
-														activePage !== key,
+													"bg-(--bg-weak-50) text-(--text-strong-950)":
+														activePage === key,
 												},
 											)}
-										/>
-										<div className="flex-1">{v.label}</div>
-										{activePage === key && (
-											<ArrowRight01Icon className="size-[18px] shrink-0 text-(--text-sub-600)" />
-										)}
-									</TabPrimitives.Trigger>
-								);
-							})}
+										>
+											<Icon
+												className={cn(
+													"size-5 shrink-0 text-(--text-soft-400) transition duration-200 ease-out",
+													{
+														"text-primary": activePage === key,
+														"group-hover:text-(--text-sub-600)":
+															activePage !== key,
+													},
+												)}
+											/>
+											<div className="flex-1">{v.label}</div>
+											{activePage === key && (
+												<ArrowRight01Icon className="size-[18px] shrink-0 text-(--text-sub-600)" />
+											)}
+										</TabPrimitives.Trigger>
+									);
+								})}
 						</div>
 						{i < arr.length - 1 && <Divider.Root $type="line-spacing" />}
 					</React.Fragment>
@@ -154,6 +161,10 @@ export function SettingsContent() {
 			<div className="w-full min-w-0">
 				<TabPrimitives.Content className="fade-in animate-in" value="account">
 					<AccountSettings />
+				</TabPrimitives.Content>
+
+				<TabPrimitives.Content className="fade-in animate-in" value="workspace">
+					<WorkspaceSettings />
 				</TabPrimitives.Content>
 			</div>
 		</TabPrimitives.Root>
