@@ -32,7 +32,11 @@ export const auth = betterAuth({
 		usePlural: true,
 	}),
 	basePath: "/auth",
-	trustedOrigins: [env.CORS_ORIGIN || ""],
+	trustedOrigins: [
+		process.env.BETTER_AUTH_URL || "",
+		`${process.env.BETTER_AUTH_URL}/auth`,
+		env.CORS_ORIGIN || "",
+	],
 	emailAndPassword: {
 		enabled: true,
 		autoSignIn: true,
