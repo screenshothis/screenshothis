@@ -99,10 +99,11 @@ export function WorkspaceSettings() {
 					<div className="grid items-center gap-4 sm:grid-cols-[minmax(0,1fr)_312px] sm:gap-6">
 						<div>
 							<div className="text-(--text-strong-950) text-label-sm">
-								Full Name
+								Workspace Name
 							</div>
 							<div className="mt-1 text-(--text-sub-600) text-paragraph-xs">
-								Your name will be visible to your workspace members and for you.
+								The name of your workspace will be visible to all workspace
+								members.
 							</div>
 						</div>
 
