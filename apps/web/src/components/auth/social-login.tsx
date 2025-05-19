@@ -46,7 +46,9 @@ export function SocialLogin() {
 					$status="error"
 					$variant="filled"
 					message={
-						error instanceof Error ? error.message : "An unknown error occurred"
+						error instanceof Error
+							? `${error.message}. Please try again or use email login.`
+							: "An unknown error occurred. Please try again or use email login."
 					}
 				/>
 			));
