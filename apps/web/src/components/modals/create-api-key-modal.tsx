@@ -4,12 +4,12 @@ import Alert01SolidIcon from "virtual:icons/hugeicons/alert-01-solid";
 import Key01Icon from "virtual:icons/hugeicons/key-01";
 
 import { CreateApiKeySchema } from "@screenshothis/schemas/api-keys";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQueryClient } from "@tanstack/react-query";
 import * as React from "react";
 
 import { createApiKeyAction } from "#/actions/create-api-key-action.ts";
 import { useActionsParams } from "#/hooks/use-actions-params.ts";
-import { useORPC } from "#/hooks/use-orpc.ts";
+import { useMe } from "#/hooks/use-me.ts";
 import { CodeBlock } from "../code-block.tsx";
 import { useAppForm } from "../forms/form.tsx";
 import * as Alert from "../ui/alert.tsx";
@@ -22,8 +22,7 @@ export function CreateApiKeyModal() {
 	const { setParams, ...params } = useActionsParams();
 	const [key, setKey] = React.useState<string | null>(null);
 	const queryClient = useQueryClient();
-	const orpc = useORPC();
-	const { data: me } = useQuery(orpc.users.me.queryOptions());
+	const me = useMe();
 	const userPlan = me?.requestLimits?.plan ?? "free";
 	const form = useAppForm({
 		defaultValues: {

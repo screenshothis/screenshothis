@@ -1,7 +1,6 @@
-import { useQuery } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
 
-import { useORPC } from "#/hooks/use-orpc.ts";
+import { useMe } from "#/hooks/use-me.ts";
 import { cn } from "#/utils/cn.ts";
 import { plans } from "#/utils/plans.ts";
 import * as LinkButton from "../ui/link-button.tsx";
@@ -10,8 +9,7 @@ import * as ProgressBar from "../ui/progress-bar.tsx";
 type UsageWidgetProps = React.ComponentPropsWithRef<"div">;
 
 export function UsageWidget({ className, ...props }: UsageWidgetProps) {
-	const orpc = useORPC();
-	const { data: me } = useQuery(orpc.users.me.queryOptions());
+	const me = useMe();
 
 	const requestLimits = me?.requestLimits;
 

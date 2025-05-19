@@ -3,9 +3,7 @@
 import Tick02Icon from "virtual:icons/hugeicons/tick-02";
 import UnfoldMoreIcon from "virtual:icons/hugeicons/unfold-more";
 
-import { useQuery } from "@tanstack/react-query";
-
-import { useORPC } from "#/hooks/use-orpc.ts";
+import { useMe } from "#/hooks/use-me.ts";
 import { cn } from "#/utils/cn.ts";
 import * as Avatar from "./ui/avatar.tsx";
 import * as DropdownMenu from "./ui/dropdown-menu.tsx";
@@ -40,8 +38,7 @@ export function WorkspaceItem({ workspace, isCurrent }: WorkspaceItem) {
 }
 
 export function WorkspaceSwitch({ className }: { className?: string }) {
-	const orpc = useORPC();
-	const { data: me } = useQuery(orpc.users.me.queryOptions());
+	const me = useMe();
 
 	return (
 		<DropdownMenu.Root>

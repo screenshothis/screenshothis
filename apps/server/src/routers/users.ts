@@ -1,6 +1,11 @@
 import { ORPCError } from "@orpc/server";
+import { UpdateUserSchema } from "@screenshothis/schemas/users";
+import type { WorkspaceMetadataSchema } from "@screenshothis/schemas/workspaces";
 import { eq } from "drizzle-orm";
+import type { z } from "zod";
 
+import { checkExistingEmail } from "#/actions/check-existing-email";
+import { uploadFile } from "#/actions/upload-file";
 import { db } from "#/db";
 import * as schema from "#/db/schema";
 import { protectedProcedure } from "#/lib/orpc";
@@ -16,6 +21,7 @@ export const usersRouter = {
 							columns: {
 								id: true,
 								name: true,
+								metadata: true,
 							},
 						},
 					},
@@ -59,10 +65,52 @@ export const usersRouter = {
 			currentWorkspace: {
 				id: user.session.activeWorkspace?.id,
 				name: user.session.activeWorkspace?.name,
+				metadata: JSON.parse(
+					user.session.activeWorkspace?.metadata ?? "{}",
+				) as z.input<typeof WorkspaceMetadataSchema>,
 			},
 			apiKeys: user.apiKeys,
 			workspaces: userWorkspaces,
 			requestLimits: user.requestLimits,
 		};
 	}),
+	update: protectedProcedure
+		.input(UpdateUserSchema)
+		.handler(async ({ context, input }) => {
+			const existingUser = await checkExistingEmail(
+				input.email,
+				context.session.user.id,
+			);
+
+			if (existingUser) {
+				throw new ORPCError("Email already in use by another account");
+			}
+
+			const updateData: Partial<typeof schema.users.$inferInsert> = {
+				name: input.name,
+				email: input.email,
+			};
+
+			if (input.image && typeof input.image === "object") {
+				const imageUrl = await uploadFile(
+					input.image,
+					`avatars/${context.session.user.id}_${Date.now()}.png`,
+					{
+						type: input.image.type,
+						acl: "public-read",
+					},
+				);
+				updateData.imageUrl = imageUrl;
+			}
+
+			const user = await db
+				.update(schema.users)
+				.set(updateData)
+				.where(eq(schema.users.id, context.session.user.id))
+				.returning({
+					id: schema.users.id,
+				});
+
+			return user;
+		}),
 };

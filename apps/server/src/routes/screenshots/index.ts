@@ -69,7 +69,8 @@ const screenshots = new OpenAPIHono<{ Variables: Variables }>().openapi(
 			);
 
 			if (!object) {
-				return c.json({ error: "Failed to get or create screenshot" }, 404);
+				// If object is null, either unauthorized origin or other error
+				return c.json({ error: "Unauthorized" }, 401);
 			}
 
 			const contentType = `image/${c.req.valid("query").format}`;

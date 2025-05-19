@@ -16,6 +16,7 @@ import type { ObjectToCamel } from "ts-case-convert";
 import wildcardMatch from "wildcard-match";
 import type { z } from "zod";
 
+import { isScreenshotOriginAllowed } from "../actions/validate-screenshot-origin";
 import { db } from "../db";
 import { screenshots } from "../db/schema/screenshots";
 import { s3 } from "../lib/s3";
@@ -33,7 +34,7 @@ export async function getOrCreateScreenshot(
 	params: GetOrCreateScreenshotParams,
 ): Promise<{
 	object: ArrayBuffer | null;
-	key: string;
+	key: string | null;
 	created: boolean;
 }> {
 	return limit(async () => {
@@ -83,6 +84,11 @@ export async function getOrCreateScreenshot(
 			const object = await s3.file(key).arrayBuffer();
 
 			return { object, key, created: false };
+		}
+
+		const allowed = await isScreenshotOriginAllowed(workspaceId, url);
+		if (!allowed) {
+			return { object: null, key: null, created: false };
 		}
 
 		const browser = await puppeteer.launch({
