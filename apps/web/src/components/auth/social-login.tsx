@@ -7,7 +7,6 @@ import * as React from "react";
 
 import { authClient } from "#/lib/auth.ts";
 import { cn } from "#/utils/cn.ts";
-import { env } from "#/utils/env.client.ts";
 import * as Divider from "../ui/divider.tsx";
 import * as SocialButton from "../ui/social-button.tsx";
 import * as AlertToast from "../ui/toast-alert.tsx";
@@ -34,7 +33,7 @@ export function SocialLogin() {
 		try {
 			const socialParams = {
 				provider: provider,
-				callbackURL: `${env.VITE_SERVER_URL}/auth/callback/${provider}?redirectTo=https://screenshothis.com/dashboard`,
+				callbackURL: "https://screenshothis.com/dashboard",
 				fetchOptions: { throw: true },
 			};
 
