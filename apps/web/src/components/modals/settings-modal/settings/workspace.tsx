@@ -151,6 +151,8 @@ export function WorkspaceSettings() {
 							</div>
 							<div className="mt-1 text-(--text-sub-600) text-paragraph-xs">
 								Specify the origins that are allowed to generate screenshots.
+								Only requests from these domains will be permitted, enhancing
+								security by preventing unauthorized access.
 							</div>
 						</div>
 
