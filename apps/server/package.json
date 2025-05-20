@@ -2,9 +2,7 @@
 	"name": "@screenshothis/server",
 	"type": "module",
 	"imports": {
-		"#/*": [
-			"./src/*"
-		]
+		"#/*": ["./src/*"]
 	},
 	"exports": {
 		"./routers": "./src/routers/index.ts"
@@ -51,7 +49,7 @@
 		"ts-case-convert": "2.1.0",
 		"unique-username-generator": "1.4.0",
 		"wildcard-match": "5.1.4",
-		"zod": "3.25.6"
+		"zod": "3.25.7"
 	},
 	"devDependencies": {
 		"@epic-web/config": "1.21.0",
