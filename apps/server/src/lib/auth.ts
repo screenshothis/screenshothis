@@ -208,7 +208,8 @@ export const auth = betterAuth({
 						},
 						{
 							productId: "60b1e6c4-2323-4102-a474-1cff991b2b22",
-							slug: "enterprise"
+							slug: "enterprise",
+						},
 					],
 					successUrl: env.POLAR_SUCCESS_URL,
 					authenticatedUsersOnly: true,
