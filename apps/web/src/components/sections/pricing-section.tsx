@@ -102,12 +102,7 @@ export function PricingSection({
 											{/* {plan.description} */}
 										</p>
 										<p className="mt-8 h-15 font-semibold tracking-tight">
-											{key === "enterprise" ? (
-												<span className="font-semibold text-h4 lg:text-h3">
-													Custom
-												</span>
-											) : (
-												<span
+											<span
 													className={cn(
 														"font-semibold text-h4 lg:text-h3",
 														plan.isFeatured && "text-white",
@@ -127,7 +122,6 @@ export function PricingSection({
 														/month
 													</span>
 												</span>
-											)}
 										</p>
 									</div>
 
@@ -235,9 +229,7 @@ function PlanButton({ plan, planKey }: { plan: Plan; planKey: string }) {
 			)}
 			onClick={isLoggedIn ? handleSubscribe : undefined}
 		>
-			{planKey === "enterprise" ? (
-				<a href="mailto:sales@expensetrackr.app">{plan.buttonLabel}</a>
-			) : isLoggedIn ? (
+			{isLoggedIn ? (
 				plan.buttonLabel
 			) : (
 				<Link to="/register">{plan.buttonLabel}</Link>
