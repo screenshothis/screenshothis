@@ -6,11 +6,13 @@ import InformationCircleSolidIcon from "virtual:icons/hugeicons/information-circ
 import { Link, useRouteContext } from "@tanstack/react-router";
 import type * as React from "react";
 
+import { authClient } from "#/lib/auth.ts";
 import { cn } from "#/utils/cn.ts";
 import { currencyFormatter } from "#/utils/currency.ts";
-import { env } from "#/utils/env.client.ts";
 import { type Plan, plans } from "#/utils/plans.ts";
 import { Button } from "../ui/button.tsx";
+import * as AlertToast from "../ui/toast-alert.tsx";
+import { toast } from "../ui/toast.tsx";
 
 type PricingSectionProps = React.ComponentPropsWithRef<"section"> & {
 	containerClassName?: string;
@@ -202,24 +204,23 @@ function PlanButton({ plan, planKey }: { plan: Plan; planKey: string }) {
 	});
 	const isLoggedIn = !!context.session?.id;
 
-	// TODO: this is handy for now, but we should use the auth client to handle this
 	const handleSubscribe = async () => {
-		const response = await fetch(`${env.VITE_SERVER_URL}/auth/checkout`, {
-			method: "POST",
-			headers: {
-				"Content-Type": "application/json",
-			},
-			body: JSON.stringify({
-				slug: planKey,
-			}),
-			credentials: "include",
-			redirect: "follow",
+		const { error } = await authClient.checkout({
+			slug: planKey,
 		});
 
-		if (response.ok) {
-			const data = (await response.json()) as { url: string };
-
-			window.location.href = data.url;
+		if (error) {
+			toast.custom((t) => (
+				<AlertToast.Root
+					t={t}
+					$status="error"
+					$variant="lighter"
+					message={`Error: ${error.message}`}
+					dismissable={false}
+				/>
+			));
+			console.error(error);
+			return;
 		}
 	};
 
