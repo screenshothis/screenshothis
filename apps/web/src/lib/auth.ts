@@ -1,4 +1,3 @@
-import { polarClient } from "@polar-sh/better-auth";
 import {
 	apiKeyClient,
 	oneTapClient,
@@ -19,6 +18,5 @@ export const authClient = createAuthClient({
 			cancelOnTapOutside: true,
 			context: "signin",
 		}),
-		polarClient(),
 	],
 });
