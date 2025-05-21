@@ -31,6 +31,7 @@
 		"@polar-sh/sdk": "0.32.15",
 		"@screenshothis/id": "workspace:*",
 		"@screenshothis/schemas": "workspace:*",
+		"@t3-oss/env-core": "0.13.4",
 		"ai": "4.3.16",
 		"better-auth": "1.2.8",
 		"better-auth-harmony": "1.2.4",

@@ -207,7 +207,7 @@ export const auth = betterAuth({
 							slug: "pro",
 						},
 						{
-							productId: "60b1e6c4-2323-4102-a474-1cff991b2b22",
+							productId: env.POLAR_ENTERPRISE_PRODUCT_ID,
 							slug: "enterprise",
 						},
 					],
