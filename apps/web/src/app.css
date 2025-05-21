@@ -288,9 +288,7 @@ html.dark .shiki span {
     --plyr-range-thumb-background: #fff;
     --plyr-range-thumb-shadow: 0 1px 1px rgba(35, 40, 47, 0.15), 0 0 0 1px rgba(35, 40, 47, 0.2);
 
-    --plyr-audio-range-track-background: var(
-      --plyr-audio-progress-buffered-background: rgba(193, 200, 209, 0.6)
-    );
+    --plyr-audio-range-track-background: var(--plyr-audio-progress-buffered-background, rgba(193, 200, 209, 0.6));
     --plyr-audio-range-thumb-active-shadow-color: rgba(35, 40, 47, 0.1);
 
     --plyr-video-range-track-background: var(
