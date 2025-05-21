@@ -20,8 +20,7 @@
 	},
 	"dependencies": {
 		"@ai-sdk/google": "1.2.18",
-		"@ghostery/adblocker-playwright": "2.5.2",
-		"@ghostery/adblocker-puppeteer": "2.5.2",
+		"@ghostery/adblocker-puppeteer": "2.6.0",
 		"@hono-storage/core": "0.0.14",
 		"@hono-storage/s3": "0.0.13",
 		"@hono/swagger-ui": "0.5.1",
@@ -41,15 +40,14 @@
 		"hono": "4.7.10",
 		"p-limit": "6.2.0",
 		"pg": "8.16.0",
-		"playwright-extra": "4.3.6",
-		"puppeteer": "24.8.2",
+		"puppeteer": "24.9.0",
 		"puppeteer-extra": "3.3.6",
 		"puppeteer-extra-plugin-stealth": "2.11.2",
 		"svix": "1.65.0",
 		"ts-case-convert": "2.1.0",
 		"unique-username-generator": "1.4.0",
 		"wildcard-match": "5.1.4",
-		"zod": "3.25.7"
+		"zod": "3.25.9"
 	},
 	"devDependencies": {
 		"@epic-web/config": "1.21.0",
