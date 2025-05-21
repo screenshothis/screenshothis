@@ -253,6 +253,20 @@ function PlanButton({ plan, planKey }: { plan: Plan; planKey: string }) {
 				/>
 			));
 		},
+		onError: (error) => {
+			toast.custom((t) => (
+				<ToastAlert.Root
+					t={t}
+					$status="error"
+					$variant="filled"
+					message={
+						error instanceof Error
+							? error.message
+							: "An unknown error occurred. Please try again."
+					}
+				/>
+			));
+		},
 	});
 
 	return (
