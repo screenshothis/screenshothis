@@ -10,7 +10,7 @@ import { Button } from "#/components/ui/button.tsx";
 import * as AlertToast from "#/components/ui/toast-alert.tsx";
 import { toast } from "#/components/ui/toast.tsx";
 import { currencyFormatter } from "#/utils/currency.ts";
-import { env } from "#/utils/env.client.ts";
+import { env } from "#/utils/env.ts";
 
 export const Route = createFileRoute("/_marketing/confirmation")({
 	validateSearch: zodValidator(

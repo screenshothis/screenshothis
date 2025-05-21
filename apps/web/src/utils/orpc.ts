@@ -6,7 +6,7 @@ import type { appRouter } from "@screenshothis/server/routers";
 import { createServerFn } from "@tanstack/react-start";
 import { getHeaders } from "@tanstack/react-start/server";
 
-import { env } from "./env.client.ts";
+import { env } from "./env.ts";
 
 export const getServerHeaders = createServerFn().handler(() => {
 	return getHeaders();

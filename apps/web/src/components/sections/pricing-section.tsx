@@ -8,7 +8,7 @@ import type * as React from "react";
 
 import { cn } from "#/utils/cn.ts";
 import { currencyFormatter } from "#/utils/currency.ts";
-import { env } from "#/utils/env.client.ts";
+import { env } from "#/utils/env.ts";
 import { type Plan, plans } from "#/utils/plans.ts";
 import { Button } from "../ui/button.tsx";
 
@@ -103,25 +103,25 @@ export function PricingSection({
 										</p>
 										<p className="mt-8 h-15 font-semibold tracking-tight">
 											<span
+												className={cn(
+													"font-semibold text-h4 lg:text-h3",
+													plan.isFeatured && "text-white",
+												)}
+											>
+												{currencyFormatter({
+													amount: plan.price || 0,
+												})}
+												<span
 													className={cn(
-														"font-semibold text-h4 lg:text-h3",
-														plan.isFeatured && "text-white",
+														"text-paragraph-xs",
+														plan.isFeatured
+															? "text-white"
+															: "text-(--text-sub-600)",
 													)}
 												>
-													{currencyFormatter({
-														amount: plan.price || 0,
-													})}
-													<span
-														className={cn(
-															"text-paragraph-xs",
-															plan.isFeatured
-																? "text-white"
-																: "text-(--text-sub-600)",
-														)}
-													>
-														/month
-													</span>
+													/month
 												</span>
+											</span>
 										</p>
 									</div>
 
