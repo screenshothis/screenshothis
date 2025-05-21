@@ -246,7 +246,7 @@ html.dark .shiki span {
 
     --plyr-audio-controls-background: #fff;
     --plyr-audio-control-background-hover: var(--plyr-color-main);
-    --plyr-audio-control-color: hsl(216: 15%: 34%);
+    --plyr-audio-control-color: hsl(216, 15%, 34%);
     --plyr-audio-control-color-hover: #fff;
 
     --plyr-video-control-color: #fff;
