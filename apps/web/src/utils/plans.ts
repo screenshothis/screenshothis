@@ -58,6 +58,6 @@ export const plans: Record<Exclude<PlanType, "free">, Plan> = {
 		extraScreenshotsCost: 0.0005,
 		buttonStyle: "stroke",
 		buttonType: "primary",
-		buttonLabel: "Contact Us",
+		buttonLabel: "Get Started",
 	},
 };
