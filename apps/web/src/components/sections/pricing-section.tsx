@@ -213,7 +213,34 @@ function PlanButton({ plan, planKey }: { plan: Plan; planKey: string }) {
 		},
 		onSuccess: ({ url }) => {
 			if (url) {
-				window.location.href = url;
+				const trustedDomains = ["polar.sh"];
+
+				try {
+					const urlObj = new URL(url);
+					if (trustedDomains.includes(urlObj.hostname)) {
+						window.location.href = url;
+					} else {
+						console.error("Untrusted redirect URL:", url);
+						toast.custom((t) => (
+							<ToastAlert.Root
+								t={t}
+								$status="error"
+								$variant="filled"
+								message="Invalid checkout URL. Please contact support."
+							/>
+						));
+					}
+				} catch (e) {
+					console.error("Invalid URL format:", url, e);
+					toast.custom((t) => (
+						<ToastAlert.Root
+							t={t}
+							$status="error"
+							$variant="filled"
+							message="Invalid checkout URL format. Please contact support."
+						/>
+					));
+				}
 				return;
 			}
 
