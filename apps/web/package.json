@@ -36,6 +36,7 @@
 		"@trpc/server": "11.1.2",
 		"@trpc/tanstack-react-query": "11.1.2",
 		"@uidotdev/usehooks": "2.4.1",
+		"@vidstack/react": "1.12.13",
 		"ai": "4.3.16",
 		"better-auth": "1.2.8",
 		"clsx": "2.1.1",
