@@ -277,7 +277,10 @@ function PlanButton({ plan, planKey }: { plan: Plan; planKey: string }) {
 		>
 			{isLoggedIn ? (
 				isPending ? (
-					"Loading..."
+					<>
+						<span className="mr-2 inline-block animate-spin">↻</span>
+						Processing...
+					</>
 				) : (
 					plan.buttonLabel
 				)
