@@ -58,7 +58,7 @@
 		"ts-case-convert": "2.1.0",
 		"unenv": "1.10.0",
 		"vinxi": "0.5.6",
-		"zod": "3.25.9",
+		"zod": "3.25.12",
 		"zustand": "5.0.4"
 	},
 	"devDependencies": {

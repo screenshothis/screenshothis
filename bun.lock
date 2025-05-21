@@ -40,7 +40,7 @@
         "ts-case-convert": "2.1.0",
         "unique-username-generator": "1.4.0",
         "wildcard-match": "5.1.4",
-        "zod": "3.25.9",
+        "zod": "3.25.12",
       },
       "devDependencies": {
         "@epic-web/config": "1.21.0",
@@ -99,7 +99,7 @@
         "ts-case-convert": "2.1.0",
         "unenv": "1.10.0",
         "vinxi": "0.5.6",
-        "zod": "3.25.9",
+        "zod": "3.25.12",
         "zustand": "5.0.4",
       },
       "devDependencies": {
@@ -131,7 +131,7 @@
     "packages/common": {
       "name": "@screenshothis/common",
       "dependencies": {
-        "zod": "3.25.9",
+        "zod": "3.25.12",
       },
       "devDependencies": {
         "@types/bun": "1.2.13",
@@ -157,7 +157,7 @@
       "dependencies": {
         "@tanstack/zod-adapter": "1.120.5",
         "ts-case-convert": "2.1.0",
-        "zod": "3.25.9",
+        "zod": "3.25.12",
       },
       "devDependencies": {
         "@types/bun": "1.2.13",
@@ -3142,7 +3142,7 @@
 
     "zip-stream": ["zip-stream@6.0.1", "", { "dependencies": { "archiver-utils": "^5.0.0", "compress-commons": "^6.0.2", "readable-stream": "^4.0.0" } }, "sha512-zK7YHHz4ZXpW89AHXUPbQVGKI7uvkd3hzusTdotCg1UxyaVtg0zFJSTfW/Dq5f7OBBVnq6cZIaC8Ti4hb6dtCA=="],
 
-    "zod": ["zod@3.25.9", "", {}, "sha512-ho97WAF12mhTHd6/1lBbAPJP0cWKvWra6Stl2Tw93EBsIMoHME3bhGUGBXT0AaVmIWtOB1cFh98T+wb9RClo7g=="],
+    "zod": ["zod@3.25.12", "", {}, "sha512-A8e9eiwm2L5YEupdjn1YcxL1ZDWuL3Bc4JKvLwUrpKZZtRUDOijR7XXsV5WMuUCZPc1tFYO5yfH14STI08MquA=="],
 
     "zod-to-json-schema": ["zod-to-json-schema@3.24.5", "", { "peerDependencies": { "zod": "^3.24.1" } }, "sha512-/AuWwMP+YqiPbsJx5D6TfgRTc4kTLjsh5SOcd4bLsfUg2RcEXrFMJl1DGgdHy2aCfsIA/cr/1JM0xcB2GZji8g=="],
 
