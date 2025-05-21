@@ -136,6 +136,7 @@ export function GetStartedSection({
 										type: "video/webm",
 									},
 								]}
+								load="visible"
 							>
 								<MediaProvider />
 								<PlyrLayout icons={plyrLayoutIcons} />
