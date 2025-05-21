@@ -27,7 +27,7 @@ type GetOrCreateScreenshotParams = ObjectToCamel<
 	z.infer<typeof CreateScreenshotSchema>
 >;
 
-const limit = pLimit(5);
+const limit = pLimit(10);
 
 export async function getOrCreateScreenshot(
 	workspaceId: string,
