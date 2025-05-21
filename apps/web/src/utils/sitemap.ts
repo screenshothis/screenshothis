@@ -27,7 +27,7 @@ export const sitemap: Sitemap<TRoutes> = {
 			changeFrequency: "daily",
 		},
 		"/legal/$": async () => {
-			return ["privacy", "terms"].map((page) => ({
+			return ["policy", "terms"].map((page) => ({
 				path: `/legal/${page}`,
 				priority: 0.8,
 				changeFrequency: "daily",
