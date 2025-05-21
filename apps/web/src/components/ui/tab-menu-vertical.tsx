@@ -85,7 +85,7 @@ function TabMenuVerticalIcon<T extends React.ElementType>({
 		/>
 	);
 }
-TabMenuVerticalIcon.displayName = "TabsVerticalIcon";
+TabMenuVerticalIcon.displayName = "TabMenuVerticalIcon";
 
 function TabMenuVerticalArrowIcon<T extends React.ElementType>({
 	className,
