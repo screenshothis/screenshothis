@@ -3,6 +3,7 @@ import CheckmarkCircle02SolidIcon from "virtual:icons/hugeicons/checkmark-circle
 import CreditCardIcon from "virtual:icons/hugeicons/credit-card";
 import InformationCircleSolidIcon from "virtual:icons/hugeicons/information-circle-solid";
 
+import { useMutation } from "@tanstack/react-query";
 import { Link, useRouteContext } from "@tanstack/react-router";
 import type * as React from "react";
 
@@ -11,6 +12,8 @@ import { currencyFormatter } from "#/utils/currency.ts";
 import { env } from "#/utils/env.ts";
 import { type Plan, plans } from "#/utils/plans.ts";
 import { Button } from "../ui/button.tsx";
+import * as ToastAlert from "../ui/toast-alert.tsx";
+import { toast } from "../ui/toast.tsx";
 
 type PricingSectionProps = React.ComponentPropsWithRef<"section"> & {
 	containerClassName?: string;
@@ -195,27 +198,35 @@ function PlanButton({ plan, planKey }: { plan: Plan; planKey: string }) {
 		from: "__root__",
 	});
 	const isLoggedIn = !!context.session?.id;
+	// FIXME: This is a hack to get the checkout URL, we need to wait for a fix for the AuthClient (Polar)
+	const { mutateAsync: checkout, isPending } = useMutation({
+		mutationFn: async (body: { slug: string }) => {
+			return fetch(`${env.VITE_SERVER_URL}/auth/checkout`, {
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json",
+				},
+				body: JSON.stringify(body),
+				credentials: "include",
+				redirect: "follow",
+			}).then((res) => res.json()) as Promise<{ url: string }>;
+		},
+		onSuccess: ({ url }) => {
+			if (url) {
+				window.location.href = url;
+				return;
+			}
 
-	// TODO: this is handy for now, but we should use the auth client to handle this
-	const handleSubscribe = async () => {
-		const response = await fetch(`${env.VITE_SERVER_URL}/auth/checkout`, {
-			method: "POST",
-			headers: {
-				"Content-Type": "application/json",
-			},
-			body: JSON.stringify({
-				slug: planKey,
-			}),
-			credentials: "include",
-			redirect: "follow",
-		});
-
-		if (response.ok) {
-			const data = (await response.json()) as { url: string };
-
-			window.location.href = data.url;
-		}
-	};
+			toast.custom((t) => (
+				<ToastAlert.Root
+					t={t}
+					$status="error"
+					$variant="filled"
+					message="An unknown error occurred. Please try again."
+				/>
+			));
+		},
+	});
 
 	return (
 		<Button
@@ -227,10 +238,22 @@ function PlanButton({ plan, planKey }: { plan: Plan; planKey: string }) {
 				plan.isFeatured &&
 					"bg-white text-primary hover:bg-orange-600 hover:text-white",
 			)}
-			onClick={isLoggedIn ? handleSubscribe : undefined}
+			disabled={isPending}
+			onClick={
+				isLoggedIn
+					? () =>
+							void checkout({
+								slug: planKey,
+							})
+					: undefined
+			}
 		>
 			{isLoggedIn ? (
-				plan.buttonLabel
+				isPending ? (
+					"Loading..."
+				) : (
+					plan.buttonLabel
+				)
 			) : (
 				<Link to="/register">{plan.buttonLabel}</Link>
 			)}
