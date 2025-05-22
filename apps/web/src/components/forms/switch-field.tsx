@@ -16,12 +16,13 @@ export function SwitchField({
 	labelClassName,
 	hint,
 	hintClassName,
+	id: idProp,
 	...rest
 }: SwitchFieldProps) {
 	const field = useFieldContext<boolean>();
 	const errors = useStore(field.store, (state) => state.meta.errors);
 	const generatedId = React.useId();
-	const id = rest.id || generatedId;
+	const id = idProp || generatedId;
 
 	const error = errors.map((error) => error.message).join(" ");
 

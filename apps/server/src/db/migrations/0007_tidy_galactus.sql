@@ -1,0 +1,1 @@
+ALTER TABLE "screenshots" ALTER COLUMN "cache_ttl" DROP NOT NULL;
