@@ -98,9 +98,18 @@ export async function enqueueScreenshotJob(
 		);
 	}
 
-	const result = (await job.waitUntilFinished(queueEvents)) as {
-		key: string;
-		created: boolean;
-	};
+	const result = await Promise.race([
+		job.waitUntilFinished(queueEvents) as Promise<{
+			key: string;
+			created: boolean;
+		}>,
+		new Promise<never>((_, reject) => {
+			setTimeout(
+				() => reject(new Error("Screenshot generation timed out")),
+				30000,
+			);
+		}),
+	]);
+
 	return result;
 }
