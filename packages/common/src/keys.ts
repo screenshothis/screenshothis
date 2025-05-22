@@ -51,7 +51,7 @@ export const THIRTY_DAYS_MS = BigInt(30 * 24 * 60 * 60 * 1_000); // 30 days
 export const keyLimits: Record<PlanType, Limit> = {
 	free: {
 		rateLimitTimeWindow: 60 * 1000, // 1 minute
-		rateLimitMax: 60, // 60 requests per minute
+		rateLimitMax: 10, // 10 requests per minute
 		rateLimitEnabled: true,
 		metadata: {
 			totalRequests: 0,
@@ -65,7 +65,7 @@ export const keyLimits: Record<PlanType, Limit> = {
 	},
 	lite: {
 		rateLimitTimeWindow: 60 * 1000, // 1 minute
-		rateLimitMax: 400, // 400 requests per minute
+		rateLimitMax: 60, // 60 requests per minute
 		rateLimitEnabled: true,
 		metadata: {
 			totalRequests: 0,
@@ -79,7 +79,7 @@ export const keyLimits: Record<PlanType, Limit> = {
 	},
 	pro: {
 		rateLimitTimeWindow: 60 * 1000, // 1 minute
-		rateLimitMax: 600, // 600 requests per minute
+		rateLimitMax: 300, // 300 requests per minute
 		rateLimitEnabled: true,
 		metadata: {
 			totalRequests: 0,
@@ -93,7 +93,7 @@ export const keyLimits: Record<PlanType, Limit> = {
 	},
 	enterprise: {
 		rateLimitTimeWindow: 60 * 1000, // 1 minute
-		rateLimitMax: 6000, // 6000 requests per minute
+		rateLimitMax: 3000, // 3000 requests per minute
 		rateLimitEnabled: true,
 		metadata: {
 			totalRequests: 0,
