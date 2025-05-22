@@ -49,6 +49,10 @@ export function CodeSection({
 						src="/img/tanstack.jpeg"
 						alt="Showcase showing Tanstack.com"
 						className="aspect-video rounded-8 bg-(--bg-white-0) shadow-2xl outline outline-(--stroke-soft-200)"
+						loading="eager"
+						fetchPriority="high"
+						width={1920}
+						height={1080}
 					/>
 				</div>
 			</div>
