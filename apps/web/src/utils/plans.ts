@@ -32,7 +32,7 @@ export const plans: Record<Exclude<PlanType, "free">, Plan> = {
 	},
 	pro: {
 		name: "Pro",
-		price: 15,
+		price: 19.99,
 		isFeatured: true,
 		features: [
 			"<strong>10,000 Screenshots</strong> are included",
