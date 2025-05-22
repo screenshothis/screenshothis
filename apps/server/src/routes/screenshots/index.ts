@@ -65,11 +65,16 @@ const screenshots = new OpenAPIHono<{ Variables: Variables }>().openapi(
 			const jobPromise = enqueueScreenshotJob(workspaceId, userId, queryParams);
 
 			const TIMEOUT_MS = 15_000;
-			const timer = new Promise<"timeout">((resolve) =>
-				setTimeout(() => resolve("timeout" as const), TIMEOUT_MS),
-			);
+			let timeoutId: ReturnType<typeof setTimeout> | null = null;
+			const timer = new Promise<"timeout">((resolve) => {
+				timeoutId = setTimeout(() => resolve("timeout" as const), TIMEOUT_MS);
+			});
 
 			const raceResult = await Promise.race([jobPromise, timer]);
+
+			if (timeoutId) {
+				clearTimeout(timeoutId);
+			}
 
 			const headers = new Headers();
 			let body: ArrayBuffer | Buffer | null = null;
