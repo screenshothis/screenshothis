@@ -9,10 +9,11 @@ import { eq, sql } from "drizzle-orm";
 
 import { db } from "#/db";
 import * as schema from "#/db/schema";
+import { env } from "#/utils/env";
 import { getOrCreateScreenshot } from "#/utils/screenshot";
 
 const connection: ConnectionOptions = {
-	url: process.env.REDIS_URL || "redis://127.0.0.1:6379",
+	url: env.REDIS_URL,
 };
 
 const QUEUE_NAME = "screenshot-generation";

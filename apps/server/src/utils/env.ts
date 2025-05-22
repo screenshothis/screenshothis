@@ -32,7 +32,7 @@ export const env = createEnv({
 		DEFAULT_API_KEY_PREFIX: z.string(),
 		GOOGLE_CLIENT_ID: z.string(),
 		GOOGLE_CLIENT_SECRET: z.string(),
-		REDIS_URL: z.string().optional(),
+		REDIS_URL: z.string().optional().default("redis://127.0.0.1:6379"),
 	},
 	runtimeEnv: process.env,
 	emptyStringAsUndefined: true,
