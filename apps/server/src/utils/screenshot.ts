@@ -198,7 +198,9 @@ export async function getOrCreateScreenshot(
 					>,
 					prefersColorScheme,
 					prefersReducedMotion,
-					duration: Number(((Date.now() - startTime) / 1000).toFixed(2)),
+					duration: Number.parseFloat(
+						((Date.now() - startTime) / 1000).toFixed(2),
+					),
 					workspaceId,
 				})
 				.returning();
