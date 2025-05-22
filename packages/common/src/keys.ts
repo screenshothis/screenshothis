@@ -65,14 +65,14 @@ export const keyLimits: Record<PlanType, Limit> = {
 	},
 	lite: {
 		rateLimitTimeWindow: 60 * 1000, // 1 minute
-		rateLimitMax: 300, // 300 requests per minute
+		rateLimitMax: 400, // 400 requests per minute
 		rateLimitEnabled: true,
 		metadata: {
 			totalRequests: 0,
-			totalAllowedRequests: 1000,
-			remainingRequests: 1000,
+			totalAllowedRequests: 2000,
+			remainingRequests: 2000,
 			plan: "lite",
-			refillAmount: 1000,
+			refillAmount: 2000,
 			refillInterval: THIRTY_DAYS_MS,
 			isExtraEnabled: true,
 		},

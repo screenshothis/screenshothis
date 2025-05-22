@@ -1,5 +1,6 @@
-import type { ButtonProps } from "#/components/ui/button.tsx";
 import type { PlanType } from "@screenshothis/schemas/plan";
+
+import type { ButtonProps } from "#/components/ui/button.tsx";
 
 export type Plan = {
 	name: string;
@@ -16,10 +17,10 @@ export type Plan = {
 export const plans: Record<Exclude<PlanType, "free">, Plan> = {
 	lite: {
 		name: "Lite",
-		price: 5,
+		price: 9.99,
 		features: [
-			"<strong>1,000 Screenshots</strong> are included",
-			"<strong>300 requests</strong> each minute",
+			"<strong>2,000 Screenshots</strong> are included",
+			"<strong>400 requests</strong> each minute",
 			"Blocks ads and cookie banners",
 			"Takes full-page screenshots",
 			"Includes caching <sup class='text-sub text-primary'>1</sup>",
