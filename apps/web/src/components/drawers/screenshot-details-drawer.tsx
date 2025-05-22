@@ -88,6 +88,13 @@ export function ScreenshotDetailsDrawer() {
 									{ label: "Selector", value: screenshot.selector ?? "N/A" },
 									{ label: "Format", value: screenshot.format },
 									{
+										label: "Duration",
+										value:
+											screenshot.duration !== undefined
+												? `${screenshot.duration}s`
+												: "N/A",
+									},
+									{
 										label: "Created",
 										value: screenshot.createdAt
 											? format(screenshot.createdAt, "PPpp")
