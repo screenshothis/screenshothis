@@ -90,6 +90,7 @@ const screenshots = new OpenAPIHono<{ Variables: Variables }>().openapi(
 					"no-cache, no-store, must-revalidate, proxy-revalidate, max-age=0",
 				);
 				headers.set("CDN-Cache-Control", "no-cache, no-store, max-age=0");
+				headers.set("Content-Length", String(PLACEHOLDER_IMAGE.length));
 			} else {
 				const { key: objectKey } = raceResult as {
 					key: string;
