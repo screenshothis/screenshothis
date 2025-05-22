@@ -186,11 +186,14 @@ export function ScreenshotDetailsDrawer() {
 									},
 									{
 										label: "Cache TTL",
-										value: screenshot.cacheTtl,
+										value:
+											screenshot.cacheTtl !== undefined
+												? screenshot.cacheTtl
+												: "N/A",
 									},
 									{
 										label: "Cache Key",
-										value: screenshot.cacheKey,
+										value: screenshot.cacheKey ?? "N/A",
 									},
 								]}
 								loading={isLoading}
