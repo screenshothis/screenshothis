@@ -1,14 +1,17 @@
 import { OpenAPIHono, createRoute, z } from "@hono/zod-openapi";
 import { CreateScreenshotSchema } from "@screenshothis/schemas/screenshots";
-import { eq, sql } from "drizzle-orm";
 import { objectToCamel } from "ts-case-convert";
 
 import type { Variables } from "#/common/environment";
-import { db } from "#/db";
-import * as schema from "#/db/schema";
 import { auth } from "#/lib/auth";
+import { s3 } from "#/lib/s3";
+import { enqueueScreenshotJob } from "#/lib/screenshot-queue";
 import { createErrorResponse } from "#/utils/errors";
-import { getOrCreateScreenshot } from "#/utils/screenshot";
+
+const PLACEHOLDER_IMAGE = Buffer.from(
+	"iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO5K7f0AAAAASUVORK5CYII=",
+	"base64",
+);
 
 const screenshots = new OpenAPIHono<{ Variables: Variables }>().openapi(
 	createRoute({
@@ -51,66 +54,77 @@ const screenshots = new OpenAPIHono<{ Variables: Variables }>().openapi(
 				},
 			});
 
-			if (!valid) {
+			if (!valid || !key || !key.metadata?.workspaceId) {
 				return c.json({ error: "Unauthorized" }, 401);
 			}
 
-			if (!key) {
-				return c.json({ error: "Unauthorized" }, 401);
-			}
+			const queryParams = c.req.valid("query");
+			const workspaceId = key.metadata.workspaceId;
+			const userId = key.userId;
 
-			if (!key.metadata?.workspaceId) {
-				return c.json({ error: "Unauthorized" }, 401);
-			}
+			const jobPromise = enqueueScreenshotJob(workspaceId, userId, queryParams);
 
-			const { object, created } = await getOrCreateScreenshot(
-				key.metadata.workspaceId,
-				c.req.valid("query"),
+			const TIMEOUT_MS = 15_000;
+			const timer = new Promise<"timeout">((resolve) =>
+				setTimeout(() => resolve("timeout" as const), TIMEOUT_MS),
 			);
 
-			if (!object) {
-				// If object is null, either unauthorized origin or other error
-				return c.json({ error: "Unauthorized" }, 401);
+			const raceResult = await Promise.race([jobPromise, timer]);
+
+			const headers = new Headers();
+			let body: ArrayBuffer | Buffer | null = null;
+			let contentType: string;
+
+			if (raceResult === "timeout") {
+				// Return 1x1 placeholder and allow client to retry
+				body = PLACEHOLDER_IMAGE;
+				contentType = "image/png";
+				// Prevent caching of placeholder so user can retry quickly
+				headers.set(
+					"Cache-Control",
+					"no-cache, no-store, must-revalidate, proxy-revalidate, max-age=0",
+				);
+				headers.set("CDN-Cache-Control", "no-cache, no-store, max-age=0");
+			} else {
+				const { key: objectKey } = raceResult as {
+					key: string;
+					created: boolean;
+				};
+				if (!objectKey) {
+					return c.json({ error: "Unauthorized" }, 401);
+				}
+				try {
+					body = await s3.file(objectKey).arrayBuffer();
+				} catch (e) {
+					return c.json({ error: "Screenshot not available" }, 404);
+				}
+				contentType = `image/${queryParams.format}`;
+
+				if (queryParams.isCached) {
+					const cacheTtl = queryParams.cacheTtl;
+					headers.set(
+						"Cache-Control",
+						`public, max-age=${cacheTtl}, s-maxage=${cacheTtl}, stale-while-revalidate=${cacheTtl}, durable`,
+					);
+					headers.set(
+						"CDN-Cache-Control",
+						`max-age=${cacheTtl}, stale-while-revalidate=${cacheTtl}, durable`,
+					);
+				} else {
+					headers.set(
+						"Cache-Control",
+						"no-cache, no-store, must-revalidate, proxy-revalidate, max-age=0",
+					);
+					headers.set(
+						"CDN-Cache-Control",
+						"no-cache, no-store, must-revalidate, proxy-revalidate, max-age=0",
+					);
+				}
 			}
 
-			const contentType = `image/${c.req.valid("query").format}`;
-			const headers = new Headers();
 			headers.set("Content-Type", contentType);
 
-			if (created) {
-				await db
-					.update(schema.requestLimits)
-					.set({
-						totalRequests: sql`${schema.requestLimits.totalRequests} + 1`,
-						remainingRequests: sql`${schema.requestLimits.remainingRequests} - 1`,
-					})
-					.where(eq(schema.requestLimits.userId, key.userId));
-			}
-
-			if (c.req.valid("query").isCached) {
-				const cacheTtl = c.req.valid("query").cacheTtl;
-				headers.set(
-					"Cache-Control",
-					`public, max-age=${cacheTtl}, s-maxage=${cacheTtl}, stale-while-revalidate=${cacheTtl}, durable`,
-				);
-				headers.set(
-					"CDN-Cache-Control",
-					`max-age=${cacheTtl}, stale-while-revalidate=${cacheTtl}, durable`,
-				);
-			} else {
-				headers.set(
-					"Cache-Control",
-					"no-cache, no-store, must-revalidate, proxy-revalidate, max-age=0",
-				);
-				headers.set(
-					"CDN-Cache-Control",
-					"no-cache, no-store, must-revalidate, proxy-revalidate, max-age=0",
-				);
-			}
-
-			return c.body(object, {
-				headers,
-			});
+			return c.body(body, { headers });
 		} catch (error) {
 			const errorResponse = createErrorResponse(error, c.get("requestId"));
 
