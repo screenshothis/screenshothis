@@ -96,7 +96,9 @@ const screenshots = new OpenAPIHono<{ Variables: Variables }>().openapi(
 				try {
 					body = await s3.file(objectKey).arrayBuffer();
 				} catch (e) {
-					return c.json({ error: "Screenshot not available" }, 404);
+					return c.json({ error: "Screenshot not ready" }, 503, {
+						headers: ["Retry-After: 5"],
+					});
 				}
 				contentType = `image/${queryParams.format}`;
 
