@@ -126,3 +126,12 @@ export async function enqueueScreenshotJob(
 
 	return result;
 }
+
+export const worker = screenshotWorker;
+
+export async function shutdownWorker() {
+	console.log("Closing screenshot worker...");
+	await screenshotWorker.close();
+	await screenshotQueue.close();
+	console.log("Screenshot worker closed");
+}
