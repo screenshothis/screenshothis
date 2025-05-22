@@ -90,6 +90,10 @@ export async function enqueueScreenshotJob(
 			{
 				jobId,
 				removeOnComplete: 1000,
+				removeOnFail: {
+					count: 1000,
+					age: 24 * 3600, // 24 hours
+				},
 			},
 		);
 	}
