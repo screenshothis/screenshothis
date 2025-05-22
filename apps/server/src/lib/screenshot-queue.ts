@@ -69,7 +69,9 @@ function buildJobKey(
 	workspaceId: string,
 	params: ScreenshotJobParams["params"],
 ): string {
-	const raw = workspaceId + JSON.stringify(params);
+	// Sort keys to ensure consistent string representation
+	const sortedParams = JSON.stringify(params, Object.keys(params).sort());
+	const raw = workspaceId + sortedParams;
 	// Bun.hash returns a 64-bit bigint which we convert to hex string
 	return Bun.hash(raw).toString(16);
 }
