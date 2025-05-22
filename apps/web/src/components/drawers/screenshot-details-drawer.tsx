@@ -176,6 +176,25 @@ export function ScreenshotDetailsDrawer() {
 								]}
 								loading={isLoading}
 							/>
+
+							<Section
+								title="Caching"
+								items={[
+									{
+										label: "Cache",
+										value: screenshot.isCached ? "Yes" : "No",
+									},
+									{
+										label: "Cache TTL",
+										value: screenshot.cacheTtl,
+									},
+									{
+										label: "Cache Key",
+										value: screenshot.cacheKey,
+									},
+								]}
+								loading={isLoading}
+							/>
 						</div>
 					)}
 				</Drawer.Body>
