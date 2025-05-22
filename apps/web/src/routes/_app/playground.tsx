@@ -461,7 +461,7 @@ function RouteComponent() {
 															inputMode="numeric"
 															name="cache_ttl"
 															placeholder="3600"
-															hint="The time to live of the cache in seconds."
+															hint="The time to live of the cache in seconds (min: 3600, max: 31622400)."
 														/>
 													)}
 												/>
