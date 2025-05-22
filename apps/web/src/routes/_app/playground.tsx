@@ -450,7 +450,7 @@ function RouteComponent() {
 												)}
 											/>
 
-											<div className="grid grid-cols-2 gap-2">
+											<div className="grid grid-cols-2 gap-3">
 												<form.AppField
 													name="cache_ttl"
 													children={(field) => (
