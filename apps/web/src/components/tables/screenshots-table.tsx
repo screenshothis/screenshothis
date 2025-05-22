@@ -1,7 +1,6 @@
 import MoreVerticalIcon from "virtual:icons/hugeicons/more-vertical";
 
 import type { ScreenshotSchema } from "@screenshothis/schemas/screenshots";
-import { Link } from "@tanstack/react-router";
 import {
 	type ColumnDef,
 	flexRender,
@@ -15,7 +14,7 @@ import type { z } from "zod";
 
 import { useScreenshotDetails } from "#/store/screenshot-details.ts";
 import { cn } from "#/utils/cn.ts";
-import * as Button from "../ui/button-primitives.tsx";
+import { Button } from "../ui/button.tsx";
 import * as Table from "../ui/table.tsx";
 
 type ScreenshotDataType = ObjectToCamel<z.infer<typeof ScreenshotSchema>>;
@@ -68,23 +67,19 @@ const columns: ColumnDef<ScreenshotDataType>[] = [
 		},
 	},
 	{
-		id: "actions",
+		id: "details",
 		enableHiding: false,
 		cell() {
 			return (
-				<Button.Root
+				<Button
+					leadingIcon={MoreVerticalIcon}
+					leadingIconClassName="size-6"
 					$size="xs"
 					$style="ghost"
 					$type="neutral"
-					asChild
-					onClick={(e) => {
-						e.stopPropagation();
-					}}
 				>
-					<Link to="/screenshots">
-						<Button.Icon as={MoreVerticalIcon} className="size-6" />
-					</Link>
-				</Button.Root>
+					<span className="sr-only">Open details</span>
+				</Button>
 			);
 		},
 		meta: {
