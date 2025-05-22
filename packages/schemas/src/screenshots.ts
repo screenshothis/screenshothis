@@ -78,6 +78,12 @@ export const ScreenshotSchema = z.object({
 	prefers_reduced_motion:
 		PrefersReducedMotionSchema.optional().default("no-preference"),
 	duration: z.number().optional(),
+	is_cached: z
+		.preprocess((val) => String(val).toLowerCase() === "true", z.boolean())
+		.optional()
+		.default(false),
+	cache_ttl: z.number().min(3600).max(31622400).optional().default(3600),
+	cache_key: z.string().optional(),
 	created_at: z.date().nullish(),
 	updated_at: z.date().nullish(),
 });

@@ -55,6 +55,9 @@ export async function getOrCreateScreenshot(
 			blockResources,
 			prefersColorScheme,
 			prefersReducedMotion,
+			isCached,
+			cacheTtl,
+			cacheKey,
 		} = params;
 
 		const existing = await db.query.screenshots.findFirst({
@@ -76,6 +79,9 @@ export async function getOrCreateScreenshot(
 				eq(screenshots.prefersColorScheme, prefersColorScheme),
 				eq(screenshots.prefersReducedMotion, prefersReducedMotion),
 				eq(screenshots.workspaceId, workspaceId),
+				eq(screenshots.isCached, isCached),
+				cacheTtl ? eq(screenshots.cacheTtl, cacheTtl) : undefined,
+				cacheKey ? eq(screenshots.cacheKey, cacheKey) : undefined,
 			),
 		});
 
@@ -198,6 +204,9 @@ export async function getOrCreateScreenshot(
 					>,
 					prefersColorScheme,
 					prefersReducedMotion,
+					isCached,
+					cacheTtl,
+					cacheKey,
 					duration: Number.parseFloat(
 						((Date.now() - startTime) / 1000).toFixed(2),
 					),

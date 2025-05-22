@@ -87,11 +87,26 @@ const screenshots = new OpenAPIHono<{ Variables: Variables }>().openapi(
 					.where(eq(schema.requestLimits.userId, key.userId));
 			}
 
-			headers.set("Cache-Control", "public, max-age=3600");
-			headers.set(
-				"CDN-Cache-Control",
-				"max-age=3600, stale-while-revalidate=3600, durable",
-			);
+			if (c.req.valid("query").isCached) {
+				const cacheTtl = c.req.valid("query").cacheTtl;
+				headers.set(
+					"Cache-Control",
+					`public, max-age=${cacheTtl}, s-maxage=${cacheTtl}, stale-while-revalidate=${cacheTtl}, durable`,
+				);
+				headers.set(
+					"CDN-Cache-Control",
+					`max-age=${cacheTtl}, stale-while-revalidate=${cacheTtl}, durable`,
+				);
+			} else {
+				headers.set(
+					"Cache-Control",
+					"no-cache, no-store, must-revalidate, proxy-revalidate, max-age=0",
+				);
+				headers.set(
+					"CDN-Cache-Control",
+					"no-cache, no-store, must-revalidate, proxy-revalidate, max-age=0",
+				);
+			}
 
 			return c.body(object, {
 				headers,

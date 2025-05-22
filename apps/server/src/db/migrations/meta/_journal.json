@@ -36,6 +36,34 @@
       "when": 1747897808392,
       "tag": "0004_equal_dagger",
       "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1747929091130,
+      "tag": "0005_furry_human_torch",
+      "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1747929339850,
+      "tag": "0006_brown_lockheed",
+      "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1747929465530,
+      "tag": "0007_tidy_galactus",
+      "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "7",
+      "when": 1747929481948,
+      "tag": "0008_reflective_mindworm",
+      "breakpoints": true
     }
   ]
 }

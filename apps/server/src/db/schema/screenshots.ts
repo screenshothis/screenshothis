@@ -52,6 +52,9 @@ export const screenshots = pgTable("screenshots", {
 		.notNull()
 		.$type<z.infer<typeof PrefersReducedMotionSchema>>()
 		.default("no-preference"),
+	isCached: boolean("is_cached").notNull().default(false),
+	cacheTtl: integer("cache_ttl").default(3600),
+	cacheKey: text("cache_key"),
 	isExtra: boolean("is_extra").notNull().default(false),
 	workspaceId: text("workspace_id")
 		.notNull()

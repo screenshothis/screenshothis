@@ -1,5 +1,6 @@
 import AdvertisimentIcon from "virtual:icons/hugeicons/advertisiment";
 import CropIcon from "virtual:icons/hugeicons/crop";
+import Database02Icon from "virtual:icons/hugeicons/database-02";
 import DocumentCode01Icon from "virtual:icons/hugeicons/document-code";
 import EaseInOutIcon from "virtual:icons/hugeicons/ease-in-out";
 import Image01Icon from "virtual:icons/hugeicons/image-01";
@@ -100,6 +101,9 @@ function RouteComponent() {
 				`   &prefers_color_scheme=${values.prefers_color_scheme}`,
 			values.prefers_reduced_motion &&
 				`   &prefers_reduced_motion=${values.prefers_reduced_motion}`,
+			values.is_cached && `   &is_cached=${values.is_cached}`,
+			values.cache_ttl && `   &cache_ttl=${values.cache_ttl}`,
+			values.cache_key && `   &cache_key=${values.cache_key}`,
 		]
 			.filter(Boolean)
 			.join("\n");
@@ -422,6 +426,58 @@ function RouteComponent() {
 													/>
 												)}
 											/>
+										</Accordion.Content>
+									</Accordion.Item>
+
+									<Accordion.Item value="caching">
+										<Accordion.Trigger>
+											<Accordion.Icon as={Database02Icon} />
+											Caching
+											<Accordion.Arrow />
+										</Accordion.Trigger>
+
+										<Accordion.Content className="mt-2 grid gap-3 px-7.5">
+											<form.AppField
+												name="is_cached"
+												children={(field) => (
+													<field.SwitchField
+														wrapperClassName="flex"
+														labelClassName="order-last"
+														label="Cache the image"
+														name="is_cached"
+														id="is_cached"
+													/>
+												)}
+											/>
+
+											<div className="grid grid-cols-2 gap-3">
+												<form.AppField
+													name="cache_ttl"
+													children={(field) => (
+														<field.TextField
+															label="Cache TTL"
+															type="number"
+															id="cache_ttl"
+															inputMode="numeric"
+															name="cache_ttl"
+															placeholder="3600"
+															hint="The time to live of the cache in seconds (min: 3600, max: 31622400)."
+														/>
+													)}
+												/>
+
+												<form.AppField
+													name="cache_key"
+													children={(field) => (
+														<field.TextField
+															label="Cache key"
+															name="cache_key"
+															placeholder="my-custom-key"
+															id="cache_key"
+														/>
+													)}
+												/>
+											</div>
 										</Accordion.Content>
 									</Accordion.Item>
 								</Accordion.Root>
