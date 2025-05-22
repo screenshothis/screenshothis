@@ -53,6 +53,20 @@ const columns: ColumnDef<ScreenshotDataType>[] = [
 		},
 	},
 	{
+		header: "Duration",
+		accessorKey: "duration",
+		accessorFn: (row) => row.duration,
+		cell({ row }) {
+			return (
+				<div className="text-(--text-sub-600) text-paragraph-sm">
+					{row.original.duration !== undefined
+						? `${row.original.duration}s`
+						: "N/A"}
+				</div>
+			);
+		},
+	},
+	{
 		header: "Generated at",
 		accessorKey: "createdAt",
 		accessorFn: (row) => row.createdAt,

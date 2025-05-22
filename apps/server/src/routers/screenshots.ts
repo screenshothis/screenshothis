@@ -103,6 +103,7 @@ export const screenshotsRouter = {
 					blockResources: true,
 					prefersColorScheme: true,
 					prefersReducedMotion: true,
+					duration: true,
 					createdAt: true,
 					updatedAt: true,
 				},

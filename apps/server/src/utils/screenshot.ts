@@ -91,6 +91,8 @@ export async function getOrCreateScreenshot(
 			return { object: null, key: null, created: false };
 		}
 
+		const startTime = Date.now();
+
 		const browser = await puppeteer.launch({
 			headless: true,
 			args: ["--no-sandbox", "--disable-setuid-sandbox"],
@@ -196,6 +198,7 @@ export async function getOrCreateScreenshot(
 					>,
 					prefersColorScheme,
 					prefersReducedMotion,
+					duration: Number(((Date.now() - startTime) / 1000).toFixed(2)),
 					workspaceId,
 				})
 				.returning();

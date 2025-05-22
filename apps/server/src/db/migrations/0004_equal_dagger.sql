@@ -1,0 +1,1 @@
+ALTER TABLE "screenshots" ADD COLUMN "duration" real DEFAULT 0 NOT NULL;
