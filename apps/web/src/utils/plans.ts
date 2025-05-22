@@ -20,7 +20,7 @@ export const plans: Record<Exclude<PlanType, "free">, Plan> = {
 		price: 9.99,
 		features: [
 			"<strong>2,000 Screenshots</strong> are included",
-			"<strong>400 requests</strong> each minute",
+			"<strong>60 requests</strong> each minute",
 			"Blocks ads and cookie banners",
 			"Takes full-page screenshots",
 			"Includes caching <sup class='text-sub text-primary'>1</sup>",
