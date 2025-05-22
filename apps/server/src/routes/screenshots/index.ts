@@ -132,7 +132,7 @@ const screenshots = new OpenAPIHono<{ Variables: Variables }>().openapi(
 
 			headers.set("Content-Type", contentType);
 
-			return c.body(body, { headers });
+			return c.body(body ?? new Uint8Array(), { headers });
 		} catch (error) {
 			const errorResponse = createErrorResponse(error, c.get("requestId"));
 
