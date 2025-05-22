@@ -20,7 +20,7 @@
 	},
 	"dependencies": {
 		"@ai-sdk/google": "1.2.18",
-		"@ghostery/adblocker-puppeteer": "2.6.0",
+		"@ghostery/adblocker-puppeteer": "2.6.1",
 		"@hono-storage/core": "0.0.14",
 		"@hono-storage/s3": "0.0.13",
 		"@hono/swagger-ui": "0.5.1",
@@ -48,15 +48,15 @@
 		"ts-case-convert": "2.1.0",
 		"unique-username-generator": "1.4.0",
 		"wildcard-match": "5.1.4",
-		"zod": "3.25.12"
+		"zod": "3.25.20"
 	},
 	"devDependencies": {
 		"@epic-web/config": "1.21.0",
-		"@types/bun": "1.2.13",
+		"@types/bun": "1.2.14",
 		"@types/pg": "8.15.2",
 		"drizzle-kit": "0.31.1",
 		"tsc-alias": "1.8.16",
 		"typescript": "5.8.3"
 	},
-	"packageManager": "bun@1.2.13"
+	"packageManager": "bun@1.2.14"
 }

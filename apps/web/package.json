@@ -59,8 +59,8 @@
 		"ts-case-convert": "2.1.0",
 		"unenv": "1.10.0",
 		"vinxi": "0.5.6",
-		"zod": "3.25.12",
-		"zustand": "5.0.4"
+		"zod": "3.25.20",
+		"zustand": "5.0.5"
 	},
 	"devDependencies": {
 		"@content-collections/core": "0.8.2",
@@ -76,7 +76,7 @@
 		"@tanstack/react-router-devtools": "1.120.6",
 		"@testing-library/dom": "10.4.0",
 		"@testing-library/react": "16.3.0",
-		"@types/react": "19.1.4",
+		"@types/react": "19.1.5",
 		"@types/react-dom": "19.1.5",
 		"@vitejs/plugin-react": "4.4.1",
 		"tailwindcss": "4.1.7",
@@ -87,5 +87,5 @@
 		"vite-plugin-node-polyfills": "0.23.0",
 		"vite-tsconfig-paths": "5.1.4"
 	},
-	"packageManager": "bun@1.2.13"
+	"packageManager": "bun@1.2.14"
 }

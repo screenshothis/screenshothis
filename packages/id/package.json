@@ -10,7 +10,7 @@
 		"base-x": "5.0.1"
 	},
 	"devDependencies": {
-		"@types/bun": "1.2.13"
+		"@types/bun": "1.2.14"
 	},
 	"peerDependencies": {
 		"typescript": "5.8.3"
