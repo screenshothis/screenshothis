@@ -110,4 +110,32 @@ export const screenshotsRouter = {
 
 			return screenshots;
 		}),
+	get: protectedProcedure
+		.input(
+			z.object({
+				id: z.string({ required_error: "Screenshot id is required" }),
+			}),
+		)
+		.handler(async ({ context, input }) => {
+			if (!context.session.activeWorkspaceId) {
+				throw new ORPCError("UNAUTHORIZED", {
+					message: "Current workspace not found",
+				});
+			}
+
+			const screenshot = await db.query.screenshots.findFirst({
+				where: and(
+					eq(schema.screenshots.id, input.id),
+					eq(schema.screenshots.workspaceId, context.session.activeWorkspaceId),
+				),
+			});
+
+			if (!screenshot) {
+				throw new ORPCError("NOT_FOUND", {
+					message: "Screenshot not found",
+				});
+			}
+
+			return screenshot;
+		}),
 };

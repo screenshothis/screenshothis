@@ -13,6 +13,7 @@ import * as React from "react";
 import type { ObjectToCamel } from "ts-case-convert";
 import type { z } from "zod";
 
+import { useScreenshotDetails } from "#/store/screenshot-details.ts";
 import { cn } from "#/utils/cn.ts";
 import * as Button from "../ui/button-primitives.tsx";
 import * as Table from "../ui/table.tsx";
@@ -71,7 +72,15 @@ const columns: ColumnDef<ScreenshotDataType>[] = [
 		enableHiding: false,
 		cell() {
 			return (
-				<Button.Root $size="xs" $style="ghost" $type="neutral" asChild>
+				<Button.Root
+					$size="xs"
+					$style="ghost"
+					$type="neutral"
+					asChild
+					onClick={(e) => {
+						e.stopPropagation();
+					}}
+				>
 					<Link to="/screenshots">
 						<Button.Icon as={MoreVerticalIcon} className="size-6" />
 					</Link>
@@ -85,6 +94,7 @@ const columns: ColumnDef<ScreenshotDataType>[] = [
 ];
 
 export function ScreenshotsTable({ data, total }: ScreenshotsTableProps) {
+	const openDrawer = useScreenshotDetails((s) => s.open);
 	const table = useReactTable({
 		data,
 		columns,
@@ -123,7 +133,11 @@ export function ScreenshotsTable({ data, total }: ScreenshotsTableProps) {
 				{table.getRowModel().rows?.length > 0 &&
 					table.getRowModel().rows.map((row, i, arr) => (
 						<React.Fragment key={row.id}>
-							<Table.Row data-state={row.getIsSelected() && "selected"}>
+							<Table.Row
+								data-state={row.getIsSelected() && "selected"}
+								onClick={() => openDrawer(row.original.id)}
+								className="cursor-pointer hover:bg-(--bg-weak-50)"
+							>
 								{row.getVisibleCells().map((cell) => (
 									<Table.Cell
 										key={cell.id}

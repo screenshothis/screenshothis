@@ -6,9 +6,15 @@ import { zodValidator } from "@tanstack/zod-adapter";
 import { objectToCamel } from "ts-case-convert";
 
 import { DashedDivider } from "#/components/dashed-divider.tsx";
+import { ScreenshotDetailsDrawer } from "#/components/drawers/screenshot-details-drawer.tsx";
 import { ScreenshotsFilter } from "#/components/filters/screenshots-filter.tsx";
 import { PageHeader } from "#/components/page-header.tsx";
 import { ScreenshotsTable } from "#/components/tables/screenshots-table.tsx";
+import type { ScreenshotSchema } from "@screenshothis/schemas/screenshots";
+import type { ObjectToCamel } from "ts-case-convert";
+import type { z } from "zod";
+
+type ScreenshotDataType = ObjectToCamel<z.infer<typeof ScreenshotSchema>>;
 
 export const Route = createFileRoute("/_app/screenshots")({
 	component: RouteComponent,
@@ -49,9 +55,11 @@ function RouteComponent() {
 
 				<ScreenshotsFilter />
 				<ScreenshotsTable
-					data={screenshots ?? []}
+					data={(screenshots ?? []) as Array<ScreenshotDataType>}
 					total={screenshots?.length ?? 0}
 				/>
+
+				<ScreenshotDetailsDrawer />
 			</div>
 		</>
 	);
