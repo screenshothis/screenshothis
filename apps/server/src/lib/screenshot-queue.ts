@@ -14,6 +14,11 @@ import { getOrCreateScreenshot } from "#/utils/screenshot";
 
 const connection: ConnectionOptions = {
 	url: env.REDIS_URL,
+	retryStrategy: (times: number) => {
+		const delay = Math.min(2 ** times * 1000, 10000);
+		console.log(`Redis connection retry attempt ${times} in ${delay}ms`);
+		return delay;
+	},
 };
 
 const QUEUE_NAME = "screenshot-generation";
@@ -36,24 +41,30 @@ const screenshotWorker = new Worker<WorkerJobData>(
 	async (
 		job: Job<WorkerJobData>,
 	): Promise<{ key: string; created: boolean }> => {
-		const { workspaceId, userId, params } = job.data;
+		try {
+			const { workspaceId, userId, params } = job.data;
 
-		const { key: objectKey, created } = await getOrCreateScreenshot(
-			workspaceId,
-			params,
-		);
+			const { key: objectKey, created } = await getOrCreateScreenshot(
+				workspaceId,
+				params,
+			);
 
-		if (created) {
-			await db
-				.update(schema.requestLimits)
-				.set({
-					totalRequests: sql`${schema.requestLimits.totalRequests} + 1`,
-					remainingRequests: sql`${schema.requestLimits.remainingRequests} - 1`,
-				})
-				.where(eq(schema.requestLimits.userId, userId));
+			if (created) {
+				await db
+					.update(schema.requestLimits)
+					.set({
+						totalRequests: sql`${schema.requestLimits.totalRequests} + 1`,
+						remainingRequests: sql`${schema.requestLimits.remainingRequests} - 1`,
+					})
+					.where(eq(schema.requestLimits.userId, userId));
+			}
+
+			return { key: objectKey as string, created };
+		} catch (error) {
+			console.error("Error in screenshot worker:", error);
+
+			throw error;
 		}
-
-		return { key: objectKey as string, created };
 	},
 	{
 		connection,
