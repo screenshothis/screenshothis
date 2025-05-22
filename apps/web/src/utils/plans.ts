@@ -48,7 +48,7 @@ export const plans: Record<Exclude<PlanType, "free">, Plan> = {
 	},
 	enterprise: {
 		name: "Enterprise",
-		price: 49,
+		price: 49.99,
 		features: [
 			"<strong>100,000 Screenshots</strong> are included",
 			"<strong>3,000 requests</strong> each minute",
