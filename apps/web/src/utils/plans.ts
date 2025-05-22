@@ -36,7 +36,7 @@ export const plans: Record<Exclude<PlanType, "free">, Plan> = {
 		isFeatured: true,
 		features: [
 			"<strong>10,000 Screenshots</strong> are included",
-			"<strong>600 requests</strong> each minute",
+			"<strong>300 requests</strong> each minute",
 			"Blocks ads and cookie banners",
 			"Takes full-page screenshots",
 			"Includes caching <sup class='text-sub text-white'>1</sup>",
@@ -51,7 +51,7 @@ export const plans: Record<Exclude<PlanType, "free">, Plan> = {
 		price: 49,
 		features: [
 			"<strong>100,000 Screenshots</strong> are included",
-			"<strong>6,000 requests</strong> each minute",
+			"<strong>3,000 requests</strong> each minute",
 			"Blocks ads and cookie banners",
 			"Takes full-page screenshots",
 			"Includes caching <sup class='text-sub text-primary'>1</sup>",
