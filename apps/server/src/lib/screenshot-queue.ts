@@ -104,7 +104,7 @@ export async function enqueueScreenshotJob(
 			{ workspaceId, userId, params },
 			{
 				jobId,
-				removeOnComplete: 1000,
+				removeOnComplete: false,
 				removeOnFail: {
 					count: 1000,
 					age: 24 * 3600, // 24 hours
@@ -137,7 +137,7 @@ export async function enqueueScreenshotJob(
 				{ workspaceId, userId, params },
 				{
 					jobId,
-					removeOnComplete: 1000,
+					removeOnComplete: false,
 					removeOnFail: {
 						count: 1000,
 						age: 24 * 3600, // 24 hours
