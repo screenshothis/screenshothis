@@ -98,6 +98,7 @@ export async function enqueueScreenshotJob(
 	let job: Job | null = await screenshotQueue.getJob(jobId);
 
 	if (!job) {
+		// No job exists, create a new one
 		job = await screenshotQueue.add(
 			"generate",
 			{ workspaceId, userId, params },
@@ -111,28 +112,46 @@ export async function enqueueScreenshotJob(
 			},
 		);
 	} else {
+		// Job exists, check its state
 		const state = await job.getState();
 		if (state === "completed") {
+			// The result should already be in S3/DB, so return a marker to fetch it
 			const returnvalue = job.returnvalue as
 				| { key: string; created: boolean }
 				| undefined;
-
 			if (returnvalue?.key) {
 				return { key: returnvalue.key, created: false };
 			}
-
+			// If no returnvalue, just return a marker to fetch from S3
 			return { key: "", created: false };
 		}
-		if (state === "failed") {
-			throw new Error("Screenshot job previously failed");
+		if (
+			state === "failed" ||
+			state === "delayed" ||
+			state === "waiting-children"
+		) {
+			// Remove the job and create a new one
+			await job.remove();
+			job = await screenshotQueue.add(
+				"generate",
+				{ workspaceId, userId, params },
+				{
+					jobId,
+					removeOnComplete: 1000,
+					removeOnFail: {
+						count: 1000,
+						age: 24 * 3600, // 24 hours
+					},
+				},
+			);
 		}
 	}
 
+	// Only call waitUntilFinished if job is not yet completed/failed/removed
 	const result = (await job.waitUntilFinished(queueEvents)) as {
 		key: string;
 		created: boolean;
 	};
-
 	return result;
 }
 
