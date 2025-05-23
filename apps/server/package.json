@@ -2,7 +2,9 @@
 	"name": "@screenshothis/server",
 	"type": "module",
 	"imports": {
-		"#/*": ["./src/*"]
+		"#/*": [
+			"./src/*"
+		]
 	},
 	"exports": {
 		"./routers": "./src/routers/index.ts"
@@ -35,6 +37,7 @@
 		"ai": "4.3.16",
 		"better-auth": "1.2.8",
 		"better-auth-harmony": "1.2.4",
+		"bullmq": "5.53.0",
 		"cross-fetch": "4.1.0",
 		"dotenv": "16.5.0",
 		"drizzle-orm": "0.43.1",

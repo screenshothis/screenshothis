@@ -7,13 +7,13 @@
 		"./keys": "./src/keys.ts"
 	},
 	"module": "src/index.ts",
+	"dependencies": {
+		"zod": "3.25.20"
+	},
 	"devDependencies": {
 		"@types/bun": "1.2.14"
 	},
 	"peerDependencies": {
 		"typescript": "5.8.3"
-	},
-	"dependencies": {
-		"zod": "3.25.20"
 	}
 }
