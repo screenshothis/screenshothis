@@ -5,10 +5,11 @@ import {
 	QueueEvents,
 	Worker,
 } from "bullmq";
-import { eq, sql } from "drizzle-orm";
+import { and, eq, sql } from "drizzle-orm";
 
 import { db } from "#/db";
 import * as schema from "#/db/schema";
+import { screenshots } from "#/db/schema/screenshots";
 import { env } from "#/utils/env";
 import { getOrCreateScreenshot } from "#/utils/screenshot";
 
@@ -134,4 +135,59 @@ export async function shutdownWorker() {
 	await screenshotWorker.close();
 	await screenshotQueue.close();
 	console.log("Screenshot worker closed");
+}
+
+export async function getExistingScreenshotKey(
+	workspaceId: string,
+	params: ScreenshotJobParams["params"],
+): Promise<string | null> {
+	const {
+		url,
+		selector,
+		width,
+		height,
+		isMobile,
+		isLandscape,
+		hasTouch,
+		deviceScaleFactor,
+		format,
+		blockAds,
+		blockCookieBanners,
+		blockTrackers,
+		blockRequests,
+		blockResources,
+		prefersColorScheme,
+		prefersReducedMotion,
+		isCached,
+		cacheTtl,
+		cacheKey,
+	} = params;
+
+	const existing = await db.query.screenshots.findFirst({
+		where: and(
+			eq(screenshots.url, url),
+			selector ? eq(screenshots.selector, selector) : undefined,
+			eq(screenshots.width, width),
+			eq(screenshots.height, height),
+			eq(screenshots.isMobile, isMobile),
+			eq(screenshots.isLandscape, isLandscape),
+			eq(screenshots.hasTouch, hasTouch),
+			eq(screenshots.deviceScaleFactor, deviceScaleFactor),
+			eq(screenshots.format, format),
+			eq(screenshots.blockAds, blockAds),
+			eq(screenshots.blockCookieBanners, blockCookieBanners),
+			eq(screenshots.blockTrackers, blockTrackers),
+			sql`${screenshots.blockRequests} @> ${JSON.stringify(blockRequests || [])}`,
+			sql`${screenshots.blockResources} @> ${JSON.stringify(blockResources || [])}`,
+			eq(screenshots.prefersColorScheme, prefersColorScheme),
+			eq(screenshots.prefersReducedMotion, prefersReducedMotion),
+			eq(screenshots.workspaceId, workspaceId),
+			eq(screenshots.isCached, isCached),
+			cacheTtl ? eq(screenshots.cacheTtl, cacheTtl) : undefined,
+			cacheKey ? eq(screenshots.cacheKey, cacheKey) : undefined,
+		),
+	});
+
+	if (!existing) return null;
+	return `screenshots/${workspaceId}/${existing.id}.${format}`;
 }

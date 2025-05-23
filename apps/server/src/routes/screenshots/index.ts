@@ -5,7 +5,10 @@ import { objectToCamel } from "ts-case-convert";
 import type { Variables } from "#/common/environment";
 import { auth } from "#/lib/auth";
 import { s3 } from "#/lib/s3";
-import { enqueueScreenshotJob } from "#/lib/screenshot-queue";
+import {
+	enqueueScreenshotJob,
+	getExistingScreenshotKey,
+} from "#/lib/screenshot-queue";
 import { createErrorResponse } from "#/utils/errors";
 
 const PLACEHOLDER_IMAGE = Buffer.from(
@@ -62,18 +65,38 @@ const screenshots = new OpenAPIHono<{ Variables: Variables }>().openapi(
 			const workspaceId = key.metadata.workspaceId;
 			const userId = key.userId;
 
-			const jobPromise = enqueueScreenshotJob(workspaceId, userId, queryParams);
+			// Attempt to find an existing screenshot first
+			const existingKey = await getExistingScreenshotKey(
+				workspaceId,
+				queryParams,
+			);
 
-			const TIMEOUT_MS = 15_000;
-			let timeoutId: ReturnType<typeof setTimeout> | null = null;
-			const timer = new Promise<"timeout">((resolve) => {
-				timeoutId = setTimeout(() => resolve("timeout" as const), TIMEOUT_MS);
-			});
+			let raceResult:
+				| Awaited<ReturnType<typeof enqueueScreenshotJob>>
+				| "timeout";
 
-			const raceResult = await Promise.race([jobPromise, timer]);
+			if (existingKey) {
+				// No need for queue or timeout; we have the screenshot already
+				raceResult = { key: existingKey, created: false };
+			} else {
+				// Not cached; enqueue generation and apply 15s timeout
+				const jobPromise = enqueueScreenshotJob(
+					workspaceId,
+					userId,
+					queryParams,
+				);
 
-			if (timeoutId) {
-				clearTimeout(timeoutId);
+				const TIMEOUT_MS = 15_000;
+				let timeoutId: ReturnType<typeof setTimeout> | null = null;
+				const timer = new Promise<"timeout">((resolve) => {
+					timeoutId = setTimeout(() => resolve("timeout" as const), TIMEOUT_MS);
+				});
+
+				raceResult = await Promise.race([jobPromise, timer]);
+
+				if (timeoutId) {
+					clearTimeout(timeoutId);
+				}
 			}
 
 			const headers = new Headers();
