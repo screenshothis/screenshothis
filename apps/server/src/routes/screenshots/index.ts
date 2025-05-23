@@ -65,18 +65,18 @@ const screenshots = new OpenAPIHono<{ Variables: Variables }>().openapi(
 			const workspaceId = key.metadata.workspaceId;
 			const userId = key.userId;
 
-			// Attempt to find an existing screenshot first
-			const existingKey = await getExistingScreenshotKey(
-				workspaceId,
-				queryParams,
-			);
+			let existingKey: string | null = null;
+			try {
+				existingKey = await getExistingScreenshotKey(workspaceId, queryParams);
+			} catch (error) {
+				console.error("Error checking for existing screenshot:", error);
 
-			let raceResult:
-				| Awaited<ReturnType<typeof enqueueScreenshotJob>>
-				| "timeout";
+				existingKey = null;
+			}
+
+			let raceResult: { key: string; created: boolean } | "timeout";
 
 			if (existingKey) {
-				// No need for queue or timeout; we have the screenshot already
 				raceResult = { key: existingKey, created: false };
 			} else {
 				// Not cached; enqueue generation and apply 15s timeout
