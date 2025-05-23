@@ -163,31 +163,38 @@ export async function getExistingScreenshotKey(
 		cacheKey,
 	} = params;
 
-	const existing = await db.query.screenshots.findFirst({
-		where: and(
-			eq(screenshots.url, url),
-			selector ? eq(screenshots.selector, selector) : undefined,
-			eq(screenshots.width, width),
-			eq(screenshots.height, height),
-			eq(screenshots.isMobile, isMobile),
-			eq(screenshots.isLandscape, isLandscape),
-			eq(screenshots.hasTouch, hasTouch),
-			eq(screenshots.deviceScaleFactor, deviceScaleFactor),
-			eq(screenshots.format, format),
-			eq(screenshots.blockAds, blockAds),
-			eq(screenshots.blockCookieBanners, blockCookieBanners),
-			eq(screenshots.blockTrackers, blockTrackers),
-			sql`${screenshots.blockRequests} @> ${JSON.stringify(blockRequests || [])}`,
-			sql`${screenshots.blockResources} @> ${JSON.stringify(blockResources || [])}`,
-			eq(screenshots.prefersColorScheme, prefersColorScheme),
-			eq(screenshots.prefersReducedMotion, prefersReducedMotion),
-			eq(screenshots.workspaceId, workspaceId),
-			eq(screenshots.isCached, isCached),
-			cacheTtl ? eq(screenshots.cacheTtl, cacheTtl) : undefined,
-			cacheKey ? eq(screenshots.cacheKey, cacheKey) : undefined,
-		),
-	});
+	try {
+		const existing = await db.query.screenshots.findFirst({
+			where: and(
+				eq(screenshots.url, url),
+				selector ? eq(screenshots.selector, selector) : undefined,
+				eq(screenshots.width, width),
+				eq(screenshots.height, height),
+				eq(screenshots.isMobile, isMobile),
+				eq(screenshots.isLandscape, isLandscape),
+				eq(screenshots.hasTouch, hasTouch),
+				eq(screenshots.deviceScaleFactor, deviceScaleFactor),
+				eq(screenshots.format, format),
+				eq(screenshots.blockAds, blockAds),
+				eq(screenshots.blockCookieBanners, blockCookieBanners),
+				eq(screenshots.blockTrackers, blockTrackers),
+				sql`${screenshots.blockRequests} @> ${JSON.stringify(blockRequests || [])}`,
+				sql`${screenshots.blockResources} @> ${JSON.stringify(blockResources || [])}`,
+				eq(screenshots.prefersColorScheme, prefersColorScheme),
+				eq(screenshots.prefersReducedMotion, prefersReducedMotion),
+				eq(screenshots.workspaceId, workspaceId),
+				eq(screenshots.isCached, isCached),
+				cacheTtl ? eq(screenshots.cacheTtl, cacheTtl) : undefined,
+				cacheKey ? eq(screenshots.cacheKey, cacheKey) : undefined,
+			),
+		});
 
-	if (!existing) return null;
-	return `screenshots/${workspaceId}/${existing.id}.${format}`;
+		if (!existing) return null;
+
+		return `screenshots/${workspaceId}/${existing.id}.${format}`;
+	} catch (error) {
+		console.error("Error querying existing screenshot:", error);
+
+		return null;
+	}
 }
