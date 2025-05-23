@@ -80,7 +80,7 @@ const screenshots = new OpenAPIHono<{ Variables: Variables }>().openapi(
 				raceResult = { key: existingKey, created: false };
 			} else {
 				// Not cached; enqueue generation and apply 15s timeout
-				const jobPromise = enqueueScreenshotJob(
+				const jobPromise = await enqueueScreenshotJob(
 					workspaceId,
 					userId,
 					queryParams,
