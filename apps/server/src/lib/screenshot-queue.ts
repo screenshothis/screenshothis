@@ -22,7 +22,9 @@ const connection: ConnectionOptions = {
 	},
 };
 
-const QUEUE_NAME = "screenshot-generation";
+// Using a hashtag ensures all BullMQ keys share the same hash slot so Dragonfly
+// can allow the script to access dynamic job keys without the allow-undeclared-keys flag.
+const QUEUE_NAME = "{screenshot-generation}";
 
 const screenshotQueue = new Queue(QUEUE_NAME, { connection });
 // QueueScheduler is only necessary for delayed or recurring jobs. If needed in future,
