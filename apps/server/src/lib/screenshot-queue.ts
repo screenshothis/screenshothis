@@ -110,20 +110,28 @@ export async function enqueueScreenshotJob(
 				},
 			},
 		);
+	} else {
+		const state = await job.getState();
+		if (state === "completed") {
+			const returnvalue = job.returnvalue as
+				| { key: string; created: boolean }
+				| undefined;
+
+			if (returnvalue?.key) {
+				return { key: returnvalue.key, created: false };
+			}
+
+			return { key: "", created: false };
+		}
+		if (state === "failed") {
+			throw new Error("Screenshot job previously failed");
+		}
 	}
 
-	const result = await Promise.race([
-		job.waitUntilFinished(queueEvents) as Promise<{
-			key: string;
-			created: boolean;
-		}>,
-		new Promise<never>((_, reject) => {
-			setTimeout(
-				() => reject(new Error("Screenshot generation timed out")),
-				30000,
-			);
-		}),
-	]);
+	const result = (await job.waitUntilFinished(queueEvents)) as {
+		key: string;
+		created: boolean;
+	};
 
 	return result;
 }
