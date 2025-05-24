@@ -18,7 +18,7 @@ export const env = createEnv({
 			.enum(["sandbox", "production"])
 			.default("sandbox")
 			.optional(),
-		POLAR_WEBHOOK_SECRET: z.string(),
+		POLAR_WEBHOOK_SECRET: z.string().optional(),
 		POLAR_LITE_PRODUCT_ID: z
 			.string()
 			.uuid({
