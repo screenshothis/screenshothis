@@ -180,7 +180,7 @@ Follow these steps to spin up the entire stack locally:
    ```
 
 3. **Start the applications**
-   From the repository root run:
+   From the repository root, run:
 
    ```bash
    bun run dev
@@ -189,8 +189,8 @@ Follow these steps to spin up the entire stack locally:
    This starts both `apps/server` (Hono API) and `apps/web` (React/TanStack Start) with hot-reloading.
 
 4. **Open your browser**
-   • Web UI: http://localhost:3001
-   • API: http://localhost:3000
+   • Web UI: [http://localhost:3001](http://localhost:3001)
+   • API: [http://localhost:3000](http://localhost:3000)
 
 ## ▶️ Running the Application
 
