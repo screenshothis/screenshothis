@@ -240,6 +240,11 @@ Husky is configured to run checks before commits.
 
 TBD
 
+### Troubleshooting
+
+- **Port conflicts**: If port 9000 or 9001 is already in use, update the ports in `docker-compose.yml` and corresponding environment variables.
+- **Connection issues**: Ensure Docker is running and the MinIO container is healthy: `docker-compose ps`
+
 ## 🤝 Contributing
 
 Contributions are welcome! If you'd like to contribute, please follow these steps:
