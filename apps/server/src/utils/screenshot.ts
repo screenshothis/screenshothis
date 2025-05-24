@@ -59,8 +59,8 @@ export async function getOrCreateScreenshot(
 			cacheTtl,
 			cacheKey,
 			userAgent,
-			headers,
-			cookies,
+			headers = [],
+			cookies = [],
 			bypassCsp,
 		} = params;
 
