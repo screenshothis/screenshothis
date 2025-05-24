@@ -38,11 +38,15 @@ export const auth = betterAuth({
 		autoSignIn: true,
 	},
 	socialProviders: {
-		google: {
-			prompt: "select_account",
-			clientId: env.GOOGLE_CLIENT_ID,
-			clientSecret: env.GOOGLE_CLIENT_SECRET,
-		},
+		...(env.GOOGLE_CLIENT_ID && env.GOOGLE_CLIENT_SECRET
+			? {
+					google: {
+						prompt: "select_account",
+						clientId: env.GOOGLE_CLIENT_ID,
+						clientSecret: env.GOOGLE_CLIENT_SECRET,
+					},
+				}
+			: {}),
 	},
 	advanced: {
 		cookiePrefix: "screenshothis",
@@ -199,15 +203,15 @@ export const auth = betterAuth({
 				checkout({
 					products: [
 						{
-							productId: env.POLAR_LITE_PRODUCT_ID,
+							productId: env.POLAR_LITE_PRODUCT_ID || "",
 							slug: "lite",
 						},
 						{
-							productId: env.POLAR_PRO_PRODUCT_ID,
+							productId: env.POLAR_PRO_PRODUCT_ID || "",
 							slug: "pro",
 						},
 						{
-							productId: env.POLAR_ENTERPRISE_PRODUCT_ID,
+							productId: env.POLAR_ENTERPRISE_PRODUCT_ID || "",
 							slug: "enterprise",
 						},
 					],
