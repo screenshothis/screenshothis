@@ -230,6 +230,8 @@ export async function getOrCreateScreenshot(
 				separator: false,
 			});
 
+			await page.setRequestInterception(true);
+
 			page.on("request", (request) => {
 				if (blockResources?.includes(request.resourceType() as never)) {
 					request.abort();
