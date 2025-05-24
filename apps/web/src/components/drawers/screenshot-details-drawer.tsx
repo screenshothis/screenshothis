@@ -68,7 +68,11 @@ export function ScreenshotDetailsDrawer() {
 				<Drawer.Header>
 					<Drawer.Title>Screenshot Details</Drawer.Title>
 					<Drawer.Description>
-						{screenshot?.url ? new URL(screenshot.url).host : ""}
+						{screenshot?.url ? (
+							new URL(screenshot.url).host
+						) : (
+							<Skeleton className="h-5 w-full max-w-60" />
+						)}
 					</Drawer.Description>
 				</Drawer.Header>
 
@@ -79,127 +83,125 @@ export function ScreenshotDetailsDrawer() {
 						</p>
 					)}
 
-					{screenshot && (
-						<div>
-							<Section
-								title="General"
-								items={[
-									{ label: "URL", value: screenshot.url },
-									{ label: "Selector", value: screenshot.selector ?? "N/A" },
-									{ label: "Format", value: screenshot.format },
-									{
-										label: "Duration",
-										value:
-											screenshot.duration !== undefined
-												? `${screenshot.duration}s`
-												: "N/A",
-									},
-									{
-										label: "Created",
-										value: screenshot.createdAt
-											? format(screenshot.createdAt, "PPpp")
+					<div>
+						<Section
+							title="General"
+							items={[
+								{ label: "URL", value: screenshot?.url },
+								{ label: "Selector", value: screenshot?.selector ?? "N/A" },
+								{ label: "Format", value: screenshot?.format },
+								{
+									label: "Duration",
+									value:
+										screenshot?.duration !== undefined
+											? `${screenshot?.duration}s`
 											: "N/A",
-									},
-								]}
-								loading={isLoading}
-							/>
+								},
+								{
+									label: "Created",
+									value: screenshot?.createdAt
+										? format(screenshot?.createdAt, "PPpp")
+										: "N/A",
+								},
+							]}
+							loading={isLoading}
+						/>
 
-							<Section
-								title="Viewport"
-								items={[
-									{
-										label: "Dimensions",
-										value: `${screenshot.width}x${screenshot.height}`,
-									},
-									{
-										label: "Mobile",
-										value: screenshot.isMobile ? "Yes" : "No",
-									},
-									{
-										label: "Landscape",
-										value: screenshot.isLandscape ? "Yes" : "No",
-									},
-									{
-										label: "Has Touch",
-										value: screenshot.hasTouch ? "Yes" : "No",
-									},
-									{
-										label: "Device Scale Factor",
-										value: screenshot.deviceScaleFactor,
-									},
-								]}
-								loading={isLoading}
-							/>
+						<Section
+							title="Viewport"
+							items={[
+								{
+									label: "Dimensions",
+									value: `${screenshot?.width}x${screenshot?.height}`,
+								},
+								{
+									label: "Mobile",
+									value: screenshot?.isMobile ? "Yes" : "No",
+								},
+								{
+									label: "Landscape",
+									value: screenshot?.isLandscape ? "Yes" : "No",
+								},
+								{
+									label: "Has Touch",
+									value: screenshot?.hasTouch ? "Yes" : "No",
+								},
+								{
+									label: "Device Scale Factor",
+									value: screenshot?.deviceScaleFactor,
+								},
+							]}
+							loading={isLoading}
+						/>
 
-							<Section
-								title="Ads, tracking and more"
-								items={[
-									{
-										label: "Block Ads",
-										value: screenshot.blockAds ? "Yes" : "No",
-									},
-									{
-										label: "Block Cookie Banners",
-										value: screenshot.blockCookieBanners ? "Yes" : "No",
-									},
-									{
-										label: "Block Trackers",
-										value: screenshot.blockTrackers ? "Yes" : "No",
-									},
-									{
-										label: "Block Requests",
-										value: screenshot.blockRequests?.length
-											? screenshot.blockRequests.join(", ")
-											: "None",
-									},
-									{
-										label: "Block Resources",
-										value: screenshot.blockResources?.length
-											? screenshot.blockResources.join(", ")
-											: "None",
-									},
-								]}
-								loading={isLoading}
-							/>
+						<Section
+							title="Ads, tracking and more"
+							items={[
+								{
+									label: "Block Ads",
+									value: screenshot?.blockAds ? "Yes" : "No",
+								},
+								{
+									label: "Block Cookie Banners",
+									value: screenshot?.blockCookieBanners ? "Yes" : "No",
+								},
+								{
+									label: "Block Trackers",
+									value: screenshot?.blockTrackers ? "Yes" : "No",
+								},
+								{
+									label: "Block Requests",
+									value: screenshot?.blockRequests?.length
+										? screenshot?.blockRequests.join(", ")
+										: "None",
+								},
+								{
+									label: "Block Resources",
+									value: screenshot?.blockResources?.length
+										? screenshot?.blockResources.join(", ")
+										: "None",
+								},
+							]}
+							loading={isLoading}
+						/>
 
-							<Section
-								title="Emulations"
-								items={[
-									{
-										label: "Prefers Color Scheme",
-										value: screenshot.prefersColorScheme,
-									},
-									{
-										label: "Prefers Reduced Motion",
-										value: screenshot.prefersReducedMotion,
-									},
-								]}
-								loading={isLoading}
-							/>
+						<Section
+							title="Emulations"
+							items={[
+								{
+									label: "Prefers Color Scheme",
+									value: screenshot?.prefersColorScheme,
+								},
+								{
+									label: "Prefers Reduced Motion",
+									value: screenshot?.prefersReducedMotion,
+								},
+							]}
+							loading={isLoading}
+						/>
 
-							<Section
-								title="Caching"
-								items={[
-									{
-										label: "Cache",
-										value: screenshot.isCached ? "Yes" : "No",
-									},
-									{
-										label: "Cache TTL",
-										value:
-											screenshot.cacheTtl !== undefined
-												? screenshot.cacheTtl
-												: "N/A",
-									},
-									{
-										label: "Cache Key",
-										value: screenshot.cacheKey ?? "N/A",
-									},
-								]}
-								loading={isLoading}
-							/>
-						</div>
-					)}
+						<Section
+							title="Caching"
+							items={[
+								{
+									label: "Cache",
+									value: screenshot?.isCached ? "Yes" : "No",
+								},
+								{
+									label: "Cache TTL",
+									value:
+										screenshot?.cacheTtl !== undefined
+											? screenshot?.cacheTtl
+											: "N/A",
+								},
+								{
+									label: "Cache Key",
+									value: screenshot?.cacheKey ?? "N/A",
+								},
+							]}
+							loading={isLoading}
+						/>
+					</div>
 				</Drawer.Body>
 			</Drawer.Content>
 		</Drawer.Root>
