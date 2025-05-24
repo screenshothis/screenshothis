@@ -190,6 +190,10 @@ export async function getExistingScreenshotKey(
 		isCached,
 		cacheTtl,
 		cacheKey,
+		userAgent,
+		headers,
+		cookies,
+		bypassCsp,
 	} = params;
 
 	try {
@@ -215,6 +219,10 @@ export async function getExistingScreenshotKey(
 				eq(screenshots.isCached, isCached),
 				cacheTtl ? eq(screenshots.cacheTtl, cacheTtl) : undefined,
 				cacheKey ? eq(screenshots.cacheKey, cacheKey) : undefined,
+				userAgent ? eq(screenshots.userAgent, userAgent) : undefined,
+				sql`${screenshots.headers} @> ${JSON.stringify(headers || [])}`,
+				sql`${screenshots.cookies} @> ${JSON.stringify(cookies || [])}`,
+				eq(screenshots.bypassCsp, bypassCsp),
 			),
 		});
 

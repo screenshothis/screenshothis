@@ -58,6 +58,10 @@ export async function getOrCreateScreenshot(
 			isCached,
 			cacheTtl,
 			cacheKey,
+			userAgent,
+			headers,
+			cookies,
+			bypassCsp,
 		} = params;
 
 		const existing = await db.query.screenshots.findFirst({
@@ -82,6 +86,10 @@ export async function getOrCreateScreenshot(
 				eq(screenshots.isCached, isCached),
 				cacheTtl ? eq(screenshots.cacheTtl, cacheTtl) : undefined,
 				cacheKey ? eq(screenshots.cacheKey, cacheKey) : undefined,
+				userAgent ? eq(screenshots.userAgent, userAgent) : undefined,
+				sql`${screenshots.headers} @> ${JSON.stringify(headers || [])}`,
+				sql`${screenshots.cookies} @> ${JSON.stringify(cookies || [])}`,
+				eq(screenshots.bypassCsp, bypassCsp),
 			),
 		});
 
@@ -111,7 +119,94 @@ export async function getOrCreateScreenshot(
 				deviceScaleFactor,
 			},
 		});
+
+		if (cookies && cookies.length > 0) {
+			const urlObj = new URL(url);
+
+			const parseCookie = (
+				line: string,
+			): import("puppeteer").CookieData | null => {
+				const parts = line.split(";").map((p) => p.trim());
+				if (parts.length === 0) return null;
+
+				const [nameValue, ...attrParts] = parts;
+				const eqIdx = nameValue.indexOf("=");
+				if (eqIdx === -1) return null;
+				const name = nameValue.slice(0, eqIdx).trim();
+				const value = nameValue.slice(eqIdx + 1).trim();
+
+				const cookie: import("puppeteer").CookieData = {
+					name,
+					value,
+					domain: urlObj.hostname,
+					path: "/",
+				};
+
+				for (const attr of attrParts) {
+					const [attrNameRaw, ...attrValueParts] = attr.split("=");
+					const attrName = attrNameRaw.trim().toLowerCase();
+					const attrValue = attrValueParts.join("=").trim();
+
+					switch (attrName) {
+						case "domain":
+							cookie.domain = attrValue.startsWith(".")
+								? attrValue.substring(1)
+								: attrValue;
+							break;
+						case "path":
+							if (attrValue) cookie.path = attrValue;
+							break;
+						case "expires": {
+							const parsed = Date.parse(attrValue);
+							if (!Number.isNaN(parsed)) {
+								cookie.expires = Math.floor(parsed / 1000);
+							}
+							break;
+						}
+						case "samesite":
+							cookie.sameSite = attrValue as import("puppeteer").CookieSameSite;
+							break;
+						case "secure":
+							cookie.secure = true;
+							break;
+						case "httponly":
+							cookie.httpOnly = true;
+							break;
+					}
+				}
+				return cookie;
+			};
+
+			const cookieObjs = cookies
+				.map(parseCookie)
+				.filter((c): c is NonNullable<typeof c> => c !== null);
+
+			if (cookieObjs.length > 0) {
+				await browser.setCookie(...cookieObjs);
+			}
+		}
+
 		const page = await browser.newPage();
+
+		if (userAgent) {
+			await page.setUserAgent(userAgent);
+		}
+
+		if (headers && headers.length > 0) {
+			const headerObj: Record<string, string> = {};
+			for (const line of headers) {
+				const [name, ...rest] = line.split(":");
+				if (!name) continue;
+				headerObj[name.trim()] = rest.join(":").trim();
+			}
+			if (Object.keys(headerObj).length > 0) {
+				await page.setExtraHTTPHeaders(headerObj);
+			}
+		}
+
+		if (bypassCsp) {
+			await page.setBypassCSP(true);
+		}
 
 		page.emulateMediaFeatures([
 			{
@@ -207,6 +302,10 @@ export async function getOrCreateScreenshot(
 					isCached,
 					cacheTtl,
 					cacheKey,
+					userAgent,
+					headers,
+					cookies,
+					bypassCsp,
 					duration: Number.parseFloat(
 						((Date.now() - startTime) / 1000).toFixed(2),
 					),

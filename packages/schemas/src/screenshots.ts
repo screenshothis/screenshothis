@@ -84,6 +84,84 @@ export const ScreenshotSchema = z.object({
 		.default(false),
 	cache_ttl: z.number().min(3600).max(31622400).optional().default(3600),
 	cache_key: z.string().optional(),
+	user_agent: z.string().optional(),
+	headers: z
+		.string()
+		.refine(
+			(val) => {
+				const lines = val
+					.split("\n")
+					.map((l) => l.trim())
+					.filter((l): l is string => l.length > 0);
+				if (lines.length === 0) return true; // allow empty string handled by optional()
+				const headerRegex = /^[!#$%&'*+.^_`|~0-9A-Za-z-]+:\s?.+$/;
+				return lines.every((line) => headerRegex.test(line));
+			},
+			{
+				message: "Headers must be in the format 'Name: Value' (one per line)",
+			},
+		)
+		.transform((value) =>
+			value
+				.split("\n")
+				.map((line) => line.trim())
+				.filter((l): l is string => l.length > 0),
+		)
+		.optional(),
+	cookies: z
+		.string()
+		.refine(
+			(val) => {
+				const lines = val
+					.split("\n")
+					.map((l) => l.trim())
+					.filter((l): l is string => l.length > 0);
+				if (lines.length === 0) return true;
+
+				const allowedAttrs = [
+					"domain",
+					"path",
+					"expires",
+					"max-age",
+					"samesite",
+					"secure",
+					"httponly",
+				];
+
+				return lines.every((line) => {
+					const segments = line.split(";").map((seg) => seg.trim());
+					if (segments.length === 0) return false;
+					// first segment must be name=value
+					const nameValue = segments[0] ?? "";
+					const attrs = segments.slice(1);
+					if (!/^([^=\s;]+)=([^;\s]*)$/.test(nameValue)) return false;
+
+					// validate attributes
+					return attrs.every((attr) => {
+						if (!attr) return false;
+						if (attr === "Secure" || attr === "HttpOnly") return true;
+						const attrNameLower = attr.split("=")[0]?.trim().toLowerCase();
+						if (!attrNameLower) return false;
+						return allowedAttrs.includes(attrNameLower);
+					});
+				});
+			},
+			{
+				message:
+					"Cookies must follow the standard Set-Cookie syntax (name=value; Attr=Value ...)",
+			},
+		)
+		.transform((value) =>
+			value
+				.split("\n")
+				.map((line) => line.trim())
+				.filter((l): l is string => l.length > 0),
+		)
+		.optional(),
+	bypass_csp: z
+		.preprocess((val) => String(val).toLowerCase() === "true", z.boolean())
+		.optional()
+		.default(false),
 	created_at: z.date().nullish(),
 	updated_at: z.date().nullish(),
 });

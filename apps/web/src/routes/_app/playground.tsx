@@ -6,6 +6,7 @@ import EaseInOutIcon from "virtual:icons/hugeicons/ease-in-out";
 import Image01Icon from "virtual:icons/hugeicons/image-01";
 import Link01Icon from "virtual:icons/hugeicons/link-01";
 import PaintBrush02Icon from "virtual:icons/hugeicons/paint-brush-02";
+import SecurityLockIcon from "virtual:icons/hugeicons/security-lock";
 import ToggleOnIcon from "virtual:icons/hugeicons/toggle-on";
 import ZoomOutAreaIcon from "virtual:icons/hugeicons/zoom-out-area";
 
@@ -48,6 +49,10 @@ function RouteComponent() {
 			block_cookie_banners: true,
 			block_trackers: true,
 			prefers_color_scheme: "light",
+			user_agent: "",
+			headers: "",
+			cookies: "",
+			bypass_csp: false,
 		} as z.input<typeof CreateScreenshotSchema>,
 		onSubmit: async ({ value }) => {
 			await mutateAsync(value, {
@@ -88,6 +93,7 @@ function RouteComponent() {
 			values.block_cookie_banners &&
 				`   &block_cookie_banners=${values.block_cookie_banners}`,
 			values.block_trackers && `   &block_trackers=${values.block_trackers}`,
+			values.bypass_csp && `   &bypass_csp=${values.bypass_csp}`,
 			values.block_requests &&
 				values.block_requests.length > 0 &&
 				values.block_requests
@@ -104,6 +110,19 @@ function RouteComponent() {
 			values.is_cached && `   &is_cached=${values.is_cached}`,
 			values.cache_ttl && `   &cache_ttl=${values.cache_ttl}`,
 			values.cache_key && `   &cache_key=${values.cache_key}`,
+			values.user_agent && `   &user_agent=${values.user_agent}`,
+			values.headers &&
+				values.headers.length > 0 &&
+				values.headers
+					.split("\n")
+					.map((h) => `   &headers=${encodeURIComponent(h)}`)
+					.join("\n"),
+			values.cookies &&
+				values.cookies.length > 0 &&
+				values.cookies
+					.split("\n")
+					.map((c) => `   &cookies=${encodeURIComponent(c)}`)
+					.join("\n"),
 		]
 			.filter(Boolean)
 			.join("\n");
@@ -478,6 +497,69 @@ function RouteComponent() {
 													)}
 												/>
 											</div>
+										</Accordion.Content>
+									</Accordion.Item>
+
+									{/* Authorization */}
+									<Accordion.Item value="authorization">
+										<Accordion.Trigger>
+											<Accordion.Icon as={SecurityLockIcon} />
+											Authorization
+											<Accordion.Arrow />
+										</Accordion.Trigger>
+										<Accordion.Content className="mt-2 grid gap-3 px-7.5">
+											<form.AppField
+												name="user_agent"
+												children={(field) => (
+													<field.TextField
+														label="User Agent"
+														name="user_agent"
+														placeholder="Mozilla/5.0 (Windows NT 10.0; Win64; x64)..."
+													/>
+												)}
+											/>
+
+											<form.AppField
+												name="headers"
+												children={(field) => (
+													<field.Textarea
+														label="Headers"
+														name="headers"
+														rows={5}
+														placeholder={[
+															"Authorization: Bearer <token>",
+															"X-Custom-Header: custom-value",
+														].join("\n")}
+														hint="One header per line in the format Name: Value"
+													/>
+												)}
+											/>
+
+											<form.AppField
+												name="cookies"
+												children={(field) => (
+													<field.Textarea
+														label="Cookies"
+														name="cookies"
+														rows={5}
+														placeholder={[
+															"sessionid=abc123; Domain=example.com; Path=/; HttpOnly",
+															"theme=dark; Path=/; SameSite=Lax",
+														].join("\n")}
+														hint="One cookie per line using standard syntax, e.g. name=value; Domain=example.com; Path=/; Secure; HttpOnly"
+													/>
+												)}
+											/>
+
+											<form.AppField
+												name="bypass_csp"
+												children={(field) => (
+													<field.SwitchField
+														label="Bypass CSP"
+														name="bypass_csp"
+													/>
+												)}
+											/>
 										</Accordion.Content>
 									</Accordion.Item>
 								</Accordion.Root>
