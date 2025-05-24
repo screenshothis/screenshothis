@@ -64,6 +64,13 @@
       "when": 1747929481948,
       "tag": "0008_reflective_mindworm",
       "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "7",
+      "when": 1748126432338,
+      "tag": "0009_nebulous_meteorite",
+      "breakpoints": true
     }
   ]
 }
