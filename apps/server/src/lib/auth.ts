@@ -23,7 +23,7 @@ import { updateUserRequestLimits } from "../actions/update-user-request-limits";
 import { db } from "../db";
 import * as schema from "../db/schema";
 import { env } from "../utils/env";
-import { polarClient } from "./polar";
+import { polarClient, polarProducts } from "./polar";
 
 export const auth = betterAuth({
 	database: drizzleAdapter(db, {
@@ -196,71 +196,72 @@ export const auth = betterAuth({
 				return url.searchParams.get("api_key");
 			},
 		}),
-		polar({
-			client: polarClient,
-			createCustomerOnSignUp: true,
-			use: [
-				checkout({
-					products: [
-						{
-							productId: env.POLAR_LITE_PRODUCT_ID || "",
-							slug: "lite",
-						},
-						{
-							productId: env.POLAR_PRO_PRODUCT_ID || "",
-							slug: "pro",
-						},
-						{
-							productId: env.POLAR_ENTERPRISE_PRODUCT_ID || "",
-							slug: "enterprise",
-						},
-					],
-					successUrl: env.POLAR_SUCCESS_URL,
-					authenticatedUsersOnly: true,
-				}),
-				portal(),
-				usage(),
-				webhooks({
-					secret: env.POLAR_WEBHOOK_SECRET,
-					async onCustomerStateChanged(payload) {
-						await db
-							.insert(schema.polarCustomerState)
-							.values({
-								metadata: payload.data.metadata,
-								externalId: payload.data.externalId,
-								email: payload.data.email,
-								name: payload.data.name,
-								activeSubscriptions: payload.data.activeSubscriptions,
-								grantedBenefits: payload.data.grantedBenefits,
-								activeMeters: payload.data.activeMeters,
-							})
-							.onConflictDoUpdate({
-								target: schema.polarCustomerState.externalId,
-								set: {
-									metadata: payload.data.metadata,
-									activeSubscriptions: payload.data.activeSubscriptions,
-									grantedBenefits: payload.data.grantedBenefits,
-									activeMeters: payload.data.activeMeters,
-								},
-							});
-					},
-					async onSubscriptionCreated(payload) {
-						const data = payload.data;
+		...(env.POLAR_ACCESS_TOKEN
+			? [
+					polar({
+						client: polarClient,
+						createCustomerOnSignUp: true,
+						use: [
+							checkout({
+								products: polarProducts,
+								successUrl: env.POLAR_SUCCESS_URL,
+								authenticatedUsersOnly: true,
+							}),
+							portal(),
+							usage({
+								creditProducts: polarProducts,
+							}),
+							...(env.POLAR_WEBHOOK_SECRET
+								? [
+										webhooks({
+											secret: env.POLAR_WEBHOOK_SECRET,
+											async onCustomerStateChanged(payload) {
+												await db
+													.insert(schema.polarCustomerState)
+													.values({
+														metadata: payload.data.metadata,
+														externalId: payload.data.externalId,
+														email: payload.data.email,
+														name: payload.data.name,
+														activeSubscriptions:
+															payload.data.activeSubscriptions,
+														grantedBenefits: payload.data.grantedBenefits,
+														activeMeters: payload.data.activeMeters,
+													})
+													.onConflictDoUpdate({
+														target: schema.polarCustomerState.externalId,
+														set: {
+															metadata: payload.data.metadata,
+															activeSubscriptions:
+																payload.data.activeSubscriptions,
+															grantedBenefits: payload.data.grantedBenefits,
+															activeMeters: payload.data.activeMeters,
+														},
+													});
+											},
+											async onSubscriptionCreated(payload) {
+												const data = payload.data;
 
-						const productSlug = await getProductSlugById(data.productId);
+												const productSlug = await getProductSlugById(
+													data.productId,
+												);
 
-						if (!data.customer.externalId) {
-							throw new Error("Customer external ID is required");
-						}
+												if (!data.customer.externalId) {
+													throw new Error("Customer external ID is required");
+												}
 
-						await updateUserRequestLimits(
-							data.customer.externalId,
-							productSlug,
-						);
-					},
-				}),
-			],
-		}),
+												await updateUserRequestLimits(
+													data.customer.externalId,
+													productSlug,
+												);
+											},
+										}),
+									]
+								: []),
+						],
+					}),
+				]
+			: []),
 		emailHarmony(),
 		oneTap({
 			clientId: env.GOOGLE_CLIENT_ID,
