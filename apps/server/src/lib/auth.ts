@@ -231,6 +231,8 @@ export const auth = betterAuth({
 													.onConflictDoUpdate({
 														target: schema.polarCustomerState.externalId,
 														set: {
+															email: payload.data.email,
+															name: payload.data.name,
 															metadata: payload.data.metadata,
 															activeSubscriptions:
 																payload.data.activeSubscriptions,
