@@ -94,7 +94,8 @@ export const ScreenshotSchema = z.object({
 					.map((l) => l.trim())
 					.filter((l): l is string => l.length > 0);
 				if (lines.length === 0) return true; // allow empty string handled by optional()
-				const headerRegex = /^[!#$%&'*+.^_`|~0-9A-Za-z-]+:\s?.+$/;
+				// Header value: visible ASCII (0x20-0x7E) only – excludes control chars (0x00–0x1F, 0x7F)
+				const headerRegex = /^[!#$%&'*+.^_`|~0-9A-Za-z-]+:\s*[ -~]+$/;
 				return lines.every((line) => headerRegex.test(line));
 			},
 			{
