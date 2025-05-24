@@ -13,10 +13,14 @@ export const authClient = createAuthClient({
 	plugins: [
 		organizationClient(),
 		apiKeyClient(),
-		oneTapClient({
-			clientId: env.VITE_GOOGLE_CLIENT_ID,
-			cancelOnTapOutside: true,
-			context: "signin",
-		}),
+		...(env.VITE_GOOGLE_CLIENT_ID
+			? [
+					oneTapClient({
+						clientId: env.VITE_GOOGLE_CLIENT_ID,
+						cancelOnTapOutside: true,
+						context: "signin",
+					}),
+				]
+			: []),
 	],
 });
