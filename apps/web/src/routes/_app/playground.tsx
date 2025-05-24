@@ -514,7 +514,9 @@ function RouteComponent() {
 													<field.TextField
 														label="User Agent"
 														name="user_agent"
+														id="user_agent"
 														placeholder="Mozilla/5.0 (Windows NT 10.0; Win64; x64)..."
+														hint="⚠️ Custom user agent strings can be used for fingerprinting; use responsibly."
 													/>
 												)}
 											/>
@@ -525,12 +527,13 @@ function RouteComponent() {
 													<field.Textarea
 														label="Headers"
 														name="headers"
+														id="headers"
 														rows={5}
 														placeholder={[
 															"Authorization: Bearer <token>",
 															"X-Custom-Header: custom-value",
 														].join("\n")}
-														hint="One header per line in the format Name: Value"
+														hint="⚠️ One header per line (Name: Value). Avoid adding security-sensitive headers."
 													/>
 												)}
 											/>
@@ -541,12 +544,13 @@ function RouteComponent() {
 													<field.Textarea
 														label="Cookies"
 														name="cookies"
+														id="cookies"
 														rows={5}
 														placeholder={[
 															"sessionid=abc123; Domain=example.com; Path=/; HttpOnly",
 															"theme=dark; Path=/; SameSite=Lax",
 														].join("\n")}
-														hint="One cookie per line using standard syntax, e.g. name=value; Domain=example.com; Path=/; Secure; HttpOnly"
+														hint="⚠️ One cookie per line. Only valid cookies; misuse may bypass security controls."
 													/>
 												)}
 											/>
@@ -557,6 +561,8 @@ function RouteComponent() {
 													<field.SwitchField
 														label="Bypass CSP"
 														name="bypass_csp"
+														id="bypass_csp"
+														hint="⚠️ Bypasses Content Security Policy protections; use with extreme caution."
 													/>
 												)}
 											/>

@@ -215,7 +215,6 @@ export async function getExistingScreenshotKey(
 		bypassCsp,
 	} = params;
 
-	// Normalize header/cookie arrays for consistent query matching
 	const normalizedHeaders = normalizeStringArray(headers);
 	const normalizedCookies = normalizeStringArray(cookies);
 
