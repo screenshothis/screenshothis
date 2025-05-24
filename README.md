@@ -52,26 +52,49 @@ Follow these steps to get the project up and running on your local machine.
 
 ### Environment Variables
 
-The backend server requires environment variables for database connection and authentication.
+This repository follows the [Turborepo best-practice](https://turborepo.com/docs/crafting-your-repository/using-environment-variables#best-practices) of keeping environment files **next to the packages that consume them**. You will therefore find separate `.env` / `.env.example` files in each application folder.
 
-1.  Navigate to the server application directory:
+#### 1. Backend – `apps/server`
+
+Environment variables for the API server (database, Redis, MinIO, authentication, etc.).
+
+1.  Navigate to the server directory and copy the example file:
     ```bash
     cd apps/server
-    ```
-2.  Create a `.env` file by copying the example file (if one exists, otherwise create it from scratch):
-    ```bash
     cp .env.example .env
     ```
-    If `.env.example` does not exist, create `.env` with the following content:
+2.  Edit `apps/server/.env` and update the values to match your local setup, e.g.:
     ```env
     DATABASE_URL="postgresql://USER:PASSWORD@HOST:PORT/DATABASE_NAME"
-
-    # For Better Auth (example variables, refer to Better Auth documentation)
     BETTER_AUTH_SECRET="your_strong_auth_secret_here"
     DEFAULT_API_KEY_PREFIX="ss_test_"
-    # Add other necessary auth variables like OAuth credentials if you plan to use them
+    # …and any optional providers (Google OAuth, Polar, AWS/MinIO, etc.)
     ```
-3.  Update the `.env` file in `apps/server/.env` with your PostgreSQL connection string and other necessary credentials.
+
+#### 2. Frontend – `apps/web`
+
+The web application only needs a handful of variables. Copy and adjust its example as well:
+
+```bash
+cd apps/web
+cp .env.example .env
+```
+
+Update `apps/web/.env` to point to your running server and any optional OAuth keys:
+
+```env
+# Server the frontend should call
+VITE_SERVER_URL="http://localhost:3000"
+
+# Optional Google OAuth client for Better Auth
+VITE_GOOGLE_CLIENT_ID="your_google_client_id.apps.googleusercontent.com"
+
+# Polar integration (optional)
+POLAR_ACCESS_TOKEN="your_polar_access_token"
+POLAR_ENVIRONMENT="sandbox"
+```
+
+> **Tip**: Keep the `.env.example` files up-to-date whenever you add a new variable so other contributors know what is required.
 
 ## 🗄️ Database Setup
 
@@ -141,6 +164,33 @@ This project uses MinIO as an S3-compatible object storage solution for local de
 - **Stop MinIO**: `docker-compose down`
 - **View MinIO logs**: `docker-compose logs minio`
 - **Restart MinIO**: `docker-compose restart minio`
+
+## 🧑‍💻 Local Development
+
+Follow these steps to spin up the entire stack locally:
+
+1. **Configure environment variables**
+   Copy every `.env.example` to `.env` inside the same folder and fill in the values needed for your machine (see the Environment Variables section).
+
+2. **Start supporting services**
+   Run the containers defined in `docker-compose.yml` (PostgreSQL, Redis, and MinIO):
+
+   ```bash
+   docker-compose up -d
+   ```
+
+3. **Start the applications**
+   From the repository root, run:
+
+   ```bash
+   bun run dev
+   ```
+
+   This starts both `apps/server` (Hono API) and `apps/web` (React/TanStack Start) with hot-reloading.
+
+4. **Open your browser**
+   • Web UI: [http://localhost:3001](http://localhost:3001)
+   • API: [http://localhost:3000](http://localhost:3000)
 
 ## ▶️ Running the Application
 
