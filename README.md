@@ -92,7 +92,7 @@ This project uses PostgreSQL with Drizzle ORM.
 
 ## 🗂️ File Storage Setup (MinIO)
 
-This project uses MinIO as an S3-compatible object storage solution for local development.
+This project uses MinIO as an S3-compatible object storage solution for local development. The MinIO service is configured in the `docker-compose.yml` file in the root directory.
 
 ### Prerequisites
 
@@ -105,6 +105,8 @@ This project uses MinIO as an S3-compatible object storage solution for local de
     ```bash
     docker-compose up -d
     ```
+
+    **Note**: MinIO data will be persisted in a Docker volume named `minio_data`.
 
 2.  **Configure Environment Variables:**
     Add the following MinIO configuration to your `apps/server/.env` file:
