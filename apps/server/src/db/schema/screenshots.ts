@@ -56,8 +56,14 @@ export const screenshots = pgTable("screenshots", {
 	cacheTtl: integer("cache_ttl").default(3600),
 	cacheKey: text("cache_key"),
 	userAgent: text("user_agent"),
-	headers: jsonb("headers").notNull().$type<Array<string>>().default([]),
-	cookies: jsonb("cookies").notNull().$type<Array<string>>().default([]),
+	headers: jsonb("headers")
+		.notNull()
+		.$type<Array<{ name: string; value: string }>>()
+		.default([]),
+	cookies: jsonb("cookies")
+		.notNull()
+		.$type<Array<{ name: string; value: string }>>()
+		.default([]),
 	bypassCsp: boolean("bypass_csp").notNull().default(false),
 	isExtra: boolean("is_extra").notNull().default(false),
 	workspaceId: text("workspace_id")

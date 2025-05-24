@@ -112,7 +112,13 @@ export const ScreenshotSchema = z.object({
 			value
 				.split("\n")
 				.map((line) => line.trim())
-				.filter((l): l is string => l.length > 0),
+				.filter((l): l is string => l.length > 0)
+				.map((line) => {
+					const colonIdx = line.indexOf(":");
+					const name = line.slice(0, colonIdx).trim().toLowerCase();
+					const value = line.slice(colonIdx + 1).trim();
+					return { name, value } as { name: string; value: string };
+				}),
 		)
 		.optional(),
 	cookies: z
@@ -165,7 +171,16 @@ export const ScreenshotSchema = z.object({
 			value
 				.split("\n")
 				.map((line) => line.trim())
-				.filter((l): l is string => l.length > 0),
+				.filter((l): l is string => l.length > 0)
+				.map((line) => {
+					const firstSeg = line.split(";")[0] ?? "";
+					const eqIdx = firstSeg.indexOf("=");
+					if (eqIdx === -1) return null;
+					const name = firstSeg.slice(0, eqIdx).trim();
+					const value = firstSeg.slice(eqIdx + 1).trim();
+					return { name, value } as { name: string; value: string };
+				})
+				.filter((obj): obj is { name: string; value: string } => obj !== null),
 		)
 		.optional(),
 	bypass_csp: z
