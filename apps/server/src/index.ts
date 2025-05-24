@@ -1,3 +1,5 @@
+import "dotenv/config";
+
 import { swaggerUI } from "@hono/swagger-ui";
 import { OpenAPIHono } from "@hono/zod-openapi";
 import { RPCHandler } from "@orpc/server/fetch";
