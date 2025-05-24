@@ -206,6 +206,9 @@ export async function getOrCreateScreenshot(
 
 		if (bypassCsp) {
 			await page.setBypassCSP(true);
+			console.warn(
+				`[AUDIT] bypass_csp enabled for workspace ${workspaceId} on URL ${url}`,
+			);
 		}
 
 		page.emulateMediaFeatures([

@@ -1,5 +1,8 @@
 import { z } from "zod";
 
+export const MAX_HEADERS_SIZE = 8192; // 8 KB (RFC 7230 guideline)
+export const MAX_COOKIES_SIZE = 4096; // 4 KB (typical cookie size limit)
+
 export const FormatSchema = z.enum(["jpeg", "png", "webp"]);
 export const ResourceTypeSchema = z.enum([
 	"document",
@@ -87,6 +90,9 @@ export const ScreenshotSchema = z.object({
 	user_agent: z.string().optional(),
 	headers: z
 		.string()
+		.max(MAX_HEADERS_SIZE, {
+			message: `Headers exceed maximum allowed size of ${MAX_HEADERS_SIZE} characters`,
+		})
 		.refine(
 			(val) => {
 				const lines = val
@@ -111,6 +117,9 @@ export const ScreenshotSchema = z.object({
 		.optional(),
 	cookies: z
 		.string()
+		.max(MAX_COOKIES_SIZE, {
+			message: `Cookies exceed maximum allowed size of ${MAX_COOKIES_SIZE} characters`,
+		})
 		.refine(
 			(val) => {
 				const lines = val
