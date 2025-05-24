@@ -90,6 +90,56 @@ This project uses PostgreSQL with Drizzle ORM.
     bun db:studio
     ```
 
+## 🗂️ File Storage Setup (MinIO)
+
+This project uses MinIO as an S3-compatible object storage solution for local development.
+
+### Prerequisites
+
+- [Docker](https://www.docker.com/) and Docker Compose
+
+### Setup Instructions
+
+1.  **Start MinIO Service:**
+    Run the following command from the root directory to start the MinIO container:
+    ```bash
+    docker-compose up -d
+    ```
+
+2.  **Configure Environment Variables:**
+    Add the following MinIO configuration to your `apps/server/.env` file:
+    ```env
+    # MinIO Configuration (for local development)
+    AWS_ACCESS_KEY_ID=screenshothis-access-key
+    AWS_SECRET_ACCESS_KEY=screenshothis-secret-key
+    AWS_REGION=us-east-1
+    AWS_BUCKET=screenshothis-bucket
+    AWS_URL=http://localhost:9000
+    AWS_ENDPOINT=http://localhost:9000
+    AWS_USE_PATH_STYLE_ENDPOINT=true
+    ```
+
+3.  **Access MinIO Console:**
+    - Open your browser and navigate to [http://localhost:9001](http://localhost:9001)
+    - Login with:
+      - **Username**: `screenshothis-access-key`
+      - **Password**: `screenshothis-secret-key`
+
+4.  **Create Storage Bucket:**
+    - In the MinIO console, click "Create Bucket"
+    - Enter bucket name: `screenshothis-bucket` (or match your `AWS_BUCKET` environment variable)
+    - Click "Create Bucket"
+
+5.  **Verify Setup:**
+    - MinIO API is available at: [http://localhost:9000](http://localhost:9000)
+    - MinIO Console is available at: [http://localhost:9001](http://localhost:9001)
+
+### Managing MinIO
+
+- **Stop MinIO**: `docker-compose down`
+- **View MinIO logs**: `docker-compose logs minio`
+- **Restart MinIO**: `docker-compose restart minio`
+
 ## ▶️ Running the Application
 
 Once the dependencies are installed and the database is configured:
