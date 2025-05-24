@@ -10,6 +10,7 @@ import type {
 import fetch from "cross-fetch";
 import { and, eq, sql } from "drizzle-orm";
 import pLimit from "p-limit";
+import type { CookieData } from "puppeteer";
 import puppeteer from "puppeteer-extra";
 import StealthPlugin from "puppeteer-extra-plugin-stealth";
 import type { ObjectToCamel } from "ts-case-convert";
@@ -122,68 +123,17 @@ export async function getOrCreateScreenshot(
 
 		if (cookies && cookies.length > 0) {
 			const urlObj = new URL(url);
-
-			const parseCookie = (
-				line: string,
-			): import("puppeteer").CookieData | null => {
-				const parts = line.split(";").map((p) => p.trim());
-				if (parts.length === 0) return null;
-
-				const [nameValue, ...attrParts] = parts;
-				const eqIdx = nameValue.indexOf("=");
-				if (eqIdx === -1) return null;
-				const name = nameValue.slice(0, eqIdx).trim();
-				const value = nameValue.slice(eqIdx + 1).trim();
-
-				const cookie: import("puppeteer").CookieData = {
-					name,
-					value,
-					domain: urlObj.hostname,
-					path: "/",
-				};
-
-				for (const attr of attrParts) {
-					const [attrNameRaw, ...attrValueParts] = attr.split("=");
-					const attrName = attrNameRaw.trim().toLowerCase();
-					const attrValue = attrValueParts.join("=").trim();
-
-					switch (attrName) {
-						case "domain":
-							cookie.domain = attrValue.startsWith(".")
-								? attrValue.substring(1)
-								: attrValue;
-							break;
-						case "path":
-							if (attrValue) cookie.path = attrValue;
-							break;
-						case "expires": {
-							const parsed = Date.parse(attrValue);
-							if (!Number.isNaN(parsed)) {
-								cookie.expires = Math.floor(parsed / 1000);
-							}
-							break;
-						}
-						case "samesite":
-							cookie.sameSite = attrValue as import("puppeteer").CookieSameSite;
-							break;
-						case "secure":
-							cookie.secure = true;
-							break;
-						case "httponly":
-							cookie.httpOnly = true;
-							break;
-					}
-				}
-				return cookie;
-			};
-
-			const cookieObjs = cookies
-				.map(parseCookie)
-				.filter((c): c is NonNullable<typeof c> => c !== null);
-
-			if (cookieObjs.length > 0) {
-				await browser.setCookie(...cookieObjs);
-			}
+			const cookieObjs: Array<CookieData> = cookies.map((c) => ({
+				name: c.name,
+				value: c.value,
+				domain: (c.domain ?? urlObj.hostname) as string,
+				path: (c.path ?? "/") as string,
+				expires: c.expires as number | undefined,
+				sameSite: c.sameSite as import("puppeteer").CookieSameSite | undefined,
+				secure: c.secure as boolean | undefined,
+				httpOnly: c.httpOnly as boolean | undefined,
+			}));
+			if (cookieObjs.length > 0) await browser.setCookie(...cookieObjs);
 		}
 
 		const page = await browser.newPage();
@@ -194,10 +144,9 @@ export async function getOrCreateScreenshot(
 
 		if (headers && headers.length > 0) {
 			const headerObj: Record<string, string> = {};
-			for (const line of headers) {
-				const [name, ...rest] = line.split(":");
-				if (!name) continue;
-				headerObj[name.trim()] = rest.join(":").trim();
+			for (const { name, value } of headers) {
+				if (!name || !value) continue;
+				headerObj[name] = value;
 			}
 			if (Object.keys(headerObj).length > 0) {
 				await page.setExtraHTTPHeaders(headerObj);

@@ -62,7 +62,18 @@ export const screenshots = pgTable("screenshots", {
 		.default([]),
 	cookies: jsonb("cookies")
 		.notNull()
-		.$type<Array<{ name: string; value: string }>>()
+		.$type<
+			Array<{
+				name: string;
+				value: string;
+				domain?: string;
+				path?: string;
+				expires?: number;
+				sameSite?: "lax" | "strict" | "none";
+				secure?: boolean;
+				httpOnly?: boolean;
+			}>
+		>()
 		.default([]),
 	bypassCsp: boolean("bypass_csp").notNull().default(false),
 	isExtra: boolean("is_extra").notNull().default(false),

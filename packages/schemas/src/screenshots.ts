@@ -173,14 +173,66 @@ export const ScreenshotSchema = z.object({
 				.map((line) => line.trim())
 				.filter((l): l is string => l.length > 0)
 				.map((line) => {
-					const firstSeg = line.split(";")[0] ?? "";
-					const eqIdx = firstSeg.indexOf("=");
+					const segments = line.split(";").map((s) => s.trim());
+					if (segments.length === 0 || !segments[0]) return null;
+					const [nameValue, ...attrParts] = segments as [string, ...string[]];
+					const eqIdx = nameValue.indexOf("=");
 					if (eqIdx === -1) return null;
-					const name = firstSeg.slice(0, eqIdx).trim();
-					const value = firstSeg.slice(eqIdx + 1).trim();
-					return { name, value } as { name: string; value: string };
+					const cookieObj: {
+						name: string;
+						value: string;
+						domain?: string;
+						path?: string;
+						expires?: number;
+						sameSite?: "lax" | "strict" | "none";
+						secure?: boolean;
+						httpOnly?: boolean;
+					} = {
+						name: nameValue.slice(0, eqIdx).trim(),
+						value: nameValue.slice(eqIdx + 1).trim(),
+					};
+
+					for (const attr of attrParts) {
+						const [attrNameRaw, ...attrValParts] = attr.split("=");
+						if (!attrNameRaw) continue;
+						const attrName = attrNameRaw.trim().toLowerCase();
+						const attrVal = attrValParts.join("=").trim();
+
+						switch (attrName) {
+							case "domain":
+								cookieObj.domain = attrVal.startsWith(".")
+									? attrVal.substring(1)
+									: attrVal;
+								break;
+							case "path":
+								cookieObj.path = attrVal || "/";
+								break;
+							case "expires": {
+								const ts = Date.parse(attrVal);
+								if (!Number.isNaN(ts))
+									cookieObj.expires = Math.floor(ts / 1000);
+								break;
+							}
+							case "samesite":
+								cookieObj.sameSite = attrVal.toLowerCase() as
+									| "lax"
+									| "strict"
+									| "none";
+								break;
+							case "secure":
+								cookieObj.secure = true;
+								break;
+							case "httponly":
+								cookieObj.httpOnly = true;
+								break;
+						}
+					}
+					return cookieObj;
 				})
-				.filter((obj): obj is { name: string; value: string } => obj !== null),
+				.filter(
+					(obj): obj is { name: string; value: string; [k: string]: unknown } =>
+						obj !== null,
+				),
 		)
 		.optional(),
 	bypass_csp: z
