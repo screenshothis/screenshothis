@@ -309,7 +309,7 @@ Please ensure your code adheres to the linting and formatting guidelines (`bun c
 
 ## 📄 License
 
-This project is licensed under the [MIT License](./LICENSE).
+This project is licensed under the [AGPL-3.0](./LICENSE).
 
 ## Security & Rate Limits
 
