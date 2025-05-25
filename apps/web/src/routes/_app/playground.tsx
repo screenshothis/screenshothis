@@ -94,12 +94,10 @@ function RouteComponent() {
 				`   &block_cookie_banners=${values.block_cookie_banners}`,
 			values.block_trackers && `   &block_trackers=${values.block_trackers}`,
 			values.bypass_csp && `   &bypass_csp=${values.bypass_csp}`,
-			values.block_requests &&
-				values.block_requests.length > 0 &&
-				values.block_requests
-					?.split("\n")
-					?.map((request) => `   &block_requests=${request}`)
-					.join("\n"),
+			values.block_requests
+				?.split("\n")
+				?.map((request) => `   &block_requests=${request}`)
+				.join("\n"),
 			values.block_resources
 				?.map((resource) => `   &block_resources=${resource}`)
 				.join("\n"),
@@ -111,18 +109,30 @@ function RouteComponent() {
 			values.cache_ttl && `   &cache_ttl=${values.cache_ttl}`,
 			values.cache_key && `   &cache_key=${values.cache_key}`,
 			values.user_agent && `   &user_agent=${values.user_agent}`,
-			values.headers &&
-				values.headers.length > 0 &&
-				values.headers
-					.split("\n")
-					.map((h) => `   &headers=${encodeURIComponent(h)}`)
-					.join("\n"),
-			values.cookies &&
-				values.cookies.length > 0 &&
-				values.cookies
-					.split("\n")
-					.map((c) => `   &cookies=${encodeURIComponent(c)}`)
-					.join("\n"),
+			(() => {
+				const qp = new URLSearchParams();
+				const headerRegex = /^[\w!#$%&'*+.^`|~-]+:\s*[ -~]+$/i;
+				const cookieRegex = /[^=\s;]+=[^;]+/;
+
+				for (const h of values.headers
+					?.split("\n")
+					.map((l) => l.trim())
+					.filter(Boolean)
+					.filter((h) => headerRegex.test(h)) ?? []) {
+					qp.append("headers", h);
+				}
+
+				for (const c of values.cookies
+					?.split("\n")
+					.map((l) => l.trim())
+					.filter(Boolean)
+					.filter((c) => cookieRegex.test(c)) ?? []) {
+					qp.append("cookies", c);
+				}
+
+				if ([...qp.keys()].length === 0) return undefined;
+				return `   &${qp.toString().replace(/&/g, "\n   &")}`;
+			})(),
 		]
 			.filter(Boolean)
 			.join("\n");
