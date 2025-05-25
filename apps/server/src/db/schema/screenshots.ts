@@ -16,6 +16,7 @@ import {
 } from "drizzle-orm/pg-core";
 import type { z } from "zod";
 
+import type { CookieSameSite } from "puppeteer";
 import { timestamps } from "./utils/timestamps";
 import { workspace } from "./workspaces";
 
@@ -69,7 +70,7 @@ export const screenshots = pgTable("screenshots", {
 				domain?: string;
 				path?: string;
 				expires?: number;
-				sameSite?: "lax" | "strict" | "none";
+				sameSite?: CookieSameSite | undefined;
 				secure?: boolean;
 				httpOnly?: boolean;
 			}>
