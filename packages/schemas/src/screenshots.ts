@@ -225,6 +225,13 @@ export const ScreenshotSchema = z.object({
 							case "httponly":
 								cookieObj.httpOnly = true;
 								break;
+							case "max-age": {
+								const maxAge = Number.parseInt(attrVal, 10);
+								if (!Number.isNaN(maxAge)) {
+									cookieObj.expires = Math.floor(Date.now() / 1000) + maxAge;
+								}
+								break;
+							}
 						}
 					}
 					return cookieObj;
