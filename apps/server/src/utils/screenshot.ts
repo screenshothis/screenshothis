@@ -10,7 +10,7 @@ import type {
 import fetch from "cross-fetch";
 import { and, eq, sql } from "drizzle-orm";
 import pLimit from "p-limit";
-import type { CookieData } from "puppeteer";
+import type { CookieData, CookieSameSite } from "puppeteer";
 import puppeteer from "puppeteer-extra";
 import StealthPlugin from "puppeteer-extra-plugin-stealth";
 import type { ObjectToCamel } from "ts-case-convert";
@@ -129,11 +129,13 @@ export async function getOrCreateScreenshot(
 				domain: (c.domain ?? urlObj.hostname) as string,
 				path: (c.path ?? "/") as string,
 				expires: c.expires as number | undefined,
-				sameSite: c.sameSite as import("puppeteer").CookieSameSite | undefined,
+				sameSite: c.sameSite as CookieSameSite | undefined,
 				secure: c.secure as boolean | undefined,
 				httpOnly: c.httpOnly as boolean | undefined,
 			}));
-			if (cookieObjs.length > 0) await browser.setCookie(...cookieObjs);
+			if (cookieObjs.length > 0) {
+				await browser.defaultBrowserContext().setCookie(...cookieObjs);
+			}
 		}
 
 		const page = await browser.newPage();
