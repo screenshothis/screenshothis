@@ -16,6 +16,8 @@ export function SwitchField({
 	labelClassName,
 	hint,
 	hintClassName,
+	hintIcon,
+	hintIconClassName,
 	id: idProp,
 	...rest
 }: SwitchFieldProps) {
@@ -33,6 +35,8 @@ export function SwitchField({
 			error={error}
 			hint={hint}
 			hintClassName={hintClassName}
+			hintIcon={hintIcon}
+			hintIconClassName={hintIconClassName}
 			id={`${id}-form-item`}
 			className={wrapperClassName}
 		>

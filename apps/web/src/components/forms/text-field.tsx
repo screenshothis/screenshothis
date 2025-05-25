@@ -24,6 +24,8 @@ export function TextField({
 	inlineTrailingNode,
 	hint,
 	hintClassName,
+	hintIcon,
+	hintIconClassName,
 	...rest
 }: TextFieldProps) {
 	const field = useFieldContext<string | number>();
@@ -40,6 +42,8 @@ export function TextField({
 			error={error}
 			hint={hint}
 			hintClassName={hintClassName}
+			hintIcon={hintIcon}
+			hintIconClassName={hintIconClassName}
 			id={id}
 			className={cn("flex flex-col gap-1", wrapperClassName)}
 		>

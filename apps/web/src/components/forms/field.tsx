@@ -1,5 +1,7 @@
 "use client";
 
+import InformationCircleSolidIcon from "virtual:icons/hugeicons/information-circle-solid";
+
 import * as m from "motion/react-m";
 import * as React from "react";
 
@@ -11,13 +13,15 @@ export type FieldProps = {
 	label?: React.ReactNode;
 	labelSub?: React.ReactNode;
 	labelClassName?: string;
-	hint?: string | Array<string>;
 	id?: string;
 	className?: string;
 	disabled?: boolean;
-	error?: string | Array<string>;
 	children: React.ReactNode;
+	hint?: string | Array<string>;
 	hintClassName?: string;
+	hintIcon?: React.ForwardRefExoticComponent<React.SVGProps<SVGSVGElement>>;
+	hintIconClassName?: string;
+	error?: string | Array<string>;
 };
 
 const HintRootMotion = m.create(Hint.Root);
@@ -31,6 +35,8 @@ export function Field({
 	children,
 	hint,
 	hintClassName,
+	hintIcon = InformationCircleSolidIcon,
+	hintIconClassName,
 	...props
 }: FieldProps) {
 	const generatedId = React.useId();
@@ -68,7 +74,7 @@ export function Field({
 					animate={{ opacity: 1, height: "auto" }}
 					exit={{ opacity: 0, height: 0 }}
 				>
-					<Hint.Icon />
+					<Hint.Icon as={hintIcon} className={hintIconClassName} />
 					<span className="mt-px">{error || hint}</span>
 				</HintRootMotion>
 			) : null}

@@ -1,4 +1,5 @@
 import AdvertisimentIcon from "virtual:icons/hugeicons/advertisiment";
+import Alert01SolidIcon from "virtual:icons/hugeicons/alert-01-solid";
 import CropIcon from "virtual:icons/hugeicons/crop";
 import Database02Icon from "virtual:icons/hugeicons/database-02";
 import DocumentCode01Icon from "virtual:icons/hugeicons/document-code";
@@ -526,7 +527,9 @@ function RouteComponent() {
 														name="user_agent"
 														id="user_agent"
 														placeholder="Mozilla/5.0 (Windows NT 10.0; Win64; x64)..."
-														hint="⚠️ Custom user agent strings can be used for fingerprinting; use responsibly."
+														hint="Custom user agent strings can be used for fingerprinting; use responsibly."
+														hintIcon={Alert01SolidIcon}
+														hintIconClassName="text-state-warning-base"
 													/>
 												)}
 											/>
@@ -543,7 +546,9 @@ function RouteComponent() {
 															"Authorization: Bearer <token>",
 															"X-Custom-Header: custom-value",
 														].join("\n")}
-														hint="⚠️ One header per line (Name: Value). Avoid adding security-sensitive headers."
+														hint="One header per line (Name: Value). Avoid adding security-sensitive headers."
+														hintIcon={Alert01SolidIcon}
+														hintIconClassName="text-state-warning-base"
 													/>
 												)}
 											/>
@@ -560,7 +565,9 @@ function RouteComponent() {
 															"sessionid=abc123; Domain=example.com; Path=/; HttpOnly",
 															"theme=dark; Path=/; SameSite=Lax",
 														].join("\n")}
-														hint="⚠️ One cookie per line. Only valid cookies; misuse may bypass security controls."
+														hint="One cookie per line. Only valid cookies; misuse may bypass security controls."
+														hintIcon={Alert01SolidIcon}
+														hintIconClassName="text-state-warning-base"
 													/>
 												)}
 											/>
@@ -572,7 +579,9 @@ function RouteComponent() {
 														label="Bypass CSP"
 														name="bypass_csp"
 														id="bypass_csp"
-														hint="⚠️ Bypasses Content Security Policy protections; use with extreme caution."
+														hint="Bypasses Content Security Policy protections; use with extreme caution."
+														hintIcon={Alert01SolidIcon}
+														hintIconClassName="text-state-warning-base"
 													/>
 												)}
 											/>
