@@ -310,3 +310,12 @@ Please ensure your code adheres to the linting and formatting guidelines (`bun c
 ## 📄 License
 
 This project is licensed under the [AGPL-3.0](./LICENSE).
+
+## Security & Rate Limits
+
+- **Header size limit**: Each request's `headers` parameter is capped at 8 KB (8192 characters).
+- **Cookie size limit**: The `cookies` parameter is capped at 4 KB (4096 characters).
+- **Rate limiting**: Screenshot generation is limited via `requestLimits` (see server schema) and enforced per-user.
+- **CSP bypass auditing**: Every time `bypass_csp=true` is used, the event is audit-logged server-side for review.
+
+These constraints ensure reliable performance and mitigate abuse vectors per RFC 7230 and common security best practices.

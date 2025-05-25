@@ -10,6 +10,7 @@ import type {
 import fetch from "cross-fetch";
 import { and, eq, sql } from "drizzle-orm";
 import pLimit from "p-limit";
+import type { CookieData, CookieSameSite } from "puppeteer";
 import puppeteer from "puppeteer-extra";
 import StealthPlugin from "puppeteer-extra-plugin-stealth";
 import type { ObjectToCamel } from "ts-case-convert";
@@ -58,6 +59,10 @@ export async function getOrCreateScreenshot(
 			isCached,
 			cacheTtl,
 			cacheKey,
+			userAgent,
+			headers = [],
+			cookies = [],
+			bypassCsp,
 		} = params;
 
 		const existing = await db.query.screenshots.findFirst({
@@ -82,6 +87,10 @@ export async function getOrCreateScreenshot(
 				eq(screenshots.isCached, isCached),
 				cacheTtl ? eq(screenshots.cacheTtl, cacheTtl) : undefined,
 				cacheKey ? eq(screenshots.cacheKey, cacheKey) : undefined,
+				userAgent ? eq(screenshots.userAgent, userAgent) : undefined,
+				sql`${screenshots.headers} @> ${JSON.stringify(headers || [])}`,
+				sql`${screenshots.cookies} @> ${JSON.stringify(cookies || [])}`,
+				eq(screenshots.bypassCsp, bypassCsp),
 			),
 		});
 
@@ -111,7 +120,47 @@ export async function getOrCreateScreenshot(
 				deviceScaleFactor,
 			},
 		});
+
+		if (cookies && cookies.length > 0) {
+			const urlObj = new URL(url);
+			const cookieObjs: Array<CookieData> = cookies.map((c) => ({
+				name: c.name,
+				value: c.value,
+				domain: (c.domain ?? urlObj.hostname) as string,
+				path: (c.path ?? "/") as string,
+				expires: c.expires as number | undefined,
+				sameSite: c.sameSite as CookieSameSite | undefined,
+				secure: c.secure as boolean | undefined,
+				httpOnly: c.httpOnly as boolean | undefined,
+			}));
+			if (cookieObjs.length > 0) {
+				await browser.defaultBrowserContext().setCookie(...cookieObjs);
+			}
+		}
+
 		const page = await browser.newPage();
+
+		if (userAgent) {
+			await page.setUserAgent(userAgent);
+		}
+
+		if (headers && headers.length > 0) {
+			const headerObj: Record<string, string> = {};
+			for (const { name, value } of headers) {
+				if (!name || !value) continue;
+				headerObj[name] = value;
+			}
+			if (Object.keys(headerObj).length > 0) {
+				await page.setExtraHTTPHeaders(headerObj);
+			}
+		}
+
+		if (bypassCsp) {
+			await page.setBypassCSP(true);
+			console.warn(
+				`[AUDIT] bypass_csp enabled for workspace ${workspaceId} on URL ${url}`,
+			);
+		}
 
 		page.emulateMediaFeatures([
 			{
@@ -131,6 +180,8 @@ export async function getOrCreateScreenshot(
 			const blockRequest = wildcardMatch(blockRequests || [], {
 				separator: false,
 			});
+
+			await page.setRequestInterception(true);
 
 			page.on("request", (request) => {
 				if (blockResources?.includes(request.resourceType() as never)) {
@@ -207,6 +258,10 @@ export async function getOrCreateScreenshot(
 					isCached,
 					cacheTtl,
 					cacheKey,
+					userAgent,
+					headers,
+					cookies,
+					bypassCsp,
 					duration: Number.parseFloat(
 						((Date.now() - startTime) / 1000).toFixed(2),
 					),

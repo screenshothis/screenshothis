@@ -79,12 +79,31 @@ screenshotWorker.on("error", (err: Error) => {
 	console.error("Screenshot worker error", err);
 });
 
+// Utility to normalize string arrays (trim, lowercase, sort) for consistent hashing/comparison
+function normalizeStringArray(arr: string[] | undefined | null): string[] {
+	if (!arr) return [];
+	return arr
+		.map((s) => s.trim().toLowerCase())
+		.filter((s) => s.length > 0)
+		.sort();
+}
+
 function buildJobKey(
 	workspaceId: string,
 	params: ScreenshotJobParams["params"],
 ): string {
+	// Normalize headers/cookies for deterministic key generation
+	const normalized = {
+		...params,
+		headers: normalizeStringArray(params.headers),
+		cookies: normalizeStringArray(params.cookies),
+	} as typeof params;
+
 	// Sort keys to ensure consistent string representation
-	const sortedParams = JSON.stringify(params, Object.keys(params).sort());
+	const sortedParams = JSON.stringify(
+		normalized,
+		Object.keys(normalized).sort(),
+	);
 	const raw = workspaceId + sortedParams;
 	// Bun.hash returns a 64-bit bigint which we convert to hex string
 	return Bun.hash(raw).toString(16);
@@ -190,7 +209,14 @@ export async function getExistingScreenshotKey(
 		isCached,
 		cacheTtl,
 		cacheKey,
+		userAgent,
+		headers,
+		cookies,
+		bypassCsp,
 	} = params;
+
+	const normalizedHeaders = normalizeStringArray(headers);
+	const normalizedCookies = normalizeStringArray(cookies);
 
 	try {
 		const existing = await db.query.screenshots.findFirst({
@@ -215,6 +241,14 @@ export async function getExistingScreenshotKey(
 				eq(screenshots.isCached, isCached),
 				cacheTtl ? eq(screenshots.cacheTtl, cacheTtl) : undefined,
 				cacheKey ? eq(screenshots.cacheKey, cacheKey) : undefined,
+				userAgent ? eq(screenshots.userAgent, userAgent) : undefined,
+				normalizedHeaders.length > 0
+					? sql`${screenshots.headers} @> ${JSON.stringify(normalizedHeaders)}`
+					: undefined,
+				normalizedCookies.length > 0
+					? sql`${screenshots.cookies} @> ${JSON.stringify(normalizedCookies)}`
+					: undefined,
+				eq(screenshots.bypassCsp, bypassCsp),
 			),
 		});
 

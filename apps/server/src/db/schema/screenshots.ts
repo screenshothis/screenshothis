@@ -16,6 +16,7 @@ import {
 } from "drizzle-orm/pg-core";
 import type { z } from "zod";
 
+import type { CookieSameSite } from "puppeteer";
 import { timestamps } from "./utils/timestamps";
 import { workspace } from "./workspaces";
 
@@ -55,6 +56,27 @@ export const screenshots = pgTable("screenshots", {
 	isCached: boolean("is_cached").notNull().default(false),
 	cacheTtl: integer("cache_ttl").default(3600),
 	cacheKey: text("cache_key"),
+	userAgent: text("user_agent"),
+	headers: jsonb("headers")
+		.notNull()
+		.$type<Array<{ name: string; value: string }>>()
+		.default([]),
+	cookies: jsonb("cookies")
+		.notNull()
+		.$type<
+			Array<{
+				name: string;
+				value: string;
+				domain?: string;
+				path?: string;
+				expires?: number;
+				sameSite?: CookieSameSite | undefined;
+				secure?: boolean;
+				httpOnly?: boolean;
+			}>
+		>()
+		.default([]),
+	bypassCsp: boolean("bypass_csp").notNull().default(false),
 	isExtra: boolean("is_extra").notNull().default(false),
 	workspaceId: text("workspace_id")
 		.notNull()
