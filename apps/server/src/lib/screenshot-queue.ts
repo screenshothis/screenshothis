@@ -88,6 +88,30 @@ function normalizeStringArray(arr: string[] | undefined | null): string[] {
 		.sort();
 }
 
+// Normalize headers objects to string array for consistent hashing
+function normalizeHeaders(
+	headers: { name: string; value: string }[] | undefined,
+): string[] {
+	if (!headers) return [];
+	return headers
+		.map((h) => `${h.name.trim().toLowerCase()}: ${h.value.trim()}`)
+		.filter((s) => s.length > 0)
+		.sort();
+}
+
+// Normalize cookies objects to string array for consistent hashing
+function normalizeCookies(
+	cookies:
+		| { name: string; value: string; [key: string]: unknown }[]
+		| undefined,
+): string[] {
+	if (!cookies) return [];
+	return cookies
+		.map((c) => `${c.name.trim().toLowerCase()}=${c.value.trim()}`)
+		.filter((s) => s.length > 0)
+		.sort();
+}
+
 function buildJobKey(
 	workspaceId: string,
 	params: ScreenshotJobParams["params"],
@@ -95,9 +119,9 @@ function buildJobKey(
 	// Normalize headers/cookies for deterministic key generation
 	const normalized = {
 		...params,
-		headers: normalizeStringArray(params.headers),
-		cookies: normalizeStringArray(params.cookies),
-	} as typeof params;
+		headers: normalizeHeaders(params.headers),
+		cookies: normalizeCookies(params.cookies),
+	};
 
 	// Sort keys to ensure consistent string representation
 	const sortedParams = JSON.stringify(
@@ -215,8 +239,8 @@ export async function getExistingScreenshotKey(
 		bypassCsp,
 	} = params;
 
-	const normalizedHeaders = normalizeStringArray(headers);
-	const normalizedCookies = normalizeStringArray(cookies);
+	const normalizedHeaders = normalizeHeaders(headers);
+	const normalizedCookies = normalizeCookies(cookies);
 
 	try {
 		const existing = await db.query.screenshots.findFirst({
