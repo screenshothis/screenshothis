@@ -1,0 +1,148 @@
+import type { CreateScreenshotSchema } from "@screenshothis/schemas/screenshots";
+import type { z } from "zod";
+
+export type PlaygroundFormValues = z.input<typeof CreateScreenshotSchema>;
+
+/**
+ * Generates the API URL with query parameters based on form values
+ */
+export function generateApiUrl(values: PlaygroundFormValues): string {
+	const baseUrl = "https://api.screenshothis.com/v1/screenshots/take";
+	const params = new URLSearchParams();
+
+	// Required parameters
+	params.set("api_key", values.api_key || "your-api-key");
+	params.set("url", values.url || "https://polar.sh");
+
+	// Optional parameters - only add if they have values
+	if (values.selector) params.set("selector", values.selector);
+	if (values.width) params.set("width", values.width.toString());
+	if (values.height) params.set("height", values.height.toString());
+	if (values.is_mobile) params.set("is_mobile", values.is_mobile.toString());
+	if (values.is_landscape)
+		params.set("is_landscape", values.is_landscape.toString());
+	if (values.has_touch) params.set("has_touch", values.has_touch.toString());
+	if (values.device_scale_factor)
+		params.set("device_scale_factor", values.device_scale_factor.toString());
+	if (values.format) params.set("format", values.format);
+	if (values.block_ads) params.set("block_ads", values.block_ads.toString());
+	if (values.block_cookie_banners)
+		params.set("block_cookie_banners", values.block_cookie_banners.toString());
+	if (values.block_trackers)
+		params.set("block_trackers", values.block_trackers.toString());
+	if (values.bypass_csp) params.set("bypass_csp", values.bypass_csp.toString());
+	if (values.prefers_color_scheme)
+		params.set("prefers_color_scheme", values.prefers_color_scheme);
+	if (values.prefers_reduced_motion)
+		params.set("prefers_reduced_motion", values.prefers_reduced_motion);
+	if (values.is_cached) params.set("is_cached", values.is_cached.toString());
+	if (values.cache_ttl) params.set("cache_ttl", values.cache_ttl.toString());
+	if (values.cache_key) params.set("cache_key", values.cache_key);
+	if (values.user_agent) params.set("user_agent", values.user_agent);
+
+	// Handle block_requests (newline-separated)
+	if (values.block_requests) {
+		const requests = values.block_requests
+			.split("\n")
+			.map((r) => r.trim())
+			.filter(Boolean);
+		for (const request of requests) {
+			params.append("block_requests", request);
+		}
+	}
+
+	// Handle block_resources (array)
+	if (values.block_resources?.length) {
+		for (const resource of values.block_resources) {
+			params.append("block_resources", resource);
+		}
+	}
+
+	// Handle headers (newline-separated, validate format)
+	if (values.headers) {
+		const headerRegex = /^[\w!#$%&'*+.^`|~-]+:\s*[ -~]+$/i;
+		const headers = values.headers
+			.split("\n")
+			.map((h) => h.trim())
+			.filter(Boolean)
+			.filter((h) => headerRegex.test(h));
+		for (const header of headers) {
+			params.append("headers", header);
+		}
+	}
+
+	// Handle cookies (newline-separated, validate format)
+	if (values.cookies) {
+		const cookieRegex = /[^=\s;]+=[^;]+/;
+		const cookies = values.cookies
+			.split("\n")
+			.map((c) => c.trim())
+			.filter(Boolean)
+			.filter((c) => cookieRegex.test(c));
+		for (const cookie of cookies) {
+			params.append("cookies", cookie);
+		}
+	}
+
+	return `${baseUrl}?${params.toString()}`;
+}
+
+/**
+ * Formats the API URL for display with proper line breaks
+ */
+export function formatApiUrlForDisplay(values: PlaygroundFormValues): string {
+	const url = generateApiUrl(values);
+	const [baseUrl, queryString] = url.split("?");
+
+	if (!queryString) return baseUrl;
+
+	const params = new URLSearchParams(queryString);
+	const lines = [baseUrl];
+
+	for (const [key, value] of params.entries()) {
+		lines.push(`   &${key}=${value}`);
+	}
+
+	return lines.join("\n");
+}
+
+/**
+ * Validates if a URL is valid
+ */
+export function isValidUrl(url: string): boolean {
+	try {
+		new URL(url);
+		return true;
+	} catch {
+		return false;
+	}
+}
+
+/**
+ * Validates header format
+ */
+export function isValidHeader(header: string): boolean {
+	const headerRegex = /^[\w!#$%&'*+.^`|~-]+:\s*[ -~]+$/i;
+	return headerRegex.test(header);
+}
+
+/**
+ * Validates cookie format
+ */
+export function isValidCookie(cookie: string): boolean {
+	const cookieRegex = /[^=\s;]+=[^;]+/;
+	return cookieRegex.test(cookie);
+}
+
+/**
+ * Copy text to clipboard
+ */
+export async function copyToClipboard(text: string): Promise<boolean> {
+	try {
+		await navigator.clipboard.writeText(text);
+		return true;
+	} catch (error) {
+		console.warn("Failed to copy to clipboard:", error);
+		return false;
+	}
+}

@@ -21,15 +21,17 @@ import { useStore } from "@tanstack/react-form";
 import { useMutation } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 import * as React from "react";
-import type { z } from "zod";
+import { useHotkeys } from "react-hotkeys-hook";
 
-import { CodeBlock } from "#/components/code-block.tsx";
 import { useAppForm } from "#/components/forms/form.tsx";
 import { PageHeader } from "#/components/page-header.tsx";
+import { ScreenshotPreview } from "#/components/playground/screenshot-preview.tsx";
+import { UrlGenerator } from "#/components/playground/url-generator.tsx";
 import * as Accordion from "#/components/ui/accordion.tsx";
-import { Skeleton } from "#/components/ui/skeleton.tsx";
+import * as Alert from "#/components/ui/alert.tsx";
+import * as Kbd from "#/components/ui/kbd.tsx";
 import { useORPC } from "#/hooks/use-orpc.ts";
-import { cn } from "#/utils/cn.ts";
+import type { PlaygroundFormValues } from "#/utils/playground-utils.ts";
 
 export const Route = createFileRoute("/_app/playground")({
 	component: RouteComponent,
@@ -38,9 +40,10 @@ export const Route = createFileRoute("/_app/playground")({
 function RouteComponent() {
 	const { queryClient } = Route.useRouteContext();
 	const orpc = useORPC();
-	const { mutateAsync, data } = useMutation(
+	const { mutateAsync, data, error, isError } = useMutation(
 		orpc.screenshots.create.mutationOptions(),
 	);
+
 	const form = useAppForm({
 		validators: { onSubmit: CreateScreenshotSchema },
 		defaultValues: {
@@ -54,7 +57,7 @@ function RouteComponent() {
 			headers: "",
 			cookies: "",
 			bypass_csp: false,
-		} as z.input<typeof CreateScreenshotSchema>,
+		} as PlaygroundFormValues,
 		onSubmit: async ({ value }) => {
 			await mutateAsync(value, {
 				async onSuccess() {
@@ -76,68 +79,20 @@ function RouteComponent() {
 		[form],
 	);
 
-	const code = React.useMemo(() => {
-		return [
-			"https://api.screenshothis.com/v1/screenshots/take",
-			`   ?api_key=${values.api_key || "your-api-key"}`,
-			`   &url=${values.url || "https://polar.sh"}`,
-			values.selector && `   &selector=${values.selector}`,
-			values.width && `   &width=${values.width}`,
-			values.height && `   &height=${values.height}`,
-			values.is_mobile && `   &is_mobile=${values.is_mobile}`,
-			values.is_landscape && `   &is_landscape=${values.is_landscape}`,
-			values.has_touch && `   &has_touch=${values.has_touch}`,
-			values.device_scale_factor &&
-				`   &device_scale_factor=${values.device_scale_factor}`,
-			values.format && `   &format=${values.format}`,
-			values.block_ads && `   &block_ads=${values.block_ads}`,
-			values.block_cookie_banners &&
-				`   &block_cookie_banners=${values.block_cookie_banners}`,
-			values.block_trackers && `   &block_trackers=${values.block_trackers}`,
-			values.bypass_csp && `   &bypass_csp=${values.bypass_csp}`,
-			values.block_requests
-				?.split("\n")
-				?.map((request) => `   &block_requests=${request}`)
-				.join("\n"),
-			values.block_resources
-				?.map((resource) => `   &block_resources=${resource}`)
-				.join("\n"),
-			values.prefers_color_scheme &&
-				`   &prefers_color_scheme=${values.prefers_color_scheme}`,
-			values.prefers_reduced_motion &&
-				`   &prefers_reduced_motion=${values.prefers_reduced_motion}`,
-			values.is_cached && `   &is_cached=${values.is_cached}`,
-			values.cache_ttl && `   &cache_ttl=${values.cache_ttl}`,
-			values.cache_key && `   &cache_key=${values.cache_key}`,
-			values.user_agent && `   &user_agent=${values.user_agent}`,
-			(() => {
-				const qp = new URLSearchParams();
-				const headerRegex = /^[\w!#$%&'*+.^`|~-]+:\s*[ -~]+$/i;
-				const cookieRegex = /[^=\s;]+=[^;]+/;
+	useHotkeys(["ctrl+enter", "meta+enter"], () => {
+		void form.handleSubmit();
+	});
 
-				for (const h of values.headers
-					?.split("\n")
-					.map((l) => l.trim())
-					.filter(Boolean)
-					.filter((h) => headerRegex.test(h)) ?? []) {
-					qp.append("headers", h);
-				}
+	const errorMessage = React.useMemo(() => {
+		if (!isError || !error) return undefined;
 
-				for (const c of values.cookies
-					?.split("\n")
-					.map((l) => l.trim())
-					.filter(Boolean)
-					.filter((c) => cookieRegex.test(c)) ?? []) {
-					qp.append("cookies", c);
-				}
-
-				if ([...qp.keys()].length === 0) return undefined;
-				return `   &${qp.toString().replace(/&/g, "\n   &")}`;
-			})(),
-		]
-			.filter(Boolean)
-			.join("\n");
-	}, [values]);
+		// Extract error message from the error object
+		if (typeof error === "string") return error;
+		if (error && typeof error === "object" && "message" in error) {
+			return String(error.message);
+		}
+		return "An unexpected error occurred";
+	}, [error, isError]);
 
 	return (
 		<>
@@ -183,7 +138,15 @@ function RouteComponent() {
 							</div>
 						</div>
 
-						<div className="grid grid-cols-1 items-start gap-3 lg:grid-cols-2">
+						<Alert.Root $variant="light" $status="feature">
+							<span className="inline-flex items-center gap-1">
+								<strong>💡 Pro tip:</strong> Use{" "}
+								<Kbd.Root>Cmd/Ctrl + Enter</Kbd.Root> to quickly generate
+								screenshots.
+							</span>
+						</Alert.Root>
+
+						<div className="grid grid-cols-1 items-start gap-3 lg:grid-cols-2 lg:gap-5">
 							<div className="grid gap-5">
 								<form.AppField
 									name="api_key"
@@ -591,44 +554,14 @@ function RouteComponent() {
 							</div>
 
 							{/* Preview */}
-							<div>
-								<div className="flex flex-col gap-2 rounded-16 bg-(--bg-weak-50) p-2 lg:gap-3 lg:p-3">
-									<div className="flex w-full items-center justify-between px-2">
-										<div className="font-medium font-mono text-(--text-sub-600) text-paragraph-xs tracking-normal md:text-paragraph-sm">
-											Preview your screenshot 👇
-										</div>
-									</div>
-
-									<div
-										className={cn(
-											"w-full rounded-10 bg-(--bg-white-0) transition-[height] duration-300",
-											!data?.image && "aspect-video",
-										)}
-									>
-										{form.state.isSubmitting ? (
-											<Skeleton className="h-full w-full rounded-10" />
-										) : data?.image ? (
-											<img
-												src={data.image}
-												alt="Screenshot"
-												className="w-full rounded-10"
-											/>
-										) : (
-											<div className="flex h-full w-full items-center justify-center rounded-10 bg-(--bg-white-0) text-(--text-sub-600) text-paragraph-sm">
-												No screenshot generated yet
-											</div>
-										)}
-									</div>
-								</div>
-
-								<CodeBlock
-									title="Generated URL"
-									wrapperClassName="mt-8"
-									lang="bash"
-									isCopyable
-									textToCopy={code.replaceAll("\n", "").replaceAll("   ", "")}
-									children={code}
+							<div className="space-y-6">
+								<ScreenshotPreview
+									imageUrl={data?.image}
+									isLoading={form.state.isSubmitting}
+									error={errorMessage}
 								/>
+
+								<UrlGenerator values={values} />
 							</div>
 						</div>
 					</form>
