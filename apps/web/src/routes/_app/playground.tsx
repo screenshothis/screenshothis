@@ -554,7 +554,7 @@ function RouteComponent() {
 							</div>
 
 							{/* Preview */}
-							<div className="space-y-6">
+							<div className="sticky top-5 space-y-6">
 								<ScreenshotPreview
 									imageUrl={data?.image}
 									isLoading={form.state.isSubmitting}
