@@ -10,9 +10,15 @@ export function generateApiUrl(values: PlaygroundFormValues): string {
 	const baseUrl = "https://api.screenshothis.com/v1/screenshots/take";
 	const params = new URLSearchParams();
 
-	// Required parameters
-	params.set("api_key", values.api_key || "your-api-key");
-	params.set("url", values.url || "https://polar.sh");
+	if (!values.api_key || values.api_key === "your-api-key") {
+		throw new Error("Please provide a valid API key");
+	}
+	if (!values.url || values.url === "https://polar.sh") {
+		throw new Error("Please provide a valid URL");
+	}
+
+	params.set("api_key", values.api_key);
+	params.set("url", values.url);
 
 	// Optional parameters - only add if they have values
 	if (values.selector) params.set("selector", values.selector);
@@ -60,7 +66,7 @@ export function generateApiUrl(values: PlaygroundFormValues): string {
 
 	// Handle headers (newline-separated, validate format)
 	if (values.headers) {
-		const headerRegex = /^[\w!#$%&'*+.^`|~-]+:\s*[ -~]+$/i;
+		const headerRegex = /^[a-zA-Z0-9!#$%&'*+.^_`|~-]+:\s*[^\r\n]*$/;
 		const headers = values.headers
 			.split("\n")
 			.map((h) => h.trim())
@@ -73,7 +79,7 @@ export function generateApiUrl(values: PlaygroundFormValues): string {
 
 	// Handle cookies (newline-separated, validate format)
 	if (values.cookies) {
-		const cookieRegex = /[^=\s;]+=[^;]+/;
+		const cookieRegex = /^[a-zA-Z0-9!#$%&'*+\-.^_`|~]+=[^;\r\n]*$/;
 		const cookies = values.cookies
 			.split("\n")
 			.map((c) => c.trim())
@@ -84,7 +90,15 @@ export function generateApiUrl(values: PlaygroundFormValues): string {
 		}
 	}
 
-	return `${baseUrl}?${params.toString()}`;
+	const generatedUrl = `${baseUrl}?${params.toString()}`;
+
+	if (generatedUrl.length > 2000) {
+		console.warn(
+			`Generated URL is ${generatedUrl.length} characters long, which may cause issues with some browsers or servers.`,
+		);
+	}
+
+	return generatedUrl;
 }
 
 /**
