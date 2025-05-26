@@ -35,27 +35,51 @@ export function ScreenshotPreview({
 		if (!imageUrl) return;
 
 		try {
+			// Check if clipboard API is available
+			if (!navigator.clipboard) {
+				await copyToClipboard(imageUrl);
+				return;
+			}
+
 			const response = await fetch(imageUrl);
+
+			if (!response.ok) {
+				throw new Error(`HTTP error! status: ${response.status}`);
+			}
+
 			const blob = await response.blob();
 			await navigator.clipboard.write([
 				new ClipboardItem({ [blob.type]: blob }),
 			]);
 		} catch (error) {
 			console.warn("Failed to copy image:", error);
-			// Fallback to copying URL
-			await copyToClipboard(imageUrl);
+
+			try {
+				await copyToClipboard(imageUrl);
+			} catch (fallbackError) {
+				console.error("Failed to copy URL as fallback:", fallbackError);
+			}
 		}
 	}, [imageUrl]);
 
 	const handleDownload = React.useCallback(() => {
 		if (!imageUrl) return;
 
-		const link = document.createElement("a");
-		link.href = imageUrl;
-		link.download = `screenshot-${Date.now()}.png`;
-		document.body.appendChild(link);
-		link.click();
-		document.body.removeChild(link);
+		try {
+			const link = document.createElement("a");
+			link.href = imageUrl;
+
+			// Determine file extension from URL or default to png
+			const url = new URL(imageUrl);
+			const extension = url.pathname.split(".").pop() || "png";
+			link.download = `screenshot-${Date.now()}.${extension}`;
+
+			document.body.appendChild(link);
+			link.click();
+			document.body.removeChild(link);
+		} catch (error) {
+			console.error("Failed to download image:", error);
+		}
 	}, [imageUrl]);
 
 	return (
@@ -123,7 +147,13 @@ export function ScreenshotPreview({
 						)}
 						<img
 							src={imageUrl}
-							alt="Generated screenshot"
+							alt={
+								imageError
+									? "Failed to load screenshot"
+									: "Generated screenshot"
+							}
+							loading="lazy"
+							decoding="async"
 							className={cn(
 								"w-full rounded-10 transition-opacity duration-300",
 								imageLoaded ? "opacity-100" : "opacity-0",
