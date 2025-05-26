@@ -1,10 +1,15 @@
+"use client";
+
 import Alert01SolidIcon from "virtual:icons/hugeicons/alert-01-solid";
+import Copy01Icon from "virtual:icons/hugeicons/copy-01";
 import Image01Icon from "virtual:icons/hugeicons/image-01";
+import ImageDownload02Icon from "virtual:icons/hugeicons/image-download-02";
 import Loading03Icon from "virtual:icons/hugeicons/loading-03";
+import Tick02Icon from "virtual:icons/hugeicons/tick-02";
 
 import * as React from "react";
 
-import { Button } from "#/components/ui/button.tsx";
+import * as CompactButton from "#/components/ui/compact-button.tsx";
 import { Skeleton } from "#/components/ui/skeleton.tsx";
 import { cn } from "#/utils/cn.ts";
 import { copyToClipboard } from "#/utils/playground-utils.ts";
@@ -24,6 +29,7 @@ export function ScreenshotPreview({
 }: ScreenshotPreviewProps) {
 	const [imageLoaded, setImageLoaded] = React.useState(false);
 	const [imageError, setImageError] = React.useState(false);
+	const [isCopied, setCopied] = React.useState(false);
 
 	// Reset states when imageUrl changes
 	React.useEffect(() => {
@@ -41,24 +47,39 @@ export function ScreenshotPreview({
 				return;
 			}
 
-			const response = await fetch(imageUrl);
+			// Convert image to PNG for better clipboard compatibility
+			const canvas = document.createElement("canvas");
+			const ctx = canvas.getContext("2d");
+			const img = new Image();
 
-			if (!response.ok) {
-				throw new Error(`HTTP error! status: ${response.status}`);
-			}
+			await new Promise((resolve, reject) => {
+				img.onload = resolve;
+				img.onerror = reject;
+				img.src = imageUrl;
+			});
 
-			const blob = await response.blob();
-			await navigator.clipboard.write([
-				new ClipboardItem({ [blob.type]: blob }),
-			]);
+			canvas.width = img.width;
+			canvas.height = img.height;
+			ctx?.drawImage(img, 0, 0);
+
+			canvas.toBlob(async (blob) => {
+				if (blob) {
+					await navigator.clipboard.write([
+						new ClipboardItem({ "image/png": blob }),
+					]);
+				}
+			}, "image/png");
 		} catch (error) {
 			console.warn("Failed to copy image:", error);
-
+			// Fallback to copying the URL/data URL as text
 			try {
 				await copyToClipboard(imageUrl);
 			} catch (fallbackError) {
 				console.error("Failed to copy URL as fallback:", fallbackError);
 			}
+		} finally {
+			setCopied(true);
+			setTimeout(() => setCopied(false), 3000);
 		}
 	}, [imageUrl]);
 
@@ -69,11 +90,12 @@ export function ScreenshotPreview({
 			const link = document.createElement("a");
 			link.href = imageUrl;
 
-			// Determine file extension from URL or default to png
-			const url = new URL(imageUrl);
-			const extension = url.pathname.split(".").pop() || "png";
-			link.download = `screenshot-${Date.now()}.${extension}`;
+			// For base64 images, extract format from data URL or default to png
+			const extension = imageUrl.startsWith("data:image/")
+				? imageUrl.split(";")[0].split("/")[1] || "png"
+				: "png";
 
+			link.download = `screenshot-${Date.now()}.${extension}`;
 			document.body.appendChild(link);
 			link.click();
 			document.body.removeChild(link);
@@ -89,24 +111,27 @@ export function ScreenshotPreview({
 				className,
 			)}
 		>
-			<div className="flex items-center justify-between">
+			<div className="flex items-center justify-between px-2">
 				<div className="font-medium font-mono text-(--text-sub-600) text-paragraph-xs tracking-normal md:text-paragraph-sm">
 					Preview your screenshot 👇
 				</div>
 
 				{imageUrl && imageLoaded && !imageError && (
 					<div className="flex gap-2">
-						<Button
-							$style="ghost"
-							leadingIcon={Image01Icon}
-							$size="sm"
-							onClick={handleCopyImage}
-						>
-							Copy Image
-						</Button>
-						<Button $style="ghost" $size="sm" onClick={handleDownload}>
-							Download
-						</Button>
+						<CompactButton.Root $style="ghost" onClick={handleCopyImage}>
+							<CompactButton.Icon
+								className="size-5"
+								as={isCopied ? Tick02Icon : Copy01Icon}
+							/>
+							<span className="sr-only">
+								{isCopied ? "Copied!" : "Copy image"}
+							</span>
+						</CompactButton.Root>
+
+						<CompactButton.Root $style="ghost" onClick={handleDownload}>
+							<CompactButton.Icon className="size-5" as={ImageDownload02Icon} />
+							<span className="sr-only">Download</span>
+						</CompactButton.Root>
 					</div>
 				)}
 			</div>

@@ -98,6 +98,7 @@ function CompactButtonRoot({
 	$fullRadius,
 	children,
 	className,
+	type = "button",
 	...rest
 }: CompactButtonProps) {
 	const uniqueId = React.useId();
@@ -118,8 +119,10 @@ function CompactButtonRoot({
 		asChild,
 	);
 
+	const buttonProps = asChild ? rest : { type, ...rest };
+
 	return (
-		<Component className={root({ class: className })} {...rest}>
+		<Component className={root({ class: className })} {...buttonProps}>
 			{extendedChildren}
 		</Component>
 	);

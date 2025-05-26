@@ -112,7 +112,7 @@ export const CodeBlock = (props: CodeBlockProps) => {
 							$style="ghost"
 						>
 							<CompactButton.Icon
-								className="size-4"
+								className="size-5"
 								as={isCopied ? Tick02Icon : Copy01Icon}
 							/>
 							<span className="sr-only">{isCopied ? "Copied" : "Copy"}</span>

@@ -138,7 +138,7 @@ function RouteComponent() {
 							</div>
 						</div>
 
-						<Alert.Root $variant="light" $status="feature">
+						<Alert.Root $variant="lighter" $status="feature">
 							<span className="inline-flex items-center gap-1">
 								<strong>💡 Pro tip:</strong> Use{" "}
 								<Kbd.Root>Cmd/Ctrl + Enter</Kbd.Root> to quickly generate

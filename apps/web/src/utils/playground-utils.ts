@@ -10,15 +10,9 @@ export function generateApiUrl(values: PlaygroundFormValues): string {
 	const baseUrl = "https://api.screenshothis.com/v1/screenshots/take";
 	const params = new URLSearchParams();
 
-	if (!values.api_key || values.api_key === "your-api-key") {
-		throw new Error("Please provide a valid API key");
-	}
-	if (!values.url || values.url === "https://polar.sh") {
-		throw new Error("Please provide a valid URL");
-	}
-
-	params.set("api_key", values.api_key);
-	params.set("url", values.url);
+	// Required parameters
+	params.set("api_key", values.api_key ?? "your-api-key");
+	params.set("url", values.url ?? "https://polar.sh");
 
 	// Optional parameters - only add if they have values
 	if (values.selector) params.set("selector", values.selector);
