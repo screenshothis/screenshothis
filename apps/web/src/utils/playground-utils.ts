@@ -11,8 +11,8 @@ export function generateApiUrl(values: PlaygroundFormValues): string {
 	const params = new URLSearchParams();
 
 	// Required parameters
-	params.set("api_key", values.api_key ?? "your-api-key");
-	params.set("url", values.url ?? "https://polar.sh");
+	params.set("api_key", values.api_key || "your-api-key");
+	params.set("url", values.url || "https://polar.sh");
 
 	// Optional parameters - only add if they have values
 	if (values.selector) params.set("selector", values.selector);
