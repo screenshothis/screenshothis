@@ -51,7 +51,7 @@
 		"ts-case-convert": "2.1.0",
 		"unique-username-generator": "1.4.0",
 		"wildcard-match": "5.1.4",
-		"zod": "3.25.28"
+		"zod": "3.25.30"
 	},
 	"devDependencies": {
 		"@epic-web/config": "1.21.0",

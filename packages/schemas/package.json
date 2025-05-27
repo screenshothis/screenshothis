@@ -13,9 +13,9 @@
 	},
 	"module": "src/index.ts",
 	"dependencies": {
-		"@tanstack/zod-adapter": "1.120.10",
+		"@tanstack/zod-adapter": "1.120.11",
 		"ts-case-convert": "2.1.0",
-		"zod": "3.25.28"
+		"zod": "3.25.30"
 	},
 	"devDependencies": {
 		"@types/bun": "1.2.14"
