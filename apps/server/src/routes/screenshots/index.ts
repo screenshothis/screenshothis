@@ -128,7 +128,10 @@ const screenshots = new OpenAPIHono<{ Variables: Variables }>().openapi(
 						headers: ["Retry-After: 5"],
 					});
 				}
-				contentType = `image/${queryParams.format}`;
+
+				const mimeFormat =
+					queryParams.format === "jpg" ? "jpeg" : queryParams.format;
+				contentType = `image/${mimeFormat}`;
 
 				if (queryParams.isCached) {
 					const cacheTtl = queryParams.cacheTtl;

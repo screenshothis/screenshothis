@@ -54,8 +54,10 @@ export const screenshotsRouter = {
 						.where(eq(schema.requestLimits.userId, context.session.user.id));
 				}
 
+				const mimeFormat = input.format === "jpg" ? "jpeg" : input.format;
+
 				return {
-					image: `data:image/${input.format};base64,${Buffer.from(object).toString("base64")}`,
+					image: `data:image/${mimeFormat};base64,${Buffer.from(object).toString("base64")}`,
 				};
 			} catch (error) {
 				console.error("Failed to get screenshot", error);
