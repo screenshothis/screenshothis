@@ -59,7 +59,7 @@ export const ScreenshotSchema = z.object({
 		.optional()
 		.default(false),
 	device_scale_factor: z.coerce.number().optional().default(1),
-	format: FormatSchema.optional().default("jpeg"),
+	format: FormatSchema.optional().default("jpg"),
 	block_ads: z
 		.preprocess((val) => String(val).toLowerCase() === "true", z.boolean())
 		.optional()
