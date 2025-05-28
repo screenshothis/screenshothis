@@ -220,13 +220,13 @@ export async function getOrCreateScreenshot(
 				if (element) {
 					buffer = await element.screenshot({
 						quality: 80,
-						type: "jpeg",
+						type: format,
 					});
 				}
 			} else {
 				buffer = await page.screenshot({
 					quality: 80,
-					type: "jpeg",
+					type: format,
 				});
 			}
 

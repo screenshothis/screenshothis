@@ -113,7 +113,6 @@ const screenshots = new OpenAPIHono<{ Variables: Variables }>().openapi(
 					"no-cache, no-store, must-revalidate, proxy-revalidate, max-age=0",
 				);
 				headers.set("CDN-Cache-Control", "no-cache, no-store, max-age=0");
-				headers.set("Content-Length", String(PLACEHOLDER_IMAGE.length));
 			} else {
 				const { key: objectKey } = raceResult as {
 					key: string;
@@ -129,6 +128,7 @@ const screenshots = new OpenAPIHono<{ Variables: Variables }>().openapi(
 						headers: ["Retry-After: 5"],
 					});
 				}
+
 				contentType = `image/${queryParams.format}`;
 
 				if (queryParams.isCached) {
@@ -153,7 +153,13 @@ const screenshots = new OpenAPIHono<{ Variables: Variables }>().openapi(
 				}
 			}
 
+			headers.set("Content-Length", String(body.byteLength));
 			headers.set("Content-Type", contentType);
+			headers.set("Accept-Ranges", "bytes");
+			headers.set(
+				"Content-Disposition",
+				`inline; filename="screenshot.${queryParams.format}"`,
+			);
 
 			return c.body(body ?? new Uint8Array(), { headers });
 		} catch (error) {
