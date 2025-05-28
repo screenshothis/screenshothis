@@ -26,10 +26,10 @@ const screenshots = new OpenAPIHono<{ Variables: Variables }>().openapi(
 		responses: {
 			200: {
 				content: {
-					"image/jpg": {
+					"image/jpeg": {
 						schema: z.string(),
 						encoding: {
-							contentType: "image/jpg",
+							contentType: "image/jpeg",
 						},
 					},
 					"image/png": {
