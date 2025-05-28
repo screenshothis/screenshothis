@@ -129,9 +129,7 @@ const screenshots = new OpenAPIHono<{ Variables: Variables }>().openapi(
 					});
 				}
 
-				const mimeFormat =
-					queryParams.format === "jpg" ? "jpeg" : queryParams.format;
-				contentType = `image/${mimeFormat}`;
+				contentType = `image/${queryParams.format}`;
 
 				if (queryParams.isCached) {
 					const cacheTtl = queryParams.cacheTtl;

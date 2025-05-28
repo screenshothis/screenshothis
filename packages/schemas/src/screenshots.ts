@@ -3,7 +3,7 @@ import { z } from "zod";
 export const MAX_HEADERS_SIZE = 8192; // 8 KB (RFC 7230 guideline)
 export const MAX_COOKIES_SIZE = 4096; // 4 KB (typical cookie size limit)
 
-export const FormatSchema = z.enum(["jpg", "png", "webp"]);
+export const FormatSchema = z.enum(["jpeg", "png", "webp"]);
 export const ResourceTypeSchema = z.enum([
 	"document",
 	"stylesheet",
@@ -59,7 +59,7 @@ export const ScreenshotSchema = z.object({
 		.optional()
 		.default(false),
 	device_scale_factor: z.coerce.number().optional().default(1),
-	format: FormatSchema.optional().default("jpg"),
+	format: FormatSchema.optional().default("jpeg"),
 	block_ads: z
 		.preprocess((val) => String(val).toLowerCase() === "true", z.boolean())
 		.optional()
