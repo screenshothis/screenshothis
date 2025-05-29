@@ -1,0 +1,1 @@
+ALTER TABLE "screenshots" ADD COLUMN "quality" integer DEFAULT 80 NOT NULL;
