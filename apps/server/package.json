@@ -51,15 +51,15 @@
 		"ts-case-convert": "2.1.0",
 		"unique-username-generator": "1.4.0",
 		"wildcard-match": "5.1.4",
-		"zod": "3.25.32"
+		"zod": "3.25.34"
 	},
 	"devDependencies": {
 		"@epic-web/config": "1.21.0",
-		"@types/bun": "1.2.14",
+		"@types/bun": "1.2.15",
 		"@types/pg": "8.15.2",
 		"drizzle-kit": "0.31.1",
 		"tsc-alias": "1.8.16",
 		"typescript": "5.8.3"
 	},
-	"packageManager": "bun@1.2.14"
+	"packageManager": "bun@1.2.15"
 }

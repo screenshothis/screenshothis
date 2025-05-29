@@ -8,10 +8,10 @@
 	},
 	"module": "src/index.ts",
 	"dependencies": {
-		"zod": "3.25.32"
+		"zod": "3.25.34"
 	},
 	"devDependencies": {
-		"@types/bun": "1.2.14"
+		"@types/bun": "1.2.15"
 	},
 	"peerDependencies": {
 		"typescript": "5.8.3"
