@@ -25,6 +25,7 @@ export function generateApiUrl(values: PlaygroundFormValues): string {
 	if (values.device_scale_factor)
 		params.set("device_scale_factor", values.device_scale_factor.toString());
 	if (values.format) params.set("format", values.format);
+	if (values.quality) params.set("quality", values.quality.toString());
 	if (values.block_ads) params.set("block_ads", values.block_ads.toString());
 	if (values.block_cookie_banners)
 		params.set("block_cookie_banners", values.block_cookie_banners.toString());
