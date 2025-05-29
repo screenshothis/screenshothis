@@ -299,6 +299,8 @@ function RouteComponent() {
 														<field.TextField
 															label="Quality"
 															type="number"
+															min="20"
+															max="100"
 															inputMode="numeric"
 															name="quality"
 															placeholder="80"
