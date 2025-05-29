@@ -15,7 +15,7 @@
 	"dependencies": {
 		"@tanstack/zod-adapter": "1.120.11",
 		"ts-case-convert": "2.1.0",
-		"zod": "3.25.34"
+		"zod": "3.25.36"
 	},
 	"devDependencies": {
 		"@types/bun": "1.2.15"

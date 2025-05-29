@@ -36,7 +36,7 @@
 		"@t3-oss/env-core": "0.13.6",
 		"ai": "4.3.16",
 		"better-auth": "1.2.8",
-		"better-auth-harmony": "1.2.4",
+		"better-auth-harmony": "1.2.5",
 		"bullmq": "5.53.0",
 		"cross-fetch": "4.1.0",
 		"dotenv": "16.5.0",
@@ -51,7 +51,7 @@
 		"ts-case-convert": "2.1.0",
 		"unique-username-generator": "1.4.0",
 		"wildcard-match": "5.1.4",
-		"zod": "3.25.34"
+		"zod": "3.25.36"
 	},
 	"devDependencies": {
 		"@epic-web/config": "1.21.0",
