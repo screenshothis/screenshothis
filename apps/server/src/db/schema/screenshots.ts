@@ -34,6 +34,7 @@ export const screenshots = pgTable("screenshots", {
 	duration: real("duration").notNull().default(0),
 	hasTouch: boolean("has_touch").notNull().default(false),
 	format: text("format").$type<z.infer<typeof FormatSchema>>().notNull(),
+	quality: integer("quality").notNull().default(80),
 	blockAds: boolean("block_ads").notNull().default(false),
 	blockCookieBanners: boolean("block_cookie_banners").notNull().default(false),
 	blockTrackers: boolean("block_trackers").notNull().default(false),

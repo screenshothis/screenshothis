@@ -13,6 +13,7 @@ import ZoomOutAreaIcon from "virtual:icons/hugeicons/zoom-out-area";
 
 import {
 	CreateScreenshotSchema,
+	FormatSchema,
 	PrefersColorSchemeSchema,
 	PrefersReducedMotionSchema,
 	ResourceTypeSchema,
@@ -265,6 +266,50 @@ function RouteComponent() {
 													/>
 												)}
 											/>
+										</Accordion.Content>
+									</Accordion.Item>
+
+									<Accordion.Item value="image-output">
+										<Accordion.Trigger>
+											<Accordion.Icon as={Image01Icon} />
+											Image Output
+											<Accordion.Arrow />
+										</Accordion.Trigger>
+										<Accordion.Content className="mt-2 grid gap-3 px-7.5">
+											<div className="grid grid-cols-2 gap-3">
+												<form.AppField
+													name="format"
+													children={(field) => (
+														<field.SelectField
+															label="Format"
+															name="format"
+															id="format"
+															placeholder="Select format"
+															defaultValue="jpeg"
+															options={FormatSchema.options.map((option) => ({
+																value: option,
+																label: option.toUpperCase(),
+															}))}
+														/>
+													)}
+												/>
+
+												<form.AppField
+													name="quality"
+													children={(field) => (
+														<field.TextField
+															label="Quality"
+															type="number"
+															min="20"
+															max="100"
+															inputMode="numeric"
+															name="quality"
+															placeholder="80"
+															hint="20-100 (default: 80)"
+														/>
+													)}
+												/>
+											</div>
 										</Accordion.Content>
 									</Accordion.Item>
 
