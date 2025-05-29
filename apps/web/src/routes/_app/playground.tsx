@@ -284,7 +284,8 @@ function RouteComponent() {
 															label="Format"
 															name="format"
 															id="format"
-															placeholder="jpeg (default)"
+															placeholder="Select format"
+															defaultValue="jpeg"
 															options={FormatSchema.options.map((option) => ({
 																value: option,
 																label: option.toUpperCase(),
