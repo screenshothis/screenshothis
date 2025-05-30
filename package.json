@@ -23,7 +23,7 @@
 	"devDependencies": {
 		"@biomejs/biome": "1.9.4",
 		"husky": "9.1.7",
-		"turbo": "2.5.3",
+		"turbo": "2.5.4",
 		"vibe-rules": "0.2.55"
 	},
 	"packageManager": "bun@1.2.15",
