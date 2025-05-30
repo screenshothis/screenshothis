@@ -12,7 +12,7 @@
 		"dev": "turbo dev",
 		"dev:server": "turbo -F @screenshothis/server dev",
 		"dev:web": "turbo -F @screenshothis/web dev",
-		"prepare": "husky || true",
+		"prepare": "husky || true && vibe-rules install cursor",
 		"typecheck": "turbo typecheck"
 	},
 	"lint-staged": {
@@ -23,7 +23,8 @@
 	"devDependencies": {
 		"@biomejs/biome": "1.9.4",
 		"husky": "9.1.7",
-		"turbo": "2.5.3"
+		"turbo": "2.5.3",
+		"vibe-rules": "0.2.55"
 	},
 	"packageManager": "bun@1.2.15",
 	"trustedDependencies": [
