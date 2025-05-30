@@ -1,10 +1,10 @@
-import { Outlet, createFileRoute, redirect } from "@tanstack/react-router";
+import { Outlet, redirect } from "@tanstack/react-router";
 
 import { CreateApiKeyModal } from "#/components/modals/create-api-key-modal.tsx";
 import { SettingsModal } from "#/components/modals/settings-modal/settings-modal.tsx";
 import Sidebar from "#/components/sidebar.tsx";
 
-export const Route = createFileRoute("/_app")({
+export const Route = createFileRoute({
 	async beforeLoad({ context: { queryClient, orpc, ...context }, location }) {
 		if (!context.session?.id) {
 			throw redirect({

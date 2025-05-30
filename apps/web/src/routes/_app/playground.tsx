@@ -20,7 +20,6 @@ import {
 } from "@screenshothis/schemas/screenshots";
 import { useStore } from "@tanstack/react-form";
 import { useMutation } from "@tanstack/react-query";
-import { createFileRoute } from "@tanstack/react-router";
 import * as React from "react";
 import { useHotkeys } from "react-hotkeys-hook";
 
@@ -34,7 +33,7 @@ import * as Kbd from "#/components/ui/kbd.tsx";
 import { useORPC } from "#/hooks/use-orpc.ts";
 import type { PlaygroundFormValues } from "#/utils/playground-utils.ts";
 
-export const Route = createFileRoute("/_app/playground")({
+export const Route = createFileRoute({
 	component: RouteComponent,
 });
 

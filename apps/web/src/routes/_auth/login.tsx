@@ -3,12 +3,7 @@ import Mail01Icon from "virtual:icons/hugeicons/mail-01";
 import UserIcon from "virtual:icons/hugeicons/user";
 
 import { SignInSchema } from "@screenshothis/schemas/users";
-import {
-	Link,
-	createFileRoute,
-	useNavigate,
-	useSearch,
-} from "@tanstack/react-router";
+import { Link, useNavigate, useSearch } from "@tanstack/react-router";
 import { zodValidator } from "@tanstack/zod-adapter";
 import { z } from "zod";
 
@@ -21,7 +16,7 @@ import { toast } from "#/components/ui/toast.tsx";
 import { authClient } from "#/lib/auth.ts";
 import { getScreenshotUrl, seo } from "#/utils/seo.ts";
 
-export const Route = createFileRoute("/_auth/login")({
+export const Route = createFileRoute({
 	validateSearch: zodValidator(
 		z
 			.object({

@@ -13,7 +13,8 @@
 	},
 	"module": "src/index.ts",
 	"dependencies": {
-		"@tanstack/zod-adapter": "1.120.13",
+		"@screenshothis/common": "workspace:*",
+		"@tanstack/zod-adapter": "1.121.0-alpha.11",
 		"ts-case-convert": "2.1.0",
 		"zod": "3.25.42"
 	},

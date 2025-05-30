@@ -1,4 +1,3 @@
-import { getRouterManifest } from "@tanstack/react-start/router-manifest";
 import {
 	createStartHandler,
 	defaultStreamHandler,
@@ -8,5 +7,4 @@ import { createRouter } from "./router.tsx";
 
 export default createStartHandler({
 	createRouter,
-	getRouterManifest,
 })(defaultStreamHandler);

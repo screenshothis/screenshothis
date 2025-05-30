@@ -8,102 +8,104 @@
 // You should NOT make any changes in this file as it will be overwritten.
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
+import type { CreateFileRoute, FileRoutesByPath } from '@tanstack/react-router'
+
 // Import Routes
 
 import { Route as rootRoute } from './routes/__root'
-import { Route as MarketingImport } from './routes/_marketing'
-import { Route as AuthImport } from './routes/_auth'
-import { Route as AppImport } from './routes/_app'
-import { Route as MarketingIndexImport } from './routes/_marketing/index'
-import { Route as MarketingConfirmationImport } from './routes/_marketing/confirmation'
-import { Route as AuthResetPasswordImport } from './routes/_auth/reset-password'
-import { Route as AuthRegisterImport } from './routes/_auth/register'
-import { Route as AuthLoginImport } from './routes/_auth/login'
-import { Route as AuthForgotPasswordImport } from './routes/_auth/forgot-password'
-import { Route as AppScreenshotsImport } from './routes/_app/screenshots'
-import { Route as AppPlaygroundImport } from './routes/_app/playground'
-import { Route as AppKeysImport } from './routes/_app/keys'
-import { Route as AppDashboardImport } from './routes/_app/dashboard'
-import { Route as MarketingLegalSplatImport } from './routes/_marketing/legal.$'
+import { Route as MarketingRouteImport } from './routes/_marketing'
+import { Route as AuthRouteImport } from './routes/_auth'
+import { Route as AppRouteImport } from './routes/_app'
+import { Route as MarketingIndexRouteImport } from './routes/_marketing/index'
+import { Route as MarketingConfirmationRouteImport } from './routes/_marketing/confirmation'
+import { Route as AuthResetPasswordRouteImport } from './routes/_auth/reset-password'
+import { Route as AuthRegisterRouteImport } from './routes/_auth/register'
+import { Route as AuthLoginRouteImport } from './routes/_auth/login'
+import { Route as AuthForgotPasswordRouteImport } from './routes/_auth/forgot-password'
+import { Route as AppScreenshotsRouteImport } from './routes/_app/screenshots'
+import { Route as AppPlaygroundRouteImport } from './routes/_app/playground'
+import { Route as AppKeysRouteImport } from './routes/_app/keys'
+import { Route as AppDashboardRouteImport } from './routes/_app/dashboard'
+import { Route as MarketingLegalSplatRouteImport } from './routes/_marketing/legal.$'
 
 // Create/Update Routes
 
-const MarketingRoute = MarketingImport.update({
+const MarketingRoute = MarketingRouteImport.update({
   id: '/_marketing',
   getParentRoute: () => rootRoute,
 } as any)
 
-const AuthRoute = AuthImport.update({
+const AuthRoute = AuthRouteImport.update({
   id: '/_auth',
   getParentRoute: () => rootRoute,
 } as any)
 
-const AppRoute = AppImport.update({
+const AppRoute = AppRouteImport.update({
   id: '/_app',
   getParentRoute: () => rootRoute,
 } as any)
 
-const MarketingIndexRoute = MarketingIndexImport.update({
+const MarketingIndexRoute = MarketingIndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => MarketingRoute,
 } as any)
 
-const MarketingConfirmationRoute = MarketingConfirmationImport.update({
+const MarketingConfirmationRoute = MarketingConfirmationRouteImport.update({
   id: '/confirmation',
   path: '/confirmation',
   getParentRoute: () => MarketingRoute,
 } as any)
 
-const AuthResetPasswordRoute = AuthResetPasswordImport.update({
+const AuthResetPasswordRoute = AuthResetPasswordRouteImport.update({
   id: '/reset-password',
   path: '/reset-password',
   getParentRoute: () => AuthRoute,
 } as any)
 
-const AuthRegisterRoute = AuthRegisterImport.update({
+const AuthRegisterRoute = AuthRegisterRouteImport.update({
   id: '/register',
   path: '/register',
   getParentRoute: () => AuthRoute,
 } as any)
 
-const AuthLoginRoute = AuthLoginImport.update({
+const AuthLoginRoute = AuthLoginRouteImport.update({
   id: '/login',
   path: '/login',
   getParentRoute: () => AuthRoute,
 } as any)
 
-const AuthForgotPasswordRoute = AuthForgotPasswordImport.update({
+const AuthForgotPasswordRoute = AuthForgotPasswordRouteImport.update({
   id: '/forgot-password',
   path: '/forgot-password',
   getParentRoute: () => AuthRoute,
 } as any)
 
-const AppScreenshotsRoute = AppScreenshotsImport.update({
+const AppScreenshotsRoute = AppScreenshotsRouteImport.update({
   id: '/screenshots',
   path: '/screenshots',
   getParentRoute: () => AppRoute,
 } as any)
 
-const AppPlaygroundRoute = AppPlaygroundImport.update({
+const AppPlaygroundRoute = AppPlaygroundRouteImport.update({
   id: '/playground',
   path: '/playground',
   getParentRoute: () => AppRoute,
 } as any)
 
-const AppKeysRoute = AppKeysImport.update({
+const AppKeysRoute = AppKeysRouteImport.update({
   id: '/keys',
   path: '/keys',
   getParentRoute: () => AppRoute,
 } as any)
 
-const AppDashboardRoute = AppDashboardImport.update({
+const AppDashboardRoute = AppDashboardRouteImport.update({
   id: '/dashboard',
   path: '/dashboard',
   getParentRoute: () => AppRoute,
 } as any)
 
-const MarketingLegalSplatRoute = MarketingLegalSplatImport.update({
+const MarketingLegalSplatRoute = MarketingLegalSplatRouteImport.update({
   id: '/legal/$',
   path: '/legal/$',
   getParentRoute: () => MarketingRoute,
@@ -117,101 +119,230 @@ declare module '@tanstack/react-router' {
       id: '/_app'
       path: ''
       fullPath: ''
-      preLoaderRoute: typeof AppImport
+      preLoaderRoute: typeof AppRouteImport
       parentRoute: typeof rootRoute
     }
     '/_auth': {
       id: '/_auth'
       path: ''
       fullPath: ''
-      preLoaderRoute: typeof AuthImport
+      preLoaderRoute: typeof AuthRouteImport
       parentRoute: typeof rootRoute
     }
     '/_marketing': {
       id: '/_marketing'
       path: ''
       fullPath: ''
-      preLoaderRoute: typeof MarketingImport
+      preLoaderRoute: typeof MarketingRouteImport
       parentRoute: typeof rootRoute
     }
     '/_app/dashboard': {
       id: '/_app/dashboard'
       path: '/dashboard'
       fullPath: '/dashboard'
-      preLoaderRoute: typeof AppDashboardImport
-      parentRoute: typeof AppImport
+      preLoaderRoute: typeof AppDashboardRouteImport
+      parentRoute: typeof AppRouteImport
     }
     '/_app/keys': {
       id: '/_app/keys'
       path: '/keys'
       fullPath: '/keys'
-      preLoaderRoute: typeof AppKeysImport
-      parentRoute: typeof AppImport
+      preLoaderRoute: typeof AppKeysRouteImport
+      parentRoute: typeof AppRouteImport
     }
     '/_app/playground': {
       id: '/_app/playground'
       path: '/playground'
       fullPath: '/playground'
-      preLoaderRoute: typeof AppPlaygroundImport
-      parentRoute: typeof AppImport
+      preLoaderRoute: typeof AppPlaygroundRouteImport
+      parentRoute: typeof AppRouteImport
     }
     '/_app/screenshots': {
       id: '/_app/screenshots'
       path: '/screenshots'
       fullPath: '/screenshots'
-      preLoaderRoute: typeof AppScreenshotsImport
-      parentRoute: typeof AppImport
+      preLoaderRoute: typeof AppScreenshotsRouteImport
+      parentRoute: typeof AppRouteImport
     }
     '/_auth/forgot-password': {
       id: '/_auth/forgot-password'
       path: '/forgot-password'
       fullPath: '/forgot-password'
-      preLoaderRoute: typeof AuthForgotPasswordImport
-      parentRoute: typeof AuthImport
+      preLoaderRoute: typeof AuthForgotPasswordRouteImport
+      parentRoute: typeof AuthRouteImport
     }
     '/_auth/login': {
       id: '/_auth/login'
       path: '/login'
       fullPath: '/login'
-      preLoaderRoute: typeof AuthLoginImport
-      parentRoute: typeof AuthImport
+      preLoaderRoute: typeof AuthLoginRouteImport
+      parentRoute: typeof AuthRouteImport
     }
     '/_auth/register': {
       id: '/_auth/register'
       path: '/register'
       fullPath: '/register'
-      preLoaderRoute: typeof AuthRegisterImport
-      parentRoute: typeof AuthImport
+      preLoaderRoute: typeof AuthRegisterRouteImport
+      parentRoute: typeof AuthRouteImport
     }
     '/_auth/reset-password': {
       id: '/_auth/reset-password'
       path: '/reset-password'
       fullPath: '/reset-password'
-      preLoaderRoute: typeof AuthResetPasswordImport
-      parentRoute: typeof AuthImport
+      preLoaderRoute: typeof AuthResetPasswordRouteImport
+      parentRoute: typeof AuthRouteImport
     }
     '/_marketing/confirmation': {
       id: '/_marketing/confirmation'
       path: '/confirmation'
       fullPath: '/confirmation'
-      preLoaderRoute: typeof MarketingConfirmationImport
-      parentRoute: typeof MarketingImport
+      preLoaderRoute: typeof MarketingConfirmationRouteImport
+      parentRoute: typeof MarketingRouteImport
     }
     '/_marketing/': {
       id: '/_marketing/'
       path: '/'
       fullPath: '/'
-      preLoaderRoute: typeof MarketingIndexImport
-      parentRoute: typeof MarketingImport
+      preLoaderRoute: typeof MarketingIndexRouteImport
+      parentRoute: typeof MarketingRouteImport
     }
     '/_marketing/legal/$': {
       id: '/_marketing/legal/$'
       path: '/legal/$'
       fullPath: '/legal/$'
-      preLoaderRoute: typeof MarketingLegalSplatImport
-      parentRoute: typeof MarketingImport
+      preLoaderRoute: typeof MarketingLegalSplatRouteImport
+      parentRoute: typeof MarketingRouteImport
     }
   }
+}
+
+// Add type-safety to the createFileRoute function across the route tree
+
+declare module './routes/_app' {
+  const createFileRoute: CreateFileRoute<
+    '/_app',
+    FileRoutesByPath['/_app']['parentRoute'],
+    FileRoutesByPath['/_app']['id'],
+    FileRoutesByPath['/_app']['path'],
+    FileRoutesByPath['/_app']['fullPath']
+  >
+}
+declare module './routes/_auth' {
+  const createFileRoute: CreateFileRoute<
+    '/_auth',
+    FileRoutesByPath['/_auth']['parentRoute'],
+    FileRoutesByPath['/_auth']['id'],
+    FileRoutesByPath['/_auth']['path'],
+    FileRoutesByPath['/_auth']['fullPath']
+  >
+}
+declare module './routes/_marketing' {
+  const createFileRoute: CreateFileRoute<
+    '/_marketing',
+    FileRoutesByPath['/_marketing']['parentRoute'],
+    FileRoutesByPath['/_marketing']['id'],
+    FileRoutesByPath['/_marketing']['path'],
+    FileRoutesByPath['/_marketing']['fullPath']
+  >
+}
+declare module './routes/_app/dashboard' {
+  const createFileRoute: CreateFileRoute<
+    '/_app/dashboard',
+    FileRoutesByPath['/_app/dashboard']['parentRoute'],
+    FileRoutesByPath['/_app/dashboard']['id'],
+    FileRoutesByPath['/_app/dashboard']['path'],
+    FileRoutesByPath['/_app/dashboard']['fullPath']
+  >
+}
+declare module './routes/_app/keys' {
+  const createFileRoute: CreateFileRoute<
+    '/_app/keys',
+    FileRoutesByPath['/_app/keys']['parentRoute'],
+    FileRoutesByPath['/_app/keys']['id'],
+    FileRoutesByPath['/_app/keys']['path'],
+    FileRoutesByPath['/_app/keys']['fullPath']
+  >
+}
+declare module './routes/_app/playground' {
+  const createFileRoute: CreateFileRoute<
+    '/_app/playground',
+    FileRoutesByPath['/_app/playground']['parentRoute'],
+    FileRoutesByPath['/_app/playground']['id'],
+    FileRoutesByPath['/_app/playground']['path'],
+    FileRoutesByPath['/_app/playground']['fullPath']
+  >
+}
+declare module './routes/_app/screenshots' {
+  const createFileRoute: CreateFileRoute<
+    '/_app/screenshots',
+    FileRoutesByPath['/_app/screenshots']['parentRoute'],
+    FileRoutesByPath['/_app/screenshots']['id'],
+    FileRoutesByPath['/_app/screenshots']['path'],
+    FileRoutesByPath['/_app/screenshots']['fullPath']
+  >
+}
+declare module './routes/_auth/forgot-password' {
+  const createFileRoute: CreateFileRoute<
+    '/_auth/forgot-password',
+    FileRoutesByPath['/_auth/forgot-password']['parentRoute'],
+    FileRoutesByPath['/_auth/forgot-password']['id'],
+    FileRoutesByPath['/_auth/forgot-password']['path'],
+    FileRoutesByPath['/_auth/forgot-password']['fullPath']
+  >
+}
+declare module './routes/_auth/login' {
+  const createFileRoute: CreateFileRoute<
+    '/_auth/login',
+    FileRoutesByPath['/_auth/login']['parentRoute'],
+    FileRoutesByPath['/_auth/login']['id'],
+    FileRoutesByPath['/_auth/login']['path'],
+    FileRoutesByPath['/_auth/login']['fullPath']
+  >
+}
+declare module './routes/_auth/register' {
+  const createFileRoute: CreateFileRoute<
+    '/_auth/register',
+    FileRoutesByPath['/_auth/register']['parentRoute'],
+    FileRoutesByPath['/_auth/register']['id'],
+    FileRoutesByPath['/_auth/register']['path'],
+    FileRoutesByPath['/_auth/register']['fullPath']
+  >
+}
+declare module './routes/_auth/reset-password' {
+  const createFileRoute: CreateFileRoute<
+    '/_auth/reset-password',
+    FileRoutesByPath['/_auth/reset-password']['parentRoute'],
+    FileRoutesByPath['/_auth/reset-password']['id'],
+    FileRoutesByPath['/_auth/reset-password']['path'],
+    FileRoutesByPath['/_auth/reset-password']['fullPath']
+  >
+}
+declare module './routes/_marketing/confirmation' {
+  const createFileRoute: CreateFileRoute<
+    '/_marketing/confirmation',
+    FileRoutesByPath['/_marketing/confirmation']['parentRoute'],
+    FileRoutesByPath['/_marketing/confirmation']['id'],
+    FileRoutesByPath['/_marketing/confirmation']['path'],
+    FileRoutesByPath['/_marketing/confirmation']['fullPath']
+  >
+}
+declare module './routes/_marketing/index' {
+  const createFileRoute: CreateFileRoute<
+    '/_marketing/',
+    FileRoutesByPath['/_marketing/']['parentRoute'],
+    FileRoutesByPath['/_marketing/']['id'],
+    FileRoutesByPath['/_marketing/']['path'],
+    FileRoutesByPath['/_marketing/']['fullPath']
+  >
+}
+declare module './routes/_marketing/legal.$' {
+  const createFileRoute: CreateFileRoute<
+    '/_marketing/legal/$',
+    FileRoutesByPath['/_marketing/legal/$']['parentRoute'],
+    FileRoutesByPath['/_marketing/legal/$']['id'],
+    FileRoutesByPath['/_marketing/legal/$']['path'],
+    FileRoutesByPath['/_marketing/legal/$']['fullPath']
+  >
 }
 
 // Create and export the route tree

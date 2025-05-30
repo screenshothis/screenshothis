@@ -19,6 +19,9 @@
 .vinxi
 .output
 .react-router/
+.tanstack-start/build
+.nitro/*
+.netlify/*
 
 # Deployment
 .vercel

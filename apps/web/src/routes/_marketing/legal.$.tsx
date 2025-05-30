@@ -1,6 +1,6 @@
 import LegalDocument01Icon from "virtual:icons/hugeicons/legal-document-01";
 
-import { createFileRoute, notFound } from "@tanstack/react-router";
+import { notFound } from "@tanstack/react-router";
 import { createServerFn } from "@tanstack/react-start";
 import { setHeaders } from "@tanstack/react-start/server";
 import { allLegalPages } from "content-collections";
@@ -28,8 +28,6 @@ const fetchLegalPage = createServerFn({ method: "GET" })
 			"cdn-cache-control": "max-age=300, stale-while-revalidate=300, durable",
 		});
 
-		console.log(page.excerpt);
-
 		return {
 			title: page.title,
 			lastUpdated: page.lastUpdated,
@@ -39,7 +37,7 @@ const fetchLegalPage = createServerFn({ method: "GET" })
 		};
 	});
 
-export const Route = createFileRoute("/_marketing/legal/$")({
+export const Route = createFileRoute({
 	staleTime: Number.POSITIVE_INFINITY,
 	loader: ({ params }) => fetchLegalPage({ data: params._splat }),
 	head: ({ loaderData, match }) => {
