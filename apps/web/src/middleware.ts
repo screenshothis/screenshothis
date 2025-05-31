@@ -21,6 +21,14 @@ export const authMiddleware = createMiddleware({ type: "function" }).server(
 			});
 		} catch (error) {
 			console.error("Authentication error:", error);
+
+			if (
+				error instanceof Error &&
+				error.message.includes("No request found")
+			) {
+				throw error;
+			}
+
 			throw redirect({
 				to: "/login",
 			});
