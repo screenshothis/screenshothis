@@ -17,14 +17,15 @@ export const authMiddleware = createMiddleware({ type: "function" }).server(
 			return next({
 				context: {
 					...auth,
-				},
+				} as const,
 			});
 		} catch (error) {
 			console.error("Authentication error:", error);
 
 			if (
 				error instanceof Error &&
-				error.message.includes("No request found")
+				(error.message.includes("No request found") ||
+					error.name === "NoRequestError")
 			) {
 				throw error;
 			}
