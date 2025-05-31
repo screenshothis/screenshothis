@@ -13,6 +13,13 @@ export default defineConfig({
 	server: {
 		port: 3001,
 	},
+	optimizeDeps: {
+		exclude: [
+			"tanstack-start-server-fn-manifest:v",
+			"tanstack-start-router-manifest:v",
+			"tanstack-start-server-routes-manifest:v",
+		],
+	},
 	plugins: [
 		generateSitemap(sitemap),
 		Icons({

@@ -12,7 +12,7 @@ import { getWebRequest } from "@tanstack/react-start/server";
 import type { Session, User } from "better-auth";
 import { LazyMotion, domAnimation } from "motion/react";
 import { ThemeProvider } from "next-themes";
-import { NuqsAdapter } from "nuqs/adapters/tanstack-router";
+import { NuqsAdapter } from "nuqs/adapters/react";
 
 import { Toaster } from "#/components/ui/toast.tsx";
 import { authClient } from "#/lib/auth.ts";
@@ -135,7 +135,7 @@ function RootComponent() {
 			defaultTheme="light"
 		>
 			<RootDocument>
-				<NuqsAdapter>
+				<NuqsAdapter fullPageNavigationOnShallowFalseUpdates>
 					<LazyMotion features={domAnimation}>
 						<Outlet />
 					</LazyMotion>
