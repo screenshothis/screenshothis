@@ -27,7 +27,9 @@ export default defineConfig({
 			jsx: "react",
 			autoInstall: true,
 			customCollections: {
-				hugeicons: FileSystemIconLoader("./public/icons/hugeicons"),
+				hugeicons: FileSystemIconLoader(
+					new URL("./public/icons/hugeicons", import.meta.url).pathname,
+				),
 			},
 			iconCustomizer(_collection, _icon, props) {
 				props.width = "1em";
