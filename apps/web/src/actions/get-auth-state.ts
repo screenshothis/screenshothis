@@ -6,8 +6,12 @@ import { authClient } from "#/lib/auth.ts";
 export const authStateFn = createServerFn({ method: "GET" }).handler(
 	async () => {
 		const request = getWebRequest();
-		if (!request)
-			throw new Error("No request found in current execution context");
+		if (!request) {
+			throw new Error(
+				"No request found in current execution context. This function must be called from within a server-side request handler.",
+			);
+		}
+
 		const { data } = await authClient.getSession({
 			fetchOptions: {
 				headers: {
