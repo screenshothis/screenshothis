@@ -3,8 +3,8 @@ import "dotenv/config";
 import { swaggerUI } from "@hono/swagger-ui";
 import { OpenAPIHono } from "@hono/zod-openapi";
 import { RPCHandler } from "@orpc/server/fetch";
+import { pinoLogger } from "hono-pino";
 import { cors } from "hono/cors";
-import { logger } from "hono/logger";
 import { requestId } from "hono/request-id";
 
 import type { Variables } from "./common/environment";
@@ -22,8 +22,12 @@ const app = new OpenAPIHono<{ Variables: Variables }>({
 	},
 });
 
-app.use(logger());
 app.use(requestId());
+app.use(
+	pinoLogger({
+		pino: { level: process.env.NODE_ENV === "production" ? "info" : "debug" },
+	}),
+);
 
 app.use("/rpc/*", async (c, next) => {
 	const session = await auth.api.getSession({ headers: c.req.raw.headers });
