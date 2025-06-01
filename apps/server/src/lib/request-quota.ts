@@ -1,3 +1,5 @@
+import { EventEmitter } from "node:events";
+
 import { eq, sql } from "drizzle-orm";
 
 import { db } from "#/db";
@@ -100,31 +102,78 @@ export interface QuotaResult {
 	nextRefillAt: Date | null;
 }
 
-export async function consumeQuota(userId: string): Promise<QuotaResult> {
-	// Ensure we have quota (triggers refill if needed)
-	await assertQuotaAvailable(userId);
+/**
+ * Returns quota info without consuming.
+ */
+export async function getQuota(userId: string): Promise<QuotaResult> {
+	const limit = await maybeRefill(userId);
 
-	const [updated] = await db
-		.update(schema.requestLimits)
-		.set({
-			totalRequests: sql`${schema.requestLimits.totalRequests} + 1`,
-			remainingRequests: sql`${schema.requestLimits.remainingRequests} - 1`,
-		})
-		.where(eq(schema.requestLimits.userId, userId))
-		.returning({
-			remainingRequests: schema.requestLimits.remainingRequests,
-			refillInterval: schema.requestLimits.refillInterval,
-			refilledAt: schema.requestLimits.refilledAt,
-			createdAt: schema.requestLimits.createdAt,
-		});
+	if (!limit || limit.remainingRequests == null) {
+		throw new RequestQuotaError("NOT_FOUND");
+	}
 
-	const lastRefill = (updated.refilledAt ?? updated.createdAt) as Date;
-	const intervalMs = Number(updated.refillInterval ?? BigInt(0));
+	const lastRefill = (limit.refilledAt ?? limit.createdAt) as Date;
+	const intervalMs = Number(limit.refillInterval ?? BigInt(0));
 	const nextRefillAt =
 		intervalMs > 0 ? new Date(lastRefill.getTime() + intervalMs) : null;
 
-	return {
-		remaining: updated.remainingRequests ?? 0,
-		nextRefillAt,
-	};
+	return { remaining: limit.remainingRequests, nextRefillAt };
 }
+
+export async function consumeQuota(userId: string): Promise<QuotaResult> {
+	return await db.transaction(async (tx) => {
+		// Lock the row so two concurrent requests can't both refill / consume simultaneously
+		await tx.execute(
+			sql`SELECT 1 FROM request_limits WHERE user_id = ${userId} FOR UPDATE`,
+		);
+
+		// Ensure refill if needed inside the same transaction
+		await maybeRefill(userId);
+
+		const [updated] = await tx
+			.update(schema.requestLimits)
+			.set({
+				totalRequests: sql`${schema.requestLimits.totalRequests} + 1`,
+				remainingRequests: sql`${schema.requestLimits.remainingRequests} - 1`,
+			})
+			.where(eq(schema.requestLimits.userId, userId))
+			.returning({
+				remainingRequests: schema.requestLimits.remainingRequests,
+				refillInterval: schema.requestLimits.refillInterval,
+				refilledAt: schema.requestLimits.refilledAt,
+				createdAt: schema.requestLimits.createdAt,
+			});
+
+		const lastRefill = (updated.refilledAt ?? updated.createdAt) as Date;
+		const intervalMs = Number(updated.refillInterval ?? BigInt(0));
+		const nextRefillAt =
+			intervalMs > 0 ? new Date(lastRefill.getTime() + intervalMs) : null;
+
+		quotaEvents.emit("consume", {
+			userId,
+			remaining: updated.remainingRequests ?? 0,
+		} as QuotaConsumeEvent);
+
+		return {
+			remaining: updated.remainingRequests ?? 0,
+			nextRefillAt,
+		};
+	});
+}
+
+// ---------------------------------------------
+// Public events
+// ---------------------------------------------
+
+export interface QuotaConsumeEvent {
+	userId: string;
+	remaining: number;
+}
+
+export interface QuotaRefillEvent {
+	userId: string;
+	amount: number;
+	remaining: number;
+}
+
+export const quotaEvents = new EventEmitter();
