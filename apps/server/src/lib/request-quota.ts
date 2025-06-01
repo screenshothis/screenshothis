@@ -10,18 +10,79 @@ export class RequestQuotaError extends Error {
 	}
 }
 
+interface LimitRow {
+	remainingRequests: number | null;
+	refillAmount: number | null;
+	refillInterval: bigint | null;
+	refilledAt: Date | null;
+	createdAt: Date; // from timestamps util
+	totalAllowedRequests: number | null;
+}
+
+async function maybeRefill(userId: string) {
+	const limit = await db.query.requestLimits.findFirst({
+		where: eq(schema.requestLimits.userId, userId),
+		columns: {
+			remainingRequests: true,
+			refillAmount: true,
+			refillInterval: true,
+			refilledAt: true,
+			totalAllowedRequests: true,
+			createdAt: true,
+		},
+	});
+
+	if (!limit) return null;
+
+	// Only attempt refill when no remaining requests and refill config exists
+	if (
+		(limit.remainingRequests ?? 0) > 0 ||
+		limit.refillAmount == null ||
+		limit.refillInterval == null ||
+		limit.refillInterval === BigInt(0)
+	) {
+		return limit;
+	}
+
+	const lastRefill = limit.refilledAt ?? limit.createdAt;
+	const intervalMs = Number(limit.refillInterval);
+	if (Date.now() - lastRefill.getTime() < intervalMs) {
+		return limit as LimitRow;
+	}
+
+	const newRemaining = Math.min(
+		(limit.totalAllowedRequests ?? limit.refillAmount) as number,
+		(limit.remainingRequests ?? 0) + (limit.refillAmount as number),
+	);
+
+	const [updated] = await db
+		.update(schema.requestLimits)
+		.set({
+			remainingRequests: newRemaining,
+			refilledAt: new Date(),
+		})
+		.where(eq(schema.requestLimits.userId, userId))
+		.returning({
+			remainingRequests: schema.requestLimits.remainingRequests,
+			refillAmount: schema.requestLimits.refillAmount,
+			refillInterval: schema.requestLimits.refillInterval,
+			refilledAt: schema.requestLimits.refilledAt,
+			createdAt: schema.requestLimits.createdAt,
+			totalAllowedRequests: schema.requestLimits.totalAllowedRequests,
+		});
+
+	return updated;
+}
+
 /**
  * Checks if the user has any remaining requests.
  *
  * @throws RequestQuotaError when the limit is not found or exhausted.
  *
  * @returns current remaining requests (without consuming).
- **/
+ */
 export async function assertQuotaAvailable(userId: string): Promise<number> {
-	const limit = await db.query.requestLimits.findFirst({
-		where: eq(schema.requestLimits.userId, userId),
-		columns: { remainingRequests: true },
-	});
+	const limit = await maybeRefill(userId);
 
 	if (!limit || limit.remainingRequests == null) {
 		throw new RequestQuotaError("NOT_FOUND");
@@ -38,8 +99,11 @@ export async function assertQuotaAvailable(userId: string): Promise<number> {
  * Decrements the user remaining request counter by 1.
  *
  * @returns updated remaining requests after consumption.
- **/
+ */
 export async function consumeQuota(userId: string): Promise<number> {
+	// Ensure we have quota (triggers refill if needed)
+	await assertQuotaAvailable(userId);
+
 	const [updated] = await db
 		.update(schema.requestLimits)
 		.set({
