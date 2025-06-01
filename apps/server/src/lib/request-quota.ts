@@ -130,48 +130,27 @@ export async function getQuota(userId: string): Promise<QuotaResult> {
 
 export async function consumeQuota(userId: string): Promise<QuotaResult> {
 	const query = sql`
-		UPDATE request_limits
-		SET
-			total_requests = total_requests + 1,
-            -- Decrement remaining requests, or refill if conditions are met
-			remaining_requests = CASE
-				WHEN remaining_requests > 0 THEN remaining_requests - 1
-                -- If no remaining requests but refill conditions are met
-				WHEN remaining_requests <= 0
-					 AND refill_amount IS NOT NULL
-					 AND refill_interval IS NOT NULL
-					 AND (extract(epoch from now()) * 1000 - extract(epoch from coalesce(refilled_at, created_at)) * 1000) >= refill_interval
-				THEN LEAST(
-						coalesce(total_allowed_requests, refill_amount),
-						remaining_requests + refill_amount
-					) - 1
-				ELSE remaining_requests
-			END,
-            -- Update refilled_at timestamp when refill occurs
-			refilled_at = CASE
-				WHEN remaining_requests <= 0
-					 AND refill_amount IS NOT NULL
-					 AND refill_interval IS NOT NULL
-					 AND (extract(epoch from now()) * 1000 - extract(epoch from coalesce(refilled_at, created_at)) * 1000) >= refill_interval
-				THEN now()
-				ELSE refilled_at
-			END
-		WHERE user_id = ${userId}
-		  AND (
-				remaining_requests > 0 OR (
-					remaining_requests <= 0
+		WITH target AS (
+			SELECT *,
+				   (remaining_requests <= 0
 					AND refill_amount IS NOT NULL
 					AND refill_interval IS NOT NULL
-					AND (extract(epoch from now()) * 1000 - extract(epoch from coalesce(refilled_at, created_at)) * 1000) >= refill_interval
-				)
-			)
-		RETURNING
-			remaining_requests,
-			refill_interval,
-			refilled_at,
-			created_at,
-			refill_amount,
-			(refilled_at = now()) AS did_refill;
+					AND (extract(epoch from now()) * 1000 - extract(epoch from coalesce(refilled_at, created_at)) * 1000) >= refill_interval) AS can_refill
+			FROM request_limits
+			WHERE user_id = ${userId}
+			FOR UPDATE
+		)
+		UPDATE request_limits AS rl
+		SET total_requests = rl.total_requests + 1,
+			remaining_requests = CASE
+				WHEN target.remaining_requests > 0 THEN target.remaining_requests - 1
+				WHEN target.can_refill THEN LEAST(coalesce(target.total_allowed_requests, target.refill_amount), target.remaining_requests + target.refill_amount) - 1
+				ELSE target.remaining_requests
+			END,
+			refilled_at = CASE WHEN target.can_refill THEN now() ELSE target.refilled_at END
+		FROM target
+		WHERE rl.user_id = ${userId}
+		RETURNING rl.remaining_requests, rl.refill_interval, rl.refilled_at, rl.created_at, rl.refill_amount, target.can_refill AS did_refill;
 	`;
 
 	const result = await db.execute(query);
