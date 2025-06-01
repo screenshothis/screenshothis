@@ -121,44 +121,71 @@ export async function getQuota(userId: string): Promise<QuotaResult> {
 }
 
 export async function consumeQuota(userId: string): Promise<QuotaResult> {
-	return await db.transaction(async (tx) => {
-		// Lock the row so two concurrent requests can't both refill / consume simultaneously
-		await tx.execute(
-			sql`SELECT 1 FROM request_limits WHERE user_id = ${userId} FOR UPDATE`,
-		);
+	const query = sql`
+		UPDATE request_limits
+		SET
+			total_requests = total_requests + 1,
+			remaining_requests = CASE
+				WHEN remaining_requests > 0 THEN remaining_requests - 1
+				WHEN remaining_requests <= 0
+					 AND refill_amount IS NOT NULL
+					 AND refill_interval IS NOT NULL
+					 AND (extract(epoch from now()) * 1000 - extract(epoch from coalesce(refilled_at, created_at)) * 1000) >= refill_interval
+				THEN LEAST(
+						coalesce(total_allowed_requests, refill_amount),
+						remaining_requests + refill_amount
+					) - 1
+				ELSE remaining_requests
+			END,
+			refilled_at = CASE
+				WHEN remaining_requests <= 0
+					 AND refill_amount IS NOT NULL
+					 AND refill_interval IS NOT NULL
+					 AND (extract(epoch from now()) * 1000 - extract(epoch from coalesce(refilled_at, created_at)) * 1000) >= refill_interval
+				THEN now()
+				ELSE refilled_at
+			END
+		WHERE user_id = ${userId}
+		  AND (
+				remaining_requests > 0 OR (
+					remaining_requests <= 0
+					AND refill_amount IS NOT NULL
+					AND refill_interval IS NOT NULL
+					AND (extract(epoch from now()) * 1000 - extract(epoch from coalesce(refilled_at, created_at)) * 1000) >= refill_interval
+				)
+			)
+		RETURNING remaining_requests, refill_interval, refilled_at, created_at;
+	`;
 
-		// Ensure refill if needed inside the same transaction
-		await maybeRefill(userId);
+	const result = await db.execute(query);
 
-		const [updated] = await tx
-			.update(schema.requestLimits)
-			.set({
-				totalRequests: sql`${schema.requestLimits.totalRequests} + 1`,
-				remainingRequests: sql`${schema.requestLimits.remainingRequests} - 1`,
-			})
-			.where(eq(schema.requestLimits.userId, userId))
-			.returning({
-				remainingRequests: schema.requestLimits.remainingRequests,
-				refillInterval: schema.requestLimits.refillInterval,
-				refilledAt: schema.requestLimits.refilledAt,
-				createdAt: schema.requestLimits.createdAt,
-			});
+	const rows = result.rows as Array<{
+		remaining_requests: number;
+		refill_interval: string | null;
+		refilled_at: Date;
+		created_at: Date;
+	}>;
 
-		const lastRefill = (updated.refilledAt ?? updated.createdAt) as Date;
-		const intervalMs = Number(updated.refillInterval ?? BigInt(0));
-		const nextRefillAt =
-			intervalMs > 0 ? new Date(lastRefill.getTime() + intervalMs) : null;
+	if (rows.length === 0) {
+		throw new RequestQuotaError("EXCEEDED");
+	}
 
-		quotaEvents.emit("consume", {
-			userId,
-			remaining: updated.remainingRequests ?? 0,
-		} as QuotaConsumeEvent);
+	const row = rows[0];
 
-		return {
-			remaining: updated.remainingRequests ?? 0,
-			nextRefillAt,
-		};
-	});
+	const lastRefill = (row.refilled_at ?? row.created_at) as Date;
+	const intervalMs = Number(row.refill_interval ?? "0");
+	const nextRefillAt =
+		intervalMs > 0 ? new Date(lastRefill.getTime() + intervalMs) : null;
+
+	quotaEvents.emit("consume", {
+		userId,
+		remaining: row.remaining_requests,
+	} as QuotaConsumeEvent);
+
+	return {
+		remaining: row.remaining_requests,
+		nextRefillAt,
+	};
 }
 
 // ---------------------------------------------
