@@ -1,25 +1,16 @@
 import { EventEmitter } from "node:events";
 
 import { eq, sql } from "drizzle-orm";
+import { z } from "zod";
 
 import { db } from "#/db";
 import * as schema from "#/db/schema";
-import { z } from "zod";
 
 export class RequestQuotaError extends Error {
 	constructor(readonly type: "NOT_FOUND" | "EXCEEDED") {
 		super(type);
 		this.name = "RequestQuotaError";
 	}
-}
-
-interface LimitRow {
-	remainingRequests: number | null;
-	refillAmount: number | null;
-	refillInterval: bigint | null;
-	refilledAt: Date | null;
-	createdAt: Date; // from timestamps util
-	totalAllowedRequests: number | null;
 }
 
 async function maybeRefill(userId: string) {
@@ -50,7 +41,7 @@ async function maybeRefill(userId: string) {
 	const lastRefill = limit.refilledAt ?? limit.createdAt;
 	const intervalMs = limit.refillInterval;
 	if (BigInt(Date.now() - lastRefill.getTime()) < intervalMs) {
-		return limit as LimitRow;
+		return limit;
 	}
 
 	const newRemaining = Math.min(
