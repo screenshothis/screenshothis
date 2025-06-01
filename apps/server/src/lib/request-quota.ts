@@ -5,6 +5,7 @@ import { z } from "zod";
 
 import { db } from "#/db";
 import * as schema from "#/db/schema";
+import { polarClient } from "./polar";
 
 export class RequestQuotaError extends Error {
 	constructor(readonly type: "NOT_FOUND" | "EXCEEDED") {
@@ -153,7 +154,7 @@ export async function consumeQuota(userId: string): Promise<QuotaResult> {
 			refilled_at = CASE WHEN target.can_refill THEN now() ELSE target.refilled_at END
 		FROM target
 		WHERE rl.user_id = ${userId}
-		RETURNING rl.remaining_requests, rl.refill_interval, rl.refilled_at, rl.created_at, rl.refill_amount, target.can_refill AS did_refill;
+		RETURNING rl.remaining_requests, rl.refill_interval, rl.refilled_at, rl.created_at, rl.refill_amount, target.can_refill AS did_refill, target.is_extra_enabled;
 	`;
 
 	const result = await db.execute(query);
@@ -165,9 +166,38 @@ export async function consumeQuota(userId: string): Promise<QuotaResult> {
 		created_at: z.union([z.string(), z.date()]),
 		refill_amount: z.number().nullable(),
 		did_refill: z.boolean(),
+		is_extra_enabled: z.boolean(),
 	});
 
 	if (result.rowCount === 0) {
+		// quota not consumed; retrieve is_extra_enabled flag
+		const extraRow = await db.query.requestLimits.findFirst({
+			where: eq(schema.requestLimits.userId, userId),
+			columns: { isExtraEnabled: true },
+		});
+
+		if (extraRow?.isExtraEnabled) {
+			console.log(
+				JSON.stringify({
+					type: "quota_extra_request",
+					userId,
+					timestamp: new Date().toISOString(),
+				}),
+			);
+
+			await polarClient.events.ingest({
+				events: [
+					{
+						name: "screenshot-generated",
+						externalCustomerId: userId,
+					},
+				],
+			});
+
+			const quotaInfo = await getQuota(userId);
+			return quotaInfo;
+		}
+
 		console.log(
 			JSON.stringify({
 				type: "quota_exceeded",
@@ -175,7 +205,6 @@ export async function consumeQuota(userId: string): Promise<QuotaResult> {
 				timestamp: new Date().toISOString(),
 			}),
 		);
-
 		throw new RequestQuotaError("EXCEEDED");
 	}
 
