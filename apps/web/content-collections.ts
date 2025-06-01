@@ -10,7 +10,7 @@ const legalPages = defineCollection({
 	include: "**/*.md",
 	schema: z.object({
 		title: z.string(),
-		lastUpdated: z.string(),
+		lastUpdated: z.coerce.date(),
 	}),
 	async transform(document, context) {
 		const html = await compileMarkdown(context, document);
