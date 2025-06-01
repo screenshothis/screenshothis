@@ -73,6 +73,14 @@ async function maybeRefill(userId: string) {
 			totalAllowedRequests: schema.requestLimits.totalAllowedRequests,
 		});
 
+	// Emit refill event so external observers can track quota resets
+	const refillDelta = newRemaining - (limit.remainingRequests ?? 0);
+	quotaEvents.emit("refill", {
+		userId,
+		amount: refillDelta,
+		remaining: newRemaining,
+	} as QuotaRefillEvent);
+
 	return updated;
 }
 
