@@ -10,9 +10,6 @@ import tsConfigPaths from "vite-tsconfig-paths";
 import { sitemap } from "#/utils/sitemap.ts";
 
 export default defineConfig({
-	server: {
-		port: 3001,
-	},
 	optimizeDeps: {
 		exclude: [
 			"tanstack-start-server-fn-manifest:v",
