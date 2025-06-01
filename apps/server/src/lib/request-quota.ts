@@ -235,4 +235,25 @@ export interface QuotaRefillEvent {
 	remaining: number;
 }
 
-export const quotaEvents = new EventEmitter();
+interface QuotaEventMap {
+	consume: QuotaConsumeEvent;
+	refill: QuotaRefillEvent;
+}
+
+class TypedEventEmitter extends EventEmitter {
+	emit<K extends keyof QuotaEventMap>(
+		event: K,
+		data: QuotaEventMap[K],
+	): boolean {
+		return super.emit(event, data);
+	}
+
+	on<K extends keyof QuotaEventMap>(
+		event: K,
+		listener: (data: QuotaEventMap[K]) => void,
+	): this {
+		return super.on(event, listener);
+	}
+}
+
+export const quotaEvents = new TypedEventEmitter();
