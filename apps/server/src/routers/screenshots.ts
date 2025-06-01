@@ -65,13 +65,17 @@ export const screenshotsRouter = {
 				}
 
 				let remainingRequests: number | undefined;
+				let nextRefillAt: Date | null = null;
 				if (created) {
-					remainingRequests = await consumeQuota(context.session.user.id);
+					const quota = await consumeQuota(context.session.user.id);
+					remainingRequests = quota.remaining;
+					nextRefillAt = quota.nextRefillAt;
 				}
 
 				return {
 					image: `data:image/${input.format};base64,${Buffer.from(object).toString("base64")}`,
 					remainingRequests,
+					nextRefillAt,
 				};
 			} catch (error) {
 				console.error("Failed to get screenshot", error);

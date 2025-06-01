@@ -95,12 +95,12 @@ export async function assertQuotaAvailable(userId: string): Promise<number> {
 	return limit.remainingRequests;
 }
 
-/**
- * Decrements the user remaining request counter by 1.
- *
- * @returns updated remaining requests after consumption.
- */
-export async function consumeQuota(userId: string): Promise<number> {
+export interface QuotaResult {
+	remaining: number;
+	nextRefillAt: Date | null;
+}
+
+export async function consumeQuota(userId: string): Promise<QuotaResult> {
 	// Ensure we have quota (triggers refill if needed)
 	await assertQuotaAvailable(userId);
 
@@ -111,7 +111,20 @@ export async function consumeQuota(userId: string): Promise<number> {
 			remainingRequests: sql`${schema.requestLimits.remainingRequests} - 1`,
 		})
 		.where(eq(schema.requestLimits.userId, userId))
-		.returning({ remainingRequests: schema.requestLimits.remainingRequests });
+		.returning({
+			remainingRequests: schema.requestLimits.remainingRequests,
+			refillInterval: schema.requestLimits.refillInterval,
+			refilledAt: schema.requestLimits.refilledAt,
+			createdAt: schema.requestLimits.createdAt,
+		});
 
-	return updated?.remainingRequests ?? 0;
+	const lastRefill = (updated.refilledAt ?? updated.createdAt) as Date;
+	const intervalMs = Number(updated.refillInterval ?? BigInt(0));
+	const nextRefillAt =
+		intervalMs > 0 ? new Date(lastRefill.getTime() + intervalMs) : null;
+
+	return {
+		remaining: updated.remainingRequests ?? 0,
+		nextRefillAt,
+	};
 }

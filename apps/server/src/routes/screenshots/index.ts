@@ -179,8 +179,11 @@ const screenshots = new OpenAPIHono<{ Variables: Variables }>().openapi(
 			}
 
 			if (createdFlag) {
-				const remaining = await consumeQuota(userId);
-				headers.set("X-Remaining-Requests", String(remaining));
+				const quota = await consumeQuota(userId);
+				headers.set("X-Remaining-Requests", String(quota.remaining));
+				if (quota.nextRefillAt) {
+					headers.set("X-Refill-At", String(quota.nextRefillAt.getTime()));
+				}
 			}
 
 			headers.set("Content-Length", String(body.byteLength));
