@@ -165,7 +165,13 @@ export async function consumeQuota(userId: string): Promise<QuotaResult> {
 					AND (extract(epoch from now()) * 1000 - extract(epoch from coalesce(refilled_at, created_at)) * 1000) >= refill_interval
 				)
 			)
-		RETURNING remaining_requests, refill_interval, refilled_at, created_at, refill_amount;
+		RETURNING
+			remaining_requests,
+			refill_interval,
+			refilled_at,
+			created_at,
+			refill_amount,
+			(refilled_at = now()) AS did_refill;
 	`;
 
 	const result = await db.execute(query);
@@ -176,6 +182,7 @@ export async function consumeQuota(userId: string): Promise<QuotaResult> {
 		refilled_at: Date;
 		created_at: Date;
 		refill_amount: number | null;
+		did_refill: boolean;
 	}>;
 
 	if (rows.length === 0) {
@@ -196,21 +203,12 @@ export async function consumeQuota(userId: string): Promise<QuotaResult> {
 		remaining: row.remaining_requests,
 	} as QuotaConsumeEvent);
 
-	// Emit refill event if refill occurred inline (heuristic: refilled_at very recent and previous remaining <=0 implied)
-	const refillWindowMs = 2000;
-	const justRefilled =
-		row.refill_amount != null &&
-		row.refilled_at &&
-		Math.abs(Date.now() - new Date(row.refilled_at).getTime()) <
-			refillWindowMs &&
-		row.remaining_requests + 1 ===
-			Math.min(row.refill_amount, row.refill_amount); // After decrement
-
-	if (justRefilled) {
+	// Emit refill event if SQL flagged it
+	if (row.did_refill) {
 		quotaEvents.emit("refill", {
 			userId,
 			amount: row.refill_amount,
-			remaining: row.remaining_requests + 1,
+			remaining: row.remaining_requests + 1, // +1 because we already consumed one
 		} as QuotaRefillEvent);
 	}
 
