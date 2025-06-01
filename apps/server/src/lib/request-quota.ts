@@ -5,6 +5,7 @@ import { z } from "zod";
 
 import { db } from "#/db";
 import * as schema from "#/db/schema";
+import { logger } from "./logger";
 import { polarClient } from "./polar";
 
 export class RequestQuotaError extends Error {
@@ -69,7 +70,7 @@ async function maybeRefill(userId: string) {
 	// Emit refill event so external observers can track quota resets
 	const refillDelta = newRemaining - (limit.remainingRequests ?? 0);
 
-	console.log(
+	logger.info(
 		JSON.stringify({
 			type: "quota_refill",
 			userId,
@@ -177,7 +178,7 @@ export async function consumeQuota(userId: string): Promise<QuotaResult> {
 		});
 
 		if (extraRow?.isExtraEnabled) {
-			console.log(
+			logger.info(
 				JSON.stringify({
 					type: "quota_extra_request",
 					userId,
@@ -198,7 +199,7 @@ export async function consumeQuota(userId: string): Promise<QuotaResult> {
 			return quotaInfo;
 		}
 
-		console.log(
+		logger.info(
 			JSON.stringify({
 				type: "quota_exceeded",
 				userId,

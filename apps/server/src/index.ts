@@ -10,6 +10,7 @@ import { requestId } from "hono/request-id";
 import type { Variables } from "./common/environment";
 import { auth } from "./lib/auth";
 import { createContext } from "./lib/context";
+import { logger } from "./lib/logger";
 import { appRouter } from "./routers";
 import screenshotsRoutes from "./routes/screenshots";
 import { env } from "./utils/env";
@@ -25,7 +26,7 @@ const app = new OpenAPIHono<{ Variables: Variables }>({
 app.use(requestId());
 app.use(
 	pinoLogger({
-		pino: { level: process.env.NODE_ENV === "production" ? "info" : "debug" },
+		pino: logger,
 	}),
 );
 
