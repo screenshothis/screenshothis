@@ -67,8 +67,8 @@ function RouteComponent() {
 				<div className="mx-auto max-w-xl">
 					<p className="inline-flex items-center gap-2 font-medium text-paragraph-xs uppercase">
 						<LegalDocument01Icon className="size-4 text-primary" />
-						<time dateTime={new Date(lastUpdated).toISOString()}>
-							{new Date(lastUpdated).toLocaleDateString("en-US", {
+						<time dateTime={lastUpdated.toISOString()}>
+							{lastUpdated.toLocaleDateString("en-US", {
 								day: "numeric",
 								year: "numeric",
 								month: "long",
