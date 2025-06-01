@@ -48,8 +48,8 @@ async function maybeRefill(userId: string) {
 	}
 
 	const lastRefill = limit.refilledAt ?? limit.createdAt;
-	const intervalMs = Number(limit.refillInterval);
-	if (Date.now() - lastRefill.getTime() < intervalMs) {
+	const intervalMs = limit.refillInterval;
+	if (BigInt(Date.now() - lastRefill.getTime()) < intervalMs) {
 		return limit as LimitRow;
 	}
 
