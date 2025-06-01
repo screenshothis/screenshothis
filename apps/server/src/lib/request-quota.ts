@@ -133,7 +133,17 @@ export async function getQuota(userId: string): Promise<QuotaResult> {
 	return { remaining: limit.remainingRequests, nextRefillAt };
 }
 
-export async function consumeQuota(userId: string): Promise<QuotaResult> {
+export async function consumeQuota(
+	userId: string,
+	opts?: {
+		workspaceId?: string;
+		url?: string;
+		format?: string;
+		userAgent?: string;
+		source?: string;
+		extraType?: string;
+	},
+): Promise<QuotaResult> {
 	const query = sql`
 		WITH target AS (
 			SELECT *,
@@ -171,10 +181,10 @@ export async function consumeQuota(userId: string): Promise<QuotaResult> {
 	});
 
 	if (result.rowCount === 0) {
-		// quota not consumed; retrieve is_extra_enabled flag
+		// quota not consumed; retrieve is_extra_enabled flag and plan/workspaceId
 		const extraRow = await db.query.requestLimits.findFirst({
 			where: eq(schema.requestLimits.userId, userId),
-			columns: { isExtraEnabled: true },
+			columns: { isExtraEnabled: true, plan: true },
 		});
 
 		if (extraRow?.isExtraEnabled) {
@@ -186,11 +196,35 @@ export async function consumeQuota(userId: string): Promise<QuotaResult> {
 				}),
 			);
 
+			// Build robust metadata for Polar event
+			const urlDomain = opts?.url
+				? (() => {
+						try {
+							return new URL(opts.url).hostname;
+						} catch {
+							return undefined;
+						}
+					})()
+				: undefined;
+			const now = new Date();
+			const metadata: Record<string, string | number | boolean> = {
+				plan: extraRow.plan,
+				timestamp: now.toISOString(),
+				userId,
+				source: opts?.source || "api",
+				extraType: opts?.extraType || "manual",
+			};
+			if (opts?.workspaceId) metadata.workspaceId = opts.workspaceId;
+			if (urlDomain) metadata.urlDomain = urlDomain;
+			if (opts?.format) metadata.format = opts.format;
+			if (opts?.userAgent) metadata.userAgent = opts.userAgent;
+
 			await polarClient.events.ingest({
 				events: [
 					{
-						name: "screenshot-generated",
+						name: "screenshot-extra-usage",
 						externalCustomerId: userId,
+						metadata,
 					},
 				],
 			});

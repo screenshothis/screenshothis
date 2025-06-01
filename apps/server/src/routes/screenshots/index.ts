@@ -180,7 +180,13 @@ const screenshots = new OpenAPIHono<{ Variables: Variables }>().openapi(
 			}
 
 			if (createdFlag) {
-				const quota = await consumeQuota(userId);
+				const quota = await consumeQuota(userId, {
+					workspaceId,
+					url: queryParams.url,
+					format: queryParams.format,
+					userAgent: queryParams.userAgent,
+					source: "rest",
+				});
 				headers.set("X-Remaining-Requests", String(quota.remaining));
 				if (quota.nextRefillAt) {
 					headers.set("X-Refill-At", String(quota.nextRefillAt.getTime()));

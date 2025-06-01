@@ -68,7 +68,13 @@ export const screenshotsRouter = {
 				let remainingRequests: number | undefined;
 				let nextRefillAt: Date | null = null;
 				if (created) {
-					const quota = await consumeQuota(context.session.user.id);
+					const quota = await consumeQuota(context.session.user.id, {
+						workspaceId: context.session.activeWorkspaceId,
+						url: input.url,
+						format: input.format,
+						userAgent: input.userAgent,
+						source: "orpc",
+					});
 					remainingRequests = quota.remaining;
 					nextRefillAt = quota.nextRefillAt;
 				}
