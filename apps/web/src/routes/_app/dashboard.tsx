@@ -1,6 +1,5 @@
 import { DashboardSearchSchema } from "@screenshothis/schemas/dashboard";
 import { useQueries } from "@tanstack/react-query";
-import { createFileRoute } from "@tanstack/react-router";
 import { zodValidator } from "@tanstack/zod-adapter";
 
 import { DashedDivider } from "#/components/dashed-divider.tsx";
@@ -12,7 +11,7 @@ import { Skeleton } from "#/components/ui/skeleton.tsx";
 import { UsageWidget } from "#/components/widgets/usage-widget.tsx";
 import { useORPC } from "#/hooks/use-orpc.ts";
 
-export const Route = createFileRoute("/_app/dashboard")({
+export const Route = createFileRoute({
 	loader: async ({ context: { orpc, queryClient } }) => {
 		await queryClient.prefetchQuery(
 			orpc.dashboard.stats.queryOptions({

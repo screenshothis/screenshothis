@@ -3,7 +3,7 @@ import Mail01Icon from "virtual:icons/hugeicons/mail-01";
 import UserAdd01Icon from "virtual:icons/hugeicons/user-add-01";
 
 import { SignUpSchema } from "@screenshothis/schemas/users";
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { useNavigate } from "@tanstack/react-router";
 
 import { AuthHeader } from "#/components/auth/auth-header.tsx";
 import { SocialLogin } from "#/components/auth/social-login.tsx";
@@ -13,7 +13,7 @@ import { toast } from "#/components/ui/toast.tsx";
 import { authClient } from "#/lib/auth.ts";
 import { getScreenshotUrl, seo } from "#/utils/seo.ts";
 
-export const Route = createFileRoute("/_auth/register")({
+export const Route = createFileRoute({
 	head({ match }) {
 		return {
 			meta: seo({

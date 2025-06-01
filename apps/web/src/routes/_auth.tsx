@@ -1,10 +1,4 @@
-import {
-	Link,
-	Outlet,
-	createFileRoute,
-	redirect,
-	useLocation,
-} from "@tanstack/react-router";
+import { Link, Outlet, redirect, useLocation } from "@tanstack/react-router";
 
 import { LanguageSelect } from "#/components/language-select.tsx";
 import * as Button from "#/components/ui/button-primitives.tsx";
@@ -39,7 +33,7 @@ const defaultConfig: PathConfig = {
 	linkHref: "/login",
 };
 
-export const Route = createFileRoute("/_auth")({
+export const Route = createFileRoute({
 	async beforeLoad({ context }) {
 		if (context.session?.id) {
 			throw redirect({

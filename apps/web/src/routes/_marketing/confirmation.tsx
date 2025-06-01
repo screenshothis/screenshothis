@@ -1,6 +1,6 @@
 import ArrowRight01Icon from "virtual:icons/hugeicons/arrow-right-01";
 
-import { Link, createFileRoute, redirect } from "@tanstack/react-router";
+import { Link, redirect } from "@tanstack/react-router";
 import { zodValidator } from "@tanstack/zod-adapter";
 import { z } from "zod";
 
@@ -12,7 +12,7 @@ import { toast } from "#/components/ui/toast.tsx";
 import { currencyFormatter } from "#/utils/currency.ts";
 import { env } from "#/utils/env.ts";
 
-export const Route = createFileRoute("/_marketing/confirmation")({
+export const Route = createFileRoute({
 	validateSearch: zodValidator(
 		z.object({
 			checkout_id: z

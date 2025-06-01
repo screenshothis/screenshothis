@@ -2,7 +2,6 @@ import LockIcon from "virtual:icons/hugeicons/lock";
 import Mail01Icon from "virtual:icons/hugeicons/mail-01";
 
 import { ForgotPasswordSchema } from "@screenshothis/schemas/users";
-import { createFileRoute } from "@tanstack/react-router";
 
 import { AuthHeader } from "#/components/auth/auth-header.tsx";
 import { useAppForm } from "#/components/forms/form.tsx";
@@ -11,7 +10,7 @@ import { toast } from "#/components/ui/toast.tsx";
 import { authClient } from "#/lib/auth.ts";
 import { getScreenshotUrl, seo } from "#/utils/seo.ts";
 
-export const Route = createFileRoute("/_auth/forgot-password")({
+export const Route = createFileRoute({
 	head({ match }) {
 		return {
 			meta: seo({

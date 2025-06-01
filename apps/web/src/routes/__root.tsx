@@ -7,15 +7,13 @@ import {
 	createRootRouteWithContext,
 } from "@tanstack/react-router";
 import { TanStackRouterDevtools } from "@tanstack/react-router-devtools";
-import { createServerFn } from "@tanstack/react-start";
-import { getWebRequest } from "@tanstack/react-start/server";
 import type { Session, User } from "better-auth";
 import { LazyMotion, domAnimation } from "motion/react";
 import { ThemeProvider } from "next-themes";
-import { NuqsAdapter } from "nuqs/adapters/tanstack-router";
+import { NuqsAdapter } from "nuqs/adapters/react";
 
+import { authStateFn } from "#/actions/get-auth-state.ts";
 import { Toaster } from "#/components/ui/toast.tsx";
-import { authClient } from "#/lib/auth.ts";
 import type { orpc } from "#/utils/orpc.ts";
 import { getScreenshotUrl, seo } from "#/utils/seo.ts";
 import appCss from "../app.css?url";
@@ -26,23 +24,6 @@ export interface RouterAppContext {
 	queryClient: QueryClient;
 	session: (Session & { user: User }) | null;
 }
-
-export const authStateFn = createServerFn({ method: "GET" }).handler(
-	async () => {
-		const request = getWebRequest();
-		if (!request)
-			throw new Error("No request found in current execution context");
-		const { data } = await authClient.getSession({
-			fetchOptions: {
-				headers: {
-					cookie: request.headers.get("cookie") || "",
-				},
-			},
-		});
-
-		return data;
-	},
-);
 
 export const Route = createRootRouteWithContext<RouterAppContext>()({
 	head: ({ match }) => ({
@@ -135,7 +116,7 @@ function RootComponent() {
 			defaultTheme="light"
 		>
 			<RootDocument>
-				<NuqsAdapter>
+				<NuqsAdapter fullPageNavigationOnShallowFalseUpdates>
 					<LazyMotion features={domAnimation}>
 						<Outlet />
 					</LazyMotion>

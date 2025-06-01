@@ -1,4 +1,3 @@
-import { createFileRoute } from "@tanstack/react-router";
 import * as React from "react";
 
 import { CodeSection } from "#/components/sections/code-section.tsx";
@@ -9,7 +8,7 @@ import { ImageShowcaseSection } from "#/components/sections/image-showcase-secti
 import { PricingSection } from "#/components/sections/pricing-section.tsx";
 import { authClient } from "#/lib/auth.ts";
 
-export const Route = createFileRoute("/_marketing/")({
+export const Route = createFileRoute({
 	component: RouteComponent,
 });
 

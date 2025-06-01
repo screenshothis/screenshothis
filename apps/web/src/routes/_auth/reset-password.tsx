@@ -2,7 +2,7 @@ import LockIcon from "virtual:icons/hugeicons/lock";
 import LockPasswordIcon from "virtual:icons/hugeicons/lock-password";
 
 import { ResetPasswordSchema } from "@screenshothis/schemas/users";
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { useNavigate } from "@tanstack/react-router";
 import { zodValidator } from "@tanstack/zod-adapter";
 import { z } from "zod";
 
@@ -12,7 +12,7 @@ import * as AlertToast from "#/components/ui/toast-alert.tsx";
 import { toast } from "#/components/ui/toast.tsx";
 import { authClient } from "#/lib/auth.ts";
 
-export const Route = createFileRoute("/_auth/reset-password")({
+export const Route = createFileRoute({
 	validateSearch: zodValidator(
 		z.object({
 			token: z.string({

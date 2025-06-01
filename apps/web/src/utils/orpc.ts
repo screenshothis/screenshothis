@@ -8,9 +8,11 @@ import { getHeaders } from "@tanstack/react-start/server";
 
 import { env } from "./env.ts";
 
-export const getServerHeaders = createServerFn().handler(() => {
-	return getHeaders();
-});
+export const getServerHeaders = createServerFn({ method: "GET" }).handler(
+	() => {
+		return getHeaders();
+	},
+);
 
 export const link = new RPCLink({
 	url: `${env.VITE_SERVER_URL}/rpc`,

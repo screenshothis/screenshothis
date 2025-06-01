@@ -41,7 +41,7 @@
 		"cross-fetch": "4.1.0",
 		"dotenv": "16.5.0",
 		"drizzle-orm": "0.44.1",
-		"hono": "4.7.10",
+		"hono": "4.7.11",
 		"p-limit": "6.2.0",
 		"pg": "8.16.0",
 		"puppeteer": "24.9.0",
@@ -51,12 +51,12 @@
 		"ts-case-convert": "2.1.0",
 		"unique-username-generator": "1.4.0",
 		"wildcard-match": "5.1.4",
-		"zod": "3.25.42"
+		"zod": "3.25.46"
 	},
 	"devDependencies": {
 		"@epic-web/config": "1.21.0",
 		"@types/bun": "1.2.15",
-		"@types/pg": "8.15.2",
+		"@types/pg": "8.15.3",
 		"drizzle-kit": "0.31.1",
 		"tsc-alias": "1.8.16",
 		"typescript": "5.8.3"

@@ -3,7 +3,6 @@ import Key01Icon from "virtual:icons/hugeicons/key-01";
 
 import { ApiKeysFilterSchema } from "@screenshothis/schemas/api-keys";
 import { useQuery } from "@tanstack/react-query";
-import { createFileRoute } from "@tanstack/react-router";
 import { zodValidator } from "@tanstack/zod-adapter";
 
 import { DashedDivider } from "#/components/dashed-divider.tsx";
@@ -14,7 +13,7 @@ import { Button } from "#/components/ui/button.tsx";
 import { useActionsParams } from "#/hooks/use-actions-params.ts";
 import { authClient } from "#/lib/auth.ts";
 
-export const Route = createFileRoute("/_app/keys")({
+export const Route = createFileRoute({
 	validateSearch: zodValidator(ApiKeysFilterSchema),
 	component: RouteComponent,
 });
