@@ -235,10 +235,10 @@ export async function consumeQuota(userId: string): Promise<QuotaResult> {
 
 	// Emit refill event if SQL flagged it
 	if (row.did_refill) {
-		const remainingBeforeConsume = row.remaining_requests + 1; // state right after refill but before current consumption
-		const actualRefilledAmount =
-			remainingBeforeConsume -
-			(row.remaining_requests + 1 - (row.refill_amount || 0));
+		const remainingBeforeConsume = row.remaining_requests + 1;
+		const originalRemaining =
+			row.remaining_requests + 1 - (row.refill_amount || 0);
+		const actualRefilledAmount = remainingBeforeConsume - originalRemaining;
 
 		quotaEvents.emit("refill", {
 			userId,
