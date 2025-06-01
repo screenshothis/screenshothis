@@ -125,9 +125,9 @@ export async function getQuota(userId: string): Promise<QuotaResult> {
 	}
 
 	const lastRefill = (limit.refilledAt ?? limit.createdAt) as Date;
-	const intervalMs = Number(limit.refillInterval ?? BigInt(0));
+	const intervalMs = limit.refillInterval ?? BigInt(0);
 	const nextRefillAt =
-		intervalMs > 0 ? new Date(lastRefill.getTime() + intervalMs) : null;
+		intervalMs > 0 ? new Date(lastRefill.getTime() + Number(intervalMs)) : null;
 
 	return { remaining: limit.remainingRequests, nextRefillAt };
 }
