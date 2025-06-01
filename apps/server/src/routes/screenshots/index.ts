@@ -4,6 +4,7 @@ import { objectToCamel } from "ts-case-convert";
 
 import type { Variables } from "#/common/environment";
 import { auth } from "#/lib/auth";
+import { logger } from "#/lib/logger";
 import {
 	RequestQuotaError,
 	assertQuotaAvailable,
@@ -92,7 +93,7 @@ const screenshots = new OpenAPIHono<{ Variables: Variables }>().openapi(
 			try {
 				existingKey = await getExistingScreenshotKey(workspaceId, queryParams);
 			} catch (error) {
-				console.error("Error checking for existing screenshot:", error);
+				logger.error({ err: error }, "error checking for existing screenshot");
 
 				existingKey = null;
 			}

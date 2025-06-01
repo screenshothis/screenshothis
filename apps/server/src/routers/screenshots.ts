@@ -7,6 +7,7 @@ import { z } from "zod";
 import { db } from "#/db";
 import * as schema from "#/db/schema";
 import { auth } from "#/lib/auth";
+import { logger } from "#/lib/logger";
 import { protectedProcedure } from "#/lib/orpc";
 import {
 	RequestQuotaError,
@@ -78,7 +79,7 @@ export const screenshotsRouter = {
 					nextRefillAt,
 				};
 			} catch (error) {
-				console.error("Failed to get screenshot", error);
+				logger.error({ err: error }, "failed to get screenshot");
 
 				throw new ORPCError("BAD_REQUEST", {
 					message: "Failed to get screenshot",

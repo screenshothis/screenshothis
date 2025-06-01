@@ -10,6 +10,7 @@ import { and, eq, sql } from "drizzle-orm";
 import { db } from "#/db";
 import * as schema from "#/db/schema";
 import { screenshots } from "#/db/schema/screenshots";
+import { logger } from "#/lib/logger";
 import { env } from "#/utils/env";
 import { getOrCreateScreenshot } from "#/utils/screenshot";
 
@@ -17,7 +18,7 @@ const connection: ConnectionOptions = {
 	url: env.REDIS_URL,
 	retryStrategy: (times: number) => {
 		const delay = Math.min(2 ** times * 1000, 10000);
-		console.log(`Redis connection retry attempt ${times} in ${delay}ms`);
+		logger.warn({ attempt: times, delay }, "redis connection retry");
 		return delay;
 	},
 };
@@ -64,7 +65,7 @@ const screenshotWorker = new Worker<WorkerJobData>(
 
 			return { key: objectKey as string, created };
 		} catch (error) {
-			console.error("Error in screenshot worker:", error);
+			logger.error({ err: error }, "error in screenshot worker");
 
 			throw error;
 		}
@@ -76,7 +77,7 @@ const screenshotWorker = new Worker<WorkerJobData>(
 );
 
 screenshotWorker.on("error", (err: Error) => {
-	console.error("Screenshot worker error", err);
+	logger.error({ err }, "screenshot worker error");
 });
 
 // Utility to normalize string arrays (trim, lowercase, sort) for consistent hashing/comparison
@@ -203,10 +204,10 @@ export async function enqueueScreenshotJob(
 export const worker = screenshotWorker;
 
 export async function shutdownWorker() {
-	console.log("Closing screenshot worker...");
+	logger.info("closing screenshot worker");
 	await screenshotWorker.close();
 	await screenshotQueue.close();
-	console.log("Screenshot worker closed");
+	logger.info("screenshot worker closed");
 }
 
 export async function getExistingScreenshotKey(
@@ -280,7 +281,7 @@ export async function getExistingScreenshotKey(
 
 		return `screenshots/${workspaceId}/${existing.id}.${format}`;
 	} catch (error) {
-		console.error("Error querying existing screenshot:", error);
+		logger.error({ err: error }, "error querying existing screenshot");
 
 		return null;
 	}
