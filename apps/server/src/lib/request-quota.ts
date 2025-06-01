@@ -4,6 +4,7 @@ import { eq, sql } from "drizzle-orm";
 
 import { db } from "#/db";
 import * as schema from "#/db/schema";
+import { z } from "zod";
 
 export class RequestQuotaError extends Error {
 	constructor(readonly type: "NOT_FOUND" | "EXCEEDED") {
@@ -155,24 +156,35 @@ export async function consumeQuota(userId: string): Promise<QuotaResult> {
 
 	const result = await db.execute(query);
 
-	const rows = result.rows as Array<{
-		remaining_requests: number;
-		refill_interval: string | null;
-		refilled_at: Date;
-		created_at: Date;
-		refill_amount: number | null;
-		did_refill: boolean;
-	}>;
+	const RowSchema = z.object({
+		remaining_requests: z.number(),
+		refill_interval: z.string().nullable(),
+		refilled_at: z.union([z.string(), z.date()]),
+		created_at: z.union([z.string(), z.date()]),
+		refill_amount: z.number().nullable(),
+		did_refill: z.boolean(),
+	});
 
-	if (rows.length === 0) {
+	if (result.rowCount === 0) {
 		throw new RequestQuotaError("EXCEEDED");
 	}
 
-	const row = rows[0];
+	const parsed = RowSchema.parse(result.rows[0] as unknown);
 
-	const lastRefillRaw = row.refilled_at ?? row.created_at;
-	const lastRefill =
-		lastRefillRaw instanceof Date ? lastRefillRaw : new Date(lastRefillRaw);
+	const row = {
+		...parsed,
+		// normalise dates
+		refilled_at:
+			parsed.refilled_at instanceof Date
+				? parsed.refilled_at
+				: new Date(parsed.refilled_at),
+		created_at:
+			parsed.created_at instanceof Date
+				? parsed.created_at
+				: new Date(parsed.created_at),
+	};
+
+	const lastRefill = row.refilled_at ?? row.created_at;
 	const intervalMs = Number(row.refill_interval ?? "0");
 	const nextRefillAt =
 		intervalMs > 0 ? new Date(lastRefill.getTime() + intervalMs) : null;
@@ -196,10 +208,6 @@ export async function consumeQuota(userId: string): Promise<QuotaResult> {
 		nextRefillAt,
 	};
 }
-
-// ---------------------------------------------
-// Public events
-// ---------------------------------------------
 
 export interface QuotaConsumeEvent {
 	userId: string;
