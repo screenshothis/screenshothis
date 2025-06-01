@@ -67,6 +67,17 @@ async function maybeRefill(userId: string) {
 
 	// Emit refill event so external observers can track quota resets
 	const refillDelta = newRemaining - (limit.remainingRequests ?? 0);
+
+	console.log(
+		JSON.stringify({
+			type: "quota_refill",
+			userId,
+			added: refillDelta,
+			remaining: newRemaining,
+			timestamp: new Date().toISOString(),
+		}),
+	);
+
 	quotaEvents.emit("refill", {
 		userId,
 		amount: refillDelta,
@@ -157,6 +168,14 @@ export async function consumeQuota(userId: string): Promise<QuotaResult> {
 	});
 
 	if (result.rowCount === 0) {
+		console.log(
+			JSON.stringify({
+				type: "quota_exceeded",
+				userId,
+				timestamp: new Date().toISOString(),
+			}),
+		);
+
 		throw new RequestQuotaError("EXCEEDED");
 	}
 
