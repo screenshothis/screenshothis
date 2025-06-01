@@ -172,7 +172,9 @@ export async function consumeQuota(userId: string): Promise<QuotaResult> {
 
 	const row = rows[0];
 
-	const lastRefill = (row.refilled_at ?? row.created_at) as Date;
+	const lastRefillRaw = row.refilled_at ?? row.created_at;
+	const lastRefill =
+		lastRefillRaw instanceof Date ? lastRefillRaw : new Date(lastRefillRaw);
 	const intervalMs = Number(row.refill_interval ?? "0");
 	const nextRefillAt =
 		intervalMs > 0 ? new Date(lastRefill.getTime() + intervalMs) : null;
