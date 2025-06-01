@@ -54,7 +54,7 @@ async function maybeRefill(userId: string) {
 
 	const newRemaining = Math.min(
 		(limit.totalAllowedRequests ?? limit.refillAmount) as number,
-		(limit.remainingRequests ?? 0) + (limit.refillAmount as number),
+		Math.max(0, limit.remainingRequests ?? 0) + (limit.refillAmount as number),
 	);
 
 	const [updated] = await db
