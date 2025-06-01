@@ -133,8 +133,10 @@ export async function consumeQuota(userId: string): Promise<QuotaResult> {
 		UPDATE request_limits
 		SET
 			total_requests = total_requests + 1,
+            -- Decrement remaining requests, or refill if conditions are met
 			remaining_requests = CASE
 				WHEN remaining_requests > 0 THEN remaining_requests - 1
+                -- If no remaining requests but refill conditions are met
 				WHEN remaining_requests <= 0
 					 AND refill_amount IS NOT NULL
 					 AND refill_interval IS NOT NULL
@@ -145,6 +147,7 @@ export async function consumeQuota(userId: string): Promise<QuotaResult> {
 					) - 1
 				ELSE remaining_requests
 			END,
+            -- Update refilled_at timestamp when refill occurs
 			refilled_at = CASE
 				WHEN remaining_requests <= 0
 					 AND refill_amount IS NOT NULL
