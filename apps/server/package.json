@@ -38,7 +38,7 @@
 		"ai": "4.3.16",
 		"better-auth": "1.2.8",
 		"better-auth-harmony": "1.2.5",
-		"bullmq": "5.53.1",
+		"bullmq": "5.53.2",
 		"cross-fetch": "4.1.0",
 		"dotenv": "16.5.0",
 		"drizzle-orm": "0.44.1",
@@ -54,7 +54,7 @@
 		"ts-case-convert": "2.1.0",
 		"unique-username-generator": "1.4.0",
 		"wildcard-match": "5.1.4",
-		"zod": "3.25.48"
+		"zod": "3.25.49"
 	},
 	"devDependencies": {
 		"@epic-web/config": "1.21.0",

@@ -16,7 +16,7 @@
 		"@screenshothis/common": "workspace:*",
 		"@tanstack/zod-adapter": "1.121.0-alpha.22",
 		"ts-case-convert": "2.1.0",
-		"zod": "3.25.48"
+		"zod": "3.25.49"
 	},
 	"devDependencies": {
 		"@types/bun": "1.2.15"
