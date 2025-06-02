@@ -20,6 +20,7 @@ import type { z } from "zod";
 import { isScreenshotOriginAllowed } from "../actions/validate-screenshot-origin";
 import { db } from "../db";
 import { screenshots } from "../db/schema/screenshots";
+import { logger } from "../lib/logger";
 import { s3 } from "../lib/s3";
 
 puppeteer.use(StealthPlugin());
@@ -157,9 +158,7 @@ export async function getOrCreateScreenshot(
 
 		if (bypassCsp) {
 			await page.setBypassCSP(true);
-			console.warn(
-				`[AUDIT] bypass_csp enabled for workspace ${workspaceId} on URL ${url}`,
-			);
+			logger.warn({ workspaceId, url }, "[AUDIT] bypass_csp enabled");
 		}
 
 		page.emulateMediaFeatures([

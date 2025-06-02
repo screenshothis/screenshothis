@@ -23,6 +23,7 @@ import { updateUserRequestLimits } from "../actions/update-user-request-limits";
 import { db } from "../db";
 import * as schema from "../db/schema";
 import { env } from "../utils/env";
+import { logger } from "./logger";
 import { polarClient, polarProducts } from "./polar";
 
 export const auth = betterAuth({
@@ -111,7 +112,7 @@ export const auth = betterAuth({
 							plan: "free",
 						});
 					} catch (error) {
-						console.error(error);
+						logger.error({ err: error }, "failed during user create hook");
 					}
 				},
 			},

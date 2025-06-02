@@ -4,6 +4,12 @@ import { objectToCamel } from "ts-case-convert";
 
 import type { Variables } from "#/common/environment";
 import { auth } from "#/lib/auth";
+import { logger } from "#/lib/logger";
+import {
+	RequestQuotaError,
+	assertQuotaAvailable,
+	consumeQuota,
+} from "#/lib/request-quota";
 import { s3 } from "#/lib/s3";
 import {
 	enqueueScreenshotJob,
@@ -65,11 +71,29 @@ const screenshots = new OpenAPIHono<{ Variables: Variables }>().openapi(
 			const workspaceId = key.metadata.workspaceId;
 			const userId = key.userId;
 
+			// Ensure quota is available before continuing
+			try {
+				await assertQuotaAvailable(userId);
+			} catch (error) {
+				if (error instanceof RequestQuotaError) {
+					return c.json(
+						{
+							error:
+								error.type === "EXCEEDED"
+									? "You have reached the maximum number of requests allowed for your current plan."
+									: "Request limits not found for the current user",
+						},
+						403,
+					);
+				}
+				throw error;
+			}
+
 			let existingKey: string | null = null;
 			try {
 				existingKey = await getExistingScreenshotKey(workspaceId, queryParams);
 			} catch (error) {
-				console.error("Error checking for existing screenshot:", error);
+				logger.error({ err: error }, "error checking for existing screenshot");
 
 				existingKey = null;
 			}
@@ -102,6 +126,7 @@ const screenshots = new OpenAPIHono<{ Variables: Variables }>().openapi(
 			const headers = new Headers();
 			let body: ArrayBuffer | Buffer | null = null;
 			let contentType: string;
+			let createdFlag = false;
 
 			if (raceResult === "timeout") {
 				// Return 1x1 placeholder and allow client to retry
@@ -118,6 +143,7 @@ const screenshots = new OpenAPIHono<{ Variables: Variables }>().openapi(
 					key: string;
 					created: boolean;
 				};
+				createdFlag = (raceResult as { created: boolean }).created;
 				if (!objectKey) {
 					return c.json({ error: "Unauthorized" }, 401);
 				}
@@ -150,6 +176,20 @@ const screenshots = new OpenAPIHono<{ Variables: Variables }>().openapi(
 						"CDN-Cache-Control",
 						"no-cache, no-store, must-revalidate, proxy-revalidate, max-age=0",
 					);
+				}
+			}
+
+			if (createdFlag) {
+				const quota = await consumeQuota(userId, {
+					workspaceId,
+					url: queryParams.url,
+					format: queryParams.format,
+					userAgent: queryParams.userAgent,
+					source: "rest",
+				});
+				headers.set("X-Remaining-Requests", String(quota.remaining));
+				if (quota.nextRefillAt) {
+					headers.set("X-Refill-At", String(quota.nextRefillAt.getTime()));
 				}
 			}
 

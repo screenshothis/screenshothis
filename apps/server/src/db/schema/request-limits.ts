@@ -1,7 +1,14 @@
 import { generateId } from "@screenshothis/id";
 import type { PlanType } from "@screenshothis/schemas/plan";
 import { relations } from "drizzle-orm";
-import { bigint, boolean, integer, pgTable, text } from "drizzle-orm/pg-core";
+import {
+	bigint,
+	boolean,
+	integer,
+	pgTable,
+	text,
+	timestamp,
+} from "drizzle-orm/pg-core";
 
 import { users } from "./auth";
 import { timestamps } from "./utils/timestamps";
@@ -18,6 +25,7 @@ export const requestLimits = pgTable("request_limits", {
 	refillInterval: bigint({
 		mode: "bigint",
 	}),
+	refilledAt: timestamp("refilled_at").defaultNow(),
 	isExtraEnabled: boolean("is_extra_enabled").notNull(),
 	userId: text("user_id")
 		.notNull()

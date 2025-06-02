@@ -1,5 +1,7 @@
+import { logger } from "#/lib/logger";
+
 export function createErrorResponse(error: unknown, requestId: string) {
-	console.error(error);
+	logger.error({ err: error, requestId }, "request error");
 
 	return {
 		requestId,

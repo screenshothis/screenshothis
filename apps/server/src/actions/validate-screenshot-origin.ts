@@ -3,6 +3,7 @@ import wildcardMatch from "wildcard-match";
 
 import { db } from "#/db";
 import * as schema from "#/db/schema";
+import { logger } from "#/lib/logger";
 
 /**
  * Checks whether the given URL's origin or hostname is allowed for the specified workspace.
@@ -42,8 +43,12 @@ export async function isScreenshotOriginAllowed(
 			}
 		}
 	} catch (error) {
-		console.error(
-			`Invalid JSON in workspace metadata: ${error instanceof Error ? error.message : "Unknown error"}`,
+		logger.warn(
+			{
+				err: error,
+				workspaceId,
+			},
+			"invalid JSON in workspace metadata",
 		);
 	}
 

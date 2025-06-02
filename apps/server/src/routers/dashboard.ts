@@ -3,6 +3,7 @@ import { sql } from "drizzle-orm";
 import { z } from "zod";
 
 import { db } from "#/db";
+import { logger } from "#/lib/logger";
 import { protectedProcedure } from "#/lib/orpc";
 
 export const dashboardRouter = {
@@ -74,7 +75,8 @@ export const dashboardRouter = {
         `,
 				)
 				.catch((error) => {
-					console.error("Failed to fetch stats", error);
+					logger.error({ err: error }, "failed to fetch stats");
+
 					throw new Error("Failed to fetch stats");
 				});
 
@@ -98,7 +100,8 @@ export const dashboardRouter = {
         `,
 				)
 				.catch((error) => {
-					console.error("Failed to fetch previous stats", error);
+					logger.error({ err: error }, "failed to fetch previous stats");
+
 					throw new Error("Failed to fetch previous stats");
 				});
 

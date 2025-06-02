@@ -1,13 +1,19 @@
 import { ORPCError } from "@orpc/server";
 import { CreateScreenshotSchema } from "@screenshothis/schemas/screenshots";
-import { and, eq, like, sql } from "drizzle-orm";
+import { and, eq, like } from "drizzle-orm";
 import { objectToCamel } from "ts-case-convert";
 import { z } from "zod";
 
 import { db } from "#/db";
 import * as schema from "#/db/schema";
 import { auth } from "#/lib/auth";
+import { logger } from "#/lib/logger";
 import { protectedProcedure } from "#/lib/orpc";
+import {
+	RequestQuotaError,
+	assertQuotaAvailable,
+	consumeQuota,
+} from "#/lib/request-quota";
 import { getOrCreateScreenshot } from "#/utils/screenshot";
 
 export const screenshotsRouter = {
@@ -33,6 +39,21 @@ export const screenshotsRouter = {
 			}
 
 			try {
+				// Ensure the user still has quota before attempting to generate a screenshot
+				try {
+					await assertQuotaAvailable(context.session.user.id);
+				} catch (error) {
+					if (error instanceof RequestQuotaError) {
+						throw new ORPCError("FORBIDDEN", {
+							message:
+								error.type === "EXCEEDED"
+									? "You have reached the maximum number of requests allowed for your current plan."
+									: "Request limits not found for the current user",
+						});
+					}
+					throw error;
+				}
+
 				const { object, created } = await getOrCreateScreenshot(
 					context.session.activeWorkspaceId,
 					input,
@@ -44,21 +65,27 @@ export const screenshotsRouter = {
 					});
 				}
 
+				let remainingRequests: number | undefined;
+				let nextRefillAt: Date | null = null;
 				if (created) {
-					await db
-						.update(schema.requestLimits)
-						.set({
-							totalRequests: sql`${schema.requestLimits.totalRequests} + 1`,
-							remainingRequests: sql`${schema.requestLimits.remainingRequests} - 1`,
-						})
-						.where(eq(schema.requestLimits.userId, context.session.user.id));
+					const quota = await consumeQuota(context.session.user.id, {
+						workspaceId: context.session.activeWorkspaceId,
+						url: input.url,
+						format: input.format,
+						userAgent: input.userAgent,
+						source: "orpc",
+					});
+					remainingRequests = quota.remaining;
+					nextRefillAt = quota.nextRefillAt;
 				}
 
 				return {
 					image: `data:image/${input.format};base64,${Buffer.from(object).toString("base64")}`,
+					remainingRequests,
+					nextRefillAt,
 				};
 			} catch (error) {
-				console.error("Failed to get screenshot", error);
+				logger.error({ err: error }, "failed to get screenshot");
 
 				throw new ORPCError("BAD_REQUEST", {
 					message: "Failed to get screenshot",
