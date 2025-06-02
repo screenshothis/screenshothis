@@ -1,5 +1,6 @@
 import "dotenv/config";
 
+import { sentry } from "@hono/sentry";
 import { swaggerUI } from "@hono/swagger-ui";
 import { OpenAPIHono } from "@hono/zod-openapi";
 import { RPCHandler } from "@orpc/server/fetch";
@@ -22,6 +23,13 @@ const app = new OpenAPIHono<{ Variables: Variables }>({
 		}
 	},
 });
+
+app.use(
+	"*",
+	sentry({
+		enabled: process.env.NODE_ENV === "production",
+	}),
+);
 
 app.use(requestId());
 app.use(
