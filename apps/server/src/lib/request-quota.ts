@@ -251,7 +251,9 @@ export async function consumeQuota(
 		refilled_at:
 			parsed.refilled_at instanceof Date
 				? parsed.refilled_at
-				: new Date(parsed.refilled_at),
+				: parsed.refilled_at
+					? new Date(parsed.refilled_at)
+					: null,
 		created_at:
 			parsed.created_at instanceof Date
 				? parsed.created_at
