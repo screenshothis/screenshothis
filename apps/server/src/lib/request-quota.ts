@@ -173,7 +173,7 @@ export async function consumeQuota(
 	const RowSchema = z.object({
 		remaining_requests: z.number(),
 		refill_interval: z.string().nullable(),
-		refilled_at: z.union([z.string(), z.date()]),
+		refilled_at: z.union([z.string(), z.date()]).nullable().optional(),
 		created_at: z.union([z.string(), z.date()]),
 		refill_amount: z.number().nullable(),
 		did_refill: z.boolean(),
