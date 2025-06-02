@@ -8,11 +8,11 @@ import {
 import { and, eq, sql } from "drizzle-orm";
 
 import { db } from "#/db";
-import * as schema from "#/db/schema";
 import { screenshots } from "#/db/schema/screenshots";
 import { logger } from "#/lib/logger";
 import { env } from "#/utils/env";
 import { getOrCreateScreenshot } from "#/utils/screenshot";
+import { consumeQuota } from "./request-quota.js";
 
 const connection: ConnectionOptions = {
 	url: env.REDIS_URL,
@@ -54,13 +54,10 @@ const screenshotWorker = new Worker<WorkerJobData>(
 			);
 
 			if (created) {
-				await db
-					.update(schema.requestLimits)
-					.set({
-						totalRequests: sql`${schema.requestLimits.totalRequests} + 1`,
-						remainingRequests: sql`${schema.requestLimits.remainingRequests} - 1`,
-					})
-					.where(eq(schema.requestLimits.userId, userId));
+				await consumeQuota(userId, {
+					workspaceId,
+					source: "worker",
+				});
 			}
 
 			return { key: objectKey as string, created };
