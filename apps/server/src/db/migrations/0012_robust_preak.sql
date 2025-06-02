@@ -1,0 +1,1 @@
+ALTER TABLE "request_limits" ALTER COLUMN "refilled_at" SET DEFAULT now();

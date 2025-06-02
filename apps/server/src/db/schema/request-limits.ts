@@ -25,7 +25,7 @@ export const requestLimits = pgTable("request_limits", {
 	refillInterval: bigint({
 		mode: "bigint",
 	}),
-	refilledAt: timestamp("refilled_at"),
+	refilledAt: timestamp("refilled_at").defaultNow(),
 	isExtraEnabled: boolean("is_extra_enabled").notNull(),
 	userId: text("user_id")
 		.notNull()
