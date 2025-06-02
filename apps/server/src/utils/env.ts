@@ -42,6 +42,7 @@ export const env = createEnv({
 		GOOGLE_CLIENT_ID: z.string().optional(),
 		GOOGLE_CLIENT_SECRET: z.string().optional(),
 		REDIS_URL: z.string().default("redis://127.0.0.1:6379"),
+		SENTRY_DSN: z.string().optional(),
 	},
 	runtimeEnv: process.env,
 	emptyStringAsUndefined: true,

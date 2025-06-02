@@ -27,7 +27,8 @@ const app = new OpenAPIHono<{ Variables: Variables }>({
 app.use(
 	"*",
 	sentry({
-		enabled: process.env.NODE_ENV === "production",
+		dsn: env.SENTRY_DSN,
+		enabled: process.env.NODE_ENV === "production" && !!env.SENTRY_DSN,
 	}),
 );
 
