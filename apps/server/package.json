@@ -21,7 +21,7 @@
 		"typecheck": "tsc --noEmit"
 	},
 	"dependencies": {
-		"@ai-sdk/google": "1.2.18",
+		"@ai-sdk/google": "1.2.19",
 		"@ghostery/adblocker-puppeteer": "2.6.1",
 		"@hono-storage/core": "0.0.14",
 		"@hono-storage/s3": "0.0.13",
