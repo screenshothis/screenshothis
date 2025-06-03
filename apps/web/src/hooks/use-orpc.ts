@@ -1,5 +1,5 @@
-import type { RouterUtils } from "@orpc/react-query";
 import type { RouterClient } from "@orpc/server";
+import type { RouterUtils } from "@orpc/tanstack-query";
 import type { appRouter } from "@screenshothis/server/routers";
 import * as React from "react";
 
