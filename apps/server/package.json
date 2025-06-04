@@ -28,8 +28,8 @@
 		"@hono/sentry": "1.2.1",
 		"@hono/swagger-ui": "0.5.1",
 		"@hono/zod-openapi": "0.19.8",
-		"@orpc/client": "1.4.0",
-		"@orpc/server": "1.4.0",
+		"@orpc/client": "1.4.1",
+		"@orpc/server": "1.4.1",
 		"@polar-sh/better-auth": "1.0.1",
 		"@polar-sh/sdk": "0.33.0",
 		"@screenshothis/id": "workspace:*",
@@ -41,7 +41,7 @@
 		"bullmq": "5.53.2",
 		"cross-fetch": "4.1.0",
 		"dotenv": "16.5.0",
-		"drizzle-orm": "0.44.1",
+		"drizzle-orm": "0.44.2",
 		"hono": "4.7.11",
 		"hono-pino": "0.8.0",
 		"p-limit": "6.2.0",
@@ -54,7 +54,7 @@
 		"ts-case-convert": "2.1.0",
 		"unique-username-generator": "1.4.0",
 		"wildcard-match": "5.1.4",
-		"zod": "3.25.49"
+		"zod": "3.25.51"
 	},
 	"devDependencies": {
 		"@epic-web/config": "1.21.0",
