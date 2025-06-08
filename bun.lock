@@ -36,6 +36,7 @@
         "drizzle-orm": "0.44.2",
         "hono": "4.7.11",
         "hono-pino": "0.8.0",
+        "ioredis": "5.6.1",
         "p-limit": "6.2.0",
         "pg": "8.16.0",
         "pino": "9.7.0",
@@ -51,6 +52,7 @@
       "devDependencies": {
         "@epic-web/config": "1.21.0",
         "@types/bun": "1.2.15",
+        "@types/ioredis": "5.0.0",
         "@types/pg": "8.15.4",
         "drizzle-kit": "0.31.1",
         "tsc-alias": "1.8.16",
@@ -1146,6 +1148,8 @@
     "@types/estree": ["@types/estree@1.0.7", "", {}, "sha512-w28IoSUCJpidD/TGviZwwMJckNESJZXFu7NBZ5YJ4mEUnNraUn9Pm8HSZm/jDF1pDWYKspWE7oVphigUPRakIQ=="],
 
     "@types/hast": ["@types/hast@3.0.4", "", { "dependencies": { "@types/unist": "*" } }, "sha512-WPs+bbQw5aCj+x6laNGWLH3wviHtoCv/P3+otBhbOhJgG8qtpdAMlTCxLtsTWA7LH1Oh/bFCHsBn0TPS5m30EQ=="],
+
+    "@types/ioredis": ["@types/ioredis@5.0.0", "", { "dependencies": { "ioredis": "*" } }, "sha512-zJbJ3FVE17CNl5KXzdeSPtdltc4tMT3TzC6fxQS0sQngkbFZ6h+0uTafsRqu+eSLIugf6Yb0Ea0SUuRr42Nk9g=="],
 
     "@types/json-schema": ["@types/json-schema@7.0.15", "", {}, "sha512-5+fP8P8MFNC+AyZCDxrB2pkZFPGzqQWUzpSeuuVLvm8VMcorNYavBqoFcxK8bQz4Qsbn4oUEEem4wDLfcysGHA=="],
 
