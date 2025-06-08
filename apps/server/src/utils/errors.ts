@@ -59,7 +59,7 @@ function containsSensitiveInfo(message: string): boolean {
 		/mongodb:\/\//, // MongoDB URLs
 		/mysql:\/\//, // MySQL URLs
 		/sqlite:\/\//, // SQLite URLs
-		/[a-zA-Z0-9]{20,}/, // Long strings that might be tokens/keys
+		/[a-zA-Z0-9]{32,}/, // Longer strings more likely to be tokens/keys
 		/localhost:\d+/, // Local ports
 		/127\.0\.0\.1/, // Local IPs
 		/192\.168\./, // Private IPs
