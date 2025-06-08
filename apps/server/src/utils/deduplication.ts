@@ -10,7 +10,10 @@ import type { z } from "zod";
 
 import { logger } from "../lib/logger";
 
-const pendingRequests = new Map<string, Promise<unknown>>();
+const pendingRequests = new Map<
+	string,
+	{ promise: Promise<unknown>; timestamp: number }
+>();
 
 interface ScreenshotParams {
 	url: string;
@@ -124,7 +127,7 @@ export async function deduplicateRequest<T>(
 		}
 
 		try {
-			const data = (await existingRequest) as T;
+			const data = (await existingRequest.promise) as T;
 			return { data, wasDeduplicated: true };
 		} catch (error) {
 			pendingRequests.delete(key);
@@ -133,7 +136,7 @@ export async function deduplicateRequest<T>(
 	}
 
 	const promise = generator();
-	pendingRequests.set(key, promise);
+	pendingRequests.set(key, { promise, timestamp: Date.now() });
 
 	if (context) {
 		setMetric(context, "request-new", 1);
@@ -168,18 +171,18 @@ export function clearPendingRequests(): void {
  * Clean up requests that have been pending for too long
  */
 export function cleanupStaleRequests(maxAgeMs = 300000): void {
-	const promises = Array.from(pendingRequests.entries());
+	const now = Date.now();
+	const entries = Array.from(pendingRequests.entries());
 
-	for (const [key, promise] of promises) {
-		Promise.race([
-			promise,
-			new Promise((_, reject) =>
-				setTimeout(() => reject(new Error("Cleanup timeout")), 100),
-			),
-		]).catch(() => {
+	for (const [key, { timestamp }] of entries) {
+		const age = now - timestamp;
+		if (age > maxAgeMs) {
 			pendingRequests.delete(key);
-			logger.warn({ key }, "Cleaned up potentially stale request");
-		});
+			logger.warn(
+				{ key, age, maxAgeMs },
+				"Cleaned up stale request that exceeded maximum age",
+			);
+		}
 	}
 }
 
