@@ -8,11 +8,39 @@ import {
 import { and, eq, sql } from "drizzle-orm";
 
 import { db } from "#/db";
+import { requestLimits } from "#/db/schema/request-limits";
 import { screenshots } from "#/db/schema/screenshots";
 import { logger } from "#/lib/logger";
 import { env } from "#/utils/env";
 import { getOrCreateScreenshot } from "#/utils/screenshot";
 import { consumeQuota } from "./request-quota.js";
+
+async function getUserPlan(userId: string): Promise<string> {
+	try {
+		const userLimits = await db.query.requestLimits.findFirst({
+			where: eq(requestLimits.userId, userId),
+			columns: { plan: true },
+		});
+		return userLimits?.plan || "free";
+	} catch (error) {
+		logger.error(
+			{ err: error, userId },
+			"Failed to get user plan, defaulting to free",
+		);
+		return "free";
+	}
+}
+
+function getPriorityForPlan(plan: string): number {
+	const priorityMap: Record<string, number> = {
+		enterprise: 50,
+		pro: 25,
+		lite: 10,
+		free: 1,
+	};
+
+	return priorityMap[plan] || 1;
+}
 
 const connection: ConnectionOptions = {
 	url: env.REDIS_URL,
@@ -252,6 +280,10 @@ export async function enqueueScreenshotJob(
 ): Promise<{ key: string; created: boolean }> {
 	const jobId = buildJobKey(workspaceId, params);
 
+	// Get user plan to determine job priority
+	const userPlan = await getUserPlan(userId);
+	const jobPriority = getPriorityForPlan(userPlan);
+
 	let job: Job | null = await screenshotQueue.getJob(jobId);
 
 	if (!job) {
@@ -266,8 +298,8 @@ export async function enqueueScreenshotJob(
 					count: 1000,
 					age: 24 * 3600, // 24 hours
 				},
-				// Priority for different user types (can be customized)
-				priority: userId.includes("pro") ? 10 : 1,
+				// Priority based on user's actual plan
+				priority: jobPriority,
 			},
 		);
 
@@ -320,7 +352,8 @@ export async function enqueueScreenshotJob(
 						count: 1000,
 						age: 24 * 3600, // 24 hours
 					},
-					priority: userId.includes("pro") ? 10 : 1,
+					// Use the same priority as determined earlier
+					priority: jobPriority,
 				},
 			);
 
