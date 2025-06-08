@@ -3,8 +3,6 @@ export function Logo(props: React.SVGProps<SVGSVGElement>) {
 		<svg
 			version="1.0"
 			xmlns="http://www.w3.org/2000/svg"
-			width={2646}
-			height={529}
 			viewBox="0 0 2646 529"
 			fill="none"
 			{...props}
