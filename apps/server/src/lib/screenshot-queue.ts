@@ -210,15 +210,6 @@ queueEvents.on("progress", ({ jobId, data }) => {
 	logger.debug({ jobId, progress: data }, "job progress event");
 });
 
-// Global error handlers for production
-process.on("uncaughtException", (err) => {
-	logger.error(err, "Uncaught exception");
-});
-
-process.on("unhandledRejection", (reason, promise) => {
-	logger.error({ promise, reason }, "Unhandled Rejection at: Promise");
-});
-
 // Utility to normalize string arrays (trim, lowercase, sort) for consistent hashing/comparison
 function normalizeStringArray(arr: string[] | undefined | null): string[] {
 	if (!arr) return [];

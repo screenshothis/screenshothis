@@ -22,6 +22,16 @@ import screenshotsRoutes from "./routes/screenshots";
 import optimizedScreenshotsRoutes from "./routes/screenshots/optimized";
 import { env } from "./utils/env";
 
+process.on("uncaughtException", (err) => {
+	logger.error(err, "Uncaught exception");
+	process.exit(1);
+});
+
+process.on("unhandledRejection", (reason, promise) => {
+	logger.error({ promise, reason }, "Unhandled Rejection at: Promise");
+	process.exit(1);
+});
+
 const app = new OpenAPIHono<{ Variables: Variables }>({
 	defaultHook: (result, c) => {
 		if (!result.success) {
