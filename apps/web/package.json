@@ -21,10 +21,10 @@
 		"@tanstack/zod-adapter": "1.121.0-alpha.22"
 	},
 	"dependencies": {
-		"@orpc/client": "1.4.4",
-		"@orpc/react-query": "1.4.4",
-		"@orpc/server": "1.4.4",
-		"@orpc/tanstack-query": "1.4.4",
+		"@orpc/client": "1.4.5",
+		"@orpc/react-query": "1.4.5",
+		"@orpc/server": "1.4.5",
+		"@orpc/tanstack-query": "1.4.5",
 		"@polar-sh/better-auth": "1.0.1",
 		"@polar-sh/sdk": "0.33.0",
 		"@screenshothis/common": "workspace:*",
