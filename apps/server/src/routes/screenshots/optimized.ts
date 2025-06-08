@@ -82,7 +82,7 @@ const optimizedScreenshots = new OpenAPIHono<{
 
 			const transformedParams = {
 				...queryParams,
-				selector: queryParams.selector || undefined,
+				selector: queryParams.selector?.trim() || undefined,
 			};
 
 			const cacheKey = generateCacheKey(workspaceId, transformedParams);
