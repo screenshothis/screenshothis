@@ -1,5 +1,10 @@
-export const getScreenshotUrl = (url: string) => {
-	return `https://api.screenshothis.com/v1/screenshots/take?api_key=ss_live_USkpHQPzxXlkFHrUxhkZBHxoGwmyXfLKqltFiYvXSLpOnvkjgXIWMdboeNRdlrMA&url=${url}&width=1200&height=630&device_scale_factor=0.75&block_ads=true&block_cookie_banners=true&block_trackers=true&prefers_color_scheme=light&prefers_reduced_motion=reduce&is_cached=true`;
+export const getScreenshotUrl = (url: string, cacheKey?: string) => {
+	return [
+		`https://api.screenshothis.com/v1/screenshots/take?api_key=ss_live_USkpHQPzxXlkFHrUxhkZBHxoGwmyXfLKqltFiYvXSLpOnvkjgXIWMdboeNRdlrMA&url=${url}&width=1200&height=630&device_scale_factor=0.75&block_ads=true&block_cookie_banners=true&block_trackers=true&prefers_color_scheme=light&prefers_reduced_motion=reduce&is_cached=true`,
+		cacheKey && `&cache_key=${cacheKey}`,
+	]
+		.filter(Boolean)
+		.join("");
 };
 
 export const seo = ({

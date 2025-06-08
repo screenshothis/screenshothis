@@ -50,7 +50,7 @@ function PathlessLayoutComponent() {
 			className="grid min-h-screen lg:grid-cols-[minmax(0,1fr)_500px] xl:grid-cols-[minmax(0,1fr)_596px] min-[1440px]:grid-cols-[minmax(0,844fr)_minmax(0,596fr)]"
 			style={{
 				background:
-					"linear-gradient(180deg, #CA5F16 0%, #DC6818 25%, #E97D35 50%, #F1AC7E 75%, #F9DCC8 100%), #FFFFFF",
+					"linear-gradient(180deg, var(--color-primary-700) 0%, var(--color-primary-600) 25%, var(--color-primary-500) 50%, var(--color-primary-300) 75%, var(--color-primary-100) 100%), #FFFFFF",
 			}}
 		>
 			<div className="flex h-full flex-col p-1.5 lg:p-2 lg:pr-0">
@@ -117,8 +117,8 @@ export default function AuthHeader() {
 		<div className="mx-auto flex w-full items-center justify-between gap-6 py-3.5 lg:py-0">
 			<Link to="/" className="shrink-0">
 				<img
-					src="/ios-icon.png"
-					alt=""
+					src="/logo-app-icon.png"
+					alt="Screenshothis"
 					width={32}
 					height={32}
 					className="size-8"

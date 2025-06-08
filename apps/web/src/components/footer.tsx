@@ -45,10 +45,10 @@ export function Footer() {
 			<div className="container max-w-6xl border-x border-t bg-(--bg-white-0) py-12 lg:px-12">
 				<div className="grid grid-cols-1 gap-y-8 sm:grid-cols-2 lg:col-span-4 lg:grid-cols-4">
 					<div className="lg:pr-8">
-						<div className="flex items-center gap-2">
+						<Link to="/" className="flex items-center gap-2">
 							<Logo className="h-8 w-auto text-primary" />
-							<span className="font-semibold">Screenshothis</span>
-						</div>
+							<span className="sr-only">Screenshothis</span>
+						</Link>
 						<p className="mt-2 font-medium text-(--text-sub-600) text-paragraph-xs">
 							© {new Date().getFullYear()} Screenshothis
 						</p>

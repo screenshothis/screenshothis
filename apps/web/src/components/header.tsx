@@ -62,8 +62,8 @@ export function Header() {
 			>
 				<div className="flex flex-row items-center justify-between">
 					<Link to="/" className="flex items-center gap-2">
-						<Logo className="h-8 w-auto text-primary" />
-						<span className="font-semibold">Screenshothis</span>
+						<Logo className="h-8 w-auto" />
+						<span className="sr-only">Screenshothis</span>
 					</Link>
 				</div>
 
@@ -121,6 +121,7 @@ function MobileMenu() {
 				<Drawer.Header>
 					<Link to="/">
 						<Logo className="h-8 w-auto" />
+						<span className="sr-only">Screenshothis</span>
 					</Link>
 					<Drawer.Title className="sr-only">Menu</Drawer.Title>
 					<Drawer.Description className="sr-only">
