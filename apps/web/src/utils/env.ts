@@ -17,7 +17,11 @@ export const env = createEnv({
 		POLAR_ENVIRONMENT: process.env.POLAR_ENVIRONMENT,
 		VITE_SERVER_URL: import.meta.env.VITE_SERVER_URL,
 		VITE_GOOGLE_CLIENT_ID: import.meta.env.VITE_GOOGLE_CLIENT_ID,
-		VITE_SOURCE_COMMIT: import.meta.env.SOURCE_COMMIT,
+		VITE_SOURCE_COMMIT:
+			process.env.SOURCE_COMMIT ||
+			process.env.COMMIT_HASH ||
+			process.env.GIT_HASH ||
+			import.meta.env.VITE_SOURCE_COMMIT,
 	},
 	emptyStringAsUndefined: true,
 });
