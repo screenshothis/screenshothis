@@ -229,7 +229,6 @@
     --color-primary-alpha-16: oklch(70.6% 0.187 47.1deg / 16%);
     --color-primary-alpha-10: oklch(70.6% 0.187 47.1deg / 10%);
 
-    /* primary colors */
     --color-primary-darker: var(--color-primary-950);
     --color-primary-dark: var(--color-primary-900);
     --color-primary: var(--color-primary-500);
