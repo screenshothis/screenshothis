@@ -32,6 +32,7 @@ export const Route = createFileRoute({
 			screenshots: screenshots.map(objectToCamel),
 		};
 	},
+	preloadStaleTime: 30_000,
 });
 
 function RouteComponent() {
