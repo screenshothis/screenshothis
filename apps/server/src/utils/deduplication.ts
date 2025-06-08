@@ -127,13 +127,8 @@ export async function deduplicateRequest<T>(
 			setMetric(context, "request-deduplicated", 1);
 		}
 
-		try {
-			const data = (await existingRequest.promise) as T;
-			return { data, wasDeduplicated: true };
-		} catch (error) {
-			pendingRequests.delete(key);
-			throw error;
-		}
+		const data = (await existingRequest.promise) as T;
+		return { data, wasDeduplicated: true };
 	}
 
 	const promise = generator();
