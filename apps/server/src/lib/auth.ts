@@ -79,10 +79,10 @@ export const auth = betterAuth({
 	session: {
 		cookieCache: {
 			enabled: true,
-			maxAge: 5 * 60,
+			maxAge: env.SESSION_COOKIE_CACHE_MAX_AGE,
 		},
-		expiresIn: 60 * 60 * 24 * 7,
-		updateAge: 60 * 60 * 24,
+		expiresIn: env.SESSION_EXPIRES_IN,
+		updateAge: env.SESSION_UPDATE_AGE,
 		additionalFields: {
 			activeWorkspaceId: {
 				type: "string",
