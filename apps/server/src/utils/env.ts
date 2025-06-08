@@ -43,6 +43,9 @@ export const env = createEnv({
 		GOOGLE_CLIENT_SECRET: z.string().optional(),
 		REDIS_URL: z.string().default("redis://127.0.0.1:6379"),
 		SENTRY_DSN: z.string().optional(),
+		DEDUPLICATION_CLEANUP_ENABLED: z.coerce.boolean().default(true),
+		DEDUPLICATION_CLEANUP_INTERVAL_MS: z.coerce.number().default(300000), // 5 minutes
+		DEDUPLICATION_MAX_AGE_MS: z.coerce.number().default(600000), // 10 minutes
 	},
 	runtimeEnv: process.env,
 	emptyStringAsUndefined: true,

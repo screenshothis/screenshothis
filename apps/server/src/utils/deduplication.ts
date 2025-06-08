@@ -9,6 +9,7 @@ import type { CookieSameSite } from "puppeteer";
 import type { z } from "zod";
 
 import { logger } from "../lib/logger";
+import { env } from "./env";
 
 const pendingRequests = new Map<
 	string,
@@ -170,7 +171,9 @@ export function clearPendingRequests(): void {
 /**
  * Clean up requests that have been pending for too long
  */
-export function cleanupStaleRequests(maxAgeMs = 300000): void {
+export function cleanupStaleRequests(
+	maxAgeMs = env.DEDUPLICATION_MAX_AGE_MS,
+): void {
 	const now = Date.now();
 	const entries = Array.from(pendingRequests.entries());
 
@@ -186,4 +189,17 @@ export function cleanupStaleRequests(maxAgeMs = 300000): void {
 	}
 }
 
-setInterval(cleanupStaleRequests, 60000);
+// Configurable automatic cleanup - can be disabled via environment variable
+if (env.DEDUPLICATION_CLEANUP_ENABLED) {
+	setInterval(cleanupStaleRequests, env.DEDUPLICATION_CLEANUP_INTERVAL_MS);
+	logger.info(
+		{
+			enabled: env.DEDUPLICATION_CLEANUP_ENABLED,
+			intervalMs: env.DEDUPLICATION_CLEANUP_INTERVAL_MS,
+			maxAgeMs: env.DEDUPLICATION_MAX_AGE_MS,
+		},
+		"Deduplication automatic cleanup enabled",
+	);
+} else {
+	logger.info("Deduplication automatic cleanup disabled");
+}
