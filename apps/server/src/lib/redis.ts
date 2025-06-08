@@ -6,7 +6,7 @@ import { logger } from "./logger";
 export const redis = new Redis(env.REDIS_URL, {
 	retryStrategy: (times: number) => {
 		const delay = Math.min(2 ** times * 1000, 10000);
-		logger.warn({ attempt: times, delay }, "Redis connection retry");
+		logger.debug({ attempt: times, delay }, "Redis connection retry");
 		return delay;
 	},
 	maxRetriesPerRequest: 3,
