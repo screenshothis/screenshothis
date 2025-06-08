@@ -140,9 +140,15 @@ health.openapi(
 		);
 
 		const hasFailures = healthChecks.some((check) => check.status === "fail");
-		const status: "healthy" | "degraded" | "unhealthy" = hasFailures
-			? "degraded"
-			: "healthy";
+		const failedChecks = healthChecks.filter(
+			(check) => check.status === "fail",
+		).length;
+		const status: "healthy" | "degraded" | "unhealthy" =
+			failedChecks === 0
+				? "healthy"
+				: failedChecks >= healthChecks.length
+					? "unhealthy"
+					: "degraded";
 
 		const totalDuration = Date.now() - startTimestamp;
 		setMetric(c, "health-check-duration", totalDuration);
