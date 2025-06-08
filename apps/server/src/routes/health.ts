@@ -96,11 +96,19 @@ health.openapi(
 				const queueStart = Date.now();
 				try {
 					const queueHealth = await getQueueHealth();
+					const QUEUE_FAILED_THRESHOLD = Number.parseInt(
+						process.env.QUEUE_FAILED_THRESHOLD || "10",
+						10,
+					);
+					const QUEUE_WAITING_THRESHOLD = Number.parseInt(
+						process.env.QUEUE_WAITING_THRESHOLD || "100",
+						10,
+					);
 					const hasQueueIssues =
 						queueHealth.error ||
 						!queueHealth.workerRunning ||
-						queueHealth.failed > 10 ||
-						queueHealth.waiting > 100;
+						queueHealth.failed > QUEUE_FAILED_THRESHOLD ||
+						queueHealth.waiting > QUEUE_WAITING_THRESHOLD;
 
 					return {
 						name: "queue",
