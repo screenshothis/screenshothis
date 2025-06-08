@@ -14,6 +14,7 @@ import { NuqsAdapter } from "nuqs/adapters/react";
 
 import { authStateFn } from "#/actions/get-auth-state.ts";
 import { Toaster } from "#/components/ui/toast.tsx";
+import { env } from "#/utils/env.ts";
 import type { orpc } from "#/utils/orpc.ts";
 import { getScreenshotUrl, seo } from "#/utils/seo.ts";
 import appCss from "../app.css?url";
@@ -90,6 +91,15 @@ export const Route = createRootRouteWithContext<RouterAppContext>()({
 			{
 				rel: "stylesheet",
 				href: appCss,
+			},
+		],
+		scripts: [
+			{
+				children: `
+					window.ENV = {
+						SOURCE_COMMIT: "${env.VITE_SOURCE_COMMIT}",
+					}
+				`,
 			},
 		],
 	}),
