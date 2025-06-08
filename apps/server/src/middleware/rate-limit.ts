@@ -10,6 +10,42 @@ interface RateLimitOptions {
 	keyPrefix?: string;
 }
 
+function getClientIdentifier(request: Request): string {
+	const forwardedFor = request.headers.get("x-forwarded-for");
+	const realIp = request.headers.get("x-real-ip");
+	const cfConnectingIp = request.headers.get("cf-connecting-ip");
+
+	if (cfConnectingIp) {
+		return cfConnectingIp.trim();
+	}
+
+	if (realIp) {
+		return realIp.trim();
+	}
+
+	if (forwardedFor) {
+		const firstIp = forwardedFor.split(",")[0]?.trim();
+		if (firstIp && isValidIp(firstIp)) {
+			return firstIp;
+		}
+	}
+
+	const userAgent = request.headers.get("user-agent") || "";
+	const acceptLang = request.headers.get("accept-language") || "";
+	const acceptEnc = request.headers.get("accept-encoding") || "";
+
+	const fingerprint = `${userAgent}-${acceptLang}-${acceptEnc}`;
+	return `fallback-${Bun.hash(fingerprint).toString(16)}`;
+}
+
+function isValidIp(ip: string): boolean {
+	const ipv4Regex =
+		/^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/;
+	const ipv6Regex = /^(?:[0-9a-fA-F]{1,4}:){7}[0-9a-fA-F]{1,4}$|^::1$|^::$/;
+
+	return ipv4Regex.test(ip) || ipv6Regex.test(ip);
+}
+
 export const rateLimitMiddleware = (options: RateLimitOptions) => {
 	return createMiddleware(async (c, next) => {
 		const { limit, window, keyPrefix = "rate_limit" } = options;
@@ -17,7 +53,7 @@ export const rateLimitMiddleware = (options: RateLimitOptions) => {
 		const sessionCookie = getSessionCookie(c.req.raw);
 		const key = sessionCookie
 			? `${keyPrefix}:user:${sessionCookie}`
-			: `${keyPrefix}:ip:${c.req.header("x-forwarded-for") || "unknown"}`;
+			: `${keyPrefix}:ip:${getClientIdentifier(c.req.raw)}`;
 
 		const now = Date.now();
 		const windowStart = Math.floor(now / window) * window;
@@ -26,10 +62,8 @@ export const rateLimitMiddleware = (options: RateLimitOptions) => {
 		const expirationSeconds = Math.ceil(window / 1000);
 
 		try {
-			// Use Redis pipeline for atomic operations
 			const pipeline = redis.pipeline();
 
-			// Get current count or 0 if key doesn't exist
 			pipeline.get(windowKey);
 
 			const results = await pipeline.exec();
@@ -53,7 +87,6 @@ export const rateLimitMiddleware = (options: RateLimitOptions) => {
 				);
 			}
 
-			// Increment counter and set expiration atomically
 			const incrPipeline = redis.pipeline();
 			incrPipeline.incr(windowKey);
 			incrPipeline.expire(windowKey, expirationSeconds);
@@ -70,13 +103,11 @@ export const rateLimitMiddleware = (options: RateLimitOptions) => {
 
 			return next();
 		} catch (error) {
-			// Fallback: if Redis is unavailable, allow the request but log the error
 			logger.error(
 				{ err: error, key: windowKey },
 				"Redis rate limiting failed, allowing request",
 			);
 
-			// Set minimal headers to indicate Redis failure
 			c.res.headers.set("X-RateLimit-Limit", limit.toString());
 			c.res.headers.set("X-RateLimit-Remaining", limit.toString());
 			c.res.headers.set("X-RateLimit-Reset", "60");
@@ -85,5 +116,3 @@ export const rateLimitMiddleware = (options: RateLimitOptions) => {
 		}
 	});
 };
-
-// Redis handles key expiration automatically, no manual cleanup needed
