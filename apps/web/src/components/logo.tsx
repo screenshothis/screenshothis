@@ -5,9 +5,11 @@ export function Logo(props: React.SVGProps<SVGSVGElement>) {
 			xmlns="http://www.w3.org/2000/svg"
 			viewBox="0 0 2646 529"
 			fill="none"
+			role="img"
+			aria-labelledby="logo-title"
 			{...props}
 		>
-			<title>Logo</title>
+			<title id="logo-title">Logo</title>
 			<g>
 				<path
 					stroke="#1D1D1D"
