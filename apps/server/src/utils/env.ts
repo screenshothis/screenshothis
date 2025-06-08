@@ -46,6 +46,7 @@ export const env = createEnv({
 		DEDUPLICATION_CLEANUP_ENABLED: z.coerce.boolean().default(true),
 		DEDUPLICATION_CLEANUP_INTERVAL_MS: z.coerce.number().default(300000), // 5 minutes
 		DEDUPLICATION_MAX_AGE_MS: z.coerce.number().default(600000), // 10 minutes
+		APP_VERSION: z.string().default("unknown"),
 	},
 	runtimeEnv: process.env,
 	emptyStringAsUndefined: true,

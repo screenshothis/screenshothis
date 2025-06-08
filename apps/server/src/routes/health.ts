@@ -5,6 +5,7 @@ import type { Variables } from "#/common/environment";
 import { db } from "#/db";
 import { s3 } from "#/lib/s3";
 import { getQueueHealth } from "#/lib/screenshot-queue";
+import { env } from "#/utils/env";
 
 const health = new OpenAPIHono<{ Variables: Variables }>();
 
@@ -153,7 +154,7 @@ health.openapi(
 			timestamp: new Date().toISOString(),
 			uptime: process.uptime(),
 			checks: healthChecks,
-			version: process.env.npm_package_version || "unknown",
+			version: env.APP_VERSION,
 		};
 
 		return c.json(response, hasFailures ? 503 : 200);
