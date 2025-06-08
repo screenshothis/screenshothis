@@ -1,4 +1,5 @@
-import { and, desc, eq, sql } from "drizzle-orm";
+import { and, desc, eq, gte, lte, sql } from "drizzle-orm";
+
 import { db } from "./index";
 import { users } from "./schema/auth";
 import { screenshots } from "./schema/screenshots";
@@ -117,8 +118,8 @@ export const getScreenshotsByDateRangePrepared = db
 	.where(
 		and(
 			eq(screenshots.workspaceId, sql.placeholder("workspaceId")),
-			sql`${screenshots.createdAt} >= ${sql.placeholder("startDate")}`,
-			sql`${screenshots.createdAt} <= ${sql.placeholder("endDate")}`,
+			gte(screenshots.createdAt, sql.placeholder("startDate")),
+			lte(screenshots.createdAt, sql.placeholder("endDate")),
 		),
 	)
 	.orderBy(desc(screenshots.createdAt))
