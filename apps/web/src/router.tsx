@@ -48,7 +48,8 @@ export const createRouter = () => {
 		routeTree,
 		scrollRestoration: true,
 		defaultPreload: "intent",
-		defaultPreloadStaleTime: 0,
+		defaultPreloadDelay: 100,
+		defaultPreloadStaleTime: 10_000,
 		context: { orpc, queryClient, session: null },
 		defaultPendingComponent: () => <Loader />,
 		defaultNotFoundComponent: () => (
