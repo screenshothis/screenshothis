@@ -176,13 +176,41 @@ health.openapi(
 				},
 				description: "Service is ready",
 			},
+			503: {
+				content: {
+					"application/json": {
+						schema: z.object({
+							status: z.literal("not ready"),
+							timestamp: z.string(),
+							error: z.string(),
+						}),
+					},
+				},
+				description: "Service is not ready",
+			},
 		},
 	}),
 	async (c) => {
-		return c.json({
-			status: "ready" as const,
-			timestamp: new Date().toISOString(),
-		});
+		try {
+			await db.execute("SELECT 1");
+
+			return c.json(
+				{
+					status: "ready" as const,
+					timestamp: new Date().toISOString(),
+				},
+				200,
+			);
+		} catch (error) {
+			return c.json(
+				{
+					status: "not ready" as const,
+					timestamp: new Date().toISOString(),
+					error: error instanceof Error ? error.message : "Unknown error",
+				},
+				503,
+			);
+		}
 	},
 );
 
