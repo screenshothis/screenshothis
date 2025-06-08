@@ -277,7 +277,7 @@ function PlanButton({ plan, planKey }: { plan: Plan; planKey: string }) {
 			className={cn(
 				"w-full",
 				plan.isFeatured &&
-					"bg-white text-primary hover:bg-orange-600 hover:text-white",
+					"bg-white text-primary hover:bg-primary-600 hover:text-white",
 			)}
 			disabled={isPending}
 			onClick={

@@ -10,6 +10,7 @@ export const env = createEnv({
 	client: {
 		VITE_SERVER_URL: z.string().url(),
 		VITE_GOOGLE_CLIENT_ID: z.string().optional(),
+		VITE_SOURCE_COMMIT: z.string().optional(),
 	},
 	runtimeEnv: {
 		POLAR_ACCESS_TOKEN: process.env.POLAR_ACCESS_TOKEN,
