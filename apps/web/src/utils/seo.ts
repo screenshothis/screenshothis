@@ -1,3 +1,5 @@
+import { env } from "./env.ts";
+
 const SCREENSHOT_API_BASE = "https://api.screenshothis.com/v1/screenshots/take";
 const DEFAULT_PARAMS = {
 	width: "1200",
@@ -11,7 +13,10 @@ const DEFAULT_PARAMS = {
 	is_cached: "true",
 };
 
-export const getScreenshotUrl = (url: string, cacheKey?: string) => {
+export const getScreenshotUrl = (
+	url: string,
+	cacheKey = env.VITE_SOURCE_COMMIT,
+) => {
 	const params = new URLSearchParams({
 		api_key:
 			process.env.SCREENSHOT_API_KEY ||
