@@ -46,7 +46,7 @@ export function Header() {
 	return (
 		<div
 			className={cn(
-				"fixed top-0 left-0 z-50 flex w-full items-center justify-center px-2 transition-all duration-300 lg:inset-x-0 lg:px-0",
+				"fixed top-0 left-0 z-50 flex w-full items-center justify-center px-4 transition-all duration-300 lg:inset-x-0 lg:px-0",
 				scrollY > 64
 					? "h-16 lg:bg-(--bg-white-0)/80 lg:shadow-sm lg:backdrop-blur-sm"
 					: "h-16 lg:h-20",
