@@ -1,3 +1,4 @@
+import { } from '@tanstack/react-router'
 import ArrowRight01Icon from "virtual:icons/hugeicons/arrow-right-01";
 
 import { Link, redirect } from "@tanstack/react-router";

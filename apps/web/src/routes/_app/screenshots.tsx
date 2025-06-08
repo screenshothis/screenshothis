@@ -1,3 +1,4 @@
+
 import Album02Icon from "virtual:icons/hugeicons/album-02";
 
 import type { ScreenshotSchema } from "@screenshothis/schemas/screenshots";

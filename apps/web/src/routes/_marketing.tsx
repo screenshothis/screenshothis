@@ -1,3 +1,4 @@
+import { } from '@tanstack/react-router'
 import { Outlet } from "@tanstack/react-router";
 
 import { Footer } from "#/components/footer.tsx";

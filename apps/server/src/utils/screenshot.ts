@@ -50,6 +50,7 @@ export async function getOrCreateScreenshot(
 			hasTouch,
 			deviceScaleFactor,
 			format,
+			quality,
 			blockAds,
 			blockCookieBanners,
 			blockTrackers,
@@ -77,6 +78,7 @@ export async function getOrCreateScreenshot(
 				eq(screenshots.hasTouch, hasTouch),
 				eq(screenshots.deviceScaleFactor, deviceScaleFactor),
 				eq(screenshots.format, format),
+				eq(screenshots.quality, quality),
 				eq(screenshots.blockAds, blockAds),
 				eq(screenshots.blockCookieBanners, blockCookieBanners),
 				eq(screenshots.blockTrackers, blockTrackers),
@@ -218,13 +220,13 @@ export async function getOrCreateScreenshot(
 				const element = await page.$(selector);
 				if (element) {
 					buffer = await element.screenshot({
-						quality: 80,
+						quality,
 						type: format,
 					});
 				}
 			} else {
 				buffer = await page.screenshot({
-					quality: 80,
+					quality,
 					type: format,
 				});
 			}
@@ -245,6 +247,7 @@ export async function getOrCreateScreenshot(
 					hasTouch,
 					deviceScaleFactor,
 					format,
+					quality,
 					blockAds,
 					blockCookieBanners,
 					blockTrackers,

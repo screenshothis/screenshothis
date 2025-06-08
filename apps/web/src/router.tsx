@@ -50,6 +50,9 @@ export const createRouter = () => {
 		defaultPreload: "intent",
 		defaultPreloadDelay: 100,
 		defaultPreloadStaleTime: 10_000,
+		defaultStructuralSharing: true,
+		defaultPendingMinMs: 50,
+		defaultPendingMs: 1000,
 		context: { orpc, queryClient, session: null },
 		defaultPendingComponent: () => <Loader />,
 		defaultNotFoundComponent: () => (

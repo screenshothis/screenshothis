@@ -94,6 +94,14 @@ export const screenshots = pgTable(
 	(table) => [
 		index("screenshots_created_at_idx").on(table.createdAt.desc()),
 		index("screenshots_url_idx").on(table.url),
+		index("screenshots_workspace_id_idx").on(table.workspaceId),
+		index("screenshots_cache_key_idx").on(table.cacheKey),
+		index("screenshots_workspace_created_idx").on(
+			table.workspaceId,
+			table.createdAt.desc(),
+		),
+		index("screenshots_url_format_idx").on(table.url, table.format),
+		index("screenshots_cached_idx").on(table.isCached),
 	],
 );
 
