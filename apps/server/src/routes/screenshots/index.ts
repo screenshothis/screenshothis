@@ -170,6 +170,7 @@ const optimizedScreenshots = new OpenAPIHono<{
 
 			const transformedParams = {
 				...queryParams,
+				url: new URL(queryParams.url).toString(),
 				selector: queryParams.selector?.trim() || undefined,
 			};
 
