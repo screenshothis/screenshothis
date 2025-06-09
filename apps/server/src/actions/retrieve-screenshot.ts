@@ -106,6 +106,7 @@ export async function retrieveScreenshot(
 					screenshotTimestamp,
 					result,
 					retryAfter: undefined,
+					validatedETag: expectedETag,
 				};
 			}
 
@@ -145,5 +146,6 @@ export async function retrieveScreenshot(
 		s3Metadata,
 		result,
 		retryAfter,
+		validatedETag: undefined,
 	};
 }

@@ -124,7 +124,7 @@ const optimizedScreenshots = new OpenAPIHono<{
 			if (retrieval.body === null) {
 				endTime(c, "total-request");
 				return c.body(null, 304, {
-					ETag: c.req.header("If-None-Match") || "",
+					ETag: retrieval.validatedETag || "",
 					"Cache-Control": "public, max-age=3600",
 				});
 			}
