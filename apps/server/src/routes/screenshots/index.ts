@@ -254,15 +254,16 @@ const optimizedScreenshots = new OpenAPIHono<{
 			);
 
 			const headers = new Headers();
-			let body: ArrayBuffer | Buffer;
+			let body: ArrayBuffer | Buffer | ReadableStream;
 			let contentType: string;
 			let cacheScenario: "success" | "placeholder" | "error";
 
 			if (result.data.key) {
 				startTime(c, "s3-fetch");
 				try {
-					body = await s3.file(result.data.key).arrayBuffer();
+					const s3Stream = s3.file(result.data.key).stream();
 					endTime(c, "s3-fetch");
+					body = s3Stream;
 					contentType = `image/${queryParams.format}`;
 					cacheScenario = "success";
 
@@ -315,7 +316,10 @@ const optimizedScreenshots = new OpenAPIHono<{
 				endTime(c, "quota-consume");
 			}
 
-			headers.set("Content-Length", String(body.byteLength));
+			if (body instanceof ReadableStream) {
+			} else {
+				headers.set("Content-Length", String(body.byteLength));
+			}
 			headers.set("Content-Type", contentType);
 			headers.set("Accept-Ranges", "bytes");
 			headers.set(
