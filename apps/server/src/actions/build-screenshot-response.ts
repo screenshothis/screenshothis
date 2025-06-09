@@ -185,5 +185,9 @@ export async function buildScreenshotResponse(
 	headers.set("X-Robots-Tag", "noindex, nofollow");
 	headers.set("Referrer-Policy", "strict-origin-when-cross-origin");
 
+	if (retrieval.body === null) {
+		throw new Error("Unexpected null body in buildScreenshotResponse");
+	}
+
 	return c.body(retrieval.body, { headers });
 }
