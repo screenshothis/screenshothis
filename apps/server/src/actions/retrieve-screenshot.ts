@@ -148,19 +148,17 @@ export async function retrieveScreenshot(
 		result,
 		retryAfter,
 		validatedETag: undefined,
-		etag: result.data.key
-			? generateETag(
-					cacheKey,
-					queryParams.format,
-					screenshotTimestamp,
-					s3Metadata
-						? {
-								s3Key: result.data.key,
-								s3ETag: s3Metadata.etag,
-								fileSize: s3Metadata.size,
-							}
-						: undefined,
-				)
-			: undefined,
+		etag: generateETag(
+			cacheKey,
+			queryParams.format,
+			screenshotTimestamp,
+			result.data.key && s3Metadata
+				? {
+						s3Key: result.data.key,
+						s3ETag: s3Metadata.etag,
+						fileSize: s3Metadata.size,
+					}
+				: undefined,
+		),
 	};
 }
