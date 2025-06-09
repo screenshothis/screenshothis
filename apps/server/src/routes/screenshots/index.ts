@@ -24,6 +24,91 @@ const PLACEHOLDER_IMAGE = Buffer.from(
 	"base64",
 );
 
+function generateETag(
+	cacheKey: string,
+	format: string,
+	timestamp?: number,
+): string {
+	const content = `${cacheKey}-${format}-${timestamp || Date.now()}`;
+	return `"${Bun.hash(content).toString(16)}"`;
+}
+
+function setCDNCacheHeaders(
+	headers: Headers,
+	scenario: "success" | "placeholder" | "error",
+	params: {
+		cacheTtl?: number;
+		format: string;
+		cacheKey: string;
+		isNewContent?: boolean;
+		workspaceId: string;
+	},
+) {
+	const {
+		cacheTtl = 3600,
+		format,
+		cacheKey,
+		isNewContent,
+		workspaceId,
+	} = params;
+
+	switch (scenario) {
+		case "success": {
+			const browserTtl = isNewContent ? Math.min(cacheTtl, 300) : cacheTtl;
+			headers.set(
+				"Cache-Control",
+				`public, max-age=${browserTtl}, stale-while-revalidate=${Math.floor(cacheTtl * 0.1)}`,
+			);
+
+			headers.set(
+				"CDN-Cache-Control",
+				`public, max-age=${cacheTtl * 2}, stale-while-revalidate=${cacheTtl}, stale-if-error=${cacheTtl * 24}`,
+			);
+
+			headers.set(
+				"CF-Cache-Tag",
+				`workspace:${workspaceId},format:${format},content:screenshot`,
+			);
+			headers.set("CF-Edge-Cache", "cache,platform=cf");
+
+			headers.set("ETag", generateETag(cacheKey, format));
+
+			break;
+		}
+
+		case "placeholder":
+			headers.set("Cache-Control", "public, max-age=30, must-revalidate");
+			headers.set(
+				"CDN-Cache-Control",
+				"public, max-age=60, stale-while-revalidate=30",
+			);
+			headers.set(
+				"CF-Cache-Tag",
+				`workspace:${workspaceId},content:placeholder`,
+			);
+			break;
+
+		case "error":
+			headers.set("Cache-Control", "public, max-age=10, must-revalidate");
+			headers.set(
+				"CDN-Cache-Control",
+				"public, max-age=30, stale-if-error=300",
+			);
+			headers.set("CF-Cache-Tag", `workspace:${workspaceId},content:error`);
+			break;
+	}
+
+	headers.set("Vary", "Accept, Accept-Encoding, User-Agent");
+	headers.set("X-Content-Type-Options", "nosniff");
+
+	headers.set("X-Edge-Location", "auto");
+	headers.set("X-Cache-Regions", "global");
+
+	if (format === "png" || format === "webp") {
+		headers.set("X-Compress-Hint", "aggressive");
+	}
+}
+
 const optimizedScreenshots = new OpenAPIHono<{
 	Variables: Variables;
 }>().openapi(
@@ -55,7 +140,10 @@ const optimizedScreenshots = new OpenAPIHono<{
 						},
 					},
 				},
-				description: "Optimized screenshot response",
+				description: "Optimized screenshot response with enhanced CDN support",
+			},
+			304: {
+				description: "Not Modified - Content hasn't changed",
 			},
 		},
 	}),
@@ -87,6 +175,17 @@ const optimizedScreenshots = new OpenAPIHono<{
 
 			const cacheKey = generateCacheKey(workspaceId, transformedParams);
 			setMetric(c, "cache-key-generated", 1);
+
+			const clientETag = c.req.header("If-None-Match");
+			const expectedETag = generateETag(cacheKey, queryParams.format);
+
+			if (clientETag === expectedETag) {
+				setMetric(c, "cache-hit-etag", 1);
+				return c.body(null, 304, {
+					ETag: expectedETag,
+					"Cache-Control": "public, max-age=3600",
+				});
+			}
 
 			startTime(c, "quota-check");
 			try {
@@ -156,6 +255,7 @@ const optimizedScreenshots = new OpenAPIHono<{
 			const headers = new Headers();
 			let body: ArrayBuffer | Buffer;
 			let contentType: string;
+			let cacheScenario: "success" | "placeholder" | "error";
 
 			if (result.data.key) {
 				startTime(c, "s3-fetch");
@@ -163,14 +263,7 @@ const optimizedScreenshots = new OpenAPIHono<{
 					body = await s3.file(result.data.key).arrayBuffer();
 					endTime(c, "s3-fetch");
 					contentType = `image/${queryParams.format}`;
-
-					if (queryParams.isCached) {
-						const cacheTtl = queryParams.cacheTtl || 3600;
-						headers.set(
-							"Cache-Control",
-							`public, max-age=${cacheTtl}, s-maxage=${cacheTtl}, stale-while-revalidate=${cacheTtl}`,
-						);
-					}
+					cacheScenario = "success";
 
 					setMetric(c, "screenshot-served", 1);
 				} catch (error) {
@@ -181,21 +274,25 @@ const optimizedScreenshots = new OpenAPIHono<{
 					);
 					body = PLACEHOLDER_IMAGE;
 					contentType = "image/png";
+					cacheScenario = "error";
 					headers.set("Retry-After", "5");
 					setMetric(c, "screenshot-s3-error", 1);
 				}
 			} else {
 				body = PLACEHOLDER_IMAGE;
 				contentType = "image/png";
-
-				headers.set(
-					"Cache-Control",
-					"no-cache, no-store, must-revalidate, max-age=0",
-				);
+				cacheScenario = "placeholder";
 				headers.set("Retry-After", "10");
-
 				setMetric(c, "placeholder-served", 1);
 			}
+
+			setCDNCacheHeaders(headers, cacheScenario, {
+				cacheTtl: queryParams.cacheTtl,
+				format: queryParams.format,
+				cacheKey,
+				isNewContent: result.data.created,
+				workspaceId,
+			});
 
 			if (result.data.created && !result.wasDeduplicated) {
 				startTime(c, "quota-consume");
@@ -227,6 +324,11 @@ const optimizedScreenshots = new OpenAPIHono<{
 
 			headers.set("X-Deduplicated", result.wasDeduplicated ? "true" : "false");
 			headers.set("X-Cache-Key", cacheKey);
+			headers.set("X-Content-Fresh", result.data.created ? "true" : "false");
+			headers.set("X-Cache-Scenario", cacheScenario);
+
+			headers.set("X-Robots-Tag", "noindex, nofollow");
+			headers.set("Referrer-Policy", "strict-origin-when-cross-origin");
 
 			endTime(c, "total-request");
 			return c.body(body, { headers });
