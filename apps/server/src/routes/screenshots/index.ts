@@ -307,10 +307,34 @@ const optimizedScreenshots = new OpenAPIHono<{
 			const workspaceId = key.metadata.workspaceId;
 			const userId = key.userId;
 
-			// Normalize URL and clean up optional parameters
+			// Safely normalize URL and clean up optional parameters
+			let normalizedUrl: string;
+			try {
+				normalizedUrl = new URL(queryParams.url).toString();
+			} catch (urlError) {
+				setMetric(c, "invalid-url", 1);
+				logger.warn(
+					{
+						url: queryParams.url,
+						workspaceId,
+						error:
+							urlError instanceof Error ? urlError.message : "Unknown error",
+					},
+					"Invalid URL provided in screenshot request",
+				);
+				return c.json(
+					{
+						error:
+							"Invalid URL format. Please provide a valid HTTP or HTTPS URL.",
+						code: "INVALID_URL",
+					},
+					400,
+				);
+			}
+
 			const transformedParams = {
 				...queryParams,
-				url: new URL(queryParams.url).toString(),
+				url: normalizedUrl,
 				selector: queryParams.selector?.trim() || undefined,
 			};
 
