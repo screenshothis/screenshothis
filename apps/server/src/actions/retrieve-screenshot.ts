@@ -106,7 +106,6 @@ export async function retrieveScreenshot(
 					screenshotTimestamp,
 					result,
 					retryAfter: undefined,
-					validatedETag: expectedETag,
 					etag: expectedETag,
 				};
 			}
