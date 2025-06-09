@@ -94,7 +94,6 @@ const optimizedScreenshots = new OpenAPIHono<{
 		try {
 			const queryParams = c.req.valid("query");
 
-			// 1. Auth & validation
 			const authResult = await authenticateAndValidateScreenshot(
 				c,
 				queryParams,
@@ -105,17 +104,14 @@ const optimizedScreenshots = new OpenAPIHono<{
 
 			const { workspaceId, userId, transformedParams } = authResult;
 
-			// 2. Cache key generation
 			const cacheKey = generateCacheKey(workspaceId, transformedParams);
 			setMetric(c, "cache-key-generated", 1);
 
-			// 3. Quota check
 			const quotaResp = await ensureQuotaAvailableForUser(userId, c);
 			if (quotaResp instanceof Response) {
 				return quotaResp;
 			}
 
-			// 4. Retrieve or generate screenshot
 			const retrieval = await retrieveScreenshot(
 				c,
 				cacheKey,
@@ -125,7 +121,6 @@ const optimizedScreenshots = new OpenAPIHono<{
 				queryParams,
 			);
 
-			// Special case: 304 handled in retrieval helper
 			if (retrieval.body === null) {
 				endTime(c, "total-request");
 				return c.body(null, 304, {
@@ -134,7 +129,6 @@ const optimizedScreenshots = new OpenAPIHono<{
 				});
 			}
 
-			// 5. Build and return response
 			const response = buildScreenshotResponse(
 				c,
 				retrieval,
