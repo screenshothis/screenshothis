@@ -100,7 +100,7 @@ export async function retrieveScreenshot(
 				endTime(c, "s3-fetch");
 				setMetric(c, "cache-hit-etag", 1);
 				return {
-					body: null as unknown as Buffer, // Placeholder, will return response directly
+					body: null, // Placeholder, will return response directly
 					contentType: "",
 					cacheScenario: "success",
 					screenshotTimestamp,
