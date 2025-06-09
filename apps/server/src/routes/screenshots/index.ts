@@ -61,7 +61,6 @@ const PLACEHOLDER_IMAGE = Buffer.from(
  * - S3 key: Unique file identifier in S3 storage
  * - S3 ETag: S3's own content-based hash
  * - File size: Additional content validation
- * - Process entropy: Process ID + random string (collision safeguard)
  *
  * @param cacheKey - Unique identifier for the screenshot request parameters
  * @param format - Image format (jpeg, png, webp)
@@ -96,11 +95,6 @@ function generateETag(
 	if (additionalEntropy?.fileSize) {
 		entropyParts.push(`size:${additionalEntropy.fileSize}`);
 	}
-
-	// Add process-level entropy as final safeguard against edge case collisions
-	entropyParts.push(
-		`proc:${process.pid}-${Math.random().toString(36).slice(2)}`,
-	);
 
 	const content = entropyParts.join("|");
 	const hasher = new Bun.CryptoHasher("sha256");
