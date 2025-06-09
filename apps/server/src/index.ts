@@ -19,7 +19,6 @@ import { rateLimitMiddleware } from "./middleware/rate-limit";
 import { appRouter } from "./routers";
 import healthRoutes from "./routes/health";
 import screenshotsRoutes from "./routes/screenshots";
-import optimizedScreenshotsRoutes from "./routes/screenshots/optimized";
 import { env } from "./utils/env";
 
 process.on("uncaughtException", (err) => {
@@ -136,18 +135,16 @@ app.doc("/openapi", {
 	],
 });
 
-// Rate limiting for screenshot API - higher limits for authenticated users
 app.use(
 	"/v1/screenshots/*",
 	some(
-		every(authMiddleware, rateLimitMiddleware({ limit: 500, window: 60000 })), // 500/min for auth users
-		rateLimitMiddleware({ limit: 10, window: 60000 }), // 10/min for anonymous
+		every(authMiddleware, rateLimitMiddleware({ limit: 500, window: 60000 })),
+		rateLimitMiddleware({ limit: 10, window: 60000 }),
 	),
 );
 
 const appRoutes = app
 	.route("/v1/screenshots", screenshotsRoutes)
-	.route("/v1/screenshots", optimizedScreenshotsRoutes)
 	.route("/health", healthRoutes);
 
 export type AppType = typeof appRoutes;
