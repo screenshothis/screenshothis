@@ -1,13 +1,9 @@
-import type {
-	PrefersColorSchemeSchema,
-	PrefersReducedMotionSchema,
-	ResourceTypeSchema,
-} from "@screenshothis/schemas/screenshots";
+import type { CreateScreenshotSchema } from "@screenshothis/schemas/screenshots";
 import type { Context } from "hono";
 import { setMetric } from "hono/timing";
-import type { CookieSameSite } from "puppeteer";
 import type { z } from "zod";
 
+import type { ObjectToCamel } from "ts-case-convert";
 import { logger } from "../lib/logger";
 import { env } from "./env";
 
@@ -16,48 +12,12 @@ const pendingRequests = new Map<
 	{ promise: Promise<unknown>; timestamp: number }
 >();
 
-interface ScreenshotParams {
-	url: string;
-	selector?: string;
-	width: number;
-	height: number;
-	isMobile?: boolean;
-	isLandscape?: boolean;
-	hasTouch?: boolean;
-	deviceScaleFactor?: number;
-	format: string;
-	quality?: number;
-	blockAds?: boolean;
-	blockCookieBanners?: boolean;
-	blockTrackers?: boolean;
-	blockRequests?: Array<string>;
-	blockResources?: Array<z.infer<typeof ResourceTypeSchema>>;
-	prefersColorScheme?: z.infer<typeof PrefersColorSchemeSchema>;
-	prefersReducedMotion?: z.infer<typeof PrefersReducedMotionSchema>;
-	isCached?: boolean;
-	cacheTtl?: number;
-	cacheKey?: string;
-	userAgent?: string;
-	headers?: Array<{ name: string; value: string }>;
-	cookies?: Array<{
-		name: string;
-		value: string;
-		domain?: string;
-		path?: string;
-		expires?: number;
-		sameSite?: CookieSameSite | undefined;
-		secure?: boolean;
-		httpOnly?: boolean;
-	}>;
-	bypassCsp?: boolean;
-}
-
 /**
  * Generate a cache key for screenshot parameters
  */
 export function generateCacheKey(
 	workspaceId: string,
-	params: ScreenshotParams,
+	params: ObjectToCamel<z.infer<typeof CreateScreenshotSchema>>,
 ): string {
 	const normalizedParams = {
 		url: params.url,
