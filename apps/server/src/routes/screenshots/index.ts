@@ -30,7 +30,9 @@ function generateETag(
 	timestamp?: number,
 ): string {
 	const content = `${cacheKey}-${format}-${timestamp || Date.now()}`;
-	return `"${Bun.hash(content).toString(16)}"`;
+	const hasher = new Bun.CryptoHasher("sha256");
+	hasher.update(content);
+	return `"${hasher.digest("hex").slice(0, 16)}"`;
 }
 
 function setCDNCacheHeaders(
