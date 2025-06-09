@@ -31,7 +31,7 @@
 		"@screenshothis/schemas": "workspace:*",
 		"@screenshothis/server": "workspace:*",
 		"@sumup/intl": "1.6.0",
-		"@t3-oss/env-core": "0.13.6",
+		"@t3-oss/env-core": "0.13.7",
 		"@tailwindcss/vite": "4.1.8",
 		"@tanstack/react-form": "1.12.2",
 		"@tanstack/react-query": "5.80.6",
