@@ -44,6 +44,7 @@ function setCDNCacheHeaders(
 		cacheKey: string;
 		isNewContent?: boolean;
 		workspaceId: string;
+		timestamp?: number;
 	},
 ) {
 	const {
@@ -52,6 +53,7 @@ function setCDNCacheHeaders(
 		cacheKey,
 		isNewContent,
 		workspaceId,
+		timestamp,
 	} = params;
 
 	switch (scenario) {
@@ -73,7 +75,7 @@ function setCDNCacheHeaders(
 			);
 			headers.set("CF-Edge-Cache", "cache,platform=cf");
 
-			headers.set("ETag", generateETag(cacheKey, format));
+			headers.set("ETag", generateETag(cacheKey, format, timestamp));
 
 			break;
 		}
@@ -179,17 +181,6 @@ const optimizedScreenshots = new OpenAPIHono<{
 			const cacheKey = generateCacheKey(workspaceId, transformedParams);
 			setMetric(c, "cache-key-generated", 1);
 
-			const clientETag = c.req.header("If-None-Match");
-			const expectedETag = generateETag(cacheKey, queryParams.format);
-
-			if (clientETag === expectedETag) {
-				setMetric(c, "cache-hit-etag", 1);
-				return c.body(null, 304, {
-					ETag: expectedETag,
-					"Cache-Control": "public, max-age=3600",
-				});
-			}
-
 			startTime(c, "quota-check");
 			try {
 				await assertQuotaAvailable(userId);
@@ -259,11 +250,37 @@ const optimizedScreenshots = new OpenAPIHono<{
 			let body: ArrayBuffer | Buffer | ReadableStream;
 			let contentType: string;
 			let cacheScenario: "success" | "placeholder" | "error";
+			let screenshotTimestamp: number;
 
 			if (result.data.key) {
 				startTime(c, "s3-fetch");
 				try {
-					const s3Stream = s3.file(result.data.key).stream();
+					const s3File = s3.file(result.data.key);
+
+					if (result.data.created) {
+						screenshotTimestamp = Date.now();
+					} else {
+						const fileStat = await s3File.stat();
+						screenshotTimestamp = fileStat.lastModified.getTime();
+					}
+
+					const clientETag = c.req.header("If-None-Match");
+					const expectedETag = generateETag(
+						cacheKey,
+						queryParams.format,
+						screenshotTimestamp,
+					);
+
+					if (clientETag === expectedETag) {
+						endTime(c, "s3-fetch");
+						setMetric(c, "cache-hit-etag", 1);
+						return c.body(null, 304, {
+							ETag: expectedETag,
+							"Cache-Control": "public, max-age=3600",
+						});
+					}
+
+					const s3Stream = s3File.stream();
 					endTime(c, "s3-fetch");
 					body = s3Stream;
 					contentType = `image/${queryParams.format}`;
@@ -279,6 +296,7 @@ const optimizedScreenshots = new OpenAPIHono<{
 					body = PLACEHOLDER_IMAGE;
 					contentType = "image/png";
 					cacheScenario = "error";
+					screenshotTimestamp = Date.now();
 					headers.set("Retry-After", "5");
 					setMetric(c, "screenshot-s3-error", 1);
 				}
@@ -286,6 +304,7 @@ const optimizedScreenshots = new OpenAPIHono<{
 				body = PLACEHOLDER_IMAGE;
 				contentType = "image/png";
 				cacheScenario = "placeholder";
+				screenshotTimestamp = Date.now();
 				headers.set("Retry-After", "10");
 				setMetric(c, "placeholder-served", 1);
 			}
@@ -296,6 +315,7 @@ const optimizedScreenshots = new OpenAPIHono<{
 				cacheKey,
 				isNewContent: result.data.created,
 				workspaceId,
+				timestamp: screenshotTimestamp,
 			});
 
 			if (result.data.created && !result.wasDeduplicated) {
