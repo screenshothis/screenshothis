@@ -29,7 +29,7 @@ function generateETag(
 	format: string,
 	timestamp?: number,
 ): string {
-	const content = `${cacheKey}-${format}-${timestamp || Date.now()}`;
+	const content = `${cacheKey}-${format}-${timestamp || 0}`;
 	const hasher = new Bun.CryptoHasher("sha256");
 	hasher.update(content);
 	return `"${hasher.digest("hex").slice(0, 16)}"`;
