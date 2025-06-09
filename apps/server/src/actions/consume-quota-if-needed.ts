@@ -1,5 +1,5 @@
 import type { Context } from "hono";
-import { endTime, startTime } from "hono/timing";
+import { endTime, setMetric, startTime } from "hono/timing";
 
 import { logger } from "../lib/logger";
 import { consumeQuota } from "../lib/request-quota";
@@ -31,6 +31,7 @@ export async function consumeQuotaIfNeeded(
 				headers.set("X-Refill-At", String(quota.nextRefillAt.getTime()));
 			}
 		} catch (error) {
+			setMetric(c, "quota-consume-failed", 1);
 			logger.error({ err: error }, "Failed to consume quota");
 		}
 		endTime(c, "quota-consume");
