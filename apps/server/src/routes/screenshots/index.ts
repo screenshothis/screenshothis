@@ -24,10 +24,12 @@ import type { Variables } from "#/common/environment";
 import { generateCacheKey } from "#/utils/deduplication";
 import { createErrorResponse } from "#/utils/errors";
 
-// Import action functions
 import { authenticateAndValidateScreenshot } from "#/actions/authenticate-and-validate-screenshot";
 import { buildScreenshotResponse } from "#/actions/build-screenshot-response";
-import { ensureQuotaAvailableForUser } from "#/actions/ensure-quota-available";
+import {
+	QuotaExceededError,
+	ensureQuotaAvailableForUser,
+} from "#/actions/ensure-quota-available";
 import { retrieveScreenshot } from "#/actions/retrieve-screenshot";
 
 /**
@@ -86,6 +88,29 @@ const optimizedScreenshots = new OpenAPIHono<{
 			304: {
 				description: "Not Modified - Content hasn't changed",
 			},
+			403: {
+				content: {
+					"application/json": {
+						schema: z.object({
+							error: z.string(),
+							requestId: z.string(),
+						}),
+					},
+				},
+				description: "Quota exceeded",
+			},
+			500: {
+				content: {
+					"application/json": {
+						schema: z.object({
+							requestId: z.string(),
+							message: z.string(),
+							code: z.string(),
+						}),
+					},
+				},
+				description: "Internal server error",
+			},
 		},
 	}),
 	async (c) => {
@@ -107,10 +132,7 @@ const optimizedScreenshots = new OpenAPIHono<{
 			const cacheKey = generateCacheKey(workspaceId, transformedParams);
 			setMetric(c, "cache-key-generated", 1);
 
-			const quotaResp = await ensureQuotaAvailableForUser(userId, c);
-			if (quotaResp instanceof Response) {
-				return quotaResp;
-			}
+			await ensureQuotaAvailableForUser(userId, c);
 
 			const retrieval = await retrieveScreenshot(
 				c,
@@ -141,6 +163,19 @@ const optimizedScreenshots = new OpenAPIHono<{
 			return response;
 		} catch (error) {
 			endTime(c, "total-request");
+
+			if (error instanceof QuotaExceededError) {
+				setMetric(c, "quota-exceeded", 1);
+
+				return c.json(
+					{
+						error: error.message,
+						requestId: c.get("requestId"),
+					},
+					403,
+				);
+			}
+
 			setMetric(c, "request-error", 1);
 			const errorResponse = createErrorResponse(error, c.get("requestId"));
 			return c.json(errorResponse, 500);
