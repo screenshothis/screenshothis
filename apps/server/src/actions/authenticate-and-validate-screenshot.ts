@@ -18,7 +18,7 @@ export async function authenticateAndValidateScreenshot(
 	});
 	endTime(c, "auth-check");
 
-	if (!valid || !key || !key.metadata?.workspaceId) {
+	if (!valid || !key || !key.metadata?.workspaceId || !key.userId) {
 		setMetric(c, "auth-failed", 1);
 		return c.json({ error: "Unauthorized" }, 401);
 	}

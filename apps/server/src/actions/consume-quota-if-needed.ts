@@ -18,6 +18,7 @@ export async function consumeQuotaIfNeeded(
 ) {
 	if (retrieval.result.data.created && !retrieval.result.wasDeduplicated) {
 		startTime(c, "quota-consume");
+
 		try {
 			const quota = await consumeQuota(userId, {
 				workspaceId,
@@ -26,14 +27,18 @@ export async function consumeQuotaIfNeeded(
 				userAgent: queryParams.userAgent,
 				source: "rest-optimized",
 			});
+
 			headers.set("X-Remaining-Requests", String(quota.remaining));
+
 			if (quota.nextRefillAt) {
 				headers.set("X-Refill-At", String(quota.nextRefillAt.getTime()));
 			}
 		} catch (error) {
 			setMetric(c, "quota-consume-failed", 1);
+
 			logger.error({ err: error }, "Failed to consume quota");
 		}
+
 		endTime(c, "quota-consume");
 	}
 }
