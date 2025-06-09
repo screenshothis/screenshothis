@@ -129,7 +129,7 @@ const optimizedScreenshots = new OpenAPIHono<{
 				});
 			}
 
-			const response = buildScreenshotResponse(
+			const response = await buildScreenshotResponse(
 				c,
 				retrieval,
 				queryParams,

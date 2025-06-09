@@ -141,7 +141,7 @@ function setCDNCacheHeaders(
 	}
 }
 
-export function buildScreenshotResponse(
+export async function buildScreenshotResponse(
 	c: Context,
 	retrieval: Awaited<ReturnType<typeof retrieveScreenshot>>,
 	queryParams: ScreenshotParams,
@@ -156,24 +156,35 @@ export function buildScreenshotResponse(
 	}
 
 	// CDN / browser caching
-	setCDNCacheHeaders(headers, retrieval.cacheScenario, {
-		cacheTtl: queryParams.cacheTtl,
-		format: queryParams.format,
-		cacheKey,
-		isNewContent: retrieval.result.data.created,
-		workspaceId,
-		timestamp: retrieval.screenshotTimestamp,
-		additionalEntropy: retrieval.result.data.key
-			? {
-					s3Key: retrieval.result.data.key,
-					s3ETag: retrieval.s3Metadata?.etag,
-					fileSize: retrieval.s3Metadata?.size,
-				}
-			: undefined,
-	});
+	setCDNCacheHeaders(
+		headers,
+		retrieval.cacheScenario as "success" | "placeholder" | "error",
+		{
+			cacheTtl: queryParams.cacheTtl,
+			format: queryParams.format,
+			cacheKey,
+			isNewContent: retrieval.result.data.created,
+			workspaceId,
+			timestamp: retrieval.screenshotTimestamp,
+			additionalEntropy: retrieval.result.data.key
+				? {
+						s3Key: retrieval.result.data.key,
+						s3ETag: retrieval.s3Metadata?.etag,
+						fileSize: retrieval.s3Metadata?.size,
+					}
+				: undefined,
+		},
+	);
 
 	// Quota consumption
-	consumeQuotaIfNeeded(c, retrieval, userId, workspaceId, queryParams, headers);
+	await consumeQuotaIfNeeded(
+		c,
+		retrieval,
+		userId,
+		workspaceId,
+		queryParams,
+		headers,
+	);
 
 	// Final headers
 	if (!(retrieval.body instanceof ReadableStream)) {
