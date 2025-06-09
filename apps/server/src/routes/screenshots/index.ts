@@ -319,6 +319,7 @@ const optimizedScreenshots = new OpenAPIHono<{
 			}
 
 			if (body instanceof ReadableStream) {
+				// Don't set Content-Length for streaming responses - browser will handle chunked encoding
 			} else {
 				headers.set("Content-Length", String(body.byteLength));
 			}
