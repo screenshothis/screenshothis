@@ -155,10 +155,16 @@ export async function buildScreenshotResponse(
 
 	// Final headers
 	if (!(retrieval.body instanceof ReadableStream)) {
-		headers.set(
-			"Content-Length",
-			String((retrieval.body as Buffer).byteLength),
-		);
+		let byteLength: number;
+		if (retrieval.body instanceof Buffer) {
+			byteLength = retrieval.body.byteLength;
+		} else if (retrieval.body instanceof ArrayBuffer) {
+			byteLength = retrieval.body.byteLength;
+		} else {
+			// This should not happen based on the return types, but provide a fallback
+			byteLength = 0;
+		}
+		headers.set("Content-Length", String(byteLength));
 	}
 	headers.set("Content-Type", retrieval.contentType);
 	headers.set("Accept-Ranges", "bytes");
