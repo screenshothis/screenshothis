@@ -107,6 +107,7 @@ export async function retrieveScreenshot(
 					result,
 					retryAfter: undefined,
 					validatedETag: expectedETag,
+					etag: expectedETag,
 				};
 			}
 
@@ -147,5 +148,19 @@ export async function retrieveScreenshot(
 		result,
 		retryAfter,
 		validatedETag: undefined,
+		etag: result.data.key
+			? generateETag(
+					cacheKey,
+					queryParams.format,
+					screenshotTimestamp,
+					s3Metadata
+						? {
+								s3Key: result.data.key,
+								s3ETag: s3Metadata.etag,
+								fileSize: s3Metadata.size,
+							}
+						: undefined,
+				)
+			: undefined,
 	};
 }
