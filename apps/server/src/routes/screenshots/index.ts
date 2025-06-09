@@ -27,9 +27,37 @@ const PLACEHOLDER_IMAGE = Buffer.from(
 function generateETag(
 	cacheKey: string,
 	format: string,
-	timestamp?: number,
+	timestamp: number,
+	additionalEntropy?: {
+		s3Key?: string;
+		s3ETag?: string;
+		fileSize?: number;
+	},
 ): string {
-	const content = `${cacheKey}-${format}-${timestamp || 0}`;
+	// Always ensure we have a valid timestamp
+	const safeTimestamp = timestamp || Date.now();
+
+	// Build content with multiple entropy sources
+	const baseContent = `${cacheKey}-${format}-${safeTimestamp}`;
+
+	// Add additional entropy if available
+	const entropyParts = [baseContent];
+	if (additionalEntropy?.s3Key) {
+		entropyParts.push(`key:${additionalEntropy.s3Key}`);
+	}
+	if (additionalEntropy?.s3ETag) {
+		entropyParts.push(`etag:${additionalEntropy.s3ETag}`);
+	}
+	if (additionalEntropy?.fileSize) {
+		entropyParts.push(`size:${additionalEntropy.fileSize}`);
+	}
+
+	// Add process-level entropy as final safeguard
+	entropyParts.push(
+		`proc:${process.pid}-${Math.random().toString(36).slice(2)}`,
+	);
+
+	const content = entropyParts.join("|");
 	const hasher = new Bun.CryptoHasher("sha256");
 	hasher.update(content);
 	return `"${hasher.digest("hex").slice(0, 16)}"`;
@@ -45,6 +73,11 @@ function setCDNCacheHeaders(
 		isNewContent?: boolean;
 		workspaceId: string;
 		timestamp?: number;
+		additionalEntropy?: {
+			s3Key?: string;
+			s3ETag?: string;
+			fileSize?: number;
+		};
 	},
 ) {
 	const {
@@ -54,6 +87,7 @@ function setCDNCacheHeaders(
 		isNewContent,
 		workspaceId,
 		timestamp,
+		additionalEntropy,
 	} = params;
 
 	switch (scenario) {
@@ -75,7 +109,15 @@ function setCDNCacheHeaders(
 			);
 			headers.set("CF-Edge-Cache", "cache,platform=cf");
 
-			headers.set("ETag", generateETag(cacheKey, format, timestamp));
+			headers.set(
+				"ETag",
+				generateETag(
+					cacheKey,
+					format,
+					timestamp || Date.now(),
+					additionalEntropy,
+				),
+			);
 
 			break;
 		}
@@ -251,6 +293,7 @@ const optimizedScreenshots = new OpenAPIHono<{
 			let contentType: string;
 			let cacheScenario: "success" | "placeholder" | "error";
 			let screenshotTimestamp: number;
+			let s3Metadata: { etag?: string; size?: number } | undefined;
 
 			if (result.data.key) {
 				startTime(c, "s3-fetch");
@@ -262,6 +305,10 @@ const optimizedScreenshots = new OpenAPIHono<{
 					} else {
 						const fileStat = await s3File.stat();
 						screenshotTimestamp = fileStat.lastModified.getTime();
+						s3Metadata = {
+							etag: fileStat.etag,
+							size: fileStat.size,
+						};
 					}
 
 					const clientETag = c.req.header("If-None-Match");
@@ -269,6 +316,11 @@ const optimizedScreenshots = new OpenAPIHono<{
 						cacheKey,
 						queryParams.format,
 						screenshotTimestamp,
+						{
+							s3Key: result.data.key,
+							s3ETag: s3Metadata?.etag,
+							fileSize: s3Metadata?.size,
+						},
 					);
 
 					if (clientETag === expectedETag) {
@@ -316,6 +368,13 @@ const optimizedScreenshots = new OpenAPIHono<{
 				isNewContent: result.data.created,
 				workspaceId,
 				timestamp: screenshotTimestamp,
+				additionalEntropy: result.data.key
+					? {
+							s3Key: result.data.key,
+							s3ETag: s3Metadata?.etag,
+							fileSize: s3Metadata?.size,
+						}
+					: undefined,
 			});
 
 			if (result.data.created && !result.wasDeduplicated) {
