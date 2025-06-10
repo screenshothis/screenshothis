@@ -114,7 +114,7 @@ class StorageFile {
 			return buffer.buffer.slice(
 				buffer.byteOffset,
 				buffer.byteOffset + buffer.byteLength,
-			) as ArrayBuffer;
+			);
 		} catch (error) {
 			logger.error(
 				{ error, key: this.key },
