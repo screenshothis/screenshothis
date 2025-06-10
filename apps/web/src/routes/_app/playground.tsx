@@ -44,6 +44,15 @@ export const Route = createFileRoute({
 	component: RouteComponent,
 });
 
+/**
+ * Renders the main playground UI for configuring and generating website screenshots.
+ *
+ * Provides a form with advanced options for customizing screenshot parameters, including viewport, image output, resource blocking, emulation, caching, and authorization. Handles user authentication and URL permission checks before generating screenshots. Displays a live preview of the generated image and a URL generator reflecting current form values.
+ *
+ * @returns The React component for the screenshot playground route.
+ *
+ * @remark Users must be logged in and the target URL must be allowed by the current workspace's origin restrictions to generate screenshots.
+ */
 function RouteComponent() {
 	const { queryClient } = Route.useRouteContext();
 	const orpc = useORPC();
