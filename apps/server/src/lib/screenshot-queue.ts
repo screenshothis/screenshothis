@@ -7,13 +7,13 @@ import {
 } from "bullmq";
 import { and, eq, sql } from "drizzle-orm";
 
-import { db } from "#/db";
-import { requestLimits } from "#/db/schema/request-limits";
-import { screenshots } from "#/db/schema/screenshots";
-import { logger } from "#/lib/logger";
-import { env } from "#/utils/env";
-import { getOrCreateScreenshot } from "#/utils/screenshot";
-import { consumeQuota } from "./request-quota.js";
+import { db } from "../db";
+import { requestLimits } from "../db/schema/request-limits";
+import { screenshots } from "../db/schema/screenshots";
+import { logger } from "../lib/logger";
+import { env } from "../utils/env";
+import { getOrCreateScreenshot } from "../utils/screenshot";
+import { consumeQuota } from "./request-quota";
 
 async function getUserPlan(userId: string): Promise<string> {
 	try {
