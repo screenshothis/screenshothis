@@ -32,9 +32,13 @@ import { UrlGenerator } from "#/components/playground/url-generator.tsx";
 import * as Accordion from "#/components/ui/accordion.tsx";
 import * as Alert from "#/components/ui/alert.tsx";
 import * as Kbd from "#/components/ui/kbd.tsx";
+import * as AlertToast from "#/components/ui/toast-alert.tsx";
+import { toast } from "#/components/ui/toast.tsx";
+import { useMe } from "#/hooks/use-me.ts";
 import { useORPC } from "#/hooks/use-orpc.ts";
 import { env } from "#/utils/env.ts";
 import type { PlaygroundFormValues } from "#/utils/playground-utils.ts";
+import { isScreenshotAllowed } from "#/utils/screenshots.ts";
 
 export const Route = createFileRoute({
 	component: RouteComponent,
@@ -43,12 +47,43 @@ export const Route = createFileRoute({
 function RouteComponent() {
 	const { queryClient } = Route.useRouteContext();
 	const orpc = useORPC();
+	const me = useMe();
 	const { mutateAsync, error, isError, data } = useMutation({
 		async mutationFn(input: PlaygroundFormValues) {
 			const params = new URLSearchParams();
 			for (const [key, value] of Object.entries(input)) {
 				if (value !== null && value !== undefined) {
 					params.set(key, String(value));
+				}
+			}
+
+			if (!me) {
+				toast.custom((t) => (
+					<AlertToast.Root
+						t={t}
+						$status="error"
+						$variant="lighter"
+						message="You need to be logged in to generate screenshots"
+					/>
+				));
+				return;
+			}
+
+			if (me.currentWorkspace?.metadata?.allowedOrigins.length > 0) {
+				const isAllowed = isScreenshotAllowed(
+					me.currentWorkspace.metadata.allowedOrigins.split("\n"),
+					input.url,
+				);
+				if (!isAllowed) {
+					toast.custom((t) => (
+						<AlertToast.Root
+							t={t}
+							$status="error"
+							$variant="lighter"
+							message="The URL is not allowed to be screenshot"
+						/>
+					));
+					return;
 				}
 			}
 

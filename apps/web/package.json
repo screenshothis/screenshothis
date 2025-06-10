@@ -68,6 +68,7 @@
 		"tanstack-router-sitemap": "1.0.12",
 		"ts-case-convert": "2.1.0",
 		"unenv": "1.10.0",
+		"wildcard-match": "5.1.4",
 		"zod": "3.25.57",
 		"zustand": "5.0.5"
 	},

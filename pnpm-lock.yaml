@@ -315,6 +315,9 @@ importers:
       unenv:
         specifier: 1.10.0
         version: 1.10.0
+      wildcard-match:
+        specifier: 5.1.4
+        version: 5.1.4
       zod:
         specifier: 3.25.57
         version: 3.25.57
