@@ -1,27 +1,28 @@
 {
-	"name": "@screenshothis/common",
-	"private": true,
-	"type": "module",
-	"exports": {
-		".": {
-			"import": "./src/index.ts",
-			"require": "./src/index.ts"
-		},
-		"./keys": {
-			"import": "./src/keys.ts",
-			"require": "./src/keys.ts"
-		}
-	},
-	"main": "src/index.ts",
-	"module": "src/index.ts",
-	"dependencies": {
-		"zod": "3.25.56"
-	},
-	"devDependencies": {
-		"@types/node": "24.0.0"
-	},
-	"peerDependencies": {
-		"typescript": "5.8.3"
-	},
-	"packageManager": "pnpm@10.12.1"
+  "name": "@screenshothis/common",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./dist/index.js",
+    "./keys": "./dist/keys.js",
+    "./package.json": "./package.json"
+  },
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "scripts": {
+    "build": "tsdown",
+    "dev": "tsdown --watch"
+  },
+  "dependencies": {
+    "zod": "3.25.56"
+  },
+  "devDependencies": {
+    "@types/node": "24.0.0",
+    "tsdown": "0.12.7"
+  },
+  "peerDependencies": {
+    "typescript": "5.8.3"
+  },
+  "packageManager": "pnpm@10.12.1",
+  "types": "./dist/index.d.ts"
 }

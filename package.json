@@ -1,30 +1,27 @@
 {
-  "name": "screenshothis",
-  "private": true,
-  "workspaces": [
-    "apps/*",
-    "packages/*"
-  ],
-  "scripts": {
-    "build": "turbo build",
-    "db:push": "turbo -F @screenshothis/server db:push",
-    "db:studio": "turbo -F @screenshothis/server db:studio",
-    "dev": "turbo dev",
-    "dev:server": "turbo -F @screenshothis/server dev",
-    "dev:web": "turbo -F @screenshothis/web dev",
-    "prepare": "husky || true && vibe-rules install cursor",
-    "typecheck": "turbo typecheck"
-  },
-  "lint-staged": {
-    "*.{js,ts,cjs,mjs,d.cts,d.mts,jsx,tsx,json,jsonc}": [
-      "biome check --write ."
-    ]
-  },
-  "devDependencies": {
-    "@biomejs/biome": "1.9.4",
-    "husky": "9.1.7",
-    "turbo": "2.5.4",
-    "vibe-rules": "0.3.1"
-  },
-  "packageManager": "pnpm@10.12.1"
+	"name": "screenshothis",
+	"private": true,
+	"workspaces": ["apps/*", "packages/*"],
+	"scripts": {
+		"build": "turbo build",
+		"db:push": "turbo -F @screenshothis/server db:push",
+		"db:studio": "turbo -F @screenshothis/server db:studio",
+		"dev": "turbo build --filter=./packages/* && turbo dev",
+		"dev:server": "turbo -F @screenshothis/server dev",
+		"dev:web": "turbo -F @screenshothis/web dev",
+		"prepare": "husky || true && vibe-rules install cursor",
+		"typecheck": "turbo typecheck"
+	},
+	"lint-staged": {
+		"*.{js,ts,cjs,mjs,d.cts,d.mts,jsx,tsx,json,jsonc}": [
+			"biome check --write ."
+		]
+	},
+	"devDependencies": {
+		"@biomejs/biome": "1.9.4",
+		"husky": "9.1.7",
+		"turbo": "2.5.4",
+		"vibe-rules": "0.3.1"
+	},
+	"packageManager": "pnpm@10.12.1"
 }
