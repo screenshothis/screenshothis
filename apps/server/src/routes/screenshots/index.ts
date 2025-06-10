@@ -1,28 +1,60 @@
+/**
+ * Optimized Screenshot API Route
+ *
+ * This module provides an optimized screenshot service with advanced caching,
+ * CDN integration, streaming responses, and robust ETag generation.
+ *
+ * Key features:
+ * - S3 streaming to avoid memory overhead for large images
+ * - Multi-layer caching (browser, CDN, conditional requests)
+ * - Request deduplication to prevent duplicate screenshot generation
+ * - Quota management and rate limiting
+ * - ETags with multiple entropy sources for reliable cache invalidation
+ * - Support for JPEG, PNG, and WebP formats
+ *
+ * @module OptimizedScreenshotRoute
+ */
+
 import { OpenAPIHono, createRoute, z } from "@hono/zod-openapi";
 import { CreateScreenshotSchema } from "@screenshothis/schemas/screenshots";
+import { endTime, setMetric, startTime } from "hono/timing";
 import { objectToCamel } from "ts-case-convert";
 
 import type { Variables } from "#/common/environment";
-import { auth } from "#/lib/auth";
-import { logger } from "#/lib/logger";
-import {
-	RequestQuotaError,
-	assertQuotaAvailable,
-	consumeQuota,
-} from "#/lib/request-quota";
-import { s3 } from "#/lib/s3";
-import {
-	enqueueScreenshotJob,
-	getExistingScreenshotKey,
-} from "#/lib/screenshot-queue";
+import { generateCacheKey } from "#/utils/deduplication";
 import { createErrorResponse } from "#/utils/errors";
 
-const PLACEHOLDER_IMAGE = Buffer.from(
-	"iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO5K7f0AAAAASUVORK5CYII=",
-	"base64",
-);
+import { authenticateAndValidateScreenshot } from "#/actions/authenticate-and-validate-screenshot";
+import { buildScreenshotResponse } from "#/actions/build-screenshot-response";
+import {
+	QuotaExceededError,
+	ensureQuotaAvailableForUser,
+} from "#/actions/ensure-quota-available";
+import { retrieveScreenshot } from "#/actions/retrieve-screenshot";
 
-const screenshots = new OpenAPIHono<{ Variables: Variables }>().openapi(
+/**
+ * Optimized Screenshot API Route Handler
+ *
+ * This endpoint provides high-performance screenshot generation with:
+ * - Request deduplication (prevents duplicate work)
+ * - Quota management (rate limiting per user)
+ * - S3 streaming (memory-efficient file serving)
+ * - Multi-tier caching (browser + CDN)
+ * - Conditional requests (304 Not Modified support)
+ * - Error resilience (graceful fallbacks)
+ *
+ * Request Flow:
+ * 1. API key authentication
+ * 2. Request parameter validation and normalization
+ * 3. Cache key generation
+ * 4. Quota validation
+ * 5. Request deduplication check
+ * 6. Screenshot retrieval or generation
+ * 7. S3 streaming response with optimal caching headers
+ */
+const optimizedScreenshots = new OpenAPIHono<{
+	Variables: Variables;
+}>().openapi(
 	createRoute({
 		method: "get",
 		path: "/take",
@@ -51,163 +83,104 @@ const screenshots = new OpenAPIHono<{ Variables: Variables }>().openapi(
 						},
 					},
 				},
-				description: "Successful response",
+				description: "Optimized screenshot response with enhanced CDN support",
+			},
+			304: {
+				description: "Not Modified - Content hasn't changed",
+			},
+			403: {
+				content: {
+					"application/json": {
+						schema: z.object({
+							error: z.string(),
+							requestId: z.string(),
+						}),
+					},
+				},
+				description: "Quota exceeded",
+			},
+			500: {
+				content: {
+					"application/json": {
+						schema: z.object({
+							requestId: z.string(),
+							message: z.string(),
+							code: z.string(),
+						}),
+					},
+				},
+				description: "Internal server error",
 			},
 		},
 	}),
 	async (c) => {
+		startTime(c, "total-request");
+
 		try {
-			const { valid, key } = await auth.api.verifyApiKey({
-				body: {
-					key: c.req.valid("query").apiKey,
-				},
-			});
-
-			if (!valid || !key || !key.metadata?.workspaceId) {
-				return c.json({ error: "Unauthorized" }, 401);
-			}
-
 			const queryParams = c.req.valid("query");
-			const workspaceId = key.metadata.workspaceId;
-			const userId = key.userId;
 
-			// Ensure quota is available before continuing
-			try {
-				await assertQuotaAvailable(userId);
-			} catch (error) {
-				if (error instanceof RequestQuotaError) {
-					return c.json(
-						{
-							error:
-								error.type === "EXCEEDED"
-									? "You have reached the maximum number of requests allowed for your current plan."
-									: "Request limits not found for the current user",
-						},
-						403,
-					);
-				}
-				throw error;
+			const authResult = await authenticateAndValidateScreenshot(
+				c,
+				queryParams,
+			);
+			if (authResult instanceof Response) {
+				return authResult;
 			}
 
-			let existingKey: string | null = null;
-			try {
-				existingKey = await getExistingScreenshotKey(workspaceId, queryParams);
-			} catch (error) {
-				logger.error({ err: error }, "error checking for existing screenshot");
+			const { workspaceId, userId, transformedParams } = authResult;
 
-				existingKey = null;
-			}
+			const cacheKey = generateCacheKey(workspaceId, transformedParams);
+			setMetric(c, "cache-key-generated", 1);
 
-			let raceResult: { key: string; created: boolean } | "timeout";
+			await ensureQuotaAvailableForUser(userId, c);
 
-			if (existingKey) {
-				raceResult = { key: existingKey, created: false };
-			} else {
-				// Not cached; enqueue generation and apply 15s timeout
-				const jobPromise = await enqueueScreenshotJob(
-					workspaceId,
-					userId,
-					queryParams,
-				);
-
-				const TIMEOUT_MS = 15_000;
-				let timeoutId: ReturnType<typeof setTimeout> | null = null;
-				const timer = new Promise<"timeout">((resolve) => {
-					timeoutId = setTimeout(() => resolve("timeout" as const), TIMEOUT_MS);
-				});
-
-				raceResult = await Promise.race([jobPromise, timer]);
-
-				if (timeoutId) {
-					clearTimeout(timeoutId);
-				}
-			}
-
-			const headers = new Headers();
-			let body: ArrayBuffer | Buffer | null = null;
-			let contentType: string;
-			let createdFlag = false;
-
-			if (raceResult === "timeout") {
-				// Return 1x1 placeholder and allow client to retry
-				body = PLACEHOLDER_IMAGE;
-				contentType = "image/png";
-				// Prevent caching of placeholder so user can retry quickly
-				headers.set(
-					"Cache-Control",
-					"no-cache, no-store, must-revalidate, proxy-revalidate, max-age=0",
-				);
-				headers.set("CDN-Cache-Control", "no-cache, no-store, max-age=0");
-			} else {
-				const { key: objectKey } = raceResult as {
-					key: string;
-					created: boolean;
-				};
-				createdFlag = (raceResult as { created: boolean }).created;
-				if (!objectKey) {
-					return c.json({ error: "Unauthorized" }, 401);
-				}
-				try {
-					body = await s3.file(objectKey).arrayBuffer();
-				} catch (e) {
-					return c.json({ error: "Screenshot not ready" }, 503, {
-						headers: ["Retry-After: 5"],
-					});
-				}
-
-				contentType = `image/${queryParams.format}`;
-
-				if (queryParams.isCached) {
-					const cacheTtl = queryParams.cacheTtl;
-					headers.set(
-						"Cache-Control",
-						`public, max-age=${cacheTtl}, s-maxage=${cacheTtl}, stale-while-revalidate=${cacheTtl}, durable`,
-					);
-					headers.set(
-						"CDN-Cache-Control",
-						`max-age=${cacheTtl}, stale-while-revalidate=${cacheTtl}, durable`,
-					);
-				} else {
-					headers.set(
-						"Cache-Control",
-						"no-cache, no-store, must-revalidate, proxy-revalidate, max-age=0",
-					);
-					headers.set(
-						"CDN-Cache-Control",
-						"no-cache, no-store, must-revalidate, proxy-revalidate, max-age=0",
-					);
-				}
-			}
-
-			if (createdFlag) {
-				const quota = await consumeQuota(userId, {
-					workspaceId,
-					url: queryParams.url,
-					format: queryParams.format,
-					userAgent: queryParams.userAgent,
-					source: "rest",
-				});
-				headers.set("X-Remaining-Requests", String(quota.remaining));
-				if (quota.nextRefillAt) {
-					headers.set("X-Refill-At", String(quota.nextRefillAt.getTime()));
-				}
-			}
-
-			headers.set("Content-Length", String(body.byteLength));
-			headers.set("Content-Type", contentType);
-			headers.set("Accept-Ranges", "bytes");
-			headers.set(
-				"Content-Disposition",
-				`inline; filename="screenshot.${queryParams.format}"`,
+			const retrieval = await retrieveScreenshot(
+				c,
+				cacheKey,
+				workspaceId,
+				userId,
+				transformedParams,
+				queryParams,
 			);
 
-			return c.body(body ?? new Uint8Array(), { headers });
-		} catch (error) {
-			const errorResponse = createErrorResponse(error, c.get("requestId"));
+			if (retrieval.body === null) {
+				endTime(c, "total-request");
+				return c.body(null, 304, {
+					ETag: retrieval.validatedETag || "",
+					"Cache-Control": "public, max-age=3600",
+				});
+			}
 
-			return c.json(errorResponse, 400);
+			const response = await buildScreenshotResponse(
+				c,
+				retrieval,
+				queryParams,
+				cacheKey,
+				workspaceId,
+				userId,
+			);
+			endTime(c, "total-request");
+			return response;
+		} catch (error) {
+			endTime(c, "total-request");
+
+			if (error instanceof QuotaExceededError) {
+				setMetric(c, "quota-exceeded", 1);
+
+				return c.json(
+					{
+						error: error.message,
+						requestId: c.get("requestId"),
+					},
+					403,
+				);
+			}
+
+			setMetric(c, "request-error", 1);
+			const errorResponse = createErrorResponse(error, c.get("requestId"));
+			return c.json(errorResponse, 500);
 		}
 	},
 );
 
-export default screenshots;
+export default optimizedScreenshots;

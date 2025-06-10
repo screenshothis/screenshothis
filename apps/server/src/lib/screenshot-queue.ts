@@ -7,12 +7,40 @@ import {
 } from "bullmq";
 import { and, eq, sql } from "drizzle-orm";
 
-import { db } from "#/db";
-import { screenshots } from "#/db/schema/screenshots";
-import { logger } from "#/lib/logger";
-import { env } from "#/utils/env";
-import { getOrCreateScreenshot } from "#/utils/screenshot";
-import { consumeQuota } from "./request-quota.js";
+import { db } from "../db";
+import { requestLimits } from "../db/schema/request-limits";
+import { screenshots } from "../db/schema/screenshots";
+import { logger } from "../lib/logger";
+import { env } from "../utils/env";
+import { getOrCreateScreenshot } from "../utils/screenshot";
+import { consumeQuota } from "./request-quota";
+
+async function getUserPlan(userId: string): Promise<string> {
+	try {
+		const userLimits = await db.query.requestLimits.findFirst({
+			where: eq(requestLimits.userId, userId),
+			columns: { plan: true },
+		});
+		return userLimits?.plan || "free";
+	} catch (error) {
+		logger.error(
+			{ err: error, userId },
+			"Failed to get user plan, defaulting to free",
+		);
+		return "free";
+	}
+}
+
+function getPriorityForPlan(plan: string): number {
+	const priorityMap: Record<string, number> = {
+		enterprise: 50,
+		pro: 25,
+		lite: 10,
+		free: 1,
+	};
+
+	return priorityMap[plan] || 1;
+}
 
 const connection: ConnectionOptions = {
 	url: env.REDIS_URL,
@@ -21,13 +49,26 @@ const connection: ConnectionOptions = {
 		logger.warn({ attempt: times, delay }, "redis connection retry");
 		return delay;
 	},
+	maxRetriesPerRequest: null,
 };
 
 // Using a hashtag ensures all BullMQ keys share the same hash slot so Dragonfly
 // can allow the script to access dynamic job keys without the allow-undeclared-keys flag.
 const QUEUE_NAME = "{screenshot-generation}";
 
-const screenshotQueue = new Queue(QUEUE_NAME, { connection });
+const screenshotQueue = new Queue(QUEUE_NAME, {
+	connection,
+	defaultJobOptions: {
+		removeOnComplete: 100, // Keep last 100 completed jobs for monitoring
+		removeOnFail: 50, // Keep last 50 failed jobs for debugging
+		attempts: 3,
+		backoff: {
+			type: "exponential",
+			delay: 2000,
+		},
+	},
+});
+
 // QueueScheduler is only necessary for delayed or recurring jobs. If needed in future,
 // it can be instantiated here.
 const queueEvents = new QueueEvents(QUEUE_NAME, { connection });
@@ -45,13 +86,20 @@ const screenshotWorker = new Worker<WorkerJobData>(
 	async (
 		job: Job<WorkerJobData>,
 	): Promise<{ key: string; created: boolean }> => {
+		const startTime = Date.now();
+
 		try {
 			const { workspaceId, userId, params } = job.data;
+
+			// Update job progress
+			await job.updateProgress(10);
 
 			const { key: objectKey, created } = await getOrCreateScreenshot(
 				workspaceId,
 				params,
 			);
+
+			await job.updateProgress(80);
 
 			if (created) {
 				await consumeQuota(userId, {
@@ -60,9 +108,33 @@ const screenshotWorker = new Worker<WorkerJobData>(
 				});
 			}
 
+			await job.updateProgress(100);
+
+			const duration = Date.now() - startTime;
+			logger.info(
+				{
+					jobId: job.id,
+					workspaceId,
+					url: params.url,
+					duration,
+					created,
+				},
+				"Screenshot job completed successfully",
+			);
+
 			return { key: objectKey as string, created };
 		} catch (error) {
-			logger.error({ err: error }, "error in screenshot worker");
+			const duration = Date.now() - startTime;
+			logger.error(
+				{
+					jobId: job.id,
+					err: error,
+					duration,
+					attempt: job.attemptsMade,
+					maxAttempts: job.opts.attempts,
+				},
+				"error in screenshot worker",
+			);
 
 			throw error;
 		}
@@ -70,11 +142,72 @@ const screenshotWorker = new Worker<WorkerJobData>(
 	{
 		connection,
 		concurrency: 10,
+		// Add rate limiting to prevent overwhelming the system
+		limiter: {
+			max: 50, // Max 50 jobs per duration
+			duration: 60000, // 1 minute
+		},
 	},
 );
 
+// Enhanced error handling
 screenshotWorker.on("error", (err: Error) => {
 	logger.error({ err }, "screenshot worker error");
+});
+
+screenshotWorker.on("failed", (job: Job | undefined, err: Error) => {
+	logger.error(
+		{
+			jobId: job?.id,
+			err,
+			attempts: job?.attemptsMade,
+			data: job?.data,
+		},
+		"screenshot job failed",
+	);
+});
+
+screenshotWorker.on("completed", (job: Job) => {
+	logger.info(
+		{
+			jobId: job.id,
+			returnValue: job.returnvalue,
+			processedOn: job.processedOn,
+			finishedOn: job.finishedOn,
+		},
+		"screenshot job completed",
+	);
+});
+
+screenshotWorker.on(
+	"progress",
+	(job: Job, progress: number | object | string | boolean) => {
+		logger.debug(
+			{
+				jobId: job.id,
+				progress,
+			},
+			"screenshot job progress updated",
+		);
+	},
+);
+
+// Queue error handling
+screenshotQueue.on("error", (err) => {
+	logger.error({ err }, "screenshot queue error");
+});
+
+// Global queue events for monitoring
+queueEvents.on("completed", ({ jobId, returnvalue }) => {
+	logger.debug({ jobId, returnvalue }, "job completed event");
+});
+
+queueEvents.on("failed", ({ jobId, failedReason }) => {
+	logger.warn({ jobId, failedReason }, "job failed event");
+});
+
+queueEvents.on("progress", ({ jobId, data }) => {
+	logger.debug({ jobId, progress: data }, "job progress event");
 });
 
 // Utility to normalize string arrays (trim, lowercase, sort) for consistent hashing/comparison
@@ -138,6 +271,10 @@ export async function enqueueScreenshotJob(
 ): Promise<{ key: string; created: boolean }> {
 	const jobId = buildJobKey(workspaceId, params);
 
+	// Get user plan to determine job priority
+	const userPlan = await getUserPlan(userId);
+	const jobPriority = getPriorityForPlan(userPlan);
+
 	let job: Job | null = await screenshotQueue.getJob(jobId);
 
 	if (!job) {
@@ -152,11 +289,32 @@ export async function enqueueScreenshotJob(
 					count: 1000,
 					age: 24 * 3600, // 24 hours
 				},
+				// Priority based on user's actual plan
+				priority: jobPriority,
 			},
+		);
+
+		logger.info(
+			{
+				jobId: job.id,
+				workspaceId,
+				userId,
+				url: params.url,
+			},
+			"New screenshot job created",
 		);
 	} else {
 		// Job exists, check its state
 		const state = await job.getState();
+		logger.debug(
+			{
+				jobId: job.id,
+				state,
+				workspaceId,
+			},
+			"Existing job found",
+		);
+
 		if (state === "completed") {
 			// The result should already be in S3/DB, so return a marker to fetch it
 			const returnvalue = job.returnvalue as
@@ -185,7 +343,18 @@ export async function enqueueScreenshotJob(
 						count: 1000,
 						age: 24 * 3600, // 24 hours
 					},
+					// Use the same priority as determined earlier
+					priority: jobPriority,
 				},
+			);
+
+			logger.info(
+				{
+					jobId: job.id,
+					previousState: state,
+					workspaceId,
+				},
+				"Recreated job after failure/delay",
 			);
 		}
 	}
@@ -204,7 +373,38 @@ export async function shutdownWorker() {
 	logger.info("closing screenshot worker");
 	await screenshotWorker.close();
 	await screenshotQueue.close();
+	await queueEvents.close();
 	logger.info("screenshot worker closed");
+}
+
+// Queue health monitoring
+export async function getQueueHealth() {
+	try {
+		const waiting = await screenshotQueue.getWaiting();
+		const active = await screenshotQueue.getActive();
+		const completed = await screenshotQueue.getCompleted();
+		const failed = await screenshotQueue.getFailed();
+
+		return {
+			waiting: waiting.length,
+			active: active.length,
+			completed: completed.length,
+			failed: failed.length,
+			isPaused: await screenshotQueue.isPaused(),
+			workerRunning: !screenshotWorker.closing,
+		};
+	} catch (error) {
+		logger.error({ err: error }, "Failed to get queue health");
+		return {
+			waiting: -1,
+			active: -1,
+			completed: -1,
+			failed: -1,
+			isPaused: true,
+			workerRunning: false,
+			error: error instanceof Error ? error.message : "Unknown error",
+		};
+	}
 }
 
 export async function getExistingScreenshotKey(

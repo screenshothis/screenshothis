@@ -2,9 +2,7 @@
 	"name": "@screenshothis/server",
 	"type": "module",
 	"imports": {
-		"#/*": [
-			"./src/*"
-		]
+		"#/*": ["./src/*"]
 	},
 	"exports": {
 		"./routers": "./src/routers/index.ts"
@@ -22,11 +20,11 @@
 	},
 	"dependencies": {
 		"@ai-sdk/google": "1.2.19",
-		"@ghostery/adblocker-puppeteer": "2.6.1",
+		"@ghostery/adblocker-puppeteer": "2.7.0",
 		"@hono-storage/core": "0.0.14",
 		"@hono-storage/s3": "0.0.13",
-		"@hono/sentry": "1.2.1",
-		"@hono/swagger-ui": "0.5.1",
+		"@hono/sentry": "1.2.2",
+		"@hono/swagger-ui": "0.5.2",
 		"@hono/zod-openapi": "0.19.8",
 		"@orpc/client": "1.4.5",
 		"@orpc/server": "1.4.5",
@@ -34,7 +32,7 @@
 		"@polar-sh/sdk": "0.33.0",
 		"@screenshothis/id": "workspace:*",
 		"@screenshothis/schemas": "workspace:*",
-		"@t3-oss/env-core": "0.13.6",
+		"@t3-oss/env-core": "0.13.8",
 		"ai": "4.3.16",
 		"better-auth": "1.2.8",
 		"better-auth-harmony": "1.2.5",

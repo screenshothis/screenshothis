@@ -1,3 +1,4 @@
+
 import Album02Icon from "virtual:icons/hugeicons/album-02";
 
 import type { ScreenshotSchema } from "@screenshothis/schemas/screenshots";
@@ -32,6 +33,7 @@ export const Route = createFileRoute({
 			screenshots: screenshots.map(objectToCamel),
 		};
 	},
+	preloadStaleTime: 30_000,
 });
 
 function RouteComponent() {
