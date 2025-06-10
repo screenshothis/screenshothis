@@ -76,7 +76,10 @@ health.openapi(
 			(async () => {
 				const storageStart = Date.now();
 				try {
-					await storage.list({ maxKeys: 1 });
+					const health = await storage.healthCheck();
+					if (!health.healthy) {
+						throw new Error("Storage health check failed");
+					}
 
 					return {
 						name: "storage",
