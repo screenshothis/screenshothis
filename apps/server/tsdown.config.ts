@@ -4,5 +4,5 @@ export default defineConfig({
 	minify: true,
 	sourcemap: true,
 	unbundle: true,
-	noExternal: ["validator"],
+	noExternal: ["better-auth-harmony"],
 });
