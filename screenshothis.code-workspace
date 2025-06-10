@@ -1,0 +1,29 @@
+{
+	"folders": [
+		{
+			"name": "root",
+			"path": "."
+		},
+		{
+			"name": "server",
+			"path": "apps/server"
+		},
+		{
+			"name": "web",
+			"path": "apps/web"
+		},
+		{
+			"name": "common",
+			"path": "packages/common"
+		},
+		{
+			"name": "id",
+			"path": "packages/id"
+		},
+		{
+			"name": "schemas",
+			"path": "packages/schemas"
+		}
+	],
+	"settings": {}
+}
