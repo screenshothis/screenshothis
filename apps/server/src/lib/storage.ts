@@ -314,7 +314,11 @@ class Storage extends EventEmitter {
 			});
 
 			await this.client.send(command);
-			logger.info({ key, size: data.length }, "File written successfully");
+
+			// Calculate actual byte size - use Buffer.byteLength for strings, data.length for binary data
+			const size =
+				typeof data === "string" ? Buffer.byteLength(data) : data.length;
+			logger.info({ key, size }, "File written successfully");
 		} catch (error) {
 			logger.error({ error, key }, "Failed to write file");
 			throw error;
