@@ -1,3 +1,5 @@
+import crypto from "node:crypto";
+
 import type { CreateScreenshotSchema } from "@screenshothis/schemas/screenshots";
 import type { Context } from "hono";
 import { setMetric } from "hono/timing";
@@ -19,53 +21,40 @@ export function generateCacheKey(
 	workspaceId: string,
 	params: ObjectToCamel<z.infer<typeof CreateScreenshotSchema>>,
 ): string {
+	// Normalize headers/cookies for deterministic key generation
+	const normalizedHeaders =
+		params.headers?.map((h) => ({
+			name: h.name?.toLowerCase() || "",
+			value: h.value || "",
+		})) || [];
+
+	const normalizedCookies =
+		params.cookies?.map((c) => ({
+			name: c.name || "",
+			value: c.value || "",
+			domain: c.domain || "",
+			path: c.path || "",
+			expires: c.expires || 0,
+			sameSite: c.sameSite || "",
+			secure: c.secure || false,
+			httpOnly: c.httpOnly || false,
+		})) || [];
+
 	const normalizedParams = {
-		url: params.url,
-		selector: params.selector || null,
-		width: params.width,
-		height: params.height,
-		isMobile: params.isMobile || false,
-		isLandscape: params.isLandscape || false,
-		hasTouch: params.hasTouch || false,
-		deviceScaleFactor: params.deviceScaleFactor || 1,
-		format: params.format,
-		quality: params.quality || 80,
-		blockAds: params.blockAds || false,
-		blockCookieBanners: params.blockCookieBanners || false,
-		blockTrackers: params.blockTrackers || false,
-		blockRequests: (params.blockRequests || []).sort(),
-		blockResources: (params.blockResources || []).sort(),
-		prefersColorScheme: params.prefersColorScheme || "light",
-		prefersReducedMotion: params.prefersReducedMotion || "no-preference",
-		isCached: params.isCached || false,
-		cacheTtl: params.cacheTtl || null,
-		cacheKey: params.cacheKey || null,
-		userAgent: params.userAgent || null,
-		headers: (params.headers || [])
-			.map((h) => ({ name: h.name, value: h.value }))
-			.sort((a, b) => a.name.localeCompare(b.name)),
-		cookies: (params.cookies || [])
-			.map((c) => ({
-				name: c.name,
-				value: c.value,
-				domain: c.domain || null,
-				path: c.path || null,
-				expires: c.expires || null,
-				sameSite: c.sameSite || null,
-				secure: c.secure || false,
-				httpOnly: c.httpOnly || false,
-			}))
-			.sort((a, b) => a.name.localeCompare(b.name)),
-		bypassCsp: params.bypassCsp || false,
+		...params,
+		headers: normalizedHeaders,
+		cookies: normalizedCookies,
 	};
 
 	const paramsString = JSON.stringify(
 		normalizedParams,
 		Object.keys(normalizedParams).sort(),
 	);
-	const hash = Bun.hash(paramsString).toString(16);
+	const hash = crypto.createHash("sha256");
+	hash.update(paramsString);
+	const hashHex = hash.digest("hex");
 
-	return `${workspaceId}-${hash}`;
+	return `${workspaceId}-${hashHex}`;
 }
 
 /**

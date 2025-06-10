@@ -1,3 +1,5 @@
+import crypto from "node:crypto";
+
 import {
 	type ConnectionOptions,
 	type Job,
@@ -260,8 +262,9 @@ function buildJobKey(
 		Object.keys(normalized).sort(),
 	);
 	const raw = workspaceId + sortedParams;
-	// Bun.hash returns a 64-bit bigint which we convert to hex string
-	return Bun.hash(raw).toString(16);
+	const hash = crypto.createHash("sha256");
+	hash.update(raw);
+	return hash.digest("hex");
 }
 
 export async function enqueueScreenshotJob(

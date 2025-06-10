@@ -96,8 +96,7 @@ export const usersRouter = {
 					input.image,
 					`avatars/${context.session.user.id}_${Date.now()}.png`,
 					{
-						type: input.image.type,
-						acl: "public-read",
+						contentType: input.image.type,
 					},
 				);
 				updateData.imageUrl = imageUrl;
