@@ -62,11 +62,7 @@ export const rateLimitMiddleware = (options: RateLimitOptions) => {
 		const expirationSeconds = Math.ceil(window / 1000);
 
 		try {
-			const pipeline = redis.pipeline();
-
-			pipeline.get(windowKey);
-
-			const results = await pipeline.exec();
+			const results = await redis.get(windowKey);
 			const currentCount = Number.parseInt(
 				(results?.[0]?.[1] as string) || "0",
 				10,
@@ -87,12 +83,8 @@ export const rateLimitMiddleware = (options: RateLimitOptions) => {
 				);
 			}
 
-			const incrPipeline = redis.pipeline();
-			incrPipeline.incr(windowKey);
-			incrPipeline.expire(windowKey, expirationSeconds);
-
-			const incrResults = await incrPipeline.exec();
-			const newCount = (incrResults?.[0]?.[1] as number) || 1;
+			const newCount = (await redis.incr(windowKey)) || 1;
+			await redis.expire(windowKey, expirationSeconds);
 
 			c.res.headers.set("X-RateLimit-Limit", limit.toString());
 			c.res.headers.set("X-RateLimit-Remaining", (limit - newCount).toString());
