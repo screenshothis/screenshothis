@@ -32,8 +32,8 @@
 		"@hono/sentry": "1.2.2",
 		"@hono/swagger-ui": "0.5.2",
 		"@hono/zod-openapi": "0.19.8",
-		"@orpc/client": "1.4.5",
-		"@orpc/server": "1.4.5",
+		"@orpc/client": "1.5.0",
+		"@orpc/server": "1.5.0",
 		"@polar-sh/better-auth": "1.0.1",
 		"@polar-sh/sdk": "0.33.0",
 		"@screenshothis/common": "workspace:*",
@@ -43,7 +43,7 @@
 		"@smithy/util-retry": "4.0.5",
 		"@t3-oss/env-core": "0.13.8",
 		"ai": "4.3.16",
-		"better-auth": "1.2.8",
+		"better-auth": "1.2.9",
 		"better-auth-harmony": "1.2.5",
 		"bullmq": "5.53.2",
 		"cross-fetch": "4.1.0",
@@ -62,7 +62,7 @@
 		"ts-case-convert": "2.1.0",
 		"unique-username-generator": "1.4.0",
 		"wildcard-match": "5.1.4",
-		"zod": "3.25.56"
+		"zod": "3.25.57"
 	},
 	"devDependencies": {
 		"@epic-web/config": "1.21.0",
