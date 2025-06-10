@@ -2,9 +2,7 @@
 	"name": "@screenshothis/server",
 	"type": "module",
 	"imports": {
-		"#/*": [
-			"./src/*"
-		]
+		"#/*": ["./src/*"]
 	},
 	"exports": {
 		"./routers": "./src/routers/index.ts"
@@ -16,10 +14,10 @@
 		"db:generate": "drizzle-kit generate",
 		"db:migrate": "drizzle-kit migrate",
 		"db:push": "drizzle-kit push",
-		"db:reset": "pnpm run scripts/reset-db.ts",
+		"db:reset": "tsx scripts/reset-db.ts",
 		"db:studio": "drizzle-kit studio",
 		"dev": "tsx watch src/index.ts",
-		"start": "pnpm run dist/src/index.js",
+		"start": "node dist/src/index.js",
 		"typecheck": "tsc --noEmit"
 	},
 	"dependencies": {
