@@ -7,17 +7,16 @@
 	"exports": {
 		"./routers": "./src/routers/index.ts"
 	},
-	"main": "src/index.ts",
+	"main": "dist/index.js",
 	"scripts": {
-		"build": "tsc && tsc-alias",
-		"compile": "tsdown",
+		"build": "tsdown",
 		"db:generate": "drizzle-kit generate",
 		"db:migrate": "drizzle-kit migrate",
 		"db:push": "drizzle-kit push",
 		"db:reset": "tsx scripts/reset-db.ts",
 		"db:studio": "drizzle-kit studio",
 		"dev": "tsx watch src/index.ts",
-		"start": "node dist/src/index.js",
+		"start": "node dist/index.js",
 		"typecheck": "tsc --noEmit"
 	},
 	"dependencies": {

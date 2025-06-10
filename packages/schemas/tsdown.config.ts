@@ -1,8 +1,9 @@
 import { defineConfig } from "tsdown";
 
 export default defineConfig({
+	entry: ["./src/**/*.ts"],
+	dts: true,
 	minify: true,
-	sourcemap: true,
+	exports: true,
 	unbundle: true,
-	noExternal: ["better-auth-harmony"],
 });

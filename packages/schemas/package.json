@@ -1,50 +1,37 @@
 {
-	"name": "@screenshothis/schemas",
-	"private": true,
-	"type": "module",
-	"exports": {
-		"./api-keys": {
-			"import": "./src/api-keys.ts",
-			"require": "./src/api-keys.ts"
-		},
-		"./common": {
-			"import": "./src/common.ts",
-			"require": "./src/common.ts"
-		},
-		"./dashboard": {
-			"import": "./src/dashboard.ts",
-			"require": "./src/dashboard.ts"
-		},
-		"./plan": {
-			"import": "./src/plan.ts",
-			"require": "./src/plan.ts"
-		},
-		"./screenshots": {
-			"import": "./src/screenshots.ts",
-			"require": "./src/screenshots.ts"
-		},
-		"./users": {
-			"import": "./src/users.ts",
-			"require": "./src/users.ts"
-		},
-		"./workspaces": {
-			"import": "./src/workspaces.ts",
-			"require": "./src/workspaces.ts"
-		}
-	},
-	"main": "src/index.ts",
-	"module": "src/index.ts",
-	"dependencies": {
-		"@screenshothis/common": "workspace:*",
-		"@tanstack/zod-adapter": "1.121.0-alpha.22",
-		"ts-case-convert": "2.1.0",
-		"zod": "3.25.56"
-	},
-	"devDependencies": {
-		"@types/node": "24.0.0"
-	},
-	"peerDependencies": {
-		"typescript": "5.8.3"
-	},
-	"packageManager": "pnpm@10.12.1"
+  "name": "@screenshothis/schemas",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./dist/index.js",
+    "./api-keys": "./dist/api-keys.js",
+    "./common": "./dist/common.js",
+    "./dashboard": "./dist/dashboard.js",
+    "./plan": "./dist/plan.js",
+    "./screenshots": "./dist/screenshots.js",
+    "./users": "./dist/users.js",
+    "./workspaces": "./dist/workspaces.js",
+    "./package.json": "./package.json"
+  },
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "scripts": {
+    "build": "tsdown",
+    "dev": "tsdown --watch"
+  },
+  "dependencies": {
+    "@screenshothis/common": "workspace:*",
+    "@tanstack/zod-adapter": "1.121.0-alpha.22",
+    "ts-case-convert": "2.1.0",
+    "zod": "3.25.56"
+  },
+  "devDependencies": {
+    "@types/node": "24.0.0",
+    "tsdown": "0.12.7"
+  },
+  "peerDependencies": {
+    "typescript": "5.8.3"
+  },
+  "packageManager": "pnpm@10.12.1",
+  "types": "./dist/index.d.ts"
 }

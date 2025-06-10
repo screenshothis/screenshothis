@@ -93,7 +93,7 @@ export const usersRouter = {
 
 			if (input.image && typeof input.image === "object") {
 				const imageUrl = await uploadFile(
-					input.image,
+					input.image as Blob,
 					`avatars/${context.session.user.id}_${Date.now()}.png`,
 					{
 						contentType: input.image.type,
