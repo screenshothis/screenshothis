@@ -7,7 +7,7 @@
 	"exports": {
 		"./routers": "./src/routers/index.ts"
 	},
-	"main": "src/index.ts",
+	"main": "dist/index.js",
 	"scripts": {
 		"build": "tsdown",
 		"db:generate": "drizzle-kit generate",
