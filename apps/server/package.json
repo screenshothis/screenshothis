@@ -18,6 +18,7 @@
 		"db:reset": "tsx scripts/reset-db.ts",
 		"db:studio": "drizzle-kit studio",
 		"dev": "tsx watch src/index.ts",
+		"postinstall": "vibe-rules install cursor",
 		"start": "node dist/index.js",
 		"typecheck": "tsc --noEmit"
 	},

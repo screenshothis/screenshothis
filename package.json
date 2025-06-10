@@ -1,7 +1,10 @@
 {
 	"name": "screenshothis",
 	"private": true,
-	"workspaces": ["apps/*", "packages/*"],
+	"workspaces": [
+		"apps/*",
+		"packages/*"
+	],
 	"scripts": {
 		"build": "turbo build",
 		"db:push": "turbo -F @screenshothis/server db:push",

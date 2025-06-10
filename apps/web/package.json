@@ -8,6 +8,7 @@
 	"scripts": {
 		"build": "vite build",
 		"dev": "vite dev --port=3001",
+		"postinstall": "vibe-rules install cursor",
 		"serve": "vite preview",
 		"start": "vite start",
 		"typecheck": "tsc --noEmit"
