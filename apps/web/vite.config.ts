@@ -38,7 +38,11 @@ export default defineConfig({
 		tsConfigPaths({
 			projects: ["./tsconfig.json"],
 		}),
-		tanstackStart({ target: "node-server" }),
+		tanstackStart({
+			tsr: {
+				verboseFileRoutes: false,
+			},
+		}),
 		contentCollections(),
 	],
 });

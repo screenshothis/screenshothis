@@ -9,10 +9,12 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import type { CreateFileRoute, FileRoutesByPath } from '@tanstack/react-router'
+import type {
+  CreateServerFileRoute,
+  ServerFileRoutesByPath,
+} from '@tanstack/react-start/server'
 
-// Import Routes
-
-import { Route as rootRoute } from './routes/__root'
+import { Route as rootRouteImport } from './routes/__root'
 import { Route as MarketingRouteImport } from './routes/_marketing'
 import { Route as AuthRouteImport } from './routes/_auth'
 import { Route as AppRouteImport } from './routes/_app'
@@ -28,90 +30,171 @@ import { Route as AppKeysRouteImport } from './routes/_app/keys'
 import { Route as AppDashboardRouteImport } from './routes/_app/dashboard'
 import { Route as MarketingLegalSplatRouteImport } from './routes/_marketing/legal.$'
 
-// Create/Update Routes
-
 const MarketingRoute = MarketingRouteImport.update({
   id: '/_marketing',
-  getParentRoute: () => rootRoute,
+  getParentRoute: () => rootRouteImport,
 } as any)
-
 const AuthRoute = AuthRouteImport.update({
   id: '/_auth',
-  getParentRoute: () => rootRoute,
+  getParentRoute: () => rootRouteImport,
 } as any)
-
 const AppRoute = AppRouteImport.update({
   id: '/_app',
-  getParentRoute: () => rootRoute,
+  getParentRoute: () => rootRouteImport,
 } as any)
-
 const MarketingIndexRoute = MarketingIndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => MarketingRoute,
 } as any)
-
 const MarketingConfirmationRoute = MarketingConfirmationRouteImport.update({
   id: '/confirmation',
   path: '/confirmation',
   getParentRoute: () => MarketingRoute,
 } as any)
-
 const AuthResetPasswordRoute = AuthResetPasswordRouteImport.update({
   id: '/reset-password',
   path: '/reset-password',
   getParentRoute: () => AuthRoute,
 } as any)
-
 const AuthRegisterRoute = AuthRegisterRouteImport.update({
   id: '/register',
   path: '/register',
   getParentRoute: () => AuthRoute,
 } as any)
-
 const AuthLoginRoute = AuthLoginRouteImport.update({
   id: '/login',
   path: '/login',
   getParentRoute: () => AuthRoute,
 } as any)
-
 const AuthForgotPasswordRoute = AuthForgotPasswordRouteImport.update({
   id: '/forgot-password',
   path: '/forgot-password',
   getParentRoute: () => AuthRoute,
 } as any)
-
 const AppScreenshotsRoute = AppScreenshotsRouteImport.update({
   id: '/screenshots',
   path: '/screenshots',
   getParentRoute: () => AppRoute,
 } as any)
-
 const AppPlaygroundRoute = AppPlaygroundRouteImport.update({
   id: '/playground',
   path: '/playground',
   getParentRoute: () => AppRoute,
 } as any)
-
 const AppKeysRoute = AppKeysRouteImport.update({
   id: '/keys',
   path: '/keys',
   getParentRoute: () => AppRoute,
 } as any)
-
 const AppDashboardRoute = AppDashboardRouteImport.update({
   id: '/dashboard',
   path: '/dashboard',
   getParentRoute: () => AppRoute,
 } as any)
-
 const MarketingLegalSplatRoute = MarketingLegalSplatRouteImport.update({
   id: '/legal/$',
   path: '/legal/$',
   getParentRoute: () => MarketingRoute,
 } as any)
 
-// Populate the FileRoutesByPath interface
+export interface FileRoutesByFullPath {
+  '': typeof MarketingRouteWithChildren
+  '/dashboard': typeof AppDashboardRoute
+  '/keys': typeof AppKeysRoute
+  '/playground': typeof AppPlaygroundRoute
+  '/screenshots': typeof AppScreenshotsRoute
+  '/forgot-password': typeof AuthForgotPasswordRoute
+  '/login': typeof AuthLoginRoute
+  '/register': typeof AuthRegisterRoute
+  '/reset-password': typeof AuthResetPasswordRoute
+  '/confirmation': typeof MarketingConfirmationRoute
+  '/': typeof MarketingIndexRoute
+  '/legal/$': typeof MarketingLegalSplatRoute
+}
+export interface FileRoutesByTo {
+  '': typeof AuthRouteWithChildren
+  '/dashboard': typeof AppDashboardRoute
+  '/keys': typeof AppKeysRoute
+  '/playground': typeof AppPlaygroundRoute
+  '/screenshots': typeof AppScreenshotsRoute
+  '/forgot-password': typeof AuthForgotPasswordRoute
+  '/login': typeof AuthLoginRoute
+  '/register': typeof AuthRegisterRoute
+  '/reset-password': typeof AuthResetPasswordRoute
+  '/confirmation': typeof MarketingConfirmationRoute
+  '/': typeof MarketingIndexRoute
+  '/legal/$': typeof MarketingLegalSplatRoute
+}
+export interface FileRoutesById {
+  __root__: typeof rootRouteImport
+  '/_app': typeof AppRouteWithChildren
+  '/_auth': typeof AuthRouteWithChildren
+  '/_marketing': typeof MarketingRouteWithChildren
+  '/_app/dashboard': typeof AppDashboardRoute
+  '/_app/keys': typeof AppKeysRoute
+  '/_app/playground': typeof AppPlaygroundRoute
+  '/_app/screenshots': typeof AppScreenshotsRoute
+  '/_auth/forgot-password': typeof AuthForgotPasswordRoute
+  '/_auth/login': typeof AuthLoginRoute
+  '/_auth/register': typeof AuthRegisterRoute
+  '/_auth/reset-password': typeof AuthResetPasswordRoute
+  '/_marketing/confirmation': typeof MarketingConfirmationRoute
+  '/_marketing/': typeof MarketingIndexRoute
+  '/_marketing/legal/$': typeof MarketingLegalSplatRoute
+}
+export interface FileRouteTypes {
+  fileRoutesByFullPath: FileRoutesByFullPath
+  fullPaths:
+    | ''
+    | '/dashboard'
+    | '/keys'
+    | '/playground'
+    | '/screenshots'
+    | '/forgot-password'
+    | '/login'
+    | '/register'
+    | '/reset-password'
+    | '/confirmation'
+    | '/'
+    | '/legal/$'
+  fileRoutesByTo: FileRoutesByTo
+  to:
+    | ''
+    | '/dashboard'
+    | '/keys'
+    | '/playground'
+    | '/screenshots'
+    | '/forgot-password'
+    | '/login'
+    | '/register'
+    | '/reset-password'
+    | '/confirmation'
+    | '/'
+    | '/legal/$'
+  id:
+    | '__root__'
+    | '/_app'
+    | '/_auth'
+    | '/_marketing'
+    | '/_app/dashboard'
+    | '/_app/keys'
+    | '/_app/playground'
+    | '/_app/screenshots'
+    | '/_auth/forgot-password'
+    | '/_auth/login'
+    | '/_auth/register'
+    | '/_auth/reset-password'
+    | '/_marketing/confirmation'
+    | '/_marketing/'
+    | '/_marketing/legal/$'
+  fileRoutesById: FileRoutesById
+}
+export interface RootRouteChildren {
+  AppRoute: typeof AppRouteWithChildren
+  AuthRoute: typeof AuthRouteWithChildren
+  MarketingRoute: typeof MarketingRouteWithChildren
+}
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
@@ -120,103 +203,101 @@ declare module '@tanstack/react-router' {
       path: ''
       fullPath: ''
       preLoaderRoute: typeof AppRouteImport
-      parentRoute: typeof rootRoute
+      parentRoute: typeof rootRouteImport
     }
     '/_auth': {
       id: '/_auth'
       path: ''
       fullPath: ''
       preLoaderRoute: typeof AuthRouteImport
-      parentRoute: typeof rootRoute
+      parentRoute: typeof rootRouteImport
     }
     '/_marketing': {
       id: '/_marketing'
       path: ''
       fullPath: ''
       preLoaderRoute: typeof MarketingRouteImport
-      parentRoute: typeof rootRoute
+      parentRoute: typeof rootRouteImport
     }
     '/_app/dashboard': {
       id: '/_app/dashboard'
       path: '/dashboard'
       fullPath: '/dashboard'
       preLoaderRoute: typeof AppDashboardRouteImport
-      parentRoute: typeof AppRouteImport
+      parentRoute: typeof AppRoute
     }
     '/_app/keys': {
       id: '/_app/keys'
       path: '/keys'
       fullPath: '/keys'
       preLoaderRoute: typeof AppKeysRouteImport
-      parentRoute: typeof AppRouteImport
+      parentRoute: typeof AppRoute
     }
     '/_app/playground': {
       id: '/_app/playground'
       path: '/playground'
       fullPath: '/playground'
       preLoaderRoute: typeof AppPlaygroundRouteImport
-      parentRoute: typeof AppRouteImport
+      parentRoute: typeof AppRoute
     }
     '/_app/screenshots': {
       id: '/_app/screenshots'
       path: '/screenshots'
       fullPath: '/screenshots'
       preLoaderRoute: typeof AppScreenshotsRouteImport
-      parentRoute: typeof AppRouteImport
+      parentRoute: typeof AppRoute
     }
     '/_auth/forgot-password': {
       id: '/_auth/forgot-password'
       path: '/forgot-password'
       fullPath: '/forgot-password'
       preLoaderRoute: typeof AuthForgotPasswordRouteImport
-      parentRoute: typeof AuthRouteImport
+      parentRoute: typeof AuthRoute
     }
     '/_auth/login': {
       id: '/_auth/login'
       path: '/login'
       fullPath: '/login'
       preLoaderRoute: typeof AuthLoginRouteImport
-      parentRoute: typeof AuthRouteImport
+      parentRoute: typeof AuthRoute
     }
     '/_auth/register': {
       id: '/_auth/register'
       path: '/register'
       fullPath: '/register'
       preLoaderRoute: typeof AuthRegisterRouteImport
-      parentRoute: typeof AuthRouteImport
+      parentRoute: typeof AuthRoute
     }
     '/_auth/reset-password': {
       id: '/_auth/reset-password'
       path: '/reset-password'
       fullPath: '/reset-password'
       preLoaderRoute: typeof AuthResetPasswordRouteImport
-      parentRoute: typeof AuthRouteImport
+      parentRoute: typeof AuthRoute
     }
     '/_marketing/confirmation': {
       id: '/_marketing/confirmation'
       path: '/confirmation'
       fullPath: '/confirmation'
       preLoaderRoute: typeof MarketingConfirmationRouteImport
-      parentRoute: typeof MarketingRouteImport
+      parentRoute: typeof MarketingRoute
     }
     '/_marketing/': {
       id: '/_marketing/'
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof MarketingIndexRouteImport
-      parentRoute: typeof MarketingRouteImport
+      parentRoute: typeof MarketingRoute
     }
     '/_marketing/legal/$': {
       id: '/_marketing/legal/$'
       path: '/legal/$'
       fullPath: '/legal/$'
       preLoaderRoute: typeof MarketingLegalSplatRouteImport
-      parentRoute: typeof MarketingRouteImport
+      parentRoute: typeof MarketingRoute
     }
   }
 }
-
-// Add type-safety to the createFileRoute function across the route tree
 
 declare module './routes/_app' {
   const createFileRoute: CreateFileRoute<
@@ -225,6 +306,14 @@ declare module './routes/_app' {
     FileRoutesByPath['/_app']['id'],
     FileRoutesByPath['/_app']['path'],
     FileRoutesByPath['/_app']['fullPath']
+  >
+
+  const createServerFileRoute: CreateServerFileRoute<
+    ServerFileRoutesByPath['/_app']['parentRoute'],
+    ServerFileRoutesByPath['/_app']['id'],
+    ServerFileRoutesByPath['/_app']['path'],
+    ServerFileRoutesByPath['/_app']['fullPath'],
+    unknown
   >
 }
 declare module './routes/_auth' {
@@ -235,6 +324,14 @@ declare module './routes/_auth' {
     FileRoutesByPath['/_auth']['path'],
     FileRoutesByPath['/_auth']['fullPath']
   >
+
+  const createServerFileRoute: CreateServerFileRoute<
+    ServerFileRoutesByPath['/_auth']['parentRoute'],
+    ServerFileRoutesByPath['/_auth']['id'],
+    ServerFileRoutesByPath['/_auth']['path'],
+    ServerFileRoutesByPath['/_auth']['fullPath'],
+    unknown
+  >
 }
 declare module './routes/_marketing' {
   const createFileRoute: CreateFileRoute<
@@ -243,6 +340,14 @@ declare module './routes/_marketing' {
     FileRoutesByPath['/_marketing']['id'],
     FileRoutesByPath['/_marketing']['path'],
     FileRoutesByPath['/_marketing']['fullPath']
+  >
+
+  const createServerFileRoute: CreateServerFileRoute<
+    ServerFileRoutesByPath['/_marketing']['parentRoute'],
+    ServerFileRoutesByPath['/_marketing']['id'],
+    ServerFileRoutesByPath['/_marketing']['path'],
+    ServerFileRoutesByPath['/_marketing']['fullPath'],
+    unknown
   >
 }
 declare module './routes/_app/dashboard' {
@@ -253,6 +358,14 @@ declare module './routes/_app/dashboard' {
     FileRoutesByPath['/_app/dashboard']['path'],
     FileRoutesByPath['/_app/dashboard']['fullPath']
   >
+
+  const createServerFileRoute: CreateServerFileRoute<
+    ServerFileRoutesByPath['/_app/dashboard']['parentRoute'],
+    ServerFileRoutesByPath['/_app/dashboard']['id'],
+    ServerFileRoutesByPath['/_app/dashboard']['path'],
+    ServerFileRoutesByPath['/_app/dashboard']['fullPath'],
+    unknown
+  >
 }
 declare module './routes/_app/keys' {
   const createFileRoute: CreateFileRoute<
@@ -261,6 +374,14 @@ declare module './routes/_app/keys' {
     FileRoutesByPath['/_app/keys']['id'],
     FileRoutesByPath['/_app/keys']['path'],
     FileRoutesByPath['/_app/keys']['fullPath']
+  >
+
+  const createServerFileRoute: CreateServerFileRoute<
+    ServerFileRoutesByPath['/_app/keys']['parentRoute'],
+    ServerFileRoutesByPath['/_app/keys']['id'],
+    ServerFileRoutesByPath['/_app/keys']['path'],
+    ServerFileRoutesByPath['/_app/keys']['fullPath'],
+    unknown
   >
 }
 declare module './routes/_app/playground' {
@@ -271,6 +392,14 @@ declare module './routes/_app/playground' {
     FileRoutesByPath['/_app/playground']['path'],
     FileRoutesByPath['/_app/playground']['fullPath']
   >
+
+  const createServerFileRoute: CreateServerFileRoute<
+    ServerFileRoutesByPath['/_app/playground']['parentRoute'],
+    ServerFileRoutesByPath['/_app/playground']['id'],
+    ServerFileRoutesByPath['/_app/playground']['path'],
+    ServerFileRoutesByPath['/_app/playground']['fullPath'],
+    unknown
+  >
 }
 declare module './routes/_app/screenshots' {
   const createFileRoute: CreateFileRoute<
@@ -279,6 +408,14 @@ declare module './routes/_app/screenshots' {
     FileRoutesByPath['/_app/screenshots']['id'],
     FileRoutesByPath['/_app/screenshots']['path'],
     FileRoutesByPath['/_app/screenshots']['fullPath']
+  >
+
+  const createServerFileRoute: CreateServerFileRoute<
+    ServerFileRoutesByPath['/_app/screenshots']['parentRoute'],
+    ServerFileRoutesByPath['/_app/screenshots']['id'],
+    ServerFileRoutesByPath['/_app/screenshots']['path'],
+    ServerFileRoutesByPath['/_app/screenshots']['fullPath'],
+    unknown
   >
 }
 declare module './routes/_auth/forgot-password' {
@@ -289,6 +426,14 @@ declare module './routes/_auth/forgot-password' {
     FileRoutesByPath['/_auth/forgot-password']['path'],
     FileRoutesByPath['/_auth/forgot-password']['fullPath']
   >
+
+  const createServerFileRoute: CreateServerFileRoute<
+    ServerFileRoutesByPath['/_auth/forgot-password']['parentRoute'],
+    ServerFileRoutesByPath['/_auth/forgot-password']['id'],
+    ServerFileRoutesByPath['/_auth/forgot-password']['path'],
+    ServerFileRoutesByPath['/_auth/forgot-password']['fullPath'],
+    unknown
+  >
 }
 declare module './routes/_auth/login' {
   const createFileRoute: CreateFileRoute<
@@ -297,6 +442,14 @@ declare module './routes/_auth/login' {
     FileRoutesByPath['/_auth/login']['id'],
     FileRoutesByPath['/_auth/login']['path'],
     FileRoutesByPath['/_auth/login']['fullPath']
+  >
+
+  const createServerFileRoute: CreateServerFileRoute<
+    ServerFileRoutesByPath['/_auth/login']['parentRoute'],
+    ServerFileRoutesByPath['/_auth/login']['id'],
+    ServerFileRoutesByPath['/_auth/login']['path'],
+    ServerFileRoutesByPath['/_auth/login']['fullPath'],
+    unknown
   >
 }
 declare module './routes/_auth/register' {
@@ -307,6 +460,14 @@ declare module './routes/_auth/register' {
     FileRoutesByPath['/_auth/register']['path'],
     FileRoutesByPath['/_auth/register']['fullPath']
   >
+
+  const createServerFileRoute: CreateServerFileRoute<
+    ServerFileRoutesByPath['/_auth/register']['parentRoute'],
+    ServerFileRoutesByPath['/_auth/register']['id'],
+    ServerFileRoutesByPath['/_auth/register']['path'],
+    ServerFileRoutesByPath['/_auth/register']['fullPath'],
+    unknown
+  >
 }
 declare module './routes/_auth/reset-password' {
   const createFileRoute: CreateFileRoute<
@@ -315,6 +476,14 @@ declare module './routes/_auth/reset-password' {
     FileRoutesByPath['/_auth/reset-password']['id'],
     FileRoutesByPath['/_auth/reset-password']['path'],
     FileRoutesByPath['/_auth/reset-password']['fullPath']
+  >
+
+  const createServerFileRoute: CreateServerFileRoute<
+    ServerFileRoutesByPath['/_auth/reset-password']['parentRoute'],
+    ServerFileRoutesByPath['/_auth/reset-password']['id'],
+    ServerFileRoutesByPath['/_auth/reset-password']['path'],
+    ServerFileRoutesByPath['/_auth/reset-password']['fullPath'],
+    unknown
   >
 }
 declare module './routes/_marketing/confirmation' {
@@ -325,6 +494,14 @@ declare module './routes/_marketing/confirmation' {
     FileRoutesByPath['/_marketing/confirmation']['path'],
     FileRoutesByPath['/_marketing/confirmation']['fullPath']
   >
+
+  const createServerFileRoute: CreateServerFileRoute<
+    ServerFileRoutesByPath['/_marketing/confirmation']['parentRoute'],
+    ServerFileRoutesByPath['/_marketing/confirmation']['id'],
+    ServerFileRoutesByPath['/_marketing/confirmation']['path'],
+    ServerFileRoutesByPath['/_marketing/confirmation']['fullPath'],
+    unknown
+  >
 }
 declare module './routes/_marketing/index' {
   const createFileRoute: CreateFileRoute<
@@ -333,6 +510,14 @@ declare module './routes/_marketing/index' {
     FileRoutesByPath['/_marketing/']['id'],
     FileRoutesByPath['/_marketing/']['path'],
     FileRoutesByPath['/_marketing/']['fullPath']
+  >
+
+  const createServerFileRoute: CreateServerFileRoute<
+    ServerFileRoutesByPath['/_marketing/']['parentRoute'],
+    ServerFileRoutesByPath['/_marketing/']['id'],
+    ServerFileRoutesByPath['/_marketing/']['path'],
+    ServerFileRoutesByPath['/_marketing/']['fullPath'],
+    unknown
   >
 }
 declare module './routes/_marketing/legal.$' {
@@ -343,9 +528,15 @@ declare module './routes/_marketing/legal.$' {
     FileRoutesByPath['/_marketing/legal/$']['path'],
     FileRoutesByPath['/_marketing/legal/$']['fullPath']
   >
-}
 
-// Create and export the route tree
+  const createServerFileRoute: CreateServerFileRoute<
+    ServerFileRoutesByPath['/_marketing/legal/$']['parentRoute'],
+    ServerFileRoutesByPath['/_marketing/legal/$']['id'],
+    ServerFileRoutesByPath['/_marketing/legal/$']['path'],
+    ServerFileRoutesByPath['/_marketing/legal/$']['fullPath'],
+    unknown
+  >
+}
 
 interface AppRouteChildren {
   AppDashboardRoute: typeof AppDashboardRoute
@@ -395,199 +586,11 @@ const MarketingRouteWithChildren = MarketingRoute._addFileChildren(
   MarketingRouteChildren,
 )
 
-export interface FileRoutesByFullPath {
-  '': typeof MarketingRouteWithChildren
-  '/dashboard': typeof AppDashboardRoute
-  '/keys': typeof AppKeysRoute
-  '/playground': typeof AppPlaygroundRoute
-  '/screenshots': typeof AppScreenshotsRoute
-  '/forgot-password': typeof AuthForgotPasswordRoute
-  '/login': typeof AuthLoginRoute
-  '/register': typeof AuthRegisterRoute
-  '/reset-password': typeof AuthResetPasswordRoute
-  '/confirmation': typeof MarketingConfirmationRoute
-  '/': typeof MarketingIndexRoute
-  '/legal/$': typeof MarketingLegalSplatRoute
-}
-
-export interface FileRoutesByTo {
-  '': typeof AuthRouteWithChildren
-  '/dashboard': typeof AppDashboardRoute
-  '/keys': typeof AppKeysRoute
-  '/playground': typeof AppPlaygroundRoute
-  '/screenshots': typeof AppScreenshotsRoute
-  '/forgot-password': typeof AuthForgotPasswordRoute
-  '/login': typeof AuthLoginRoute
-  '/register': typeof AuthRegisterRoute
-  '/reset-password': typeof AuthResetPasswordRoute
-  '/confirmation': typeof MarketingConfirmationRoute
-  '/': typeof MarketingIndexRoute
-  '/legal/$': typeof MarketingLegalSplatRoute
-}
-
-export interface FileRoutesById {
-  __root__: typeof rootRoute
-  '/_app': typeof AppRouteWithChildren
-  '/_auth': typeof AuthRouteWithChildren
-  '/_marketing': typeof MarketingRouteWithChildren
-  '/_app/dashboard': typeof AppDashboardRoute
-  '/_app/keys': typeof AppKeysRoute
-  '/_app/playground': typeof AppPlaygroundRoute
-  '/_app/screenshots': typeof AppScreenshotsRoute
-  '/_auth/forgot-password': typeof AuthForgotPasswordRoute
-  '/_auth/login': typeof AuthLoginRoute
-  '/_auth/register': typeof AuthRegisterRoute
-  '/_auth/reset-password': typeof AuthResetPasswordRoute
-  '/_marketing/confirmation': typeof MarketingConfirmationRoute
-  '/_marketing/': typeof MarketingIndexRoute
-  '/_marketing/legal/$': typeof MarketingLegalSplatRoute
-}
-
-export interface FileRouteTypes {
-  fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths:
-    | ''
-    | '/dashboard'
-    | '/keys'
-    | '/playground'
-    | '/screenshots'
-    | '/forgot-password'
-    | '/login'
-    | '/register'
-    | '/reset-password'
-    | '/confirmation'
-    | '/'
-    | '/legal/$'
-  fileRoutesByTo: FileRoutesByTo
-  to:
-    | ''
-    | '/dashboard'
-    | '/keys'
-    | '/playground'
-    | '/screenshots'
-    | '/forgot-password'
-    | '/login'
-    | '/register'
-    | '/reset-password'
-    | '/confirmation'
-    | '/'
-    | '/legal/$'
-  id:
-    | '__root__'
-    | '/_app'
-    | '/_auth'
-    | '/_marketing'
-    | '/_app/dashboard'
-    | '/_app/keys'
-    | '/_app/playground'
-    | '/_app/screenshots'
-    | '/_auth/forgot-password'
-    | '/_auth/login'
-    | '/_auth/register'
-    | '/_auth/reset-password'
-    | '/_marketing/confirmation'
-    | '/_marketing/'
-    | '/_marketing/legal/$'
-  fileRoutesById: FileRoutesById
-}
-
-export interface RootRouteChildren {
-  AppRoute: typeof AppRouteWithChildren
-  AuthRoute: typeof AuthRouteWithChildren
-  MarketingRoute: typeof MarketingRouteWithChildren
-}
-
 const rootRouteChildren: RootRouteChildren = {
   AppRoute: AppRouteWithChildren,
   AuthRoute: AuthRouteWithChildren,
   MarketingRoute: MarketingRouteWithChildren,
 }
-
-export const routeTree = rootRoute
+export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-/* ROUTE_MANIFEST_START
-{
-  "routes": {
-    "__root__": {
-      "filePath": "__root.tsx",
-      "children": [
-        "/_app",
-        "/_auth",
-        "/_marketing"
-      ]
-    },
-    "/_app": {
-      "filePath": "_app.tsx",
-      "children": [
-        "/_app/dashboard",
-        "/_app/keys",
-        "/_app/playground",
-        "/_app/screenshots"
-      ]
-    },
-    "/_auth": {
-      "filePath": "_auth.tsx",
-      "children": [
-        "/_auth/forgot-password",
-        "/_auth/login",
-        "/_auth/register",
-        "/_auth/reset-password"
-      ]
-    },
-    "/_marketing": {
-      "filePath": "_marketing.tsx",
-      "children": [
-        "/_marketing/confirmation",
-        "/_marketing/",
-        "/_marketing/legal/$"
-      ]
-    },
-    "/_app/dashboard": {
-      "filePath": "_app/dashboard.tsx",
-      "parent": "/_app"
-    },
-    "/_app/keys": {
-      "filePath": "_app/keys.tsx",
-      "parent": "/_app"
-    },
-    "/_app/playground": {
-      "filePath": "_app/playground.tsx",
-      "parent": "/_app"
-    },
-    "/_app/screenshots": {
-      "filePath": "_app/screenshots.tsx",
-      "parent": "/_app"
-    },
-    "/_auth/forgot-password": {
-      "filePath": "_auth/forgot-password.tsx",
-      "parent": "/_auth"
-    },
-    "/_auth/login": {
-      "filePath": "_auth/login.tsx",
-      "parent": "/_auth"
-    },
-    "/_auth/register": {
-      "filePath": "_auth/register.tsx",
-      "parent": "/_auth"
-    },
-    "/_auth/reset-password": {
-      "filePath": "_auth/reset-password.tsx",
-      "parent": "/_auth"
-    },
-    "/_marketing/confirmation": {
-      "filePath": "_marketing/confirmation.tsx",
-      "parent": "/_marketing"
-    },
-    "/_marketing/": {
-      "filePath": "_marketing/index.tsx",
-      "parent": "/_marketing"
-    },
-    "/_marketing/legal/$": {
-      "filePath": "_marketing/legal.$.tsx",
-      "parent": "/_marketing"
-    }
-  }
-}
-ROUTE_MANIFEST_END */
