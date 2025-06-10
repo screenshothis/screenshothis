@@ -14,6 +14,7 @@ import {
 } from "@aws-sdk/client-s3";
 import { Upload } from "@aws-sdk/lib-storage";
 import { NodeHttpHandler } from "@smithy/node-http-handler";
+import { ConfiguredRetryStrategy } from "@smithy/util-retry";
 
 import { env } from "../utils/env";
 import { logger } from "./logger";
@@ -28,6 +29,7 @@ interface StorageConfig {
 	maxSockets?: number;
 	requestTimeout?: number;
 	cacheMiddleware?: boolean;
+	maxRetries?: number;
 }
 
 interface FileOptions {
@@ -237,6 +239,9 @@ class Storage extends EventEmitter {
 	private client: S3Client;
 	private bucket: string;
 
+	// S3 batch delete limit
+	private static readonly S3_BATCH_DELETE_LIMIT = 1000;
+
 	constructor(config?: StorageConfig) {
 		super();
 
@@ -251,6 +256,7 @@ class Storage extends EventEmitter {
 			maxSockets: config?.maxSockets || 50,
 			requestTimeout: config?.requestTimeout || 30000,
 			cacheMiddleware: config?.cacheMiddleware ?? true,
+			maxRetries: config?.maxRetries || 3,
 		};
 
 		this.bucket = resolvedConfig.bucket;
@@ -264,6 +270,13 @@ class Storage extends EventEmitter {
 			}),
 		});
 
+		// Configure retry strategy with exponential backoff for transient failures
+		const retryStrategy = new ConfiguredRetryStrategy(
+			resolvedConfig.maxRetries,
+			// Exponential backoff: 100ms, 200ms, 400ms, 800ms, etc.
+			(attempt: number) => 100 * 2 ** attempt,
+		);
+
 		this.client = new S3Client({
 			credentials: {
 				accessKeyId: resolvedConfig.accessKeyId,
@@ -273,6 +286,7 @@ class Storage extends EventEmitter {
 			region: resolvedConfig.region,
 			forcePathStyle: resolvedConfig.forcePathStyle,
 			requestHandler,
+			retryStrategy,
 		});
 
 		logger.info(
@@ -280,8 +294,9 @@ class Storage extends EventEmitter {
 				region: resolvedConfig.region,
 				bucket: this.bucket,
 				endpoint: resolvedConfig.endpoint,
+				maxRetries: resolvedConfig.maxRetries,
 			},
-			"Storage client initialized",
+			"Storage client initialized with retry strategy",
 		);
 	}
 
@@ -415,7 +430,10 @@ class Storage extends EventEmitter {
 	}
 
 	/**
-	 * Delete multiple files efficiently
+	 * Delete multiple files efficiently with S3 batch limit handling
+	 *
+	 * S3 has a limit of 1000 objects per batch delete operation.
+	 * This method automatically splits larger arrays into batches.
 	 */
 	async deleteMany(keys: string[]): Promise<{
 		deleted: string[];
@@ -425,6 +443,72 @@ class Storage extends EventEmitter {
 			return { deleted: [], errors: [] };
 		}
 
+		// Check if we exceed the S3 batch limit
+		if (keys.length > Storage.S3_BATCH_DELETE_LIMIT) {
+			logger.info(
+				{ keyCount: keys.length, limit: Storage.S3_BATCH_DELETE_LIMIT },
+				"Splitting delete operation into batches due to S3 limit",
+			);
+
+			// Split into batches and process sequentially
+			const allDeleted: string[] = [];
+			const allErrors: Array<{ key: string; error: string }> = [];
+
+			for (let i = 0; i < keys.length; i += Storage.S3_BATCH_DELETE_LIMIT) {
+				const batchKeys = keys.slice(i, i + Storage.S3_BATCH_DELETE_LIMIT);
+				const batchNumber = Math.floor(i / Storage.S3_BATCH_DELETE_LIMIT) + 1;
+				const totalBatches = Math.ceil(
+					keys.length / Storage.S3_BATCH_DELETE_LIMIT,
+				);
+
+				logger.info(
+					{ batchNumber, totalBatches, batchSize: batchKeys.length },
+					"Processing delete batch",
+				);
+
+				try {
+					const batchResult = await this.deleteBatch(batchKeys);
+					allDeleted.push(...batchResult.deleted);
+					allErrors.push(...batchResult.errors);
+				} catch (error) {
+					// If entire batch fails, add all keys as errors
+					const batchErrors = batchKeys.map((key) => ({
+						key,
+						error:
+							error instanceof Error ? error.message : "Batch operation failed",
+					}));
+					allErrors.push(...batchErrors);
+
+					logger.error(
+						{ error, batchNumber, batchSize: batchKeys.length },
+						"Batch delete operation failed",
+					);
+				}
+			}
+
+			logger.info(
+				{
+					totalKeys: keys.length,
+					deletedCount: allDeleted.length,
+					errorCount: allErrors.length,
+				},
+				"Batched delete operation completed",
+			);
+
+			return { deleted: allDeleted, errors: allErrors };
+		}
+
+		// Single batch operation for arrays under the limit
+		return this.deleteBatch(keys);
+	}
+
+	/**
+	 * Internal method to delete a single batch of objects (max 1000)
+	 */
+	private async deleteBatch(keys: string[]): Promise<{
+		deleted: string[];
+		errors: Array<{ key: string; error: string }>;
+	}> {
 		try {
 			const command = new DeleteObjectsCommand({
 				Bucket: this.bucket,
@@ -451,10 +535,7 @@ class Storage extends EventEmitter {
 
 			return { deleted, errors };
 		} catch (error) {
-			logger.error(
-				{ error, keyCount: keys.length },
-				"Failed to delete multiple files",
-			);
+			logger.error({ error, keyCount: keys.length }, "Failed to delete batch");
 			throw error;
 		}
 	}
