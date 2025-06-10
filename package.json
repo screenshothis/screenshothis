@@ -6,7 +6,7 @@
 		"build": "turbo build",
 		"db:push": "turbo -F @screenshothis/server db:push",
 		"db:studio": "turbo -F @screenshothis/server db:studio",
-		"dev": "turbo build --filter=./packages/* && turbo dev",
+		"dev": "turbo dev --filter=./apps/*",
 		"dev:server": "turbo -F @screenshothis/server dev",
 		"dev:web": "turbo -F @screenshothis/web dev",
 		"prepare": "husky || true && vibe-rules install cursor",
