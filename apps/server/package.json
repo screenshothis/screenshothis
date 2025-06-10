@@ -2,7 +2,9 @@
 	"name": "@screenshothis/server",
 	"type": "module",
 	"imports": {
-		"#/*": ["./src/*"]
+		"#/*": [
+			"./src/*"
+		]
 	},
 	"exports": {
 		"./routers": "./src/routers/index.ts"
@@ -10,12 +12,14 @@
 	"main": "src/index.ts",
 	"scripts": {
 		"build": "tsc && tsc-alias",
-		"compile": "bun build --compile --minify --sourcemap --bytecode ./src/index.ts --outfile server",
+		"compile": "tsdown",
+		"db:generate": "drizzle-kit generate",
+		"db:migrate": "drizzle-kit migrate",
 		"db:push": "drizzle-kit push",
-		"db:reset": "bun run scripts/reset-db.ts",
+		"db:reset": "pnpm run scripts/reset-db.ts",
 		"db:studio": "drizzle-kit studio",
-		"dev": "bun run --hot src/index.ts",
-		"start": "bun run dist/src/index.js",
+		"dev": "tsx watch src/index.ts",
+		"start": "pnpm run dist/src/index.js",
 		"typecheck": "tsc --noEmit"
 	},
 	"dependencies": {
@@ -32,9 +36,11 @@
 		"@orpc/server": "1.4.5",
 		"@polar-sh/better-auth": "1.0.1",
 		"@polar-sh/sdk": "0.33.0",
+		"@screenshothis/common": "workspace:*",
 		"@screenshothis/id": "workspace:*",
 		"@screenshothis/schemas": "workspace:*",
 		"@smithy/node-http-handler": "4.0.6",
+		"@smithy/util-retry": "4.0.5",
 		"@t3-oss/env-core": "0.13.8",
 		"ai": "4.3.16",
 		"better-auth": "1.2.8",
@@ -60,12 +66,13 @@
 	},
 	"devDependencies": {
 		"@epic-web/config": "1.21.0",
-		"@types/bun": "1.2.15",
-		"@types/ioredis": "5.0.0",
+		"@types/node": "24.0.0",
 		"@types/pg": "8.15.4",
 		"drizzle-kit": "0.31.1",
 		"tsc-alias": "1.8.16",
+		"tsdown": "0.12.7",
+		"tsx": "4.19.4",
 		"typescript": "5.8.3"
 	},
-	"packageManager": "bun@1.2.15"
+	"packageManager": "pnpm@10.12.1"
 }

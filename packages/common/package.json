@@ -3,18 +3,25 @@
 	"private": true,
 	"type": "module",
 	"exports": {
-		".": "./src/index.ts",
-		"./keys": "./src/keys.ts"
+		".": {
+			"import": "./src/index.ts",
+			"require": "./src/index.ts"
+		},
+		"./keys": {
+			"import": "./src/keys.ts",
+			"require": "./src/keys.ts"
+		}
 	},
+	"main": "src/index.ts",
 	"module": "src/index.ts",
 	"dependencies": {
 		"zod": "3.25.56"
 	},
 	"devDependencies": {
-		"@types/bun": "1.2.15"
+		"@types/node": "24.0.0"
 	},
 	"peerDependencies": {
 		"typescript": "5.8.3"
 	},
-	"packageManager": "bun@1.2.15"
+	"packageManager": "pnpm@10.12.1"
 }

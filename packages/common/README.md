@@ -24,13 +24,13 @@ const customLimit: Limit = {
 To install dependencies:
 
 ```bash
-bun install
+pnpm install
 ```
 
 To run:
 
 ```bash
-bun run index.ts
+pnpm run index.ts
 ```
 
-This project was created using `bun init` in bun v1.2.12. [Bun](https://bun.sh) is a fast all-in-one JavaScript runtime.
+This project was created using `pnpm init`. [pnpm](https://pnpm.io) is a fast, disk space efficient package manager.

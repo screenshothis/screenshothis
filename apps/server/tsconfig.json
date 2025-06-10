@@ -12,7 +12,7 @@
 			"#/*": ["./src/*"]
 		},
 		"outDir": "./dist",
-		"types": ["bun"],
+		"types": ["node"],
 		"jsx": "react-jsx",
 		"jsxImportSource": "hono/jsx"
 	},
