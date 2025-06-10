@@ -41,6 +41,9 @@ importers:
       '@hono-storage/s3':
         specifier: 0.0.13
         version: 0.0.13(hono@4.7.11)
+      '@hono/node-server':
+        specifier: 1.14.4
+        version: 1.14.4(hono@4.7.11)
       '@hono/sentry':
         specifier: 1.2.2
         version: 1.2.2(hono@4.7.11)
@@ -1283,6 +1286,12 @@ packages:
     resolution: {integrity: sha512-ua3FSzZo2jT+gJL6VwLxF8KmtPSPzsehQbw1sIzN1PR8AS91Fj8qNn76fX5Qt4bd4+N5xUAtaTLciM/D/cP3+Q==}
     peerDependencies:
       hono: '>=3.8'
+
+  '@hono/node-server@1.14.4':
+    resolution: {integrity: sha512-DnxpshhYewr2q9ZN8ez/M5mmc3sucr8CT1sIgIy1bkeUXut9XWDkqHoFHRhWIQgkYnKpVRxunyhK7WzpJeJ6qQ==}
+    engines: {node: '>=18.14.1'}
+    peerDependencies:
+      hono: ^4
 
   '@hono/sentry@1.2.2':
     resolution: {integrity: sha512-027grZBrRGDPor8mRd+QOBcSpUlF07YrTp/WFDXZhbvWZ+1LrZdERUqcdg1gBGDUTanHhd9ucblpNNN6+V1bxg==}
@@ -9250,6 +9259,10 @@ snapshots:
       hono: 4.7.11
     transitivePeerDependencies:
       - aws-crt
+
+  '@hono/node-server@1.14.4(hono@4.7.11)':
+    dependencies:
+      hono: 4.7.11
 
   '@hono/sentry@1.2.2(hono@4.7.11)':
     dependencies:

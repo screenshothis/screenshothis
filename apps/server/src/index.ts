@@ -1,5 +1,6 @@
 import "dotenv/config";
 
+import { serve } from "@hono/node-server";
 import { sentry } from "@hono/sentry";
 import { swaggerUI } from "@hono/swagger-ui";
 import { OpenAPIHono } from "@hono/zod-openapi";
@@ -149,4 +150,4 @@ const appRoutes = app
 
 export type AppType = typeof appRoutes;
 
-export default app;
+serve(app);

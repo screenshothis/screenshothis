@@ -2,7 +2,9 @@
 	"name": "@screenshothis/server",
 	"type": "module",
 	"imports": {
-		"#/*": ["./src/*"]
+		"#/*": [
+			"./src/*"
+		]
 	},
 	"exports": {
 		"./routers": "./src/routers/index.ts"
@@ -26,6 +28,7 @@
 		"@ghostery/adblocker-puppeteer": "2.7.0",
 		"@hono-storage/core": "0.0.14",
 		"@hono-storage/s3": "0.0.13",
+		"@hono/node-server": "1.14.4",
 		"@hono/sentry": "1.2.2",
 		"@hono/swagger-ui": "0.5.2",
 		"@hono/zod-openapi": "0.19.8",
