@@ -3,8 +3,8 @@ import { endTime, setMetric, startTime } from "hono/timing";
 
 import type { Variables } from "#/common/environment";
 import { db } from "#/db";
-import { s3 } from "#/lib/s3";
 import { getQueueHealth } from "#/lib/screenshot-queue";
+import { storage } from "#/lib/storage";
 import { env } from "#/utils/env";
 
 const health = new OpenAPIHono<{ Variables: Variables }>();
@@ -76,7 +76,7 @@ health.openapi(
 			(async () => {
 				const storageStart = Date.now();
 				try {
-					await s3.list({ maxKeys: 1 });
+					await storage.list({ maxKeys: 1 });
 
 					return {
 						name: "storage",

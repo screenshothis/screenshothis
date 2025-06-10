@@ -2,12 +2,12 @@ import type { Context } from "hono";
 import { endTime, setMetric, startTime } from "hono/timing";
 
 import { logger } from "../lib/logger";
-import { s3 } from "../lib/s3";
 import type { ScreenshotJobParams } from "../lib/screenshot-queue";
 import {
 	enqueueScreenshotJob,
 	getExistingScreenshotKey,
 } from "../lib/screenshot-queue";
+import { storage } from "../lib/storage";
 import { deduplicateRequest } from "../utils/deduplication";
 import { generateETag } from "../utils/etag";
 
@@ -73,7 +73,7 @@ export async function retrieveScreenshot(
 		// Fetch from S3
 		startTime(c, "s3-fetch");
 		try {
-			const s3File = s3.file(result.data.key);
+			const s3File = storage.file(result.data.key);
 
 			if (result.data.created) {
 				screenshotTimestamp = Date.now();

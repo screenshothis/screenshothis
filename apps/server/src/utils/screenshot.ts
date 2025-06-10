@@ -21,7 +21,7 @@ import { isScreenshotOriginAllowed } from "../actions/validate-screenshot-origin
 import { db } from "../db";
 import { screenshots } from "../db/schema/screenshots";
 import { logger } from "../lib/logger";
-import { s3 } from "../lib/s3";
+import { storage } from "../lib/storage";
 
 puppeteer.use(StealthPlugin());
 
@@ -99,7 +99,7 @@ export async function getOrCreateScreenshot(
 
 		if (existing) {
 			const key = `screenshots/${workspaceId}/${existing.id}.${format}`;
-			const object = await s3.file(key).arrayBuffer();
+			const object = await storage.file(key).arrayBuffer();
 
 			return { object, key, created: false };
 		}
@@ -272,10 +272,10 @@ export async function getOrCreateScreenshot(
 				.returning();
 
 			const key = `screenshots/${workspaceId}/${inserted.id}.${format}`;
-			await s3.write(key, buffer);
+			await storage.write(key, buffer);
 			await page.close();
 
-			const object = await s3.file(key).arrayBuffer();
+			const object = await storage.file(key).arrayBuffer();
 
 			return { object, key, created: true };
 		} finally {

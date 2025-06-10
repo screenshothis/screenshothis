@@ -1,3 +1,5 @@
+import crypto from "node:crypto";
+
 export function generateETag(
 	cacheKey: string,
 	format: string,
@@ -27,7 +29,7 @@ export function generateETag(
 	}
 
 	const content = entropyParts.join("|");
-	const hasher = new Bun.CryptoHasher("sha256");
-	hasher.update(content);
-	return `"${hasher.digest("hex").slice(0, 16)}"`;
+	const hash = crypto.createHash("sha256");
+	hash.update(content);
+	return `"${hash.digest("hex").slice(0, 16)}"`;
 }

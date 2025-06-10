@@ -20,6 +20,8 @@
 	},
 	"dependencies": {
 		"@ai-sdk/google": "1.2.19",
+		"@aws-sdk/client-s3": "^3.826.0",
+		"@aws-sdk/lib-storage": "3.540.0",
 		"@ghostery/adblocker-puppeteer": "2.7.0",
 		"@hono-storage/core": "0.0.14",
 		"@hono-storage/s3": "0.0.13",
