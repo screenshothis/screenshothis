@@ -130,6 +130,39 @@ health.openapi(
 					};
 				}
 			})(),
+
+			(async () => {
+				const s3Start = Date.now();
+				try {
+					const testKey = `health-check/test-${Date.now()}.txt`;
+					const testData = "health-check-data";
+
+					await storage.write(testKey, testData);
+
+					const file = storage.file(testKey);
+					const readData = await file.arrayBuffer();
+					const readText = new TextDecoder().decode(readData);
+
+					await file.delete();
+
+					if (readText !== testData) {
+						throw new Error("S3 read/write test failed - data mismatch");
+					}
+
+					return {
+						name: "s3",
+						status: "pass" as const,
+						duration: Date.now() - s3Start,
+					};
+				} catch (error) {
+					return {
+						name: "s3",
+						status: "fail" as const,
+						duration: Date.now() - s3Start,
+						error: error instanceof Error ? error.message : "Unknown error",
+					};
+				}
+			})(),
 		]);
 
 		const healthChecks = checks.map((check) =>
