@@ -1,3 +1,5 @@
+import crypto from "node:crypto";
+
 import { getSessionCookie } from "better-auth/cookies";
 import { createMiddleware } from "hono/factory";
 
@@ -35,7 +37,7 @@ function getClientIdentifier(request: Request): string {
 	const acceptEnc = request.headers.get("accept-encoding") || "";
 
 	const fingerprint = `${userAgent}-${acceptLang}-${acceptEnc}`;
-	return `fallback-${Bun.hash(fingerprint).toString(16)}`;
+	return `fallback-${crypto.createHash("sha256").update(fingerprint).digest("hex")}`;
 }
 
 function isValidIp(ip: string): boolean {
@@ -62,7 +64,12 @@ export const rateLimitMiddleware = (options: RateLimitOptions) => {
 		const expirationSeconds = Math.ceil(window / 1000);
 
 		try {
-			const results = await redis.get(windowKey);
+			const pipeline = redis.pipeline();
+
+			pipeline.get(windowKey);
+
+			const results = await pipeline.exec();
+
 			const currentCount = Number.parseInt(
 				(results?.[0]?.[1] as string) || "0",
 				10,
@@ -83,8 +90,12 @@ export const rateLimitMiddleware = (options: RateLimitOptions) => {
 				);
 			}
 
-			const newCount = (await redis.incr(windowKey)) || 1;
-			await redis.expire(windowKey, expirationSeconds);
+			const incrPipeline = redis.pipeline();
+			incrPipeline.incr(windowKey);
+			incrPipeline.expire(windowKey, expirationSeconds);
+
+			const incrResults = await incrPipeline.exec();
+			const newCount = (incrResults?.[0]?.[1] as number) || 1;
 
 			c.res.headers.set("X-RateLimit-Limit", limit.toString());
 			c.res.headers.set("X-RateLimit-Remaining", (limit - newCount).toString());
