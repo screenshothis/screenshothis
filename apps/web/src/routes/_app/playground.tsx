@@ -87,17 +87,58 @@ function RouteComponent() {
 				}
 			}
 
-			const result = await betterFetch(
-				`${env.VITE_SERVER_URL}/v1/screenshots/take?${params.toString()}`,
-				{
-					output: z.instanceof(Blob),
-					throw: true,
-				},
-			);
+			try {
+				const blob = await betterFetch(
+					`${env.VITE_SERVER_URL}/v1/screenshots/take?${params.toString()}`,
+					{
+						output: z.instanceof(Blob),
+						throw: true,
+					},
+				);
 
-			const url = URL.createObjectURL(result);
+				const url = URL.createObjectURL(blob);
 
-			return { image: url };
+				return { image: url };
+			} catch (err) {
+				let message =
+					err instanceof Error && err.message
+						? err.message
+						: "An unexpected error occurred";
+
+				// Attempt to extract error message from JSON response if available
+				const errWithResponse = err as { response?: unknown };
+				if (
+					errWithResponse &&
+					typeof errWithResponse === "object" &&
+					"response" in errWithResponse &&
+					errWithResponse.response instanceof Response
+				) {
+					try {
+						const jsonBody = await errWithResponse.response.clone().json();
+						if (jsonBody && typeof jsonBody === "object") {
+							message =
+								"message" in jsonBody
+									? String(jsonBody.message)
+									: "error" in jsonBody
+										? String(jsonBody.error)
+										: message;
+						}
+					} catch {
+						// Ignore JSON parse errors
+					}
+				}
+
+				toast.custom((t) => (
+					<AlertToast.Root
+						t={t}
+						$status="error"
+						$variant="lighter"
+						message={message}
+					/>
+				));
+
+				return;
+			}
 		},
 	});
 
