@@ -99,9 +99,37 @@ export async function getOrCreateScreenshot(
 
 		if (existing) {
 			const key = `screenshots/${workspaceId}/${existing.id}.${format}`;
-			const object = await storage.file(key).arrayBuffer();
 
-			return { object, key, created: false };
+			try {
+				const object = await storage.file(key).arrayBuffer();
+				return { object, key, created: false };
+			} catch (error) {
+				logger.warn(
+					{
+						err: error,
+						key,
+						screenshotId: existing.id,
+						workspaceId,
+					},
+					"Existing screenshot file not found in S3, will regenerate",
+				);
+
+				// Delete the orphaned database record so we can regenerate
+				try {
+					await db.delete(screenshots).where(eq(screenshots.id, existing.id));
+					logger.info(
+						{ screenshotId: existing.id, key },
+						"Cleaned up orphaned screenshot record",
+					);
+				} catch (cleanupError) {
+					logger.error(
+						{ err: cleanupError, screenshotId: existing.id },
+						"Failed to cleanup orphaned screenshot record",
+					);
+				}
+
+				// Continue to generate a new screenshot
+			}
 		}
 
 		const allowed = await isScreenshotOriginAllowed(workspaceId, url);

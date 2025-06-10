@@ -78,9 +78,18 @@ export async function retrieveScreenshot(
 			if (result.data.created) {
 				screenshotTimestamp = Date.now();
 			} else {
-				const fileStat = await s3File.stat();
-				screenshotTimestamp = fileStat.lastModified.getTime();
-				s3Metadata = { etag: fileStat.etag, size: fileStat.size };
+				try {
+					const fileStat = await s3File.stat();
+					screenshotTimestamp = fileStat.lastModified.getTime();
+					s3Metadata = { etag: fileStat.etag, size: fileStat.size };
+				} catch (statError) {
+					logger.warn(
+						{ err: statError, key: result.data.key },
+						"Failed to get file stats, will attempt direct stream",
+					);
+					// Use current time as fallback and continue with stream attempt
+					screenshotTimestamp = Date.now();
+				}
 			}
 
 			// 304 handling
