@@ -66,7 +66,7 @@ export const usersRouter = {
 				id: user.session.activeWorkspace?.id,
 				name: user.session.activeWorkspace?.name,
 				metadata: JSON.parse(
-					user.session.activeWorkspace?.metadata ?? "[]",
+					user.session.activeWorkspace?.metadata ?? "{}",
 				) as z.input<typeof WorkspaceMetadataSchema>,
 			},
 			apiKeys: user.apiKeys,
