@@ -19,7 +19,7 @@
     - TypeScript-first ORM (Drizzle) for intuitive and type-safe database interactions.
 - **Authentication**: Secure email & password authentication provided by Better Auth.
 - **Development Tools**:
-    - **Bun**: Fast JavaScript runtime, bundler, and package manager.
+    - **pnpm**: Fast, disk space efficient package manager.
     - **Biome**: Integrated linter and formatter for consistent code quality.
     - **Husky**: Git hooks for automated checks.
 
@@ -29,8 +29,8 @@ Follow these steps to get the project up and running on your local machine.
 
 ### Prerequisites
 
-- [Bun](https://bun.sh/) (v1.0 or higher)
-- [Node.js](https://nodejs.org/) (for some tooling, though Bun is primary)
+- [pnpm](https://pnpm.io/) (v8.0 or higher)
+- [Node.js](https://nodejs.org/) (v18 or higher)
 - [Git](https://git-scm.com/)
 - A running PostgreSQL instance
 
@@ -43,9 +43,9 @@ Follow these steps to get the project up and running on your local machine.
     ```
 
 2.  **Install dependencies:**
-    This project uses Bun for package management.
+    This project uses pnpm for package management.
     ```bash
-    bun install
+    pnpm install
     ```
 
 ## ⚙️ Configuration
@@ -105,12 +105,12 @@ This project uses PostgreSQL with Drizzle ORM.
 3.  **Apply Schema (Push Migrations)**:
     This command introspects your Drizzle schema and applies the necessary changes to your database.
     ```bash
-    bun db:push
+    pnpm run db:push
     ```
 4.  **(Optional) Drizzle Studio**:
     To view and manage your database with a UI, you can use Drizzle Studio:
     ```bash
-    bun db:studio
+    pnpm run db:studio
     ```
 
 ## 🗂️ File Storage Setup (MinIO)
@@ -183,7 +183,7 @@ Follow these steps to spin up the entire stack locally:
    From the repository root, run:
 
    ```bash
-   bun run dev
+   pnpm run dev
    ```
 
    This starts both `apps/server` (Hono API) and `apps/web` (React/TanStack Start) with hot-reloading.
@@ -199,7 +199,7 @@ Once the dependencies are installed and the database is configured:
 1.  **Start the development servers:**
     This command will start both the web frontend and the Hono backend API concurrently.
     ```bash
-    bun dev
+    pnpm run dev
     ```
 
 2.  **Access the applications:**
@@ -260,18 +260,18 @@ screenshothis/
 
 The following scripts can be run from the root of the monorepo:
 
--   `bun install`: Install all dependencies for the monorepo.
--   `bun dev`: Start all applications (web and server) in development mode.
--   `bun build`: Build all applications for production.
--   `bun dev:web`: Start only the web (frontend) application in development mode.
--   `bun dev:server`: Start only the server (backend) application in development mode.
--   `bun check-types`: Run TypeScript type checking across all packages and applications.
--   `bun db:push`: Apply Drizzle schema changes to the configured database.
--   `bun db:studio`: Open Drizzle Studio to view and manage the database.
--   `bun check`: Run Biome linting and formatting checks across the codebase.
--   `bun format`: Apply Biome formatting to the codebase.
--   `bun lint`: Run Biome linting checks.
--   `bun lint:fix`: Run Biome linting and attempt to automatically fix issues.
+-   `pnpm install`: Install all dependencies for the monorepo.
+-   `pnpm run dev`: Start all applications (web and server) in development mode.
+-   `pnpm run build`: Build all applications for production.
+-   `pnpm run dev:web`: Start only the web (frontend) application in development mode.
+-   `pnpm run dev:server`: Start only the server (backend) application in development mode.
+-   `pnpm run check-types`: Run TypeScript type checking across all packages and applications.
+-   `pnpm run db:push`: Apply Drizzle schema changes to the configured database.
+-   `pnpm run db:studio`: Open Drizzle Studio to view and manage the database.
+-   `pnpm run check`: Run Biome linting and formatting checks across the codebase.
+-   `pnpm run format`: Apply Biome formatting to the codebase.
+-   `pnpm run lint`: Run Biome linting checks.
+-   `pnpm run lint:fix`: Run Biome linting and attempt to automatically fix issues.
 
 *(Note: Individual apps within `apps/*` and packages within `packages/*` may have their own specific scripts defined in their respective `package.json` files.)*
 
@@ -279,10 +279,10 @@ The following scripts can be run from the root of the monorepo:
 
 This project uses [Biome](https://biomejs.dev/) for linting and formatting.
 
--   To check for issues: `bun check`
--   To format code: `bun format`
--   To lint code: `bun lint`
--   To lint and attempt to fix issues: `bun lint:fix`
+-   To check for issues: `pnpm run check`
+-   To format code: `pnpm run format`
+-   To lint code: `pnpm run lint`
+-   To lint and attempt to fix issues: `pnpm run lint:fix`
 
 Husky is configured to run checks before commits.
 
@@ -305,7 +305,7 @@ Contributions are welcome! If you'd like to contribute, please follow these step
 4.  Push to the branch (`git push origin feature/your-feature-name`).
 5.  Open a Pull Request.
 
-Please ensure your code adheres to the linting and formatting guidelines (`bun check`).
+Please ensure your code adheres to the linting and formatting guidelines (`pnpm run check`).
 
 ## 📄 License
 

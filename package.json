@@ -26,15 +26,5 @@
     "turbo": "2.5.4",
     "vibe-rules": "0.3.1"
   },
-  "packageManager": "bun@1.2.15",
-  "trustedDependencies": [
-    "@biomejs/biome",
-    "@clerk/shared",
-    "@parcel/watcher",
-    "@tailwindcss/oxide",
-    "esbuild",
-    "msgpackr-extract",
-    "puppeteer",
-    "unrs-resolver"
-  ]
+  "packageManager": "pnpm@10.12.1"
 }

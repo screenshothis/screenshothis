@@ -91,5 +91,5 @@
 		"vite": "6.3.5",
 		"vite-tsconfig-paths": "5.1.4"
 	},
-	"packageManager": "bun@1.2.15"
+	"packageManager": "pnpm@10.12.1"
 }

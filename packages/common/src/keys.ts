@@ -1,4 +1,7 @@
-import type { PlanType } from "@screenshothis/schemas/plan";
+import { z } from "zod";
+
+export const PlanTypeSchema = z.enum(["free", "lite", "pro", "enterprise"]);
+export type PlanType = z.infer<typeof PlanTypeSchema>;
 
 export type LimitMetadata = {
 	totalRequests: number;
