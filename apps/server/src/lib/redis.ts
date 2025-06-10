@@ -22,7 +22,7 @@ redis.on("ready", () => {
 });
 
 redis.on("error", (err) => {
-	logger.error("❌ Redis error:", err);
+	logger.error({ err }, "❌ Redis error");
 });
 
 redis.on("end", () => {
