@@ -137,6 +137,16 @@ app.doc("/openapi", {
 });
 
 app.use(
+	"/v1/*",
+	cors({
+		origin: "*",
+		allowMethods: ["GET"],
+		allowHeaders: ["Content-Type"],
+		credentials: false,
+	}),
+);
+
+app.use(
 	"/v1/screenshots/*",
 	some(
 		every(authMiddleware, rateLimitMiddleware({ limit: 500, window: 60000 })),

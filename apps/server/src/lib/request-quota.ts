@@ -3,8 +3,8 @@ import { EventEmitter } from "node:events";
 import { eq, sql } from "drizzle-orm";
 import { z } from "zod";
 
-import { db } from "#/db";
-import * as schema from "#/db/schema";
+import { db } from "../db";
+import * as schema from "../db/schema";
 import { logger } from "./logger";
 import { polarClient } from "./polar";
 

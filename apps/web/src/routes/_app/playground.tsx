@@ -1,4 +1,3 @@
-
 import AdvertisimentIcon from "virtual:icons/hugeicons/advertisiment";
 import Alert01SolidIcon from "virtual:icons/hugeicons/alert-01-solid";
 import CropIcon from "virtual:icons/hugeicons/crop";
@@ -12,6 +11,7 @@ import SecurityLockIcon from "virtual:icons/hugeicons/security-lock";
 import ToggleOnIcon from "virtual:icons/hugeicons/toggle-on";
 import ZoomOutAreaIcon from "virtual:icons/hugeicons/zoom-out-area";
 
+import { betterFetch } from "@better-fetch/fetch";
 import {
 	CreateScreenshotSchema,
 	FormatSchema,
@@ -23,6 +23,7 @@ import { useStore } from "@tanstack/react-form";
 import { useMutation } from "@tanstack/react-query";
 import * as React from "react";
 import { useHotkeys } from "react-hotkeys-hook";
+import { z } from "zod";
 
 import { useAppForm } from "#/components/forms/form.tsx";
 import { PageHeader } from "#/components/page-header.tsx";
@@ -31,19 +32,124 @@ import { UrlGenerator } from "#/components/playground/url-generator.tsx";
 import * as Accordion from "#/components/ui/accordion.tsx";
 import * as Alert from "#/components/ui/alert.tsx";
 import * as Kbd from "#/components/ui/kbd.tsx";
+import * as AlertToast from "#/components/ui/toast-alert.tsx";
+import { toast } from "#/components/ui/toast.tsx";
+import { useMe } from "#/hooks/use-me.ts";
 import { useORPC } from "#/hooks/use-orpc.ts";
+import { env } from "#/utils/env.ts";
 import type { PlaygroundFormValues } from "#/utils/playground-utils.ts";
+import { isScreenshotAllowed } from "#/utils/screenshots.ts";
 
 export const Route = createFileRoute({
 	component: RouteComponent,
 });
 
+/**
+ * Renders the main playground UI for configuring and generating website screenshots.
+ *
+ * Provides a form with advanced options for customizing screenshot parameters, including viewport, image output, resource blocking, emulation, caching, and authorization. Handles user authentication and URL permission checks before generating screenshots. Displays a live preview of the generated image and a URL generator reflecting current form values.
+ *
+ * @returns The React component for the screenshot playground route.
+ *
+ * @remark Users must be logged in and the target URL must be allowed by the current workspace's origin restrictions to generate screenshots.
+ */
 function RouteComponent() {
 	const { queryClient } = Route.useRouteContext();
 	const orpc = useORPC();
-	const { mutateAsync, data, error, isError } = useMutation(
-		orpc.screenshots.create.mutationOptions(),
-	);
+	const me = useMe();
+	const { mutateAsync, error, isError, data } = useMutation({
+		async mutationFn(input: PlaygroundFormValues) {
+			const params = new URLSearchParams();
+			for (const [key, value] of Object.entries(input)) {
+				if (value !== null && value !== undefined) {
+					params.set(key, String(value));
+				}
+			}
+
+			if (!me) {
+				toast.custom((t) => (
+					<AlertToast.Root
+						t={t}
+						$status="error"
+						$variant="lighter"
+						message="You need to be logged in to generate screenshots"
+					/>
+				));
+				return;
+			}
+
+			if (me.currentWorkspace?.metadata?.allowedOrigins.length > 0) {
+				const isAllowed = isScreenshotAllowed(
+					me.currentWorkspace.metadata.allowedOrigins.split("\n"),
+					input.url,
+				);
+				if (!isAllowed) {
+					toast.custom((t) => (
+						<AlertToast.Root
+							t={t}
+							$status="error"
+							$variant="lighter"
+							message="The URL is not allowed to be screenshot"
+						/>
+					));
+					return;
+				}
+			}
+
+			try {
+				const blob = await betterFetch(
+					`${env.VITE_SERVER_URL}/v1/screenshots/take?${params.toString()}`,
+					{
+						output: z.instanceof(Blob),
+						throw: true,
+					},
+				);
+
+				const url = URL.createObjectURL(blob);
+
+				return { image: url };
+			} catch (err) {
+				let message =
+					err instanceof Error && err.message
+						? err.message
+						: "An unexpected error occurred";
+
+				// Attempt to extract error message from JSON response if available
+				const errWithResponse = err as { response?: unknown };
+				if (
+					errWithResponse &&
+					typeof errWithResponse === "object" &&
+					"response" in errWithResponse &&
+					errWithResponse.response instanceof Response
+				) {
+					try {
+						const jsonBody = await errWithResponse.response.clone().json();
+						if (jsonBody && typeof jsonBody === "object") {
+							message =
+								"message" in jsonBody
+									? String(jsonBody.message)
+									: "error" in jsonBody
+										? String(jsonBody.error)
+										: message;
+						}
+					} catch {
+						// Ignore JSON parse errors
+					}
+				}
+
+				toast.custom((t) => (
+					<AlertToast.Root
+						t={t}
+						$status="error"
+						$variant="lighter"
+						message={message}
+					/>
+				));
+
+				return;
+			}
+		},
+	});
 
 	const form = useAppForm({
 		validators: { onSubmit: CreateScreenshotSchema },
@@ -63,7 +169,7 @@ function RouteComponent() {
 			await mutateAsync(value, {
 				async onSuccess() {
 					await queryClient.invalidateQueries({
-						queryKey: orpc.users.me.queryOptions().queryKey,
+						queryKey: orpc.users.me.queryKey(),
 					});
 				},
 			});
@@ -86,13 +192,7 @@ function RouteComponent() {
 
 	const errorMessage = React.useMemo(() => {
 		if (!isError || !error) return undefined;
-
-		// Extract error message from the error object
-		if (typeof error === "string") return error;
-		if (error && typeof error === "object" && "message" in error) {
-			return String(error.message);
-		}
-		return "An unexpected error occurred";
+		return error.message || "An unexpected error occurred";
 	}, [error, isError]);
 
 	return (
