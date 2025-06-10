@@ -3,7 +3,7 @@ import { type FileOptions, storage } from "../lib/storage";
 import { env } from "../utils/env";
 
 /**
- * Saves an arbitrary file/byte-array to the specified key (path) in S3/R2.
+ * Saves an arbitrary file/byte-array to the specified key (path) in object storage.
  *
  * @param file  File, Blob, ArrayBuffer or Uint8Array with the binary contents
  * @param key   Destination key (e.g. "avatars/12345.jpg")
