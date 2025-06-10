@@ -272,10 +272,52 @@ export async function getOrCreateScreenshot(
 				.returning();
 
 			const key = `screenshots/${workspaceId}/${inserted.id}.${format}`;
-			await storage.write(key, buffer);
+
+			try {
+				await storage.write(key, buffer);
+				logger.info(
+					{ key, size: buffer.length },
+					"Screenshot uploaded to S3 successfully",
+				);
+			} catch (uploadError) {
+				logger.error(
+					{ err: uploadError, key, screenshotId: inserted.id },
+					"Failed to upload screenshot to S3",
+				);
+
+				try {
+					await db.delete(screenshots).where(eq(screenshots.id, inserted.id));
+					logger.info(
+						{ screenshotId: inserted.id },
+						"Cleaned up screenshot record after S3 upload failure",
+					);
+				} catch (cleanupError) {
+					logger.error(
+						{ err: cleanupError, screenshotId: inserted.id },
+						"Failed to cleanup screenshot record after S3 upload failure",
+					);
+				}
+
+				throw new Error(
+					`Screenshot generation failed: S3 upload error - ${uploadError instanceof Error ? uploadError.message : "Unknown error"}`,
+				);
+			}
+
 			await page.close();
 
-			const object = await storage.file(key).arrayBuffer();
+			let object: ArrayBuffer;
+			try {
+				object = await storage.file(key).arrayBuffer();
+				logger.info({ key }, "Screenshot verified in S3");
+			} catch (verifyError) {
+				logger.error(
+					{ err: verifyError, key, screenshotId: inserted.id },
+					"Screenshot upload succeeded but verification failed",
+				);
+				throw new Error(
+					`Screenshot generation failed: S3 verification error - ${verifyError instanceof Error ? verifyError.message : "Unknown error"}`,
+				);
+			}
 
 			return { object, key, created: true };
 		} finally {
