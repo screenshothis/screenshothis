@@ -27,8 +27,8 @@ import { createErrorResponse } from "#/utils/errors";
 import { authenticateAndValidateScreenshot } from "#/actions/authenticate-and-validate-screenshot";
 import { buildScreenshotResponse } from "#/actions/build-screenshot-response";
 import {
-    QuotaExceededError,
-    ensureQuotaAvailableForUser,
+	QuotaExceededError,
+	ensureQuotaAvailableForUser,
 } from "#/actions/ensure-quota-available";
 import { retrieveScreenshot } from "#/actions/retrieve-screenshot";
 
@@ -53,125 +53,128 @@ import { retrieveScreenshot } from "#/actions/retrieve-screenshot";
  * 7. S3 streaming response with optimal caching headers
  */
 const optimizedScreenshots = new OpenAPIHono<{
-    Variables: Variables;
+	Variables: Variables;
 }>().openapi(
-    createRoute({
-        method: "get",
-        path: "/take",
-        request: {
-            query: CreateScreenshotSchema.transform((data) => objectToCamel(data)),
-        },
-        responses: {
-            200: {
-                content: {
-                    "image/jpeg": {
-                        schema: z.string().openapi({ format: "binary" }),
-                    },
-                    "image/png": {
-                        schema: z.string().openapi({ format: "binary" }),
-                    },
-                    "image/webp": {
-                        schema: z.string().openapi({ format: "binary" }),
-                    },
-                },
-                description: "Optimized screenshot response with enhanced CDN support",
-            },
-            304: {
-                description: "Not Modified - Content hasn't changed",
-            },
-            403: {
-                content: {
-                    "application/json": {
-                        schema: z.object({
-                            error: z.string(),
-                            requestId: z.string(),
-                        }),
-                    },
-                },
-                description: "Quota exceeded",
-            },
-            500: {
-                content: {
-                    "application/json": {
-                        schema: z.object({
-                            requestId: z.string(),
-                            message: z.string(),
-                            code: z.string(),
-                        }),
-                    },
-                },
-                description: "Internal server error",
-            },
-        },
-    }),
-    async (c) => {
-        startTime(c, "total-request");
+	createRoute({
+		summary: "Generate optimized website screenshot",
+		description:
+			"Captures high-quality screenshots of websites with advanced optimization features including smart caching, CDN integration, request deduplication, and quota management. Supports multiple image formats (JPEG, PNG, WebP) with customizable dimensions, device emulation, and viewport settings. Implements efficient S3 streaming for large images and conditional requests for optimal performance.",
+		method: "get",
+		path: "/take",
+		request: {
+			query: CreateScreenshotSchema.transform((data) => objectToCamel(data)),
+		},
+		responses: {
+			200: {
+				content: {
+					"image/jpeg": {
+						schema: z.string().openapi({ format: "binary" }),
+					},
+					"image/png": {
+						schema: z.string().openapi({ format: "binary" }),
+					},
+					"image/webp": {
+						schema: z.string().openapi({ format: "binary" }),
+					},
+				},
+				description: "Optimized screenshot response with enhanced CDN support",
+			},
+			304: {
+				description: "Not Modified - Content hasn't changed",
+			},
+			403: {
+				content: {
+					"application/json": {
+						schema: z.object({
+							error: z.string(),
+							requestId: z.string(),
+						}),
+					},
+				},
+				description: "Quota exceeded",
+			},
+			500: {
+				content: {
+					"application/json": {
+						schema: z.object({
+							requestId: z.string(),
+							message: z.string(),
+							code: z.string(),
+						}),
+					},
+				},
+				description: "Internal server error",
+			},
+		},
+	}),
+	async (c) => {
+		startTime(c, "total-request");
 
-        try {
-            const queryParams = c.req.valid("query");
+		try {
+			const queryParams = c.req.valid("query");
 
-            const authResult = await authenticateAndValidateScreenshot(
-                c,
-                queryParams,
-            );
-            if (authResult instanceof Response) {
-                return authResult;
-            }
+			const authResult = await authenticateAndValidateScreenshot(
+				c,
+				queryParams,
+			);
+			if (authResult instanceof Response) {
+				return authResult;
+			}
 
-            const { workspaceId, userId, transformedParams } = authResult;
+			const { workspaceId, userId, transformedParams } = authResult;
 
-            const cacheKey = generateCacheKey(workspaceId, transformedParams);
-            setMetric(c, "cache-key-generated", 1);
+			const cacheKey = generateCacheKey(workspaceId, transformedParams);
+			setMetric(c, "cache-key-generated", 1);
 
-            await ensureQuotaAvailableForUser(userId, c);
+			await ensureQuotaAvailableForUser(userId, c);
 
-            const retrieval = await retrieveScreenshot(
-                c,
-                cacheKey,
-                workspaceId,
-                userId,
-                transformedParams,
-                queryParams,
-            );
+			const retrieval = await retrieveScreenshot(
+				c,
+				cacheKey,
+				workspaceId,
+				userId,
+				transformedParams,
+				queryParams,
+			);
 
-            if (retrieval.body === null) {
-                endTime(c, "total-request");
-                return c.body(null, 304, {
-                    ETag: retrieval.validatedETag || "",
-                    "Cache-Control": "public, max-age=3600",
-                });
-            }
+			if (retrieval.body === null) {
+				endTime(c, "total-request");
+				return c.body(null, 304, {
+					ETag: retrieval.validatedETag || "",
+					"Cache-Control": "public, max-age=3600",
+				});
+			}
 
-            const response = await buildScreenshotResponse(
-                c,
-                retrieval,
-                queryParams,
-                cacheKey,
-                workspaceId,
-                userId,
-            );
-            endTime(c, "total-request");
-            return response;
-        } catch (error) {
-            endTime(c, "total-request");
+			const response = await buildScreenshotResponse(
+				c,
+				retrieval,
+				queryParams,
+				cacheKey,
+				workspaceId,
+				userId,
+			);
+			endTime(c, "total-request");
+			return response;
+		} catch (error) {
+			endTime(c, "total-request");
 
-            if (error instanceof QuotaExceededError) {
-                setMetric(c, "quota-exceeded", 1);
+			if (error instanceof QuotaExceededError) {
+				setMetric(c, "quota-exceeded", 1);
 
-                return c.json(
-                    {
-                        error: error.message,
-                        requestId: c.get("requestId"),
-                    },
-                    403,
-                );
-            }
+				return c.json(
+					{
+						error: error.message,
+						requestId: c.get("requestId"),
+					},
+					403,
+				);
+			}
 
-            setMetric(c, "request-error", 1);
-            const errorResponse = createErrorResponse(error, c.get("requestId"));
-            return c.json(errorResponse, 500);
-        }
-    },
+			setMetric(c, "request-error", 1);
+			const errorResponse = createErrorResponse(error, c.get("requestId"));
+			return c.json(errorResponse, 500);
+		}
+	},
 );
 
 export default optimizedScreenshots;
