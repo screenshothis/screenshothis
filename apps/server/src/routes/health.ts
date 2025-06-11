@@ -9,21 +9,23 @@ import { env } from "../utils/env";
 
 const health = new OpenAPIHono<{ Variables: Variables }>();
 
-const HealthCheckSchema = z.object({
-    status: z.enum(["healthy", "degraded", "unhealthy"]),
-    timestamp: z.string(),
-    uptime: z.number(),
-    checks: z.array(
-        z.object({
-            name: z.string(),
-            status: z.enum(["pass", "fail"]),
-            duration: z.number().optional(),
-            error: z.string().optional(),
-            details: z.record(z.any()).optional(),
-        }),
-    ),
-    version: z.string().optional(),
-});
+const HealthCheckSchema = z
+    .object({
+        status: z.enum(["healthy", "degraded", "unhealthy"]),
+        timestamp: z.string(),
+        uptime: z.number(),
+        checks: z.array(
+            z.object({
+                name: z.string(),
+                status: z.enum(["pass", "fail"]),
+                duration: z.number().optional(),
+                error: z.string().optional(),
+                details: z.record(z.any()).optional(),
+            }),
+        ),
+        version: z.string().optional(),
+    })
+    .openapi("HealthCheck");
 
 health.openapi(
     createRoute({
