@@ -54,6 +54,7 @@ const HealthCheckSchema = z
 
 health.openapi(
 	createRoute({
+		operationId: "health",
 		summary: "Comprehensive health check",
 		description:
 			"Performs a comprehensive health check of all critical system components including database connectivity, storage availability, job queue status, and S3 functionality. Returns detailed status information for monitoring and alerting systems.",
@@ -235,6 +236,7 @@ health.openapi(
 
 health.openapi(
 	createRoute({
+		operationId: "ready",
 		summary: "Readiness probe",
 		description:
 			"Kubernetes-compatible readiness probe that verifies the service is ready to accept traffic. Checks database connectivity to ensure the service can handle requests. Used by orchestrators to determine when to route traffic to this instance.",
@@ -292,6 +294,7 @@ health.openapi(
 
 health.openapi(
 	createRoute({
+		operationId: "live",
 		summary: "Liveness probe",
 		description:
 			"Kubernetes-compatible liveness probe that indicates whether the service is alive and functioning. This lightweight check verifies the application is responsive and should be used by orchestrators to determine if the container needs to be restarted.",

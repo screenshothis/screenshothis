@@ -56,6 +56,7 @@ const optimizedScreenshots = new OpenAPIHono<{
 	Variables: Variables;
 }>().openapi(
 	createRoute({
+		operationId: "takeScreenshot",
 		summary: "Generate optimized website screenshot",
 		description:
 			"Captures high-quality screenshots of websites with advanced optimization features including smart caching, CDN integration, request deduplication, and quota management. Supports multiple image formats (JPEG, PNG, WebP) with customizable dimensions, device emulation, and viewport settings. Implements efficient S3 streaming for large images and conditional requests for optimal performance.",
