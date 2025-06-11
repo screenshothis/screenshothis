@@ -143,12 +143,12 @@ export async function getOrCreateScreenshot(
 			headless: true,
 			args: ["--no-sandbox", "--disable-setuid-sandbox"],
 			defaultViewport: {
-				width: width / deviceScaleFactor,
-				height: height / deviceScaleFactor,
+				width: Math.round(width / deviceScaleFactor),
+				height: Math.round(height / deviceScaleFactor),
 				isMobile,
 				isLandscape,
 				hasTouch,
-				deviceScaleFactor,
+				deviceScaleFactor: deviceScaleFactor,
 			},
 		});
 
