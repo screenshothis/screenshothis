@@ -1,40 +1,69 @@
 import { z } from "zod";
+import "zod-openapi/extend";
 
 export const MAX_HEADERS_SIZE = 8192; // 8 KB (RFC 7230 guideline)
 export const MAX_COOKIES_SIZE = 4096; // 4 KB (typical cookie size limit)
 
-export const FormatSchema = z.enum(["jpeg", "png", "webp"]);
-export const ResourceTypeSchema = z.enum([
-	"document",
-	"stylesheet",
-	"image",
-	"media",
-	"font",
-	"script",
-	"texttrack",
-	"xhr",
-	"fetch",
-	"prefetch",
-	"eventsource",
-	"websocket",
-	"manifest",
-	"signedexchange",
-	"ping",
-	"cspviolationreport",
-	"preflight",
-	"other",
-]);
-export const PrefersColorSchemeSchema = z.enum(["light", "dark"]);
-export const PrefersReducedMotionSchema = z.enum(["no-preference", "reduce"]);
+export const FormatSchema = z.enum(["jpeg", "png", "webp"]).openapi({
+	description: "Image format for the screenshot output",
+	example: "jpeg",
+});
+
+export const ResourceTypeSchema = z
+	.enum([
+		"document",
+		"stylesheet",
+		"image",
+		"media",
+		"font",
+		"script",
+		"texttrack",
+		"xhr",
+		"fetch",
+		"prefetch",
+		"eventsource",
+		"websocket",
+		"manifest",
+		"signedexchange",
+		"ping",
+		"cspviolationreport",
+		"preflight",
+		"other",
+	])
+	.openapi({
+		description:
+			"Types of web resources that can be blocked during screenshot capture",
+		example: "script",
+	});
+
+export const PrefersColorSchemeSchema = z.enum(["light", "dark"]).openapi({
+	description: "Preferred color scheme for rendering the webpage",
+	example: "light",
+});
+
+export const PrefersReducedMotionSchema = z
+	.enum(["no-preference", "reduce"])
+	.openapi({
+		description: "Preference for reduced motion accessibility setting",
+		example: "no-preference",
+	});
 
 export const ScreenshotSchema = z.object({
-	id: z.string(),
+	id: z.string().openapi({
+		description: "Unique identifier for the screenshot record",
+		example: "scr_1234567890abcdef",
+	}),
 	api_key: z
 		.string({
 			required_error: "API key is required",
 		})
 		.min(32, {
 			message: "Invalid API key",
+		})
+		.openapi({
+			description:
+				"API key used to authenticate the request. Must be at least 32 characters long.",
+			example: "sk_live_abcdef1234567890abcdef1234567890",
 		}),
 	url: z
 		.string({
@@ -42,53 +71,164 @@ export const ScreenshotSchema = z.object({
 		})
 		.url({
 			message: "Invalid URL",
+		})
+		.openapi({
+			description:
+				"Target URL of the website to capture. Must be a valid HTTP or HTTPS URL.",
+			example: "https://example.com",
 		}),
-	selector: z.string().nullish(),
-	width: z.coerce.number().optional().default(1920),
-	height: z.coerce.number().optional().default(1080),
+	selector: z.string().nullish().openapi({
+		description:
+			"CSS selector to capture a specific element instead of the full page. If provided, only the matching element will be screenshotted.",
+		example: ".main-content",
+	}),
+	width: z.coerce.number().optional().default(1920).openapi({
+		description: "Width of the viewport in pixels for the screenshot",
+		example: 1920,
+		minimum: 1,
+		maximum: 7680,
+	}),
+	height: z.coerce.number().optional().default(1080).openapi({
+		description: "Height of the viewport in pixels for the screenshot",
+		example: 1080,
+		minimum: 1,
+		maximum: 4320,
+	}),
 	is_mobile: z
 		.preprocess((val) => String(val).toLowerCase() === "true", z.boolean())
 		.optional()
-		.default(false),
+		.default(false)
+		.openapi({
+			description:
+				"Enable mobile device emulation with touch events and mobile user agent",
+			example: false,
+		}),
 	is_landscape: z
 		.preprocess((val) => String(val).toLowerCase() === "true", z.boolean())
 		.optional()
-		.default(false),
+		.default(false)
+		.openapi({
+			description:
+				"Set device orientation to landscape mode when mobile emulation is enabled",
+			example: false,
+		}),
 	has_touch: z
 		.preprocess((val) => String(val).toLowerCase() === "true", z.boolean())
 		.optional()
-		.default(false),
-	device_scale_factor: z.coerce.number().optional().default(1),
-	format: FormatSchema.optional().default("jpeg"),
-	quality: z.coerce.number().min(20).max(100).optional().default(80),
+		.default(false)
+		.openapi({
+			description: "Enable touch event support for the emulated device",
+			example: false,
+		}),
+	device_scale_factor: z.coerce.number().optional().default(1).openapi({
+		description:
+			"Device pixel ratio for high-DPI displays. Higher values produce sharper images on retina displays.",
+		example: 1,
+		minimum: 0.1,
+		maximum: 3,
+	}),
+	format: FormatSchema.optional().default("jpeg").openapi({
+		description:
+			"Output image format. JPEG offers smaller file sizes, PNG supports transparency, WebP provides modern compression.",
+		example: "jpeg",
+	}),
+	quality: z.coerce.number().min(20).max(100).optional().default(80).openapi({
+		description:
+			"Image compression quality from 20 (lowest/smallest) to 100 (highest/largest). Only applies to JPEG and WebP formats.",
+		example: 80,
+		minimum: 20,
+		maximum: 100,
+	}),
 	block_ads: z
 		.preprocess((val) => String(val).toLowerCase() === "true", z.boolean())
 		.optional()
-		.default(false),
+		.default(false)
+		.openapi({
+			description:
+				"Block advertisements and ad-related content from loading during screenshot capture",
+			example: false,
+		}),
 	block_cookie_banners: z
 		.preprocess((val) => String(val).toLowerCase() === "true", z.boolean())
 		.optional()
-		.default(false),
+		.default(false)
+		.openapi({
+			description:
+				"Automatically hide cookie consent banners and GDPR notices for cleaner screenshots",
+			example: false,
+		}),
 	block_trackers: z
 		.preprocess((val) => String(val).toLowerCase() === "true", z.boolean())
 		.optional()
-		.default(false),
+		.default(false)
+		.openapi({
+			description:
+				"Block tracking scripts and analytics to improve page load speed and privacy",
+			example: false,
+		}),
 	block_requests: z
 		.string()
 		.transform((value) => value.split("\n"))
-		.optional(),
-	block_resources: ResourceTypeSchema.array().optional().default([]),
-	prefers_color_scheme: PrefersColorSchemeSchema.optional().default("light"),
-	prefers_reduced_motion:
-		PrefersReducedMotionSchema.optional().default("no-preference"),
-	duration: z.number().optional(),
+		.optional()
+		.openapi({
+			description:
+				"Newline-separated list of URL patterns to block during page load. Supports wildcards and regex patterns.",
+			example: "*.doubleclick.net\n*.googletagmanager.com\n*/analytics/*",
+		}),
+	block_resources: ResourceTypeSchema.array()
+		.optional()
+		.default([])
+		.openapi({
+			description:
+				"Array of resource types to prevent from loading. Useful for faster page loads and cleaner screenshots.",
+			example: ["script", "stylesheet", "font"],
+		}),
+	prefers_color_scheme: PrefersColorSchemeSchema.optional()
+		.default("light")
+		.openapi({
+			description:
+				"Set the preferred color scheme for websites that support dark/light mode theming",
+			example: "light",
+		}),
+	prefers_reduced_motion: PrefersReducedMotionSchema.optional()
+		.default("no-preference")
+		.openapi({
+			description:
+				"Accessibility setting to reduce animations and transitions for motion-sensitive users",
+			example: "no-preference",
+		}),
+	duration: z.number().optional().openapi({
+		description:
+			"Time taken to capture the screenshot in milliseconds (read-only, populated after processing)",
+		example: 2500,
+	}),
 	is_cached: z
 		.preprocess((val) => String(val).toLowerCase() === "true", z.boolean())
 		.optional()
-		.default(false),
-	cache_ttl: z.number().min(3600).max(31622400).optional().default(3600),
-	cache_key: z.string().optional(),
-	user_agent: z.string().optional(),
+		.default(false)
+		.openapi({
+			description:
+				"Whether to use cached version of the screenshot if available, or force a fresh capture",
+			example: false,
+		}),
+	cache_ttl: z
+		.number()
+		.min(3600)
+		.max(31622400)
+		.optional()
+		.default(3600)
+		.openapi({
+			description:
+				"Cache expiration time in seconds. Minimum 1 hour (3600), maximum 1 year (31622400)",
+			example: 3600,
+			minimum: 3600,
+			maximum: 31622400,
+		}),
+	cache_key: z.string().optional().openapi({
+		description:
+			"Custom cache key for grouping related screenshots. Auto-generated if not provided.",
+		example: "homepage-desktop-light",
+	}),
 	headers: z
 		.string()
 		.max(MAX_HEADERS_SIZE, {
@@ -121,7 +261,13 @@ export const ScreenshotSchema = z.object({
 					return { name, value } as { name: string; value: string };
 				}),
 		)
-		.optional(),
+		.optional()
+		.openapi({
+			description:
+				"Custom HTTP headers to send with the request in 'Name: Value' format, one per line. Maximum 8KB total size.",
+			example:
+				"User-Agent: MyBot/1.0\nAuthorization: Bearer token123\nX-Custom-Header: value",
+		}),
 	cookies: z
 		.string()
 		.max(MAX_COOKIES_SIZE, {
@@ -242,13 +388,31 @@ export const ScreenshotSchema = z.object({
 						obj !== null,
 				),
 		)
-		.optional(),
+		.optional()
+		.openapi({
+			description:
+				"Cookies to set before capturing the screenshot using Set-Cookie syntax (name=value; attributes), one per line. Maximum 4KB total size.",
+			example:
+				"session_id=abc123; Domain=example.com; Path=/; Secure\nuser_pref=dark_mode; Max-Age=3600",
+		}),
 	bypass_csp: z
 		.preprocess((val) => String(val).toLowerCase() === "true", z.boolean())
 		.optional()
-		.default(false),
-	created_at: z.date().nullish(),
-	updated_at: z.date().nullish(),
+		.default(false)
+		.openapi({
+			description:
+				"Bypass Content Security Policy restrictions that might prevent proper page rendering or script execution",
+			example: false,
+		}),
+	created_at: z.date().nullish().openapi({
+		description: "Timestamp when the screenshot record was created (read-only)",
+		example: "2024-01-15T10:30:00.000Z",
+	}),
+	updated_at: z.date().nullish().openapi({
+		description:
+			"Timestamp when the screenshot record was last updated (read-only)",
+		example: "2024-01-15T10:35:00.000Z",
+	}),
 });
 
 export const CreateScreenshotSchema = ScreenshotSchema.omit({
@@ -256,8 +420,20 @@ export const CreateScreenshotSchema = ScreenshotSchema.omit({
 	duration: true,
 	created_at: true,
 	updated_at: true,
+}).openapi({
+	description:
+		"Schema for creating a new screenshot with all configuration options for capture settings, device emulation, content blocking, and caching behavior",
 });
 
-export const ScreenshotsFilterSchema = z.object({
-	q: z.string().optional(),
-});
+export const ScreenshotsFilterSchema = z
+	.object({
+		q: z.string().optional().openapi({
+			description:
+				"Search query to filter screenshots by URL, cache key, or other metadata",
+			example: "example.com",
+		}),
+	})
+	.openapi({
+		description:
+			"Filter parameters for querying and searching through screenshot records",
+	});

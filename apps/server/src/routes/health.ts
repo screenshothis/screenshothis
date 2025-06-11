@@ -45,6 +45,10 @@ const HealthCheckSchema = z
 			.openapi({
 				description: "Array of health check results",
 			}),
+		version: z.string().optional().openapi({
+			description: "Application version or commit hash",
+			example: "1.0.0",
+		}),
 	})
 	.openapi("HealthCheck");
 

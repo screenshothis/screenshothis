@@ -432,6 +432,9 @@ importers:
       zod:
         specifier: 3.25.57
         version: 3.25.57
+      zod-openapi:
+        specifier: 4.2.4
+        version: 4.2.4(zod@3.25.57)
     devDependencies:
       '@types/node':
         specifier: 24.0.0
@@ -8045,6 +8048,12 @@ packages:
   zip-stream@6.0.1:
     resolution: {integrity: sha512-zK7YHHz4ZXpW89AHXUPbQVGKI7uvkd3hzusTdotCg1UxyaVtg0zFJSTfW/Dq5f7OBBVnq6cZIaC8Ti4hb6dtCA==}
     engines: {node: '>= 14'}
+
+  zod-openapi@4.2.4:
+    resolution: {integrity: sha512-tsrQpbpqFCXqVXUzi3TPwFhuMtLN3oNZobOtYnK6/5VkXsNdnIgyNr4r8no4wmYluaxzN3F7iS+8xCW8BmMQ8g==}
+    engines: {node: '>=18'}
+    peerDependencies:
+      zod: ^3.21.4
 
   zod-to-json-schema@3.24.5:
     resolution: {integrity: sha512-/AuWwMP+YqiPbsJx5D6TfgRTc4kTLjsh5SOcd4bLsfUg2RcEXrFMJl1DGgdHy2aCfsIA/cr/1JM0xcB2GZji8g==}
@@ -16863,6 +16872,10 @@ snapshots:
       archiver-utils: 5.0.2
       compress-commons: 6.0.2
       readable-stream: 4.7.0
+
+  zod-openapi@4.2.4(zod@3.25.57):
+    dependencies:
+      zod: 3.25.57
 
   zod-to-json-schema@3.24.5(zod@3.25.57):
     dependencies:
