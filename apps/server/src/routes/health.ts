@@ -50,7 +50,25 @@ const HealthCheckSchema = z
 			example: "1.0.0",
 		}),
 	})
-	.openapi("HealthCheck");
+	.openapi("HealthCheck", {
+		description:
+			"Performs a comprehensive health check of all critical system components including database connectivity, storage availability, job queue status, and S3 functionality. Returns detailed status information for monitoring and alerting systems.",
+		examples: [
+			{
+				status: "healthy",
+				timestamp: "2024-01-01T00:00:00.000Z",
+				uptime: 3600,
+				checks: [
+					{
+						name: "database",
+						status: "pass",
+						duration: 10,
+					},
+				],
+				version: "1.0.0",
+			},
+		],
+	});
 
 health.openapi(
 	createRoute({
