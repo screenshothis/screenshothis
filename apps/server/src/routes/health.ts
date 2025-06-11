@@ -198,7 +198,7 @@ health.openapi(
             timestamp: new Date().toISOString(),
             uptime: process.uptime(),
             checks: healthChecks,
-            version: env.APP_VERSION,
+            version: env.APP_VERSION || env.SOURCE_COMMIT,
         };
 
         return c.json(response, hasFailures ? 503 : 200);
