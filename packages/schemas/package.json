@@ -24,7 +24,8 @@
     "@screenshothis/common": "workspace:*",
     "@tanstack/zod-adapter": "1.121.0",
     "ts-case-convert": "2.1.0",
-    "zod": "3.25.57"
+    "zod": "3.25.57",
+    "zod-openapi": "4.2.4"
   },
   "devDependencies": {
     "@types/node": "24.0.0",
