@@ -1,11 +1,11 @@
 import { OpenAPIHono, createRoute, z } from "@hono/zod-openapi";
 import { endTime, setMetric, startTime } from "hono/timing";
 
-import type { Variables } from "#/common/environment";
-import { db } from "#/db";
-import { getQueueHealth } from "#/lib/screenshot-queue";
-import { storage } from "#/lib/storage";
-import { env } from "#/utils/env";
+import type { Variables } from "../common/environment";
+import { db } from "../db";
+import { getQueueHealth } from "../lib/screenshot-queue";
+import { storage } from "../lib/storage";
+import { env } from "../utils/env";
 
 const health = new OpenAPIHono<{ Variables: Variables }>();
 
