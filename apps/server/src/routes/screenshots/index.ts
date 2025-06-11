@@ -69,13 +69,22 @@ const optimizedScreenshots = new OpenAPIHono<{
 			200: {
 				content: {
 					"image/jpeg": {
-						schema: z.string().openapi({ format: "binary" }),
+						schema: z.string().openapi({
+							format: "binary",
+							example: "<binary JPEG image data>",
+						}),
 					},
 					"image/png": {
-						schema: z.string().openapi({ format: "binary" }),
+						schema: z.string().openapi({
+							format: "binary",
+							example: "<binary PNG image data>",
+						}),
 					},
 					"image/webp": {
-						schema: z.string().openapi({ format: "binary" }),
+						schema: z.string().openapi({
+							format: "binary",
+							example: "<binary WebP image data>",
+						}),
 					},
 				},
 				description: "Optimized screenshot response with enhanced CDN support",
@@ -90,6 +99,10 @@ const optimizedScreenshots = new OpenAPIHono<{
 							error: z.string(),
 							requestId: z.string(),
 						}),
+						example: {
+							error: "Quota exceeded for this billing period",
+							requestId: "req_1234567890abcdef",
+						},
 					},
 				},
 				description: "Quota exceeded",
@@ -102,6 +115,11 @@ const optimizedScreenshots = new OpenAPIHono<{
 							message: z.string(),
 							code: z.string(),
 						}),
+						example: {
+							requestId: "req_1234567890abcdef",
+							message: "Screenshot generation failed",
+							code: "SCREENSHOT_ERROR",
+						},
 					},
 				},
 				description: "Internal server error",
