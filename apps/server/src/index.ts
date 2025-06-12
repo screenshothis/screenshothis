@@ -108,12 +108,6 @@ app.use("/rpc/*", async (c, next) => {
 	await next();
 });
 
-app.openAPIRegistry.registerComponent("securitySchemes", "ApiKeyQuery", {
-	type: "apiKey",
-	in: "query",
-	name: "api_key",
-});
-
 app.get(
 	"/",
 	swaggerUI({
