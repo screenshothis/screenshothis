@@ -216,6 +216,7 @@ export async function upsertScreenshot(
 					type: "jpeg",
 					quality,
 					fullPage: true,
+					optimizeForSpeed: true,
 				});
 			} else {
 				if (selector) {
@@ -225,12 +226,14 @@ export async function upsertScreenshot(
 						buffer = await element.screenshot({
 							quality,
 							type: format,
+							optimizeForSpeed: true,
 						});
 					}
 				} else {
 					buffer = await page.screenshot({
 						quality,
 						type: format,
+						optimizeForSpeed: true,
 					});
 				}
 			}
