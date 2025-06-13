@@ -14,7 +14,7 @@ export async function scrollDown(
 				let iterations = 0;
 				const startTime = Date.now();
 
-				const timer = setInterval(() => {
+				const step = () => {
 					const scrollHeight = document.body.scrollHeight;
 					window.scrollBy(0, distance);
 					totalHeight += distance;
@@ -29,11 +29,14 @@ export async function scrollDown(
 						durationExceeded ||
 						iterationsExceeded
 					) {
-						clearInterval(timer);
 						window.scrollTo(0, 0); // Scroll back to top
 						resolve(undefined);
+						return;
 					}
-				}, 100);
+					requestAnimationFrame(step);
+				};
+
+				requestAnimationFrame(step);
 			});
 		},
 		{ fullPageScrollDuration, maxIterations },
@@ -55,10 +58,12 @@ export async function calculateViewport(page: Page): Promise<ViewportInfo> {
 		const pageHeight = document.documentElement.scrollHeight;
 		return {
 			pages: Math.ceil(pageHeight / window.innerHeight),
-			extraHeight: (pageHeight % window.innerHeight) * window.devicePixelRatio,
+			extraHeight: Math.round(
+				(pageHeight % window.innerHeight) * window.devicePixelRatio,
+			),
 			viewport: {
-				height: window.innerHeight * window.devicePixelRatio,
-				width: window.innerWidth * window.devicePixelRatio,
+				height: Math.round(window.innerHeight * window.devicePixelRatio),
+				width: Math.round(window.innerWidth * window.devicePixelRatio),
 			},
 		};
 	});
