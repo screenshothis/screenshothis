@@ -1,51 +1,5 @@
 import type { Page } from "puppeteer";
 
-export async function scrollDown(
-	page: Page,
-	options: { fullPageScrollDuration?: number; maxIterations?: number } = {},
-) {
-	const { fullPageScrollDuration = 5_000, maxIterations = 1_000 } = options;
-
-	await page.evaluate(
-		async ({ fullPageScrollDuration, maxIterations }) => {
-			await new Promise((resolve) => {
-				let totalHeight = 0;
-				const distance = 100;
-				let iterations = 0;
-				const startTime = Date.now();
-
-				const step = () => {
-					const scrollHeight = Math.max(
-						document.body.scrollHeight,
-						document.documentElement.scrollHeight,
-					);
-					window.scrollBy(0, distance);
-					totalHeight += distance;
-					iterations += 1;
-
-					const durationExceeded =
-						Date.now() - startTime >= fullPageScrollDuration;
-					const iterationsExceeded = iterations >= maxIterations;
-
-					if (
-						totalHeight >= scrollHeight ||
-						durationExceeded ||
-						iterationsExceeded
-					) {
-						window.scrollTo(0, 0); // Scroll back to top
-						resolve(undefined);
-						return;
-					}
-					requestAnimationFrame(step);
-				};
-
-				requestAnimationFrame(step);
-			});
-		},
-		{ fullPageScrollDuration, maxIterations },
-	);
-}
-
 export interface ViewportInfo {
 	pages: number;
 	extraHeight: number;

@@ -278,17 +278,23 @@ export async function upsertScreenshot(
 							window.scrollTo(0, 0);
 							await wait(100);
 
-							// Scroll to bottom gradually to trigger lazy loading
-							const steps = 20;
-							const stepSize = pageHeight / steps;
-							const stepDelay = scrollDuration / steps;
+							// Smoothly scroll to bottom over the provided duration using rAF
+							await new Promise<void>((resolveScroll) => {
+								const startTime = performance.now();
+								const step = () => {
+									const elapsed = performance.now() - startTime;
+									const progress = Math.min(elapsed / scrollDuration, 1);
+									window.scrollTo(0, progress * pageHeight);
+									if (progress < 1) {
+										requestAnimationFrame(step);
+									} else {
+										resolveScroll();
+									}
+								};
+								requestAnimationFrame(step);
+							});
 
-							for (let i = 1; i <= steps; i++) {
-								window.scrollTo(0, i * stepSize);
-								await wait(stepDelay);
-							}
-
-							// Ensure we reach the bottom
+							// Ensure we reach the bottom and allow lazy content to load
 							window.scrollTo(0, pageHeight);
 							await wait(300);
 
