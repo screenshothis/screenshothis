@@ -51,7 +51,10 @@ export const env = createEnv({
 		SESSION_EXPIRES_IN: z.coerce.number().default(604800),
 		SESSION_UPDATE_AGE: z.coerce.number().default(86400),
 		SOURCE_COMMIT: z.string().optional(),
-		SCREENSHOT_CONCURRENCY: z.coerce.number().default(10),
+		SCREENSHOT_CONCURRENCY: z.coerce
+			.number()
+			.min(1, { message: "SCREENSHOT_CONCURRENCY must be ≥ 1" })
+			.default(10),
 	},
 	runtimeEnv: process.env,
 	emptyStringAsUndefined: true,
