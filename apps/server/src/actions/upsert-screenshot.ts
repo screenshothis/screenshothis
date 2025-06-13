@@ -208,7 +208,7 @@ export async function upsertScreenshot(
 						Number.isFinite(fullPageScrollDuration) &&
 						fullPageScrollDuration > 0
 							? fullPageScrollDuration
-							: 1; // Default to 1ms if invalid or undefined
+							: 800; // Sane default to guarantee at least one scroll step
 					await performFullPageScroll(page, scrollDuration);
 				}
 
