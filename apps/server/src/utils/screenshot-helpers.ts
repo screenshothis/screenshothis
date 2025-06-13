@@ -157,6 +157,13 @@ export async function performFullPageScroll(
 	scrollDuration: number,
 ): Promise<void> {
 	await page.evaluate(async (duration: number) => {
+		// Ensure a valid positive duration to avoid division by zero or NaN during progress calculation
+		const safeDuration =
+			typeof duration !== "number" ||
+			!Number.isFinite(duration) ||
+			duration <= 0
+				? 1
+				: duration;
 		const wait = (ms: number) =>
 			new Promise<void>((resolve) => setTimeout(resolve, ms));
 
@@ -183,7 +190,7 @@ export async function performFullPageScroll(
 			let lastStep = 0;
 			const step = () => {
 				const elapsed = performance.now() - startTime;
-				const progress = Math.min(elapsed / duration, 1);
+				const progress = Math.min(elapsed / safeDuration, 1);
 
 				const currentStep = Math.floor(progress * steps);
 				if (currentStep !== lastStep) {
