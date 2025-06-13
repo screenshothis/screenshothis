@@ -83,7 +83,9 @@ export async function upsertScreenshot(
 				eq(screenshots.deviceScaleFactor, deviceScaleFactor),
 				eq(screenshots.fullPage, fullPage),
 				eq(screenshots.fullPageScroll, fullPageScroll),
-				eq(screenshots.fullPageScrollDuration, fullPageScrollDuration),
+				fullPageScrollDuration
+					? eq(screenshots.fullPageScrollDuration, fullPageScrollDuration)
+					: undefined,
 				eq(screenshots.format, format),
 				eq(screenshots.quality, quality),
 				eq(screenshots.blockAds, blockAds),

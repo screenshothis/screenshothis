@@ -459,7 +459,9 @@ export async function getExistingScreenshotKey(
 				eq(screenshots.deviceScaleFactor, deviceScaleFactor),
 				eq(screenshots.fullPage, fullPage),
 				eq(screenshots.fullPageScroll, fullPageScroll),
-				eq(screenshots.fullPageScrollDuration, fullPageScrollDuration),
+				fullPageScrollDuration
+					? eq(screenshots.fullPageScrollDuration, fullPageScrollDuration)
+					: undefined,
 				eq(screenshots.format, format),
 				eq(screenshots.blockAds, blockAds),
 				eq(screenshots.blockCookieBanners, blockCookieBanners),
