@@ -203,7 +203,13 @@ export async function upsertScreenshot(
 			let buffer: Uint8Array<ArrayBufferLike> | null = null;
 			if (fullPage) {
 				if (fullPageScroll) {
-					await performFullPageScroll(page, fullPageScrollDuration);
+					const scrollDuration =
+						typeof fullPageScrollDuration === "number" &&
+						Number.isFinite(fullPageScrollDuration) &&
+						fullPageScrollDuration > 0
+							? fullPageScrollDuration
+							: 1; // Default to 1ms if invalid or undefined
+					await performFullPageScroll(page, scrollDuration);
 				}
 
 				buffer = await page.screenshot({
