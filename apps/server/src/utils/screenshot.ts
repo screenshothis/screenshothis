@@ -40,8 +40,17 @@ export async function scrollDown(
 	);
 }
 
-export async function calculateViewport(page: Page) {
-	return await page.evaluate(() => {
+export interface ViewportInfo {
+	pages: number;
+	extraHeight: number;
+	viewport: {
+		height: number;
+		width: number;
+	};
+}
+
+export async function calculateViewport(page: Page): Promise<ViewportInfo> {
+	const result = await page.evaluate(() => {
 		window.scrollTo(0, 0);
 		const pageHeight = document.documentElement.scrollHeight;
 		return {
@@ -53,4 +62,6 @@ export async function calculateViewport(page: Page) {
 			},
 		};
 	});
+
+	return result as ViewportInfo;
 }
