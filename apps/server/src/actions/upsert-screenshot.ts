@@ -332,7 +332,12 @@ export async function upsertScreenshot(
 			try {
 				if (page && !page.isClosed()) await page.close();
 			} catch {}
-			if (browser) await browser.close();
+
+			try {
+				if (browser) await browser.close();
+			} catch (e) {
+				logger.warn({ err: e }, "Failed to close browser during cleanup");
+			}
 		}
 	});
 }
