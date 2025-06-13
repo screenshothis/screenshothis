@@ -15,7 +15,10 @@ export async function scrollDown(
 				const startTime = Date.now();
 
 				const step = () => {
-					const scrollHeight = document.body.scrollHeight;
+					const scrollHeight = Math.max(
+						document.body.scrollHeight,
+						document.documentElement.scrollHeight,
+					);
 					window.scrollBy(0, distance);
 					totalHeight += distance;
 					iterations += 1;
