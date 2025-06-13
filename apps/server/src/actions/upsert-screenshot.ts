@@ -70,6 +70,9 @@ export async function upsertScreenshot(
 			bypassCsp,
 		} = params;
 
+		const sortedBlockRequests = (blockRequests || []).slice().sort();
+		const sortedBlockResources = (blockResources || []).slice().sort();
+
 		const existing = await db.query.screenshots.findFirst({
 			where: and(
 				eq(screenshots.url, url),
@@ -90,8 +93,8 @@ export async function upsertScreenshot(
 				eq(screenshots.blockAds, blockAds),
 				eq(screenshots.blockCookieBanners, blockCookieBanners),
 				eq(screenshots.blockTrackers, blockTrackers),
-				sql`${screenshots.blockRequests} @> ${JSON.stringify(blockRequests || [])}`,
-				sql`${screenshots.blockResources} @> ${JSON.stringify(blockResources || [])}`,
+				sql`${screenshots.blockRequests} @> ${JSON.stringify(sortedBlockRequests)} AND ${JSON.stringify(sortedBlockRequests)}::jsonb @> ${screenshots.blockRequests}`,
+				sql`${screenshots.blockResources} @> ${JSON.stringify(sortedBlockResources)} AND ${JSON.stringify(sortedBlockResources)}::jsonb @> ${screenshots.blockResources}`,
 				eq(screenshots.prefersColorScheme, prefersColorScheme),
 				eq(screenshots.prefersReducedMotion, prefersReducedMotion),
 				eq(screenshots.workspaceId, workspaceId),
@@ -368,10 +371,12 @@ export async function upsertScreenshot(
 					blockAds,
 					blockCookieBanners,
 					blockTrackers,
-					blockRequests,
-					blockResources: blockResources as Array<
-						z.infer<typeof ResourceTypeSchema>
-					>,
+					blockRequests: blockRequests ? [...blockRequests].sort() : undefined,
+					blockResources: blockResources
+						? ((blockResources as string[]).slice().sort() as Array<
+								z.infer<typeof ResourceTypeSchema>
+							>)
+						: undefined,
 					prefersColorScheme,
 					prefersReducedMotion,
 					isCached,
