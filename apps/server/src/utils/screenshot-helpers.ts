@@ -169,17 +169,28 @@ export async function performFullPageScroll(
 			document.documentElement.clientHeight,
 		);
 
-		// Start at the top
+		const viewportHeight = window.innerHeight;
+		const totalScroll = Math.max(0, pageHeight - viewportHeight);
+		// Guard against zero-division and ensure at least one animation frame
+		const steps = Math.max(1, Math.floor(totalScroll / viewportHeight));
+
 		window.scrollTo(0, 0);
 		await wait(100);
 
 		// Smoothly scroll to bottom over the provided duration using rAF
 		await new Promise<void>((resolveScroll) => {
 			const startTime = performance.now();
+			let lastStep = 0;
 			const step = () => {
 				const elapsed = performance.now() - startTime;
 				const progress = Math.min(elapsed / duration, 1);
-				window.scrollTo(0, progress * pageHeight);
+
+				const currentStep = Math.floor(progress * steps);
+				if (currentStep !== lastStep) {
+					window.scrollTo(0, currentStep * viewportHeight);
+					lastStep = currentStep;
+				}
+
 				if (progress < 1) {
 					requestAnimationFrame(step);
 				} else {
@@ -193,7 +204,6 @@ export async function performFullPageScroll(
 		window.scrollTo(0, pageHeight);
 		await wait(300);
 
-		// Return to top
 		window.scrollTo(0, 0);
 		await wait(300);
 
