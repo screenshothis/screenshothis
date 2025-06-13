@@ -14,6 +14,7 @@ import { db } from "../db";
 import { screenshots } from "../db/schema/screenshots";
 import { logger } from "../lib/logger";
 import { storage } from "../lib/storage";
+import { env } from "../utils/env";
 import {
 	applyCookies,
 	applyHeadersAndAgent,
@@ -29,7 +30,7 @@ type UpsertScreenshotParams = ObjectToCamel<
 	z.infer<typeof CreateScreenshotSchema>
 >;
 
-const limit = pLimit(10);
+const limit = pLimit(env.SCREENSHOT_CONCURRENCY);
 
 export async function upsertScreenshot(
 	workspaceId: string,
