@@ -4,10 +4,13 @@ import CropIcon from "virtual:icons/hugeicons/crop";
 import Database02Icon from "virtual:icons/hugeicons/database-02";
 import DocumentCode01Icon from "virtual:icons/hugeicons/document-code";
 import EaseInOutIcon from "virtual:icons/hugeicons/ease-in-out";
+import FullScreenIcon from "virtual:icons/hugeicons/full-screen";
 import Image01Icon from "virtual:icons/hugeicons/image-01";
 import Link01Icon from "virtual:icons/hugeicons/link-01";
 import PaintBrush02Icon from "virtual:icons/hugeicons/paint-brush-02";
 import SecurityLockIcon from "virtual:icons/hugeicons/security-lock";
+import SquareArrowHorizontalIcon from "virtual:icons/hugeicons/square-arrow-horizontal";
+import SquareArrowVerticalIcon from "virtual:icons/hugeicons/square-arrow-vertical";
 import ToggleOnIcon from "virtual:icons/hugeicons/toggle-on";
 import ZoomOutAreaIcon from "virtual:icons/hugeicons/zoom-out-area";
 
@@ -156,6 +159,7 @@ function RouteComponent() {
 		defaultValues: {
 			url: "",
 			api_key: "",
+			full_page_scroll: true,
 			block_ads: true,
 			block_cookie_banners: true,
 			block_trackers: true,
@@ -297,6 +301,7 @@ function RouteComponent() {
 															inputMode="numeric"
 															name="width"
 															placeholder="1920"
+															leadingIcon={SquareArrowHorizontalIcon}
 														/>
 													)}
 												/>
@@ -309,6 +314,7 @@ function RouteComponent() {
 															inputMode="numeric"
 															name="height"
 															placeholder="1080"
+															leadingIcon={SquareArrowVerticalIcon}
 														/>
 													)}
 												/>
@@ -319,10 +325,11 @@ function RouteComponent() {
 													name="is_mobile"
 													children={(field) => (
 														<field.SwitchField
-															wrapperClassName="flex"
+															labelClassName="order-last"
+															childrenWrapperClassName="flex"
+															className="p-0"
 															label="Is mobile?"
 															name="is_mobile"
-															labelClassName="order-last"
 														/>
 													)}
 												/>
@@ -331,10 +338,11 @@ function RouteComponent() {
 													name="is_landscape"
 													children={(field) => (
 														<field.SwitchField
-															wrapperClassName="flex"
+															labelClassName="order-last"
+															childrenWrapperClassName="flex"
+															className="p-0"
 															label="Is landscape?"
 															name="is_landscape"
-															labelClassName="order-last"
 														/>
 													)}
 												/>
@@ -343,10 +351,11 @@ function RouteComponent() {
 													name="has_touch"
 													children={(field) => (
 														<field.SwitchField
-															wrapperClassName="flex"
+															labelClassName="order-last"
+															childrenWrapperClassName="flex"
+															className="p-0"
 															label="Has touch?"
 															name="has_touch"
-															labelClassName="order-last"
 														/>
 													)}
 												/>
@@ -363,6 +372,59 @@ function RouteComponent() {
 														placeholder="1"
 														leadingIcon={ZoomOutAreaIcon}
 														hint="In most cases, you can leave this at 1, otherwise we recommend 0.75."
+													/>
+												)}
+											/>
+										</Accordion.Content>
+									</Accordion.Item>
+
+									<Accordion.Item value="full-page">
+										<Accordion.Trigger>
+											<Accordion.Icon as={FullScreenIcon} />
+											Full page
+											<Accordion.Arrow />
+										</Accordion.Trigger>
+										<Accordion.Content className="mt-2 grid gap-3 px-7.5">
+											<div className="grid grid-cols-2 items-start gap-6">
+												<form.AppField
+													name="full_page"
+													children={(field) => (
+														<field.SwitchField
+															childrenWrapperClassName="flex items-center"
+															className="order-first p-0"
+															label="Capture the full page"
+															name="full_page"
+															id="full_page"
+														/>
+													)}
+												/>
+
+												<form.AppField
+													name="full_page_scroll"
+													children={(field) => (
+														<field.SwitchField
+															childrenWrapperClassName="flex items-center"
+															className="order-first p-0"
+															label="Scroll the full page"
+															name="full_page_scroll"
+															id="full_page_scroll"
+															hint="Scroll the full page to trigger lazy loading"
+														/>
+													)}
+												/>
+											</div>
+
+											<form.AppField
+												name="full_page_scroll_duration"
+												children={(field) => (
+													<field.TextField
+														label="Scroll duration"
+														type="number"
+														inputMode="numeric"
+														name="full_page_scroll_duration"
+														id="full_page_scroll_duration"
+														placeholder="i.e. 400"
+														hint="The duration of the scroll in milliseconds"
 													/>
 												)}
 											/>
@@ -579,8 +641,8 @@ function RouteComponent() {
 												name="is_cached"
 												children={(field) => (
 													<field.SwitchField
-														wrapperClassName="flex"
-														labelClassName="order-last"
+														wrapperClassName="grid grid-cols-[auto_auto_1fr] items-center gap-x-2 gap-y-1"
+														hintClassName="col-span-2"
 														label="Cache the image"
 														name="is_cached"
 														id="is_cached"

@@ -1,0 +1,2 @@
+ALTER TABLE "screenshots" ADD COLUMN "full_page_scroll" boolean DEFAULT true NOT NULL;--> statement-breakpoint
+ALTER TABLE "screenshots" ADD COLUMN "full_page_scroll_duration" integer DEFAULT 400 NOT NULL;

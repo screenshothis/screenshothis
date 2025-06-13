@@ -19,6 +19,7 @@ export function SwitchField({
 	hintIcon,
 	hintIconClassName,
 	id: idProp,
+	childrenWrapperClassName,
 	...rest
 }: SwitchFieldProps) {
 	const field = useFieldContext<boolean>();
@@ -39,6 +40,7 @@ export function SwitchField({
 			hintIconClassName={hintIconClassName}
 			id={`${id}-form-item`}
 			className={wrapperClassName}
+			childrenWrapperClassName={childrenWrapperClassName}
 		>
 			<Switch.Root
 				data-slot="form-control"

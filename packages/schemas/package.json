@@ -10,6 +10,7 @@
     "./plan": "./dist/plan.js",
     "./screenshots": "./dist/screenshots.js",
     "./users": "./dist/users.js",
+    "./utils/zod": "./dist/utils/zod.js",
     "./workspaces": "./dist/workspaces.js",
     "./package.json": "./package.json"
   },

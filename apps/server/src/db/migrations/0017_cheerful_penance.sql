@@ -1,0 +1,1 @@
+ALTER TABLE "screenshots" ADD COLUMN "full_page" boolean DEFAULT false NOT NULL;
