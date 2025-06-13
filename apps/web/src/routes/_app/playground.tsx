@@ -641,8 +641,8 @@ function RouteComponent() {
 												name="is_cached"
 												children={(field) => (
 													<field.SwitchField
-														wrapperClassName="grid grid-cols-[auto_auto_1fr] items-center gap-x-2 gap-y-1"
-														hintClassName="col-span-2"
+														childrenWrapperClassName="flex items-center"
+														className="order-first p-0"
 														label="Cache the image"
 														name="is_cached"
 														id="is_cached"
