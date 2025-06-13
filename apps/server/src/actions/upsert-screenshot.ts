@@ -168,15 +168,12 @@ export async function upsertScreenshot(
 				},
 			});
 
-			// Apply cookies to the default browser context
 			await applyCookies(browser, url, cookies);
 
 			page = await browser.newPage();
 
-			// Apply custom headers / user-agent
 			await applyHeadersAndAgent(page, userAgent, headers);
 
-			// Apply CSP bypass, media features
 			await applyPagePreferences(
 				page,
 				bypassCsp,
@@ -187,14 +184,12 @@ export async function upsertScreenshot(
 				logger.warn({ workspaceId, url }, "[AUDIT] bypass_csp enabled");
 			}
 
-			// Setup request/resource blocking
 			await setupRequestBlocking(
 				page,
 				blockRequests || [],
 				blockResources || [],
 			);
 
-			// Enable ad / tracker / cookie banner blocking via Ghostery
 			await setupAdAndTrackerBlocking(page, {
 				blockAds: !!blockAds,
 				blockCookieBanners: !!blockCookieBanners,
