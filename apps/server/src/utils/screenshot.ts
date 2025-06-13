@@ -13,7 +13,10 @@ export async function calculateViewport(page: Page): Promise<ViewportInfo> {
 	const result = await page.evaluate(() => {
 		window.scrollTo(0, 0);
 
-		const pageHeight = document.documentElement.scrollHeight;
+		const pageHeight = Math.max(
+			document.documentElement.scrollHeight,
+			document.body.scrollHeight,
+		);
 
 		// All measurements below are in CSS pixels to maintain consistency.
 		return {
