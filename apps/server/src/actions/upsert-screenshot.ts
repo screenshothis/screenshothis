@@ -1,20 +1,12 @@
-import {
-	PuppeteerBlocker,
-	adsAndTrackingLists,
-	adsLists,
-} from "@ghostery/adblocker-puppeteer";
 import type {
 	CreateScreenshotSchema,
 	ResourceTypeSchema,
 } from "@screenshothis/schemas/screenshots";
-import fetch from "cross-fetch";
 import { and, eq, sql } from "drizzle-orm";
 import pLimit from "p-limit";
-import type { CookieData, CookieSameSite } from "puppeteer";
 import puppeteer from "puppeteer-extra";
 import StealthPlugin from "puppeteer-extra-plugin-stealth";
 import type { ObjectToCamel } from "ts-case-convert";
-import wildcardMatch from "wildcard-match";
 import type { z } from "zod";
 
 import { isScreenshotOriginAllowed } from "../actions/validate-screenshot-origin";
@@ -22,6 +14,14 @@ import { db } from "../db";
 import { screenshots } from "../db/schema/screenshots";
 import { logger } from "../lib/logger";
 import { storage } from "../lib/storage";
+import {
+	applyCookies,
+	applyHeadersAndAgent,
+	applyPagePreferences,
+	performFullPageScroll,
+	setupAdAndTrackerBlocking,
+	setupRequestBlocking,
+} from "../utils/screenshot-helpers";
 
 puppeteer.use(StealthPlugin());
 
@@ -150,106 +150,55 @@ export async function upsertScreenshot(
 
 		const startTime = Date.now();
 
-		const browser = await puppeteer.launch({
-			headless: true,
-			args: ["--no-sandbox", "--disable-setuid-sandbox"],
-			defaultViewport: {
-				width: Math.round(width / deviceScaleFactor),
-				height: Math.round(height / deviceScaleFactor),
-				isMobile,
-				isLandscape,
-				hasTouch,
-				deviceScaleFactor: deviceScaleFactor,
-			},
-		});
-
-		if (cookies && cookies.length > 0) {
-			const urlObj = new URL(url);
-			const cookieObjs: Array<CookieData> = cookies.map((c) => ({
-				name: c.name,
-				value: c.value,
-				domain: (c.domain ?? urlObj.hostname) as string,
-				path: (c.path ?? "/") as string,
-				expires: c.expires as number | undefined,
-				sameSite: c.sameSite as CookieSameSite | undefined,
-				secure: c.secure as boolean | undefined,
-				httpOnly: c.httpOnly as boolean | undefined,
-			}));
-			if (cookieObjs.length > 0) {
-				await browser.defaultBrowserContext().setCookie(...cookieObjs);
-			}
-		}
-
-		const page = await browser.newPage();
-
-		if (userAgent) {
-			await page.setUserAgent(userAgent);
-		}
-
-		if (headers && headers.length > 0) {
-			const headerObj: Record<string, string> = {};
-			for (const { name, value } of headers) {
-				if (!name || !value) continue;
-				headerObj[name] = value;
-			}
-			if (Object.keys(headerObj).length > 0) {
-				await page.setExtraHTTPHeaders(headerObj);
-			}
-		}
-
-		if (bypassCsp) {
-			await page.setBypassCSP(true);
-			logger.warn({ workspaceId, url }, "[AUDIT] bypass_csp enabled");
-		}
-
-		page.emulateMediaFeatures([
-			{
-				name: "prefers-color-scheme",
-				value: prefersColorScheme,
-			},
-			{
-				name: "prefers-reduced-motion",
-				value: prefersReducedMotion,
-			},
-		]);
-
-		if (
-			(blockRequests && blockRequests?.length > 0) ||
-			blockResources?.length > 0
-		) {
-			const blockRequest = wildcardMatch(blockRequests || [], {
-				separator: false,
-			});
-
-			await page.setRequestInterception(true);
-
-			page.on("request", (request) => {
-				if (blockResources?.includes(request.resourceType() as never)) {
-					request.abort();
-					return;
-				}
-
-				if (blockRequest(request.url())) {
-					request.abort();
-					return;
-				}
-
-				request.continue();
-			});
-		}
+		let browser: import("puppeteer").Browser | null = null;
+		let page: import("puppeteer").Page | null = null;
 
 		try {
-			const blocker = await PuppeteerBlocker.fromLists(fetch, [
-				...(blockAds ? adsLists : []),
-				...(blockCookieBanners
-					? [
-							"https://secure.fanboy.co.nz/fanboy-cookiemonster.txt",
-							"https://secure.fanboy.co.nz/fanboy-annoyance.txt",
-						]
-					: []),
-				...(blockTrackers ? adsAndTrackingLists : []),
-			]);
-			await blocker.enableBlockingInPage(page);
+			browser = await puppeteer.launch({
+				headless: true,
+				args: ["--no-sandbox", "--disable-setuid-sandbox"],
+				defaultViewport: {
+					width: Math.round(width / deviceScaleFactor),
+					height: Math.round(height / deviceScaleFactor),
+					isMobile,
+					isLandscape,
+					hasTouch,
+					deviceScaleFactor: deviceScaleFactor,
+				},
+			});
+
+			// Apply cookies to the default browser context
+			await applyCookies(browser, url, cookies);
+
+			page = await browser.newPage();
+
+			// Apply custom headers / user-agent
+			await applyHeadersAndAgent(page, userAgent, headers);
+
+			// Apply CSP bypass, media features
+			await applyPagePreferences(
+				page,
+				bypassCsp,
+				prefersColorScheme,
+				prefersReducedMotion,
+			);
+			if (bypassCsp) {
+				logger.warn({ workspaceId, url }, "[AUDIT] bypass_csp enabled");
+			}
+
+			// Setup request/resource blocking
+			await setupRequestBlocking(
+				page,
+				blockRequests || [],
+				blockResources || [],
+			);
+
+			// Enable ad / tracker / cookie banner blocking via Ghostery
+			await setupAdAndTrackerBlocking(page, {
+				blockAds: !!blockAds,
+				blockCookieBanners: !!blockCookieBanners,
+				blockTrackers: !!blockTrackers,
+			});
 
 			await page.goto(url, {
 				waitUntil: ["load", "domcontentloaded", "networkidle2"],
@@ -258,77 +207,7 @@ export async function upsertScreenshot(
 			let buffer: Uint8Array<ArrayBufferLike> | null = null;
 			if (fullPage) {
 				if (fullPageScroll) {
-					const pageHeight = await page.evaluate(() => {
-						return Math.max(
-							document.body.scrollHeight,
-							document.documentElement.scrollHeight,
-							document.body.offsetHeight,
-							document.documentElement.offsetHeight,
-							document.body.clientHeight,
-							document.documentElement.clientHeight,
-						);
-					});
-
-					await page.evaluate(
-						async (pageHeight, scrollDuration) => {
-							const wait = (ms: number) =>
-								new Promise<void>((resolve) => setTimeout(resolve, ms));
-
-							// Start at the top
-							window.scrollTo(0, 0);
-							await wait(100);
-
-							// Smoothly scroll to bottom over the provided duration using rAF
-							await new Promise<void>((resolveScroll) => {
-								const startTime = performance.now();
-								const step = () => {
-									const elapsed = performance.now() - startTime;
-									const progress = Math.min(elapsed / scrollDuration, 1);
-									window.scrollTo(0, progress * pageHeight);
-									if (progress < 1) {
-										requestAnimationFrame(step);
-									} else {
-										resolveScroll();
-									}
-								};
-								requestAnimationFrame(step);
-							});
-
-							// Ensure we reach the bottom and allow lazy content to load
-							window.scrollTo(0, pageHeight);
-							await wait(300);
-
-							// Return to top
-							window.scrollTo(0, 0);
-							await wait(300);
-
-							// Wait for all images to load
-							const images = Array.from(document.querySelectorAll("img"));
-							await Promise.all(
-								images.map((img) => {
-									if (img.complete && img.naturalHeight !== 0) {
-										return Promise.resolve();
-									}
-									return new Promise((resolve, reject) => {
-										const timeout = setTimeout(() => {
-											resolve(undefined); // Don't fail the entire process for one image
-										}, 5000);
-
-										img.onload = () => {
-											clearTimeout(timeout);
-											resolve(undefined);
-										};
-										img.onerror = () => {
-											clearTimeout(timeout);
-											resolve(undefined); // Don't fail the entire process for one image
-										};
-									});
-								}),
-							);
-						},
-						pageHeight,
-						fullPageScrollDuration,
-					);
+					await performFullPageScroll(page, fullPageScrollDuration);
 				}
 
 				buffer = await page.screenshot({
@@ -431,8 +310,6 @@ export async function upsertScreenshot(
 				);
 			}
 
-			await page.close();
-
 			let object: ArrayBuffer;
 			try {
 				object = await storage.file(key).arrayBuffer();
@@ -450,8 +327,10 @@ export async function upsertScreenshot(
 			return { object, key, created: true };
 		} finally {
 			// Ensure resources are closed if not already
-			if (!page.isClosed()) await page.close();
-			await browser.close();
+			try {
+				if (page && !page.isClosed()) await page.close();
+			} catch {}
+			if (browser) await browser.close();
 		}
 	});
 }
