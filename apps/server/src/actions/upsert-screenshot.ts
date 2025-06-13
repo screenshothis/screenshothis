@@ -22,7 +22,6 @@ import { db } from "../db";
 import { screenshots } from "../db/schema/screenshots";
 import { logger } from "../lib/logger";
 import { storage } from "../lib/storage";
-import { wait } from "../utils/common";
 
 puppeteer.use(StealthPlugin());
 
@@ -269,6 +268,9 @@ export async function upsertScreenshot(
 
 					await page.evaluate(
 						async (pageHeight, scrollDuration) => {
+							const wait = (ms: number) =>
+								new Promise<void>((resolve) => setTimeout(resolve, ms));
+
 							// Start at the top
 							window.scrollTo(0, 0);
 							await wait(100);
