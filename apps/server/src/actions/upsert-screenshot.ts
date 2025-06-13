@@ -361,6 +361,8 @@ export async function upsertScreenshot(
 					hasTouch,
 					deviceScaleFactor,
 					fullPage,
+					fullPageScroll,
+					fullPageScrollDuration,
 					format,
 					quality,
 					blockAds,
