@@ -221,11 +221,15 @@ export const ScreenshotSchema = z.object({
 			"Custom cache key for grouping related screenshots. Auto-generated if not provided.",
 		example: "homepage-desktop-light",
 	}),
-	user_agent: z.string().optional().openapi({
-		description: "User agent to use for the screenshot",
-		example:
-			"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
-	}),
+	user_agent: z
+		.string()
+		.max(1024, { message: "User agent string is too long (max 1024 chars)" })
+		.optional()
+		.openapi({
+			description: "User agent to use for the screenshot",
+			example:
+				"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+		}),
 	headers: z
 		.string()
 		.max(MAX_HEADERS_SIZE, {
