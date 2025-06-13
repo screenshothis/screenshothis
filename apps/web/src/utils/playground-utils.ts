@@ -113,8 +113,6 @@ export function formatApiUrlForDisplay(values: PlaygroundFormValues): string {
 	const url = generateApiUrl(values);
 	const [baseUrl, queryString] = url.split("?");
 
-	console.log(values);
-
 	if (!queryString) return baseUrl;
 
 	const params = new URLSearchParams(queryString);
