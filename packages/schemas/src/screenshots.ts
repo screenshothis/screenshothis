@@ -124,10 +124,17 @@ export const ScreenshotSchema = z.object({
 		description: "Scroll the full page to trigger lazy loading",
 		example: true,
 	}),
-	full_page_scroll_duration: z.coerce.number().optional().default(400).openapi({
-		description: "Duration of the full page scroll in milliseconds",
-		example: 400,
-	}),
+	full_page_scroll_duration: z.coerce
+		.number()
+		.min(0, { message: "Must be ≥ 0 ms" })
+		.max(30_000, { message: "Must be ≤ 30 000 ms" })
+		.optional()
+		.default(400)
+		.openapi({
+			description: "Duration of the full page scroll in milliseconds",
+			example: 400,
+			minimum: 0,
+		}),
 	format: FormatSchema.optional().default("jpeg").openapi({
 		description:
 			"Output image format. JPEG offers smaller file sizes, PNG supports transparency, WebP provides modern compression.",
