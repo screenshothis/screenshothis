@@ -157,6 +157,13 @@ export async function performFullPageScroll(
 	scrollDuration: number,
 ): Promise<void> {
 	await page.evaluate(async (duration: number) => {
+		// Polyfill for TypeScript's __name helper which may be referenced in compiled code but isn't defined in the browser context when this function string is executed.
+		type __NameHelper = (fn: unknown, name?: string) => unknown;
+		const globalWithName = globalThis as unknown as { __name?: __NameHelper };
+		if (typeof globalWithName.__name !== "function") {
+			globalWithName.__name = (fn: unknown) => fn;
+		}
+
 		// Ensure a valid positive duration to avoid division by zero or NaN during progress calculation
 		const safeDuration =
 			typeof duration !== "number" ||
