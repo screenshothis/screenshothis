@@ -427,6 +427,7 @@ export async function getExistingScreenshotKey(
 		fullPageScroll,
 		fullPageScrollDuration,
 		format,
+		quality,
 		blockAds,
 		blockCookieBanners,
 		blockTrackers,
@@ -463,6 +464,7 @@ export async function getExistingScreenshotKey(
 					? eq(screenshots.fullPageScrollDuration, fullPageScrollDuration)
 					: undefined,
 				eq(screenshots.format, format),
+				eq(screenshots.quality, quality),
 				eq(screenshots.blockAds, blockAds),
 				eq(screenshots.blockCookieBanners, blockCookieBanners),
 				eq(screenshots.blockTrackers, blockTrackers),
