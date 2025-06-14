@@ -36,6 +36,11 @@ export const screenshots = pgTable(
 		deviceScaleFactor: real("device_scale_factor").notNull().default(1),
 		duration: real("duration").notNull().default(0),
 		hasTouch: boolean("has_touch").notNull().default(false),
+		fullPage: boolean("full_page").notNull().default(false),
+		fullPageScroll: boolean("full_page_scroll").notNull().default(true),
+		fullPageScrollDuration: integer("full_page_scroll_duration")
+			.notNull()
+			.default(400),
 		format: text("format").$type<z.infer<typeof FormatSchema>>().notNull(),
 		quality: integer("quality").notNull().default(80),
 		blockAds: boolean("block_ads").notNull().default(false),

@@ -622,7 +622,6 @@ export default {
     tanstackRouter({
       target: 'react',
       autoCodeSplitting: true,
-      verboseFileRoutes: false,
     }),
   ],
 }
@@ -810,7 +809,6 @@ export default defineConfig({
         tanstackRouter({
           target: 'react',
           autoCodeSplitting: true,
-          verboseFileRoutes: false,
         }),
       ],
     },
@@ -897,7 +895,6 @@ export default defineConfig({
     tanstackRouter({
       target: 'react',
       autoCodeSplitting: true,
-      verboseFileRoutes: false,
     }),
     react(),
     // ...
@@ -983,7 +980,6 @@ export default {
     tanstackRouter({
       target: 'react',
       autoCodeSplitting: true,
-      verboseFileRoutes: false,
     }),
   ],
 }
@@ -1652,7 +1648,6 @@ export default defineConfig({
   plugins: [
     tanstackRouter({
       target: 'react',
-      verboseFileRoutes: false,
       virtualRouteConfig: './routes.ts',
     }),
     react(),

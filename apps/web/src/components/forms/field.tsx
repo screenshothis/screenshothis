@@ -16,7 +16,8 @@ export type FieldProps = {
 	id?: string;
 	className?: string;
 	disabled?: boolean;
-	children: React.ReactNode;
+	children?: React.ReactNode;
+	childrenWrapperClassName?: string;
 	hint?: string | Array<string>;
 	hintClassName?: string;
 	hintIcon?: React.ForwardRefExoticComponent<React.SVGProps<SVGSVGElement>>;
@@ -33,6 +34,7 @@ export function Field({
 	labelClassName,
 	className,
 	children,
+	childrenWrapperClassName,
 	hint,
 	hintClassName,
 	hintIcon = InformationCircleSolidIcon,
@@ -44,19 +46,23 @@ export function Field({
 
 	return (
 		<div data-slot="form-item" className={cn("grid gap-1", className)}>
-			{label ? (
-				<Label.Root
-					className={labelClassName}
-					disabled={props.disabled}
-					htmlFor={id}
-					data-slot="form-label"
-				>
-					{label}
-					{labelSub ? <Label.Sub className="ml-1">{labelSub}</Label.Sub> : null}
-				</Label.Root>
-			) : null}
+			<div className={cn("grid gap-1", childrenWrapperClassName)}>
+				{label ? (
+					<Label.Root
+						className={labelClassName}
+						disabled={props.disabled}
+						htmlFor={id}
+						data-slot="form-label"
+					>
+						{label}
+						{labelSub ? (
+							<Label.Sub className="ml-1">{labelSub}</Label.Sub>
+						) : null}
+					</Label.Root>
+				) : null}
 
-			{children}
+				{children}
+			</div>
 
 			{error || hint ? (
 				<HintRootMotion

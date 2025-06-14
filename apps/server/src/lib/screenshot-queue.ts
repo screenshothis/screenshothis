@@ -9,12 +9,12 @@ import {
 } from "bullmq";
 import { and, eq, sql } from "drizzle-orm";
 
+import { upsertScreenshot } from "../actions/upsert-screenshot";
 import { db } from "../db";
 import { requestLimits } from "../db/schema/request-limits";
 import { screenshots } from "../db/schema/screenshots";
 import { logger } from "../lib/logger";
 import { env } from "../utils/env";
-import { getOrCreateScreenshot } from "../utils/screenshot";
 import { consumeQuota } from "./request-quota";
 
 async function getUserPlan(userId: string): Promise<string> {
@@ -78,7 +78,7 @@ const queueEvents = new QueueEvents(QUEUE_NAME, { connection });
 export interface ScreenshotJobParams {
 	workspaceId: string;
 	userId: string;
-	params: Parameters<typeof getOrCreateScreenshot>[1];
+	params: Parameters<typeof upsertScreenshot>[1];
 }
 
 type WorkerJobData = ScreenshotJobParams;
@@ -96,7 +96,7 @@ const screenshotWorker = new Worker<WorkerJobData>(
 			// Update job progress
 			await job.updateProgress(10);
 
-			const { key: objectKey, created } = await getOrCreateScreenshot(
+			const { key: objectKey, created } = await upsertScreenshot(
 				workspaceId,
 				params,
 			);
@@ -423,6 +423,9 @@ export async function getExistingScreenshotKey(
 		isLandscape,
 		hasTouch,
 		deviceScaleFactor,
+		fullPage,
+		fullPageScroll,
+		fullPageScrollDuration,
 		format,
 		blockAds,
 		blockCookieBanners,
@@ -454,6 +457,11 @@ export async function getExistingScreenshotKey(
 				eq(screenshots.isLandscape, isLandscape),
 				eq(screenshots.hasTouch, hasTouch),
 				eq(screenshots.deviceScaleFactor, deviceScaleFactor),
+				eq(screenshots.fullPage, fullPage),
+				eq(screenshots.fullPageScroll, fullPageScroll),
+				fullPageScrollDuration
+					? eq(screenshots.fullPageScrollDuration, fullPageScrollDuration)
+					: undefined,
 				eq(screenshots.format, format),
 				eq(screenshots.blockAds, blockAds),
 				eq(screenshots.blockCookieBanners, blockCookieBanners),

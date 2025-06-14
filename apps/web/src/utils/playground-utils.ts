@@ -24,6 +24,14 @@ export function generateApiUrl(values: PlaygroundFormValues): string {
 	if (values.has_touch) params.set("has_touch", values.has_touch.toString());
 	if (values.device_scale_factor)
 		params.set("device_scale_factor", values.device_scale_factor.toString());
+	if (values.full_page) params.set("full_page", values.full_page.toString());
+	if (values.full_page_scroll)
+		params.set("full_page_scroll", values.full_page_scroll.toString());
+	if (values.full_page_scroll_duration)
+		params.set(
+			"full_page_scroll_duration",
+			values.full_page_scroll_duration.toString(),
+		);
 	if (values.format) params.set("format", values.format);
 	if (values.quality !== undefined && values.quality !== null) {
 		params.set("quality", values.quality.toString());

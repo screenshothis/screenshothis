@@ -1,5 +1,6 @@
 import { z } from "zod";
 import "zod-openapi/extend";
+import { booleanSchema } from "./utils/zod.ts";
 
 export const MAX_HEADERS_SIZE = 8192; // 8 KB (RFC 7230 guideline)
 export const MAX_COOKIES_SIZE = 4096; // 4 KB (typical cookie size limit)
@@ -94,32 +95,20 @@ export const ScreenshotSchema = z.object({
 		minimum: 1,
 		maximum: 4320,
 	}),
-	is_mobile: z
-		.preprocess((val) => String(val).toLowerCase() === "true", z.boolean())
-		.optional()
-		.default(false)
-		.openapi({
-			description:
-				"Enable mobile device emulation with touch events and mobile user agent",
-			example: false,
-		}),
-	is_landscape: z
-		.preprocess((val) => String(val).toLowerCase() === "true", z.boolean())
-		.optional()
-		.default(false)
-		.openapi({
-			description:
-				"Set device orientation to landscape mode when mobile emulation is enabled",
-			example: false,
-		}),
-	has_touch: z
-		.preprocess((val) => String(val).toLowerCase() === "true", z.boolean())
-		.optional()
-		.default(false)
-		.openapi({
-			description: "Enable touch event support for the emulated device",
-			example: false,
-		}),
+	is_mobile: booleanSchema.optional().default(false).openapi({
+		description:
+			"Enable mobile device emulation with touch events and mobile user agent",
+		example: false,
+	}),
+	is_landscape: booleanSchema.optional().default(false).openapi({
+		description:
+			"Set device orientation to landscape mode when mobile emulation is enabled",
+		example: false,
+	}),
+	has_touch: booleanSchema.optional().default(false).openapi({
+		description: "Enable touch event support for the emulated device",
+		example: false,
+	}),
 	device_scale_factor: z.coerce.number().optional().default(1).openapi({
 		description:
 			"Device pixel ratio for high-DPI displays. Higher values produce sharper images on retina displays.",
@@ -127,6 +116,25 @@ export const ScreenshotSchema = z.object({
 		minimum: 0.1,
 		maximum: 3,
 	}),
+	full_page: booleanSchema.optional().default(false).openapi({
+		description: "Capture the full page instead of just the viewport",
+		example: false,
+	}),
+	full_page_scroll: booleanSchema.optional().default(true).openapi({
+		description: "Scroll the full page to trigger lazy loading",
+		example: true,
+	}),
+	full_page_scroll_duration: z.coerce
+		.number()
+		.min(0, { message: "Must be ≥ 0 ms" })
+		.max(30_000, { message: "Must be ≤ 30 000 ms" })
+		.optional()
+		.default(400)
+		.openapi({
+			description: "Duration of the full page scroll in milliseconds",
+			example: 400,
+			minimum: 0,
+		}),
 	format: FormatSchema.optional().default("jpeg").openapi({
 		description:
 			"Output image format. JPEG offers smaller file sizes, PNG supports transparency, WebP provides modern compression.",
@@ -139,33 +147,21 @@ export const ScreenshotSchema = z.object({
 		minimum: 20,
 		maximum: 100,
 	}),
-	block_ads: z
-		.preprocess((val) => String(val).toLowerCase() === "true", z.boolean())
-		.optional()
-		.default(false)
-		.openapi({
-			description:
-				"Block advertisements and ad-related content from loading during screenshot capture",
-			example: false,
-		}),
-	block_cookie_banners: z
-		.preprocess((val) => String(val).toLowerCase() === "true", z.boolean())
-		.optional()
-		.default(false)
-		.openapi({
-			description:
-				"Automatically hide cookie consent banners and GDPR notices for cleaner screenshots",
-			example: false,
-		}),
-	block_trackers: z
-		.preprocess((val) => String(val).toLowerCase() === "true", z.boolean())
-		.optional()
-		.default(false)
-		.openapi({
-			description:
-				"Block tracking scripts and analytics to improve page load speed and privacy",
-			example: false,
-		}),
+	block_ads: booleanSchema.optional().default(false).openapi({
+		description:
+			"Block advertisements and ad-related content from loading during screenshot capture",
+		example: false,
+	}),
+	block_cookie_banners: booleanSchema.optional().default(false).openapi({
+		description:
+			"Automatically hide cookie consent banners and GDPR notices for cleaner screenshots",
+		example: false,
+	}),
+	block_trackers: booleanSchema.optional().default(false).openapi({
+		description:
+			"Block tracking scripts and analytics to improve page load speed and privacy",
+		example: false,
+	}),
 	block_requests: z
 		.string()
 		.transform((value) => value.split("\n"))
@@ -197,20 +193,16 @@ export const ScreenshotSchema = z.object({
 				"Accessibility setting to reduce animations and transitions for motion-sensitive users",
 			example: "no-preference",
 		}),
-	duration: z.number().optional().openapi({
+	duration: z.coerce.number().optional().openapi({
 		description:
 			"Time taken to capture the screenshot in milliseconds (read-only, populated after processing)",
 		example: 2500,
 	}),
-	is_cached: z
-		.preprocess((val) => String(val).toLowerCase() === "true", z.boolean())
-		.optional()
-		.default(false)
-		.openapi({
-			description:
-				"Whether to use cached version of the screenshot if available, or force a fresh capture",
-			example: false,
-		}),
+	is_cached: booleanSchema.optional().default(false).openapi({
+		description:
+			"Whether to use cached version of the screenshot if available, or force a fresh capture",
+		example: false,
+	}),
 	cache_ttl: z
 		.number()
 		.min(3600)
@@ -229,6 +221,15 @@ export const ScreenshotSchema = z.object({
 			"Custom cache key for grouping related screenshots. Auto-generated if not provided.",
 		example: "homepage-desktop-light",
 	}),
+	user_agent: z
+		.string()
+		.max(1024, { message: "User agent string is too long (max 1024 chars)" })
+		.optional()
+		.openapi({
+			description: "User agent to use for the screenshot",
+			example:
+				"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+		}),
 	headers: z
 		.string()
 		.max(MAX_HEADERS_SIZE, {
@@ -395,15 +396,11 @@ export const ScreenshotSchema = z.object({
 			example:
 				"session_id=abc123; Domain=example.com; Path=/; Secure\nuser_pref=dark_mode; Max-Age=3600",
 		}),
-	bypass_csp: z
-		.preprocess((val) => String(val).toLowerCase() === "true", z.boolean())
-		.optional()
-		.default(false)
-		.openapi({
-			description:
-				"Bypass Content Security Policy restrictions that might prevent proper page rendering or script execution",
-			example: false,
-		}),
+	bypass_csp: booleanSchema.optional().default(false).openapi({
+		description:
+			"Bypass Content Security Policy restrictions that might prevent proper page rendering or script execution",
+		example: false,
+	}),
 	created_at: z.date().nullish().openapi({
 		description: "Timestamp when the screenshot record was created (read-only)",
 		example: "2024-01-15T10:30:00.000Z",

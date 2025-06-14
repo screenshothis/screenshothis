@@ -1,20 +1,12 @@
-import {
-	PuppeteerBlocker,
-	adsAndTrackingLists,
-	adsLists,
-} from "@ghostery/adblocker-puppeteer";
 import type {
 	CreateScreenshotSchema,
 	ResourceTypeSchema,
 } from "@screenshothis/schemas/screenshots";
-import fetch from "cross-fetch";
 import { and, eq, sql } from "drizzle-orm";
 import pLimit from "p-limit";
-import type { CookieData, CookieSameSite } from "puppeteer";
 import puppeteer from "puppeteer-extra";
 import StealthPlugin from "puppeteer-extra-plugin-stealth";
 import type { ObjectToCamel } from "ts-case-convert";
-import wildcardMatch from "wildcard-match";
 import type { z } from "zod";
 
 import { isScreenshotOriginAllowed } from "../actions/validate-screenshot-origin";
@@ -22,18 +14,27 @@ import { db } from "../db";
 import { screenshots } from "../db/schema/screenshots";
 import { logger } from "../lib/logger";
 import { storage } from "../lib/storage";
+import { env } from "../utils/env";
+import {
+	applyCookies,
+	applyHeadersAndAgent,
+	applyPagePreferences,
+	performFullPageScroll,
+	setupAdAndTrackerBlocking,
+	setupRequestBlocking,
+} from "../utils/screenshot-helpers";
 
 puppeteer.use(StealthPlugin());
 
-type GetOrCreateScreenshotParams = ObjectToCamel<
+type UpsertScreenshotParams = ObjectToCamel<
 	z.infer<typeof CreateScreenshotSchema>
 >;
 
-const limit = pLimit(10);
+const limit = pLimit(env.SCREENSHOT_CONCURRENCY);
 
-export async function getOrCreateScreenshot(
+export async function upsertScreenshot(
 	workspaceId: string,
-	params: GetOrCreateScreenshotParams,
+	params: UpsertScreenshotParams,
 ): Promise<{
 	object: ArrayBuffer | null;
 	key: string | null;
@@ -49,6 +50,9 @@ export async function getOrCreateScreenshot(
 			isLandscape,
 			hasTouch,
 			deviceScaleFactor,
+			fullPage,
+			fullPageScroll,
+			fullPageScrollDuration,
 			format,
 			quality,
 			blockAds,
@@ -67,6 +71,9 @@ export async function getOrCreateScreenshot(
 			bypassCsp,
 		} = params;
 
+		const sortedBlockRequests = (blockRequests || []).slice().sort();
+		const sortedBlockResources = (blockResources || []).slice().sort();
+
 		const existing = await db.query.screenshots.findFirst({
 			where: and(
 				eq(screenshots.url, url),
@@ -77,13 +84,18 @@ export async function getOrCreateScreenshot(
 				eq(screenshots.isLandscape, isLandscape),
 				eq(screenshots.hasTouch, hasTouch),
 				eq(screenshots.deviceScaleFactor, deviceScaleFactor),
+				eq(screenshots.fullPage, fullPage),
+				eq(screenshots.fullPageScroll, fullPageScroll),
+				fullPageScrollDuration
+					? eq(screenshots.fullPageScrollDuration, fullPageScrollDuration)
+					: undefined,
 				eq(screenshots.format, format),
 				eq(screenshots.quality, quality),
 				eq(screenshots.blockAds, blockAds),
 				eq(screenshots.blockCookieBanners, blockCookieBanners),
 				eq(screenshots.blockTrackers, blockTrackers),
-				sql`${screenshots.blockRequests} @> ${JSON.stringify(blockRequests || [])}`,
-				sql`${screenshots.blockResources} @> ${JSON.stringify(blockResources || [])}`,
+				sql`${screenshots.blockRequests} @> ${JSON.stringify(sortedBlockRequests)} AND ${JSON.stringify(sortedBlockRequests)}::jsonb @> ${screenshots.blockRequests}`,
+				sql`${screenshots.blockResources} @> ${JSON.stringify(sortedBlockResources)} AND ${JSON.stringify(sortedBlockResources)}::jsonb @> ${screenshots.blockResources}`,
 				eq(screenshots.prefersColorScheme, prefersColorScheme),
 				eq(screenshots.prefersReducedMotion, prefersReducedMotion),
 				eq(screenshots.workspaceId, workspaceId),
@@ -139,124 +151,91 @@ export async function getOrCreateScreenshot(
 
 		const startTime = Date.now();
 
-		const browser = await puppeteer.launch({
-			headless: true,
-			args: ["--no-sandbox", "--disable-setuid-sandbox"],
-			defaultViewport: {
-				width: Math.round(width / deviceScaleFactor),
-				height: Math.round(height / deviceScaleFactor),
-				isMobile,
-				isLandscape,
-				hasTouch,
-				deviceScaleFactor: deviceScaleFactor,
-			},
-		});
-
-		if (cookies && cookies.length > 0) {
-			const urlObj = new URL(url);
-			const cookieObjs: Array<CookieData> = cookies.map((c) => ({
-				name: c.name,
-				value: c.value,
-				domain: (c.domain ?? urlObj.hostname) as string,
-				path: (c.path ?? "/") as string,
-				expires: c.expires as number | undefined,
-				sameSite: c.sameSite as CookieSameSite | undefined,
-				secure: c.secure as boolean | undefined,
-				httpOnly: c.httpOnly as boolean | undefined,
-			}));
-			if (cookieObjs.length > 0) {
-				await browser.defaultBrowserContext().setCookie(...cookieObjs);
-			}
-		}
-
-		const page = await browser.newPage();
-
-		if (userAgent) {
-			await page.setUserAgent(userAgent);
-		}
-
-		if (headers && headers.length > 0) {
-			const headerObj: Record<string, string> = {};
-			for (const { name, value } of headers) {
-				if (!name || !value) continue;
-				headerObj[name] = value;
-			}
-			if (Object.keys(headerObj).length > 0) {
-				await page.setExtraHTTPHeaders(headerObj);
-			}
-		}
-
-		if (bypassCsp) {
-			await page.setBypassCSP(true);
-			logger.warn({ workspaceId, url }, "[AUDIT] bypass_csp enabled");
-		}
-
-		page.emulateMediaFeatures([
-			{
-				name: "prefers-color-scheme",
-				value: prefersColorScheme,
-			},
-			{
-				name: "prefers-reduced-motion",
-				value: prefersReducedMotion,
-			},
-		]);
-
-		if (
-			(blockRequests && blockRequests?.length > 0) ||
-			blockResources?.length > 0
-		) {
-			const blockRequest = wildcardMatch(blockRequests || [], {
-				separator: false,
-			});
-
-			await page.setRequestInterception(true);
-
-			page.on("request", (request) => {
-				if (blockResources?.includes(request.resourceType() as never)) {
-					request.abort();
-					return;
-				}
-
-				if (blockRequest(request.url())) {
-					request.abort();
-					return;
-				}
-
-				request.continue();
-			});
-		}
+		let browser: import("puppeteer").Browser | null = null;
+		let page: import("puppeteer").Page | null = null;
 
 		try {
-			const blocker = await PuppeteerBlocker.fromLists(fetch, [
-				...(blockAds ? adsLists : []),
-				...(blockCookieBanners
-					? [
-							"https://secure.fanboy.co.nz/fanboy-cookiemonster.txt",
-							"https://secure.fanboy.co.nz/fanboy-annoyance.txt",
-						]
-					: []),
-				...(blockTrackers ? adsAndTrackingLists : []),
-			]);
-			await blocker.enableBlockingInPage(page);
+			browser = await puppeteer.launch({
+				headless: true,
+				args: ["--no-sandbox", "--disable-setuid-sandbox"],
+				defaultViewport: {
+					width: Math.round(width / deviceScaleFactor),
+					height: Math.round(height / deviceScaleFactor),
+					isMobile,
+					isLandscape,
+					hasTouch,
+					deviceScaleFactor: deviceScaleFactor,
+				},
+			});
 
-			await page.goto(url, { waitUntil: "networkidle0" });
+			await applyCookies(browser, url, cookies);
+
+			page = await browser.newPage();
+
+			await applyHeadersAndAgent(page, userAgent, headers);
+
+			await applyPagePreferences(
+				page,
+				bypassCsp,
+				prefersColorScheme,
+				prefersReducedMotion,
+			);
+			if (bypassCsp) {
+				logger.warn({ workspaceId, url }, "[AUDIT] bypass_csp enabled");
+			}
+
+			await setupRequestBlocking(
+				page,
+				blockRequests || [],
+				blockResources || [],
+			);
+
+			await setupAdAndTrackerBlocking(page, {
+				blockAds: !!blockAds,
+				blockCookieBanners: !!blockCookieBanners,
+				blockTrackers: !!blockTrackers,
+			});
+
+			await page.goto(url, {
+				waitUntil: ["load", "domcontentloaded", "networkidle2"],
+			});
 
 			let buffer: Uint8Array<ArrayBufferLike> | null = null;
-			if (selector) {
-				await page.waitForSelector(selector);
-				const element = await page.$(selector);
-				if (element) {
-					buffer = await element.screenshot({
+			if (fullPage) {
+				if (fullPageScroll) {
+					const scrollDuration =
+						typeof fullPageScrollDuration === "number" &&
+						Number.isFinite(fullPageScrollDuration) &&
+						fullPageScrollDuration > 0
+							? fullPageScrollDuration
+							: 800; // Sane default to guarantee at least one scroll step
+					await performFullPageScroll(page, scrollDuration);
+				}
+
+				buffer = await page.screenshot({
+					type: "jpeg",
+					quality,
+					fullPage: true,
+					optimizeForSpeed: true,
+				});
+			} else {
+				if (selector) {
+					await page.waitForSelector(selector);
+					const element = await page.$(selector);
+					if (element) {
+						buffer = await element.screenshot({
+							quality,
+							type: format,
+							optimizeForSpeed: true,
+						});
+					}
+				} else {
+					buffer = await page.screenshot({
 						quality,
 						type: format,
+						optimizeForSpeed: true,
 					});
 				}
-			} else {
-				buffer = await page.screenshot({
-					quality,
-					type: format,
-				});
 			}
 
 			if (!buffer) {
@@ -274,15 +253,20 @@ export async function getOrCreateScreenshot(
 					isLandscape,
 					hasTouch,
 					deviceScaleFactor,
+					fullPage,
+					fullPageScroll,
+					fullPageScrollDuration,
 					format,
 					quality,
 					blockAds,
 					blockCookieBanners,
 					blockTrackers,
-					blockRequests,
-					blockResources: blockResources as Array<
-						z.infer<typeof ResourceTypeSchema>
-					>,
+					blockRequests: blockRequests ? [...blockRequests].sort() : undefined,
+					blockResources: blockResources
+						? ((blockResources as string[]).slice().sort() as Array<
+								z.infer<typeof ResourceTypeSchema>
+							>)
+						: undefined,
 					prefersColorScheme,
 					prefersReducedMotion,
 					isCached,
@@ -331,8 +315,6 @@ export async function getOrCreateScreenshot(
 				);
 			}
 
-			await page.close();
-
 			let object: ArrayBuffer;
 			try {
 				object = await storage.file(key).arrayBuffer();
@@ -350,8 +332,15 @@ export async function getOrCreateScreenshot(
 			return { object, key, created: true };
 		} finally {
 			// Ensure resources are closed if not already
-			if (!page.isClosed()) await page.close();
-			await browser.close();
+			try {
+				if (page && !page.isClosed()) await page.close();
+			} catch {}
+
+			try {
+				if (browser) await browser.close();
+			} catch (e) {
+				logger.warn({ err: e }, "Failed to close browser during cleanup");
+			}
 		}
 	});
 }
