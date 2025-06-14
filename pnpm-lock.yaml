@@ -180,6 +180,12 @@ importers:
       '@better-fetch/fetch':
         specifier: ^1.1.18
         version: 1.1.18
+      '@fontsource-variable/geist':
+        specifier: 5.2.6
+        version: 5.2.6
+      '@fontsource-variable/geist-mono':
+        specifier: 5.2.6
+        version: 5.2.6
       '@orpc/client':
         specifier: 1.5.1
         version: 1.5.1
@@ -1268,6 +1274,12 @@ packages:
 
   '@floating-ui/utils@0.2.9':
     resolution: {integrity: sha512-MDWhGtE+eHw5JW7lq4qhc5yRLS11ERl1c7Z6Xd0a58DozHES6EnNNwUWbMiG4J9Cgj053Bhk8zvlhFYKVhULwg==}
+
+  '@fontsource-variable/geist-mono@5.2.6':
+    resolution: {integrity: sha512-vw6T9JGTrYJ980bn7W8iTPhe2jVK5ifunVs7xh9dfTVArjDSkJs03JjeZrH5LKEpGABLXSlSlNU57HRm4tmFMg==}
+
+  '@fontsource-variable/geist@5.2.6':
+    resolution: {integrity: sha512-Bt9pdD55Fojq4h9yFKQAzh5+Xj4tKFpwbcDzK6t5PPSH2GrjPoPqm6N8y+tK6vzwKZ9hHyaOz/tAbO9cQd9UFQ==}
 
   '@ghostery/adblocker-content@2.7.0':
     resolution: {integrity: sha512-NZN4XyQ2bXBC86qFEevw8GEXoVXuzAvvj9urgHu+Ud/JfAzW5agaLUoXNz5gT/ZU6fVZScwOVvbL48AI66JUUg==}
@@ -9338,6 +9350,10 @@ snapshots:
       react-dom: 19.1.0(react@19.1.0)
 
   '@floating-ui/utils@0.2.9': {}
+
+  '@fontsource-variable/geist-mono@5.2.6': {}
+
+  '@fontsource-variable/geist@5.2.6': {}
 
   '@ghostery/adblocker-content@2.7.0':
     dependencies:

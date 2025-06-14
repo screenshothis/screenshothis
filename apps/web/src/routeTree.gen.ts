@@ -99,7 +99,6 @@ const MarketingLegalSplatRoute = MarketingLegalSplatRouteImport.update({
 } as any)
 
 export interface FileRoutesByFullPath {
-  '': typeof MarketingRouteWithChildren
   '/dashboard': typeof AppDashboardRoute
   '/keys': typeof AppKeysRoute
   '/playground': typeof AppPlaygroundRoute
@@ -113,7 +112,6 @@ export interface FileRoutesByFullPath {
   '/legal/$': typeof MarketingLegalSplatRoute
 }
 export interface FileRoutesByTo {
-  '': typeof AuthRouteWithChildren
   '/dashboard': typeof AppDashboardRoute
   '/keys': typeof AppKeysRoute
   '/playground': typeof AppPlaygroundRoute
@@ -146,7 +144,6 @@ export interface FileRoutesById {
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
-    | ''
     | '/dashboard'
     | '/keys'
     | '/playground'
@@ -160,7 +157,6 @@ export interface FileRouteTypes {
     | '/legal/$'
   fileRoutesByTo: FileRoutesByTo
   to:
-    | ''
     | '/dashboard'
     | '/keys'
     | '/playground'

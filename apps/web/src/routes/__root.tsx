@@ -1,3 +1,6 @@
+import "@fontsource-variable/geist";
+import "@fontsource-variable/geist-mono";
+
 import type { QueryClient } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import {
@@ -141,17 +144,6 @@ function RootDocument({ children }: { children: React.ReactNode }) {
 		<html lang="en" className="h-full antialiased" suppressHydrationWarning>
 			<head>
 				<HeadContent />
-
-				<link rel="preconnect" href="https://fonts.googleapis.com" />
-				<link
-					rel="preconnect"
-					href="https://fonts.gstatic.com"
-					crossOrigin="anonymous"
-				/>
-				<link
-					href="https://fonts.googleapis.com/css2?family=Geist+Mono:wght@100..900&family=Geist:wght@100..900&display=swap"
-					rel="stylesheet"
-				/>
 			</head>
 			<body
 				className="h-full bg-(--bg-white-0) text-(--text-strong-950)"
