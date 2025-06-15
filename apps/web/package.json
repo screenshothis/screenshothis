@@ -33,9 +33,9 @@
 		"@tanstack/react-query": "5.80.7",
 		"@tanstack/react-router": "1.121.12",
 		"@tanstack/react-router-with-query": "1.121.12",
-		"@tanstack/react-start": "1.121.12",
+		"@tanstack/react-start": "1.121.13",
 		"@tanstack/react-table": "8.21.3",
-		"@tanstack/router-plugin": "1.121.12",
+		"@tanstack/router-plugin": "1.121.13",
 		"@tanstack/zod-adapter": "1.121.12",
 		"@trpc/client": "11.4.1",
 		"@trpc/server": "11.4.1",
@@ -68,7 +68,7 @@
 		"zustand": "5.0.5"
 	},
 	"devDependencies": {
-		"@content-collections/core": "0.9.0",
+		"@content-collections/core": "0.9.1",
 		"@content-collections/markdown": "0.1.4",
 		"@content-collections/vite": "0.2.5",
 		"@epic-web/config": "1.21.0",
