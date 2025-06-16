@@ -8,6 +8,8 @@ export async function getProductSlugById(productId: string): Promise<PlanType> {
 			return "lite";
 		case env.POLAR_PRO_PRODUCT_ID:
 			return "pro";
+		case env.POLAR_ENTERPRISE_PRODUCT_ID:
+			return "enterprise";
 		default:
 			throw new Error(`Unknown product ID: ${productId}`);
 	}
