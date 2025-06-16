@@ -55,9 +55,7 @@ export function generateApiUrl(values: PlaygroundFormValues): string {
 		(v) => v.toString(),
 	);
 	addIfNotDefault("format", values.format);
-	if (values.quality !== undefined && values.quality !== null) {
-		addIfNotDefault("quality", values.quality, (v) => v.toString());
-	}
+	addIfNotDefault("quality", values.quality, (v) => v.toString());
 	addIfNotDefault("block_ads", values.block_ads, (v) => v.toString());
 	addIfNotDefault("block_cookie_banners", values.block_cookie_banners, (v) =>
 		v.toString(),
