@@ -395,14 +395,6 @@ function RouteComponent() {
 															label="Capture the full page"
 															name="full_page"
 															id="full_page"
-															onCheckedChange={(checked) => {
-																field.handleChange(checked);
-
-																form.setFieldValue(
-																	"full_page_scroll",
-																	!checked,
-																);
-															}}
 														/>
 													)}
 												/>

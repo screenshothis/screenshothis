@@ -1,7 +1,27 @@
-import type { CreateScreenshotSchema } from "@screenshothis/schemas/screenshots";
+import { CreateScreenshotSchema } from "@screenshothis/schemas/screenshots";
 import type { z } from "zod";
 
 export type PlaygroundFormValues = z.input<typeof CreateScreenshotSchema>;
+
+// Extract default values from the Zod schema so we can compare form values
+// and avoid including params that match their defaults.
+// We fake the required fields with placeholders for parsing.
+const _dummyRequiredFields = {
+	api_key: "x".repeat(32),
+	url: "https://example.com",
+};
+
+const DEFAULT_VALUES: Partial<PlaygroundFormValues> = (() => {
+	try {
+		// Parse an empty object to get defaults while satisfying required fields
+		return CreateScreenshotSchema.parse(
+			_dummyRequiredFields,
+		) as PlaygroundFormValues;
+	} catch {
+		// Fallback in case the schema requirements change unexpectedly
+		return {} as Partial<PlaygroundFormValues>;
+	}
+})();
 
 /**
  * Generates the API URL with query parameters based on form values
@@ -14,40 +34,52 @@ export function generateApiUrl(values: PlaygroundFormValues): string {
 	params.set("api_key", values.api_key || "your-api-key");
 	params.set("url", values.url || "https://polar.sh");
 
-	// Optional parameters - only add if they have values
-	if (values.selector) params.set("selector", values.selector);
-	if (values.width) params.set("width", values.width.toString());
-	if (values.height) params.set("height", values.height.toString());
-	if (values.is_mobile) params.set("is_mobile", values.is_mobile.toString());
-	if (values.is_landscape)
-		params.set("is_landscape", values.is_landscape.toString());
-	if (values.has_touch) params.set("has_touch", values.has_touch.toString());
-	if (values.device_scale_factor)
-		params.set("device_scale_factor", values.device_scale_factor.toString());
-	if (values.full_page) params.set("full_page", values.full_page.toString());
-	if (values.full_page_scroll)
-		params.set("full_page_scroll", values.full_page_scroll.toString());
-	if (values.full_page_scroll_duration)
-		params.set(
-			"full_page_scroll_duration",
-			values.full_page_scroll_duration.toString(),
-		);
-	if (values.format) params.set("format", values.format);
+	// Optional parameters - only add if they differ from their defaults
+	const addIfNotDefault = <K extends keyof PlaygroundFormValues>(
+		key: K,
+		value: PlaygroundFormValues[K],
+		formatter: (v: NonNullable<typeof value>) => string = (v) => String(v),
+	) => {
+		const def = DEFAULT_VALUES[key as keyof PlaygroundFormValues] as
+			| typeof value
+			| undefined;
+		if (value === undefined || value === null) return;
+		if (def !== undefined && value === def) return;
+		params.set(key as string, formatter(value as NonNullable<typeof value>));
+	};
+
+	addIfNotDefault("selector", values.selector);
+	addIfNotDefault("width", values.width, (v) => v.toString());
+	addIfNotDefault("height", values.height, (v) => v.toString());
+	addIfNotDefault("is_mobile", values.is_mobile, (v) => v.toString());
+	addIfNotDefault("is_landscape", values.is_landscape, (v) => v.toString());
+	addIfNotDefault("has_touch", values.has_touch, (v) => v.toString());
+	addIfNotDefault("device_scale_factor", values.device_scale_factor, (v) =>
+		v.toString(),
+	);
+	addIfNotDefault("full_page", values.full_page, (v) => v.toString());
+	addIfNotDefault("full_page_scroll", values.full_page_scroll, (v) =>
+		v.toString(),
+	);
+	addIfNotDefault(
+		"full_page_scroll_duration",
+		values.full_page_scroll_duration,
+		(v) => v.toString(),
+	);
+	addIfNotDefault("format", values.format);
 	if (values.quality !== undefined && values.quality !== null) {
-		params.set("quality", values.quality.toString());
+		addIfNotDefault("quality", values.quality, (v) => v.toString());
 	}
-	if (values.block_ads) params.set("block_ads", values.block_ads.toString());
-	if (values.block_cookie_banners)
-		params.set("block_cookie_banners", values.block_cookie_banners.toString());
-	if (values.block_trackers)
-		params.set("block_trackers", values.block_trackers.toString());
-	if (values.bypass_csp) params.set("bypass_csp", values.bypass_csp.toString());
-	if (values.prefers_color_scheme)
-		params.set("prefers_color_scheme", values.prefers_color_scheme);
-	if (values.prefers_reduced_motion)
-		params.set("prefers_reduced_motion", values.prefers_reduced_motion);
-	if (values.is_cached) params.set("is_cached", values.is_cached.toString());
-	if (values.cache_ttl) params.set("cache_ttl", values.cache_ttl.toString());
+	addIfNotDefault("block_ads", values.block_ads, (v) => v.toString());
+	addIfNotDefault("block_cookie_banners", values.block_cookie_banners, (v) =>
+		v.toString(),
+	);
+	addIfNotDefault("block_trackers", values.block_trackers, (v) => v.toString());
+	addIfNotDefault("bypass_csp", values.bypass_csp, (v) => v.toString());
+	addIfNotDefault("prefers_color_scheme", values.prefers_color_scheme);
+	addIfNotDefault("prefers_reduced_motion", values.prefers_reduced_motion);
+	addIfNotDefault("is_cached", values.is_cached, (v) => v.toString());
+	addIfNotDefault("cache_ttl", values.cache_ttl, (v) => v.toString());
 	if (values.cache_key) params.set("cache_key", values.cache_key);
 	if (values.user_agent) params.set("user_agent", values.user_agent);
 
