@@ -9,4 +9,5 @@ onlyBuiltDependencies:
   - esbuild
   - msgpackr-extract
   - puppeteer
+  - sharp
   - unrs-resolver
