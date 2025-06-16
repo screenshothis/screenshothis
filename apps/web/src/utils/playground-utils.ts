@@ -4,24 +4,12 @@ import type { z } from "zod";
 export type PlaygroundFormValues = z.input<typeof CreateScreenshotSchema>;
 
 // Extract default values from the Zod schema so we can compare form values
-// and avoid including params that match their defaults.
-// We fake the required fields with placeholders for parsing.
-const _dummyRequiredFields = {
-	api_key: "x".repeat(32),
-	url: "https://example.com",
-};
-
-const DEFAULT_VALUES: Partial<PlaygroundFormValues> = (() => {
-	try {
-		// Parse an empty object to get defaults while satisfying required fields
-		return CreateScreenshotSchema.parse(
-			_dummyRequiredFields,
-		) as PlaygroundFormValues;
-	} catch {
-		// Fallback in case the schema requirements change unexpectedly
-		return {} as Partial<PlaygroundFormValues>;
-	}
-})();
+// and avoid sending parameters that match their defaults. We leverage Zod's
+// `.partial()` to make every field optional, then parse an empty object. The
+// result is cast back to the *input* type to align with `PlaygroundFormValues`
+// (which expects pre-transform shapes like `block_requests` as a string).
+const DEFAULT_VALUES: Partial<PlaygroundFormValues> =
+	CreateScreenshotSchema.partial().parse({}) as unknown as PlaygroundFormValues;
 
 /**
  * Generates the API URL with query parameters based on form values
