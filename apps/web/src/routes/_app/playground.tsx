@@ -11,6 +11,7 @@ import PaintBrush02Icon from "virtual:icons/hugeicons/paint-brush-02";
 import SecurityLockIcon from "virtual:icons/hugeicons/security-lock";
 import SquareArrowHorizontalIcon from "virtual:icons/hugeicons/square-arrow-horizontal";
 import SquareArrowVerticalIcon from "virtual:icons/hugeicons/square-arrow-vertical";
+import Timer01Icon from "virtual:icons/hugeicons/timer-01";
 import ToggleOnIcon from "virtual:icons/hugeicons/toggle-on";
 import ZoomOutAreaIcon from "virtual:icons/hugeicons/zoom-out-area";
 
@@ -421,6 +422,7 @@ function RouteComponent() {
 													name="full_page_scroll_duration"
 													children={(field) => (
 														<field.TextField
+															leadingIcon={Timer01Icon}
 															label="Scroll duration"
 															type="number"
 															inputMode="numeric"
