@@ -426,6 +426,7 @@ function RouteComponent() {
 														id="full_page_scroll_duration"
 														placeholder="i.e. 400"
 														hint="The duration of the scroll in milliseconds"
+														disabled={!values.full_page_scroll}
 													/>
 												)}
 											/>
