@@ -82,11 +82,12 @@ function RouteComponent() {
 				return;
 			}
 
-			if (me.currentWorkspace?.metadata?.allowedOrigins.length > 0) {
+			if (me.currentWorkspace?.metadata?.allowedOrigins?.length > 0) {
 				const isAllowed = isScreenshotAllowed(
 					me.currentWorkspace.metadata.allowedOrigins.split("\n"),
 					input.url,
 				);
+
 				if (!isAllowed) {
 					toast.custom((t) => (
 						<AlertToast.Root
