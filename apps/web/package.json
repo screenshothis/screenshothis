@@ -22,7 +22,7 @@
 		"@orpc/server": "1.5.2",
 		"@orpc/tanstack-query": "1.5.2",
 		"@polar-sh/better-auth": "1.0.1",
-		"@polar-sh/sdk": "0.33.1",
+		"@polar-sh/sdk": "0.33.2",
 		"@screenshothis/common": "workspace:*",
 		"@screenshothis/schemas": "workspace:*",
 		"@screenshothis/server": "workspace:*",
