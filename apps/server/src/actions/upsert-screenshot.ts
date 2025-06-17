@@ -6,6 +6,7 @@ import { and, eq, sql } from "drizzle-orm";
 import pLimit from "p-limit";
 import puppeteer from "puppeteer-extra";
 import StealthPlugin from "puppeteer-extra-plugin-stealth";
+import sharp from "sharp";
 import type { ObjectToCamel } from "ts-case-convert";
 import type { z } from "zod";
 
@@ -225,14 +226,14 @@ export async function upsertScreenshot(
 					if (element) {
 						buffer = await element.screenshot({
 							quality,
-							type: format,
+							type: "jpeg",
 							optimizeForSpeed: true,
 						});
 					}
 				} else {
 					buffer = await page.screenshot({
 						quality,
-						type: format,
+						type: "jpeg",
 						optimizeForSpeed: true,
 					});
 				}
@@ -240,6 +241,38 @@ export async function upsertScreenshot(
 
 			if (!buffer) {
 				throw new Error("Failed to generate screenshot");
+			}
+
+			// If the requested format differs from the JPEG captured by puppeteer
+			// convert the image using sharp before persisting it. This allows us to
+			// benefit from the quality option supported by JPEG screenshots while
+			// still returning/storing the desired format.
+			let processedBuffer: Buffer = Buffer.from(buffer);
+			if (format !== "jpeg") {
+				try {
+					switch (format) {
+						case "png":
+							processedBuffer = await sharp(processedBuffer)
+								.png({ quality })
+								.toBuffer();
+							break;
+						case "webp":
+							processedBuffer = await sharp(processedBuffer)
+								.webp({ quality })
+								.toBuffer();
+							break;
+						default:
+							throw new Error(`Unsupported output format: ${format}`);
+					}
+				} catch (conversionError) {
+					logger.error(
+						{ err: conversionError, format },
+						"Screenshot format conversion failed",
+					);
+					throw new Error(
+						`Screenshot generation failed: format conversion error - ${conversionError instanceof Error ? conversionError.message : "Unknown error"}`,
+					);
+				}
 			}
 
 			const [inserted] = await db
@@ -286,9 +319,9 @@ export async function upsertScreenshot(
 			const key = `screenshots/${workspaceId}/${inserted.id}.${format}`;
 
 			try {
-				await storage.write(key, buffer);
+				await storage.write(key, processedBuffer);
 				logger.info(
-					{ key, size: buffer.length },
+					{ key, size: processedBuffer.length },
 					"Screenshot uploaded to S3 successfully",
 				);
 			} catch (uploadError) {

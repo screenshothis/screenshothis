@@ -160,7 +160,6 @@ function RouteComponent() {
 		defaultValues: {
 			url: "",
 			api_key: "",
-			full_page_scroll: true,
 			block_ads: true,
 			block_cookie_banners: true,
 			block_trackers: true,
@@ -400,40 +399,37 @@ function RouteComponent() {
 													)}
 												/>
 
-												{values.full_page ? (
-													<form.AppField
-														name="full_page_scroll"
-														children={(field) => (
-															<field.SwitchField
-																childrenWrapperClassName="flex items-center"
-																className="order-first p-0"
-																label="Scroll the full page"
-																name="full_page_scroll"
-																id="full_page_scroll"
-																hint="Scroll the full page to trigger lazy loading"
-															/>
-														)}
-													/>
-												) : null}
-											</div>
-
-											{values.full_page ? (
 												<form.AppField
-													name="full_page_scroll_duration"
+													name="full_page_scroll"
 													children={(field) => (
-														<field.TextField
-															leadingIcon={Timer01Icon}
-															label="Scroll duration"
-															type="number"
-															inputMode="numeric"
-															name="full_page_scroll_duration"
-															id="full_page_scroll_duration"
-															placeholder="i.e. 400"
-															hint="The duration of the scroll in milliseconds"
+														<field.SwitchField
+															childrenWrapperClassName="flex items-center"
+															className="order-first p-0"
+															label="Scroll the full page"
+															name="full_page_scroll"
+															id="full_page_scroll"
+															hint="Scroll the full page to trigger lazy loading"
 														/>
 													)}
 												/>
-											) : null}
+											</div>
+
+											<form.AppField
+												name="full_page_scroll_duration"
+												children={(field) => (
+													<field.TextField
+														leadingIcon={Timer01Icon}
+														label="Scroll duration"
+														type="number"
+														inputMode="numeric"
+														name="full_page_scroll_duration"
+														id="full_page_scroll_duration"
+														placeholder="i.e. 400"
+														hint="The duration of the scroll in milliseconds"
+														disabled={!values.full_page_scroll}
+													/>
+												)}
+											/>
 										</Accordion.Content>
 									</Accordion.Item>
 
