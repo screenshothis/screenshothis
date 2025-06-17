@@ -167,7 +167,6 @@ function RouteComponent() {
 			user_agent: "",
 			headers: "",
 			cookies: "",
-			bypass_csp: false,
 		} as PlaygroundFormValues,
 		onSubmit: async ({ value }) => {
 			await mutateAsync(value, {
