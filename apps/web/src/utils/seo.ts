@@ -20,7 +20,7 @@ export const getScreenshotUrl = (
 	const params = new URLSearchParams({
 		api_key:
 			process.env.SCREENSHOT_API_KEY ||
-			"ss_live_USkpHQPzxXlkFHrUxhkZBHxoGwmyXfLKqltFiYvXSLpOnvkjgXIWMdboeNRdlrMA",
+			"ss_live_NQJgRXqHcKPwnoMTuQmgiwLIGbVfihjpMyQhgsaMyNBHTyesvrxpYNXmdgcnxipc",
 		url,
 		...DEFAULT_PARAMS,
 		...(cacheKey && { cache_key: cacheKey }),
