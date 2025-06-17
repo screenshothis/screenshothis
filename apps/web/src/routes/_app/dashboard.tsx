@@ -1,4 +1,3 @@
-
 import { DashboardSearchSchema } from "@screenshothis/schemas/dashboard";
 import { useQueries } from "@tanstack/react-query";
 import { zodValidator } from "@tanstack/zod-adapter";
