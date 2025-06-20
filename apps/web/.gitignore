@@ -20,6 +20,7 @@
 .output
 .react-router/
 .tanstack-start/build
+.tanstack
 .nitro/*
 .netlify/*
 
