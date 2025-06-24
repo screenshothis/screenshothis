@@ -24,8 +24,8 @@
 		"@biomejs/biome": "2.0.5",
 		"husky": "9.1.7",
 		"turbo": "2.5.4",
-		"ultracite": "5.0.12",
+		"ultracite": "5.0.18",
 		"vibe-rules": "0.3.41"
 	},
-	"packageManager": "pnpm@10.12.2"
+	"packageManager": "pnpm@10.12.3"
 }
