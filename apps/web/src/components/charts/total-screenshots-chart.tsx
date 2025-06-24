@@ -28,7 +28,7 @@ function useTooltipPosition(chartRef: React.RefObject<HTMLDivElement | null>) {
 		const handleUpdate = () => {
 			if (chartRef.current) {
 				const activeDot = chartRef.current.querySelector(
-					".recharts-active-dot",
+					".recharts-active-dot"
 				) as HTMLElement;
 
 				if (activeDot) {
@@ -90,7 +90,7 @@ const CustomTooltip = ({
 						"relative whitespace-nowrap rounded-10 bg-(--bg-white-0) px-3 py-2.5 ring-(--stroke-soft-200) ring-1",
 						"-translate-y-1/2",
 						"group-[&.left]:translate-x-[21px]",
-						"group-[&.right]:-translate-x-[calc(100%+21px)]",
+						"group-[&.right]:-translate-x-[calc(100%+21px)]"
 					)}
 					style={{
 						filter:
@@ -122,7 +122,7 @@ const CustomTooltip = ({
 						className={cn(
 							"-translate-y-1/2 absolute top-1/2 size-3",
 							"group-[&.right]:right-0 group-[&.right]:translate-x-[calc(100%-6px)]",
-							"group-[&.left]:-translate-x-[calc(100%-6px)] group-[&.left]:left-0",
+							"group-[&.left]:-translate-x-[calc(100%-6px)] group-[&.left]:left-0"
 						)}
 					>
 						<div
@@ -131,7 +131,7 @@ const CustomTooltip = ({
 								"size-3 rounded-bl-4",
 								"border-stroke-soft-200 bg-(--bg-white-0)",
 								"group-[&.left]:rotate-45",
-								"group-[&.right]:-rotate-[135deg]",
+								"group-[&.right]:-rotate-[135deg]"
 							)}
 						/>
 					</div>
@@ -177,68 +177,68 @@ export function TotalScreenshotsChart({
 	};
 
 	return (
-		<ResponsiveContainer width="100%" height={192} ref={chartRef}>
+		<ResponsiveContainer height={192} ref={chartRef} width="100%">
 			<LineChart
-				data={data}
-				margin={{ top: 6, right: 0, left: 0, bottom: 6 }}
 				className={cn(
 					"[&_.recharts-cartesian-grid-horizontal>line]:stroke-(--bg-weak-50) [&_.recharts-cartesian-grid-horizontal>line]:[stroke-dasharray:0]",
-					"[&_.recharts-cartesian-grid-vertical>line:last-child]:opacity-0 [&_.recharts-cartesian-grid-vertical>line:nth-last-child(2)]:opacity-0",
+					"[&_.recharts-cartesian-grid-vertical>line:last-child]:opacity-0 [&_.recharts-cartesian-grid-vertical>line:nth-last-child(2)]:opacity-0"
 				)}
+				data={data}
+				margin={{ top: 6, right: 0, left: 0, bottom: 6 }}
 			>
 				<RechartsTooltip
+					animationDuration={100}
 					content={<CustomTooltip />}
 					cursor={false}
 					isAnimationActive={true}
-					animationDuration={100}
 					offset={0}
 					position={{ x: tooltipX, y: tooltipY }}
 					wrapperClassName={position}
 				/>
 				<CartesianGrid
-					strokeDasharray="4 4"
 					className="stroke-(--stroke-soft-200)"
+					strokeDasharray="4 4"
 				/>
 				<XAxis
-					dataKey="date"
 					axisLine={false}
-					tickLine={false}
-					tickMargin={8}
-					tickFormatter={formatXAxis}
+					className="[&_.recharts-cartesian-axis-tick_text]:fill-(--text-soft-400) [&_.recharts-cartesian-axis-tick_text]:text-label-xs"
+					dataKey="date"
 					minTickGap={40}
 					padding={{ left: sm ? 30 : 4, right: sm ? 30 : 4 }}
-					className="[&_.recharts-cartesian-axis-tick_text]:fill-(--text-soft-400) [&_.recharts-cartesian-axis-tick_text]:text-label-xs"
+					tickFormatter={formatXAxis}
+					tickLine={false}
+					tickMargin={8}
 				/>
 				<YAxis
-					type="number"
+					axisLine={false}
+					className="[&_.recharts-cartesian-axis-tick_text]:fill-(--text-soft-400) [&_.recharts-cartesian-axis-tick_text]:text-label-xs"
 					dataKey="value"
 					domain={["auto", "auto"]}
 					orientation="right"
-					axisLine={false}
-					tickLine={false}
-					tickMargin={16}
-					className="[&_.recharts-cartesian-axis-tick_text]:fill-(--text-soft-400) [&_.recharts-cartesian-axis-tick_text]:text-label-xs"
 					tickFormatter={(value) =>
 						new Intl.NumberFormat("en-US", { notation: "compact" }).format(
-							value,
+							value
 						)
 					}
+					tickLine={false}
+					tickMargin={16}
+					type="number"
 				/>
 				<Line
-					type="monotone"
-					dataKey="value"
-					stroke="var(--color-primary)"
-					strokeWidth={2}
-					dot={true}
-					strokeLinejoin="round"
-					isAnimationActive={isFirstLoad.current}
 					activeDot={{
 						r: 5.5,
 						strokeWidth: 3,
 						className: cn(
-							"stroke-(--stroke-white-0) [filter:drop-shadow(0_6px_10px_#0e121b0f)_drop-shadow(0_2px_4px_#0e121b08)]",
+							"stroke-(--stroke-white-0) [filter:drop-shadow(0_6px_10px_#0e121b0f)_drop-shadow(0_2px_4px_#0e121b08)]"
 						),
 					}}
+					dataKey="value"
+					dot={true}
+					isAnimationActive={isFirstLoad.current}
+					stroke="var(--color-primary)"
+					strokeLinejoin="round"
+					strokeWidth={2}
+					type="monotone"
 				/>
 			</LineChart>
 		</ResponsiveContainer>
