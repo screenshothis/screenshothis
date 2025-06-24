@@ -12,10 +12,10 @@ import {
 	XAxis,
 	YAxis,
 } from "recharts";
+import type { z } from "zod";
 
 import useBreakpoint from "#/hooks/use-breakpoint.ts";
 import { cn } from "#/utils/cn.ts";
-import type { z } from "zod";
 
 function useTooltipPosition(chartRef: React.RefObject<HTMLDivElement | null>) {
 	const [tooltipPos, setTooltipPos] = React.useState({
@@ -78,6 +78,7 @@ type CustomTooltipProps = React.ComponentProps<typeof RechartsTooltip>;
 
 const CustomTooltip = ({
 	active,
+	// @ts-expect-error - TODO: fix this tooltip payload
 	payload,
 	wrapperClassName,
 }: CustomTooltipProps) => {

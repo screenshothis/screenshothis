@@ -23,7 +23,7 @@
   },
   "dependencies": {
     "@screenshothis/common": "workspace:*",
-    "@tanstack/zod-adapter": "1.121.27",
+    "@tanstack/zod-adapter": "1.121.34",
     "ts-case-convert": "2.1.0",
     "zod": "3.25.67",
     "zod-openapi": "4.2.4"
@@ -35,5 +35,5 @@
   "peerDependencies": {
     "typescript": "5.8.3"
   },
-  "packageManager": "pnpm@10.12.1"
+  "packageManager": "pnpm@10.12.2"
 }

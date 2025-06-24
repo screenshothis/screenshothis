@@ -2077,7 +2077,7 @@ Here is a naive illustration (don't do this) of using a Route's `loader` option 
 // src/routes/posts.tsx
 let postsCache = []
 
-export const Route = createFileRoute({
+export const Route = createFileRoute('/posts')({
   loader: async () => {
     postsCache = await fetchPosts()
   },
@@ -2109,7 +2109,7 @@ const postsQueryOptions = queryOptions({
   queryFn: () => fetchPosts(),
 })
 
-export const Route = createFileRoute({
+export const Route = createFileRoute('/posts')({
   // Use the `loader` option to ensure that the data is loaded
   loader: () => queryClient.ensureQueryData(postsQueryOptions),
   component: () => {
@@ -2134,7 +2134,7 @@ export const Route = createFileRoute({
 When an error occurs while using `suspense` with `Tanstack Query`, you'll need to let queries know that you want to try again when re-rendering. This can be done by using the `reset` function provided by the `useQueryErrorResetBoundary` hook. We can invoke this function in an effect as soon as the error component mounts. This will make sure that the query is reset and will try to fetch data again when the route component is rendered again. This will also cover cases where users navigate away from our route instead of clicking the `retry` button.
 
 ```tsx
-export const Route = createFileRoute({
+export const Route = createFileRoute('/')({
   loader: () => queryClient.ensureQueryData(postsQueryOptions),
   errorComponent: ({ error, reset }) => {
     const router = useRouter()
@@ -4055,7 +4055,7 @@ Once you have defined the router context type, you can use it in your route defi
 
 ```tsx
 // src/routes/todos.tsx
-export const Route = createFileRoute({
+export const Route = createFileRoute('/todos')({
   component: Todos,
   loader: ({ context }) => fetchTodosByUserId(context.user.id),
 })
@@ -4085,7 +4085,7 @@ Then, in your route:
 
 ```tsx
 // src/routes/todos.tsx
-export const Route = createFileRoute({
+export const Route = createFileRoute('/todos')({
   component: Todos,
   loader: ({ context }) => context.fetchTodosByUserId(context.userId),
 })
@@ -4121,7 +4121,7 @@ Then, in your route:
 
 ```tsx
 // src/routes/todos.tsx
-export const Route = createFileRoute({
+export const Route = createFileRoute('/todos')({
   component: Todos,
   loader: async ({ context }) => {
     await context.queryClient.ensureQueryData({
@@ -4197,7 +4197,7 @@ So, now in our route's `loader` function, we can access the `networkStrength` ho
 ```tsx
 import { createFileRoute } from '@tanstack/react-router'
 
-export const Route = createFileRoute({
+export const Route = createFileRoute('/posts')({
   component: Posts,
   loader: ({ context }) => {
     if (context.networkStrength === 'STRONG') {
@@ -4245,7 +4245,7 @@ const router = createRouter({
 ```tsx
 import { createFileRoute } from '@tanstack/react-router'
 
-export const Route = createFileRoute({
+export const Route = createFileRoute('/todos')({
   component: Todos,
   beforeLoad: () => {
     return {
@@ -4379,7 +4379,9 @@ Falling in behind Remix's own Scroll Restoration APIs, you can also customize th
 
 The `getKey` option receives the relevant `Location` state from TanStack Router and expects you to return a string to uniquely identify the scrollable measurements for that state.
 
-The default `getKey` is `(location) => location.state.key!`, where `key` is the unique key generated for each entry in the history.
+The default `getKey` is `(location) => location.state.__TSR_key!`, where `__TSR_key` is the unique key generated for each entry in the history.
+
+> Older versions, prior to `v1.121.34`, used `state.key` as the default key, but this has been deprecated in favor of `state.__TSR_key`. For now, `location.state.key` will still be available for compatibility, but it will be removed in the next major version.
 
 ## Examples
 
@@ -4403,7 +4405,7 @@ const router = createRouter({
     const paths = ['/', '/chat']
     return paths.includes(location.pathname)
       ? location.pathname
-      : location.state.key!
+      : location.state.__TSR_key!
   },
 })
 ```

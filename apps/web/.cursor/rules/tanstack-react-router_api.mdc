@@ -393,7 +393,8 @@ The `ParsedHistoryState` type represents a parsed state object. Additionally to 
 
 ```tsx
 export type ParsedHistoryState = HistoryState & {
-  key?: string
+  key?: string // TODO: Remove in v2 - use __TSR_key instead
+  __TSR_key?: string
   __TSR_index: number
 }
 ```
@@ -2164,7 +2165,7 @@ A new function that accepts a single argument of type [`RouteOptions`](../RouteO
 ```tsx
 import { createFileRoute } from '@tanstack/react-router'
 
-export const Route = createFileRoute({
+export const Route = createFileRoute('/')({
   loader: () => {
     return 'Hello World'
   },
@@ -2990,7 +2991,7 @@ const searchSchema = z.object({
   two: z.string().optional(),
 })
 
-export const Route = createFileRoute({
+export const Route = createFileRoute('/')({
   validateSearch: zodValidator(searchSchema),
   search: {
     middlewares: [retainSearchParams(true)],
@@ -3079,7 +3080,7 @@ const searchSchema = z.object({
   two: z.string().default(defaultValues.two),
 })
 
-export const Route = createFileRoute({
+export const Route = createFileRoute('/')({
   validateSearch: zodValidator(searchSchema),
   search: {
     // strip default values
@@ -3117,7 +3118,7 @@ const searchSchema = z.object({
   two: z.string().default('xyz'),
 })
 
-export const Route = createFileRoute({
+export const Route = createFileRoute('/')({
   validateSearch: zodValidator(searchSchema),
   search: {
     // remove all search params
