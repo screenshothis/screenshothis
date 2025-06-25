@@ -30,7 +30,7 @@
   },
   "devDependencies": {
     "@types/node": "24.0.4",
-    "tsdown": "0.12.8"
+    "tsdown": "0.12.9"
   },
   "peerDependencies": {
     "typescript": "5.8.3"

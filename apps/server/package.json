@@ -50,7 +50,7 @@
 		"cross-fetch": "4.1.0",
 		"dotenv": "16.5.0",
 		"drizzle-orm": "0.44.2",
-		"hono": "4.8.2",
+		"hono": "4.8.3",
 		"hono-pino": "0.8.0",
 		"ioredis": "5.6.1",
 		"p-limit": "6.2.0",
@@ -72,7 +72,7 @@
 		"@types/pg": "8.15.4",
 		"drizzle-kit": "0.31.2",
 		"tsc-alias": "1.8.16",
-		"tsdown": "0.12.8",
+		"tsdown": "0.12.9",
 		"tsx": "4.20.3",
 		"typescript": "5.8.3"
 	},
