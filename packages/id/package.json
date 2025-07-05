@@ -18,7 +18,7 @@
     "base-x": "5.0.1"
   },
   "devDependencies": {
-    "@types/node": "24.0.6",
+    "@types/node": "24.0.10",
     "tsdown": "0.12.9"
   },
   "peerDependencies": {

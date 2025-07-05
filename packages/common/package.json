@@ -15,10 +15,10 @@
     "dev": "tsdown --watch"
   },
   "dependencies": {
-    "zod": "3.25.67"
+    "zod": "3.25.74"
   },
   "devDependencies": {
-    "@types/node": "24.0.6",
+    "@types/node": "24.0.10",
     "tsdown": "0.12.9"
   },
   "peerDependencies": {
