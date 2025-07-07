@@ -23,10 +23,10 @@
   },
   "dependencies": {
     "@screenshothis/common": "workspace:*",
-    "@tanstack/zod-adapter": "1.124.0",
+    "@tanstack/zod-adapter": "1.125.4",
     "ts-case-convert": "2.1.0",
-    "zod": "3.25.74",
-    "zod-openapi": "4.2.4"
+    "zod": "3.25.75",
+    "zod-openapi": "5.0.1"
   },
   "devDependencies": {
     "@types/node": "24.0.10",
